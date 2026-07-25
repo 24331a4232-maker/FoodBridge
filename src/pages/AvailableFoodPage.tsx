@@ -1,0 +1,271 @@
+import { useEffect, useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Filter, MapPin, Clock, UtensilsCrossed, Hotel, Package, ChevronLeft, ChevronRight, Flame, X } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import type { FoodDonation, FoodCategory } from '@/types';
+import { useToast } from '@/context/ToastContext';
+import { fadeInUp, staggerContainer } from '@/lib/animations';
+
+const categories: { value: FoodCategory | 'all'; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'cooked', label: 'Cooked' },
+  { value: 'raw', label: 'Raw' },
+  { value: 'packaged', label: 'Packaged' },
+  { value: 'beverages', label: 'Beverages' },
+  { value: 'bakery', label: 'Bakery' },
+  { value: 'other', label: 'Other' },
+];
+
+const PAGE_SIZE = 6;
+
+function FoodCardSkeleton() {
+  return (
+    <div className="card overflow-hidden animate-pulse">
+      <div className="h-48 bg-gray-200 dark:bg-gray-800" />
+      <div className="p-5 space-y-3">
+        <div className="h-5 bg-gray-200 dark:bg-gray-800 rounded w-3/4" />
+        <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2" />
+        <div className="flex gap-2">
+          <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded-full w-16" />
+          <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded-full w-20" />
+        </div>
+        <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-full" />
+        <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-2/3" />
+      </div>
+    </div>
+  );
+}
+
+export function AvailableFoodPage() {
+  const [donations, setDonations] = useState<FoodDonation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [category, setCategory] = useState<FoodCategory | 'all'>('all');
+  const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<FoodDonation | null>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const load = async () => {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('food_donations')
+        .select('*')
+        .eq('status', 'available')
+        .order('created_at', { ascending: false });
+      if (error) {
+        toast('Could not load donations', 'error');
+      } else {
+        setDonations((data as FoodDonation[]) ?? []);
+      }
+      setLoading(false);
+    };
+    load();
+  }, [toast]);
+
+  const filtered = useMemo(() => {
+    return donations.filter((d) => {
+      const matchSearch =
+        !search ||
+        d.food_name.toLowerCase().includes(search.toLowerCase()) ||
+        d.organization.toLowerCase().includes(search.toLowerCase()) ||
+        d.city.toLowerCase().includes(search.toLowerCase());
+      const matchCat = category === 'all' || d.category === category;
+      return matchSearch && matchCat;
+    });
+  }, [donations, search, category]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const current = useMemo(() => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filtered, page]);
+
+  useEffect(() => { setPage(1); }, [search, category]);
+
+  const formatTime = (iso: string) => {
+    const date = new Date(iso);
+    const diff = date.getTime() - Date.now();
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    if (hours < 0) return 'Expired';
+    return `${hours}h ${mins}m left`;
+  };
+
+  return (
+    <div className="pt-20 min-h-screen gradient-bg">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
+          <span className="badge bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 mb-4">
+            <UtensilsCrossed className="h-3.5 w-3.5" /> Available Now
+          </span>
+          <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold">Available Food Donations</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-xl mx-auto">Browse surplus food available for pickup near you. Claim a donation and deliver it to someone in need.</p>
+        </motion.div>
+
+        {/* Search & Filter */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-8">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search by food, hotel, or city..."
+              className="input-field pl-12"
+            />
+          </div>
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            <Filter className="h-5 w-5 text-gray-400 shrink-0" />
+            {categories.map((c) => (
+              <button
+                key={c.value}
+                onClick={() => setCategory(c.value)}
+                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                  category === c.value
+                    ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30'
+                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30'
+                }`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Grid */}
+        {loading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {Array.from({ length: 6 }).map((_, i) => <FoodCardSkeleton key={i} />)}
+          </div>
+        ) : current.length === 0 ? (
+          <div className="text-center py-20">
+            <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500">No donations match your search. Try different filters.</p>
+          </div>
+        ) : (
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {current.map((d) => (
+              <motion.div
+                key={d.id}
+                variants={fadeInUp}
+                whileHover={{ y: -6 }}
+                onClick={() => setSelected(d)}
+                className="card overflow-hidden cursor-pointer group"
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <img src={d.image_url || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'} alt={d.food_name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                  {d.is_urgent && (
+                    <span className="absolute top-3 left-3 badge bg-red-500 text-white">
+                      <Flame className="h-3 w-3" /> Urgent
+                    </span>
+                  )}
+                  <span className="absolute top-3 right-3 badge bg-white/90 dark:bg-gray-900/90 text-gray-700 dark:text-gray-200 backdrop-blur-md capitalize">
+                    {d.category}
+                  </span>
+                </div>
+                <div className="p-5">
+                  <h3 className="font-display font-semibold text-lg mb-1">{d.food_name}</h3>
+                  <p className="text-sm text-gray-500 flex items-center gap-1.5 mb-3">
+                    <Hotel className="h-3.5 w-3.5" /> {d.organization}
+                  </p>
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <span className="badge bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
+                      <Package className="h-3 w-3" /> {d.quantity} {d.quantity_unit}
+                    </span>
+                    <span className="badge bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
+                      <Clock className="h-3 w-3" /> {formatTime(d.expiry_time)}
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
+                    <MapPin className="h-4 w-4 text-primary-500 shrink-0 mt-0.5" />
+                    <span>{d.address}, {d.city}</span>
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+
+        {/* Pagination */}
+        {!loading && totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-10">
+            <button
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+              className="p-2 rounded-full glass disabled:opacity-40 hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setPage(i + 1)}
+                className={`h-10 w-10 rounded-full font-medium text-sm transition-all ${
+                  page === i + 1 ? 'bg-primary-600 text-white shadow-lg' : 'glass hover:bg-primary-50 dark:hover:bg-primary-900/30'
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+            <button
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages}
+              className="p-2 rounded-full glass disabled:opacity-40 hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        )}
+      </section>
+
+      {/* Detail Modal */}
+      <AnimatePresence>
+        {selected && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelected(null)}
+            className="fixed inset-0 z-[60] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass-card max-w-lg w-full overflow-hidden max-h-[90vh] overflow-y-auto"
+            >
+              <div className="relative h-56">
+                <img src={selected.image_url || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'} alt={selected.food_name} className="w-full h-full object-cover" />
+                <button onClick={() => setSelected(null)} className="absolute top-3 right-3 h-9 w-9 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="p-6">
+                <h2 className="font-display text-2xl font-bold mb-2">{selected.food_name}</h2>
+                <p className="text-gray-500 mb-4">{selected.organization} - {selected.organization_type}</p>
+                {selected.description && <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{selected.description}</p>}
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="card p-3"><p className="text-gray-400 text-xs">Quantity</p><p className="font-semibold">{selected.quantity} {selected.quantity_unit}</p></div>
+                  <div className="card p-3"><p className="text-gray-400 text-xs">Category</p><p className="font-semibold capitalize">{selected.category}</p></div>
+                  <div className="card p-3"><p className="text-gray-400 text-xs">Pickup Time</p><p className="font-semibold">{new Date(selected.pickup_time).toLocaleString()}</p></div>
+                  <div className="card p-3"><p className="text-gray-400 text-xs">Expiry</p><p className="font-semibold">{new Date(selected.expiry_time).toLocaleString()}</p></div>
+                  <div className="card p-3 col-span-2"><p className="text-gray-400 text-xs">Address</p><p className="font-semibold">{selected.address}, {selected.city}</p></div>
+                  {selected.contact_phone && <div className="card p-3 col-span-2"><p className="text-gray-400 text-xs">Contact</p><p className="font-semibold">{selected.contact_phone}</p></div>}
+                </div>
+                <button
+                  onClick={() => { toast('Please login as a volunteer to accept this pickup', 'info'); setSelected(null); }}
+                  className="btn-primary w-full mt-6"
+                >
+                  Accept Pickup
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
