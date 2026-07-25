@@ -1,23 +1,72 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Menu, X, Moon, Sun, LogOut, LayoutDashboard, User as UserIcon, Award } from 'lucide-react';
+import {
+  Menu, X, Moon, Sun, LogOut, ChevronDown, LayoutDashboard, User as UserIcon,
+  Award, Package, Search, ShieldCheck, MapPin, Truck, HeartHandshake,
+  Building2, FileText, Lock, HelpCircle, Mail, type LucideIcon,
+} from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
 import { NotificationBell } from '@/components/NotificationBell';
 
-const navLinks = [
+interface NavItem {
+  name: string;
+  path?: string;
+  icon?: LucideIcon;
+  children?: { name: string; path: string; icon: LucideIcon }[];
+}
+
+const navItems: NavItem[] = [
   { name: 'Home', path: '/' },
   { name: 'About', path: '/about' },
-  { name: 'Available Food', path: '/available-food' },
-  { name: 'Food Quality', path: '/food-quality' },
-  { name: 'Donate Food', path: '/donate-food' },
+  {
+    name: 'Features',
+    children: [
+      { name: 'Donate Food', path: '/donate-food', icon: Package },
+      { name: 'Available Donations', path: '/available-food', icon: Search },
+      { name: 'Food Quality Verification', path: '/food-quality', icon: ShieldCheck },
+      { name: 'Donation Tracking', path: '/tracking', icon: Truck },
+      { name: 'Current Location Map', path: '/location', icon: MapPin },
+    ],
+  },
+  {
+    name: 'Dashboards',
+    children: [
+      { name: 'Volunteer Dashboard', path: '/volunteer', icon: LayoutDashboard },
+      { name: 'Admin Dashboard', path: '/admin', icon: Building2 },
+      { name: 'Profile & Settings', path: '/profile', icon: UserIcon },
+    ],
+  },
+  {
+    name: 'Certificates',
+    children: [
+      { name: 'Volunteer Certificate', path: '/certificate', icon: Award },
+      { name: 'Certificate Verification', path: '/verify-certificate', icon: ShieldCheck },
+    ],
+  },
+  {
+    name: 'Resources',
+    children: [
+      { name: 'FAQ', path: '/help', icon: HelpCircle },
+      { name: 'Privacy Policy', path: '/privacy', icon: Lock },
+      { name: 'Terms & Conditions', path: '/terms', icon: FileText },
+    ],
+  },
   { name: 'Contact', path: '/contact' },
 ];
+
+function isActive(pathname: string, path?: string, children?: { path: string }[]): boolean {
+  if (path) return pathname === path;
+  if (children) return children.some((c) => pathname === c.path);
+  return false;
+}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
   const [userMenu, setUserMenu] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const { user, profile, signOut } = useAuth();
@@ -31,9 +80,12 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Close dropdowns and mobile menu on navigation
   useEffect(() => {
     setMobileOpen(false);
+    setOpenDropdown(null);
     setUserMenu(false);
+    setMobileExpanded(null);
   }, [location.pathname]);
 
   const handleSignOut = async () => {
@@ -47,19 +99,17 @@ export function Navbar() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5, ease: 'easeOut' }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? 'glass shadow-lg shadow-gray-200/30 dark:shadow-black/20'
-          : 'bg-transparent'
+        scrolled ? 'glass shadow-lg shadow-gray-200/30 dark:shadow-black/20' : 'bg-white/70 dark:bg-gray-950/70 backdrop-blur-md'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-20">
+        <div className="flex items-center justify-between h-16 sm:h-18">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group">
+          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
             <motion.img
               src="/logo.png"
               alt="FoodBridge"
-              className="h-9 w-9 sm:h-11 sm:w-11 object-contain"
+              className="h-9 w-9 sm:h-10 sm:w-10 object-contain"
               whileHover={{ rotate: 10, scale: 1.05 }}
               transition={{ type: 'spring', stiffness: 300 }}
             />
@@ -67,31 +117,89 @@ export function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`relative px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
-                  location.pathname === link.path
-                    ? 'text-primary-700 dark:text-primary-300'
-                    : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
-                }`}
-              >
-                {link.name}
-                {location.pathname === link.path && (
-                  <motion.span
-                    layoutId="navActive"
-                    className="absolute inset-0 rounded-full bg-primary-100 dark:bg-primary-900/40 -z-10"
-                    transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-                  />
-                )}
-              </Link>
-            ))}
+          <div className="hidden lg:flex items-center gap-0.5">
+            {navItems.map((item) => {
+              const active = isActive(location.pathname, item.path, item.children);
+              if (item.children) {
+                return (
+                  <div
+                    key={item.name}
+                    className="relative"
+                    onMouseEnter={() => setOpenDropdown(item.name)}
+                    onMouseLeave={() => setOpenDropdown((cur) => (cur === item.name ? null : cur))}
+                  >
+                    <button
+                      className={`flex items-center gap-1 px-3.5 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                        active
+                          ? 'text-primary-700 dark:text-primary-300'
+                          : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
+                      }`}
+                    >
+                      {item.name}
+                      <motion.span animate={{ rotate: openDropdown === item.name ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                        <ChevronDown className="h-4 w-4" />
+                      </motion.span>
+                    </button>
+                    <AnimatePresence>
+                      {openDropdown === item.name && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10, scale: 0.97 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.97 }}
+                          transition={{ duration: 0.18, ease: 'easeOut' }}
+                          className="absolute left-0 top-full pt-2 w-60"
+                        >
+                          <div className="glass-card p-2 shadow-xl">
+                            {item.children.map((child) => {
+                              const ChildIcon = child.icon!;
+                              const childActive = location.pathname === child.path;
+                              return (
+                                <Link
+                                  key={child.path}
+                                  to={child.path}
+                                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors ${
+                                    childActive
+                                      ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                                      : 'hover:bg-primary-50 dark:hover:bg-primary-900/20'
+                                  }`}
+                                >
+                                  <ChildIcon className={`h-4 w-4 ${childActive ? 'text-primary-600' : 'text-gray-500 dark:text-gray-400'}`} />
+                                  <span className="text-sm font-medium">{child.name}</span>
+                                </Link>
+                              );
+                            })}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              }
+              return (
+                <Link
+                  key={item.name}
+                  to={item.path!}
+                  className={`relative px-3.5 py-2 text-sm font-medium rounded-full transition-all duration-200 ${
+                    active
+                      ? 'text-primary-700 dark:text-primary-300'
+                      : 'text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400'
+                  }`}
+                >
+                  {item.name}
+                  {active && (
+                    <motion.span
+                      layoutId="navActive"
+                      className="absolute inset-0 rounded-full bg-primary-100 dark:bg-primary-900/40 -z-10"
+                      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                    />
+                  )}
+                </Link>
+              );
+            })}
           </div>
 
           {/* Right side */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {user && <NotificationBell />}
             <button
               onClick={toggleTheme}
@@ -145,13 +253,9 @@ export function Navbar() {
                           <Award className="h-4 w-4 text-primary-600" />
                           <span className="text-sm">Certificate</span>
                         </Link>
-                        <Link to="/my-certificates" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">
-                          <Award className="h-4 w-4 text-primary-600" />
-                          <span className="text-sm">My Certificates</span>
-                        </Link>
                         {profile?.role === 'admin' && (
                           <Link to="/admin" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">
-                            <LayoutDashboard className="h-4 w-4 text-accent-600" />
+                            <Building2 className="h-4 w-4 text-accent-600" />
                             <span className="text-sm">Admin Panel</span>
                           </Link>
                         )}
@@ -191,33 +295,80 @@ export function Navbar() {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="lg:hidden glass overflow-hidden"
+            className="lg:hidden glass overflow-hidden border-t border-gray-100 dark:border-gray-800"
           >
-            <div className="px-4 py-4 space-y-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`block px-4 py-3 rounded-2xl text-sm font-medium transition-colors ${
-                    location.pathname === link.path
-                      ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-800'
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
+            <div className="px-4 py-4 space-y-1 max-h-[80vh] overflow-y-auto">
+              {navItems.map((item) => {
+                const active = isActive(location.pathname, item.path, item.children);
+                if (item.children) {
+                  const expanded = mobileExpanded === item.name;
+                  return (
+                    <div key={item.name}>
+                      <button
+                        onClick={() => setMobileExpanded(expanded ? null : item.name)}
+                        className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-medium transition-colors ${
+                          active
+                            ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                        }`}
+                      >
+                        {item.name}
+                        <motion.span animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                          <ChevronDown className="h-4 w-4" />
+                        </motion.span>
+                      </button>
+                      <AnimatePresence initial={false}>
+                        {expanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25 }}
+                            className="overflow-hidden pl-3 mt-1 space-y-0.5"
+                          >
+                            {item.children.map((child) => {
+                              const ChildIcon = child.icon!;
+                              const childActive = location.pathname === child.path;
+                              return (
+                                <Link
+                                  key={child.path}
+                                  to={child.path}
+                                  className={`flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition-colors ${
+                                    childActive
+                                      ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                                      : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'
+                                  }`}
+                                >
+                                  <ChildIcon className="h-4 w-4 text-primary-500" />
+                                  {child.name}
+                                </Link>
+                              );
+                            })}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  );
+                }
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.path!}
+                    className={`block px-4 py-3 rounded-2xl text-sm font-medium transition-colors ${
+                      active
+                        ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300'
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                );
+              })}
+
               {user ? (
-                <>
-                  <Link to="/profile" className="block px-4 py-3 rounded-2xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800">My Profile</Link>
-                  <Link to="/volunteer" className="block px-4 py-3 rounded-2xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800">Dashboard</Link>
-                  <Link to="/certificate" className="block px-4 py-3 rounded-2xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800">Certificate</Link>
-                  <Link to="/my-certificates" className="block px-4 py-3 rounded-2xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800">My Certificates</Link>
-                  {profile?.role === 'admin' && (
-                    <Link to="/admin" className="block px-4 py-3 rounded-2xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800">Admin Panel</Link>
-                  )}
-                  <button onClick={handleSignOut} className="w-full text-left px-4 py-3 rounded-2xl text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30">Sign Out</button>
-                </>
+                <button onClick={handleSignOut} className="w-full text-left px-4 py-3 rounded-2xl text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30">
+                  Sign Out
+                </button>
               ) : (
                 <div className="flex gap-2 pt-2">
                   <Link to="/login" className="btn-secondary flex-1 text-sm">Login</Link>

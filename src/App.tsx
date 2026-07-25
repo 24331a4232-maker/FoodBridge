@@ -30,6 +30,8 @@ import { VerifyCertificatePage } from '@/pages/VerifyCertificatePage';
 import { PrivacyPage } from '@/pages/PrivacyPage';
 import { TermsPage } from '@/pages/TermsPage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
+import { DonationTrackingPage } from '@/pages/DonationTrackingPage';
+import { CurrentLocationPage } from '@/pages/CurrentLocationPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -52,6 +54,8 @@ function AnimatedRoutes() {
         <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
         <Route path="/register" element={<PageTransition><RegisterPage /></PageTransition>} />
         <Route path="/profile" element={<ProtectedRoute><PageTransition><ProfilePage /></PageTransition></ProtectedRoute>} />
+        <Route path="/tracking" element={<ProtectedRoute><PageTransition><DonationTrackingPage /></PageTransition></ProtectedRoute>} />
+        <Route path="/location" element={<PageTransition><CurrentLocationPage /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><ContactPage /></PageTransition>} />
         <Route path="/help" element={<PageTransition><HelpCenterPage /></PageTransition>} />
         <Route path="/achievements" element={<PageTransition><AchievementsPage /></PageTransition>} />
