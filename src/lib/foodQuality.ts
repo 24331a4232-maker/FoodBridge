@@ -156,16 +156,16 @@ export function calculateFoodQuality(input: QualityInput): QualityResult {
 
 export function getFreshnessColor(status: FreshnessStatus): string {
   switch (status) {
-    case 'fresh': return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300';
-    case 'consume_soon': return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300';
+    case 'fresh': return 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300';
+    case 'consume_soon': return 'bg-gold-100 dark:bg-gold-900/30 text-gold-700 dark:text-gold-300';
     case 'expired': return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300';
   }
 }
 
 export function getFreshnessDot(status: FreshnessStatus): string {
   switch (status) {
-    case 'fresh': return 'bg-green-500';
-    case 'consume_soon': return 'bg-amber-500';
+    case 'fresh': return 'bg-primary-500';
+    case 'consume_soon': return 'bg-gold-500';
     case 'expired': return 'bg-red-500';
   }
 }
@@ -173,23 +173,23 @@ export function getFreshnessDot(status: FreshnessStatus): string {
 export function getPriorityColor(priority: PriorityLevel): string {
   switch (priority) {
     case 'high': return 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300';
-    case 'medium': return 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300';
-    case 'low': return 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300';
+    case 'medium': return 'bg-gold-100 dark:bg-gold-900/30 text-gold-700 dark:text-gold-300';
+    case 'low': return 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300';
   }
 }
 
 export function getScoreColor(score: number): string {
-  if (score >= 80) return 'text-green-600';
-  if (score >= 60) return 'text-amber-600';
-  if (score >= 40) return 'text-orange-600';
+  if (score >= 80) return 'text-primary-600';
+  if (score >= 60) return 'text-gold-600';
+  if (score >= 40) return 'text-accent-600';
   return 'text-red-600';
 }
 
 export function getScoreGradient(score: number): string {
-  if (score >= 80) return 'from-green-500 to-emerald-500';
-  if (score >= 60) return 'from-amber-500 to-yellow-500';
-  if (score >= 40) return 'from-orange-500 to-amber-500';
-  return 'from-red-500 to-rose-500';
+  if (score >= 80) return 'from-primary-500 to-primary-500';
+  if (score >= 60) return 'from-gold-500 to-yellow-500';
+  if (score >= 40) return 'from-accent-500 to-gold-500';
+  return 'from-red-500 to-red-500';
 }
 
 export function getFreshnessLabel(status: FreshnessStatus | null | undefined): string {

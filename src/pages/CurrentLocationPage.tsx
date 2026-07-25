@@ -109,7 +109,7 @@ export function CurrentLocationPage() {
                   selectedPoint={selected}
                 />
                 <div className="flex flex-wrap items-center justify-center gap-4 mt-3 text-xs">
-                  <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-full bg-blue-600 ring-2 ring-white shadow" /> You</span>
+                  <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-full bg-secondary-600 ring-2 ring-white shadow" /> You</span>
                   <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-full bg-primary-600 ring-2 ring-white shadow" /> Donations</span>
                   <span className="flex items-center gap-1.5"><span className="h-3 w-3 rounded-full bg-accent-500 ring-2 ring-white shadow" /> Volunteers</span>
                 </div>

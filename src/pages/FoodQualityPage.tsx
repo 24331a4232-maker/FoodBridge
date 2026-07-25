@@ -12,15 +12,15 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { Illustration } from '@/components/Illustration';
 import { fadeInUp, scaleIn, slideInRight, staggerContainer } from '@/lib/animations';
 
-const IVORY = '#FFFDF8';
+const IVORY = '#FFFFFF';
 
 const inspectionSteps = [
-  { icon: Package, title: 'Food Collected', desc: 'Surplus food is picked up from hotels, events and restaurants in sealed containers.', color: 'from-green-500 to-emerald-500' },
-  { icon: Eye, title: 'Visual Inspection', desc: 'Trained volunteers check appearance, aroma and signs of spoilage.', color: 'from-emerald-500 to-teal-500' },
-  { icon: Thermometer, title: 'Temperature Check', desc: 'Food temperature is measured to confirm safe storage conditions.', color: 'from-teal-500 to-cyan-500' },
-  { icon: ClipboardCheck, title: 'Packaging Verification', desc: 'Containers are inspected for cleanliness, sealing and food-grade material.', color: 'from-cyan-500 to-sky-500' },
-  { icon: ShieldCheck, title: 'Volunteer Approval', desc: 'A certified volunteer signs off the donation as safe for redistribution.', color: 'from-sky-500 to-blue-500' },
-  { icon: Truck, title: 'Delivered Safely', desc: 'Verified food is transported and handed to partner shelters and kitchens.', color: 'from-blue-500 to-indigo-500' },
+  { icon: Package, title: 'Food Collected', desc: 'Surplus food is picked up from hotels, events and restaurants in sealed containers.', color: 'from-primary-500 to-primary-400' },
+  { icon: Eye, title: 'Visual Inspection', desc: 'Trained volunteers check appearance, aroma and signs of spoilage.', color: 'from-primary-400 to-primary-300' },
+  { icon: Thermometer, title: 'Temperature Check', desc: 'Food temperature is measured to confirm safe storage conditions.', color: 'from-primary-300 to-primary-200' },
+  { icon: ClipboardCheck, title: 'Packaging Verification', desc: 'Containers are inspected for cleanliness, sealing and food-grade material.', color: 'from-secondary-400 to-secondary-300' },
+  { icon: ShieldCheck, title: 'Volunteer Approval', desc: 'A certified volunteer signs off the donation as safe for redistribution.', color: 'from-secondary-500 to-secondary-400' },
+  { icon: Truck, title: 'Delivered Safely', desc: 'Verified food is transported and handed to partner shelters and kitchens.', color: 'from-accent-500 to-accent-400' },
 ];
 
 const safetyChecklist = [
@@ -34,11 +34,11 @@ const safetyChecklist = [
 ];
 
 const qualityBadges = [
-  { label: 'Fresh Certified', icon: Leaf, color: 'from-green-500 to-emerald-500' },
-  { label: 'Hygienically Packed', icon: Lock, color: 'from-emerald-500 to-teal-500' },
-  { label: 'Temperature Verified', icon: Thermometer, color: 'from-orange-500 to-amber-500' },
-  { label: 'NGO Approved', icon: BadgeCheck, color: 'from-green-600 to-green-500' },
-  { label: 'Safe To Donate', icon: ShieldCheck, color: 'from-orange-600 to-orange-500' },
+  { label: 'Fresh Certified', icon: Leaf, color: 'from-primary-500 to-primary-400' },
+  { label: 'Hygienically Packed', icon: Lock, color: 'from-primary-400 to-primary-300' },
+  { label: 'Temperature Verified', icon: Thermometer, color: 'from-accent-500 to-accent-400' },
+  { label: 'NGO Approved', icon: BadgeCheck, color: 'from-primary-600 to-primary-500' },
+  { label: 'Safe To Donate', icon: ShieldCheck, color: 'from-accent-600 to-accent-500' },
 ];
 
 const galleryItems = [
@@ -50,17 +50,17 @@ const galleryItems = [
 ];
 
 const approvalStatuses = [
-  { label: 'Accepted', icon: CheckCircle, color: 'from-green-500 to-emerald-500', bg: 'bg-green-50 dark:bg-green-900/20', text: 'text-green-700 dark:text-green-300', desc: 'Passed all quality checks and approved for delivery.' },
-  { label: 'Needs Repacking', icon: AlertTriangle, color: 'from-amber-500 to-orange-500', bg: 'bg-amber-50 dark:bg-amber-900/20', text: 'text-amber-700 dark:text-amber-300', desc: 'Food is safe but requires repackaging before delivery.' },
-  { label: 'Rejected', icon: XCircle, color: 'from-red-500 to-rose-500', bg: 'bg-red-50 dark:bg-red-900/20', text: 'text-red-700 dark:text-red-300', desc: 'Did not meet safety standards and cannot be donated.' },
-  { label: 'Pending Inspection', icon: Clock, color: 'from-blue-500 to-sky-500', bg: 'bg-blue-50 dark:bg-blue-900/20', text: 'text-blue-700 dark:text-blue-300', desc: 'Awaiting volunteer inspection before approval.' },
+  { label: 'Accepted', icon: CheckCircle, color: 'from-primary-500 to-primary-400', bg: 'bg-primary-50 dark:bg-primary-900/20', text: 'text-primary-700 dark:text-primary-300', desc: 'Passed all quality checks and approved for delivery.' },
+  { label: 'Needs Repacking', icon: AlertTriangle, color: 'from-accent-500 to-accent-400', bg: 'bg-accent-50 dark:bg-accent-900/20', text: 'text-accent-700 dark:text-accent-300', desc: 'Food is safe but requires repackaging before delivery.' },
+  { label: 'Rejected', icon: XCircle, color: 'from-red-500 to-red-500', bg: 'bg-red-50 dark:bg-red-900/20', text: 'text-red-700 dark:text-red-300', desc: 'Did not meet safety standards and cannot be donated.' },
+  { label: 'Pending Inspection', icon: Clock, color: 'from-secondary-500 to-secondary-400', bg: 'bg-secondary-50 dark:bg-secondary-900/20', text: 'text-secondary-700 dark:text-secondary-300', desc: 'Awaiting volunteer inspection before approval.' },
 ];
 
 const stats = [
-  { value: 25000, suffix: '+', label: 'Meals Verified', icon: Utensils, color: 'text-green-600' },
-  { value: 98, suffix: '%', label: 'Quality Score', icon: Sparkles, color: 'text-orange-500' },
-  { value: 120, suffix: '+', label: 'Partner Hotels', icon: Building2, color: 'text-green-600' },
-  { value: 350, suffix: '+', label: 'Quality Volunteers', icon: Users, color: 'text-orange-500' },
+  { value: 25000, suffix: '+', label: 'Meals Verified', icon: Utensils, color: 'text-primary-600' },
+  { value: 98, suffix: '%', label: 'Quality Score', icon: Sparkles, color: 'text-accent-500' },
+  { value: 120, suffix: '+', label: 'Partner Hotels', icon: Building2, color: 'text-primary-600' },
+  { value: 350, suffix: '+', label: 'Quality Volunteers', icon: Users, color: 'text-accent-500' },
 ];
 
 const scoreCategories = [
@@ -124,8 +124,8 @@ function ScoreCircle({ score }: { score: number }) {
         />
         <defs>
           <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#15803d" />
-            <stop offset="100%" stopColor="#f97316" />
+            <stop offset="0%" stopColor="#0F766E" />
+            <stop offset="100%" stopColor="#C2410C" />
           </linearGradient>
         </defs>
       </svg>
@@ -145,17 +145,17 @@ function CertificateDocument({ scale = 1 }: { scale?: number }) {
     >
       {/* Ivory paper texture */}
       <div className="absolute inset-0" style={{ backgroundColor: IVORY }} />
-      {/* Green & gold border */}
-      <div className="absolute inset-3 border-[5px] border-green-700 rounded-2xl" />
-      <div className="absolute inset-5 border-2 border-amber-500/80 rounded-xl" />
-      <div className="absolute inset-6 border border-green-500/40 rounded-lg" />
+      {/* Teal & copper border */}
+      <div className="absolute inset-3 border-[5px] border-primary-700 rounded-2xl" />
+      <div className="absolute inset-5 border-2 border-gold-500/80 rounded-xl" />
+      <div className="absolute inset-6 border border-primary-500/40 rounded-lg" />
       {/* Corner ornaments */}
       {[
         'top-8 left-8', 'top-8 right-8 rotate-90', 'bottom-8 left-8 -rotate-90', 'bottom-8 right-8 rotate-180',
       ].map((pos, i) => (
         <div key={i} className={`absolute ${pos} h-10 w-10`}>
-          <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-green-600 to-amber-500 rounded-full" />
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-600 to-amber-500 rounded-full" />
+          <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-primary-700 to-gold-500 rounded-full" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-700 to-gold-500 rounded-full" />
         </div>
       ))}
       {/* Watermark */}
@@ -171,21 +171,21 @@ function CertificateDocument({ scale = 1 }: { scale?: number }) {
         </div>
         {/* Logo */}
         <motion.img src="/logo.png" alt="FoodBridge" initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ type: 'spring' }} className="h-16 w-16 object-contain mb-2 relative z-10" />
-        <p className="text-[10px] font-semibold text-green-700 uppercase tracking-[0.25em] mb-1">FoodBridge</p>
+        <p className="text-[10px] font-semibold text-primary-700 uppercase tracking-[0.25em] mb-1">FoodBridge</p>
         {/* Title */}
         <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">Food Quality Certificate</h2>
         <p className="text-xs sm:text-sm text-gray-500 mb-2">Certified Safe for Redistribution</p>
-        <div className="h-1 w-28 bg-gradient-to-r from-green-600 to-amber-500 rounded-full my-3" />
+        <div className="h-1 w-28 bg-gradient-to-r from-primary-700 to-gold-500 rounded-full my-3" />
         {/* Issued to */}
         <p className="text-sm text-gray-500 mb-1">Issued To</p>
-        <p className="font-display text-xl sm:text-2xl font-bold bg-gradient-to-r from-green-700 to-orange-500 bg-clip-text text-transparent mb-2">{certificateInfo.issuedTo}</p>
-        <div className="h-px w-48 bg-gradient-to-r from-green-400 to-amber-400 my-2" />
+        <p className="font-display text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary-700 to-accent-600 bg-clip-text text-transparent mb-2">{certificateInfo.issuedTo}</p>
+        <div className="h-px w-48 bg-gradient-to-r from-primary-400 to-gold-400 my-2" />
         {/* Details grid */}
         <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs sm:text-sm mt-3 max-w-2xl">
           <div className="text-left"><p className="text-gray-400 text-[10px] uppercase tracking-wide">Inspection Date</p><p className="font-medium text-gray-700">{certificateInfo.inspectionDate}</p></div>
           <div className="text-left"><p className="text-gray-400 text-[10px] uppercase tracking-wide">Expiry Date</p><p className="font-medium text-gray-700">{certificateInfo.expiryDate}</p></div>
           <div className="text-left"><p className="text-gray-400 text-[10px] uppercase tracking-wide">Food Category</p><p className="font-medium text-gray-700">{certificateInfo.foodCategory}</p></div>
-          <div className="text-left"><p className="text-gray-400 text-[10px] uppercase tracking-wide">Quality Grade</p><p className="font-display font-bold text-green-700 text-lg">{certificateInfo.grade}</p></div>
+          <div className="text-left"><p className="text-gray-400 text-[10px] uppercase tracking-wide">Quality Grade</p><p className="font-display font-bold text-primary-700 text-lg">{certificateInfo.grade}</p></div>
         </div>
         {/* Bottom row: signature, seal, QR */}
         <div className="absolute bottom-9 left-12 right-12 flex items-end justify-between">
@@ -195,21 +195,21 @@ function CertificateDocument({ scale = 1 }: { scale?: number }) {
             <p className="text-[10px] text-gray-500">{certificateInfo.inspector}, Certified Inspector</p>
           </div>
           <div className="flex flex-col items-center">
-            <div className="h-14 w-14 rounded-full border-2 border-amber-500 flex items-center justify-center text-amber-600 font-bold text-[8px] relative">
-              <div className="absolute inset-1 rounded-full border border-amber-400" />
+            <div className="h-14 w-14 rounded-full border-2 border-gold-500 flex items-center justify-center text-gold-600 font-bold text-[8px] relative bg-gold-50">
+              <div className="absolute inset-1 rounded-full border border-gold-400" />
               <div className="text-center leading-tight"><div>OFFICIAL</div><div>SEAL</div><div className="text-[6px] mt-0.5">FOODBRIDGE</div></div>
             </div>
           </div>
           <div className="flex flex-col items-center gap-1">
             <div className="h-14 w-14 rounded-lg bg-white border border-gray-200 flex items-center justify-center">
-              <QrCode className="h-8 w-8 text-green-700" />
+              <QrCode className="h-8 w-8 text-primary-700" />
             </div>
             <p className="text-[9px] text-gray-400 flex items-center gap-1"><QrCode className="h-2.5 w-2.5" /> Scan to verify</p>
           </div>
         </div>
         {/* Verified stamp */}
         <div className="absolute bottom-24 right-12 rotate-[-12deg]">
-          <div className="border-[3px] border-green-600 rounded-full px-4 py-1.5 text-green-700 font-display font-bold text-sm tracking-wider opacity-80">
+          <div className="border-[3px] border-primary-600 rounded-full px-4 py-1.5 text-primary-700 font-display font-bold text-sm tracking-wider opacity-80">
             VERIFIED
           </div>
         </div>
@@ -239,7 +239,7 @@ export function FoodQualityPage() {
       <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 pt-12 pb-16 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-10 items-center">
           <motion.div variants={staggerContainer} initial="hidden" animate="visible">
-            <motion.span variants={fadeInUp} className="badge bg-green-100 text-green-700 mb-4">
+            <motion.span variants={fadeInUp} className="badge bg-primary-100 text-primary-700 mb-4">
               <ShieldCheck className="h-3.5 w-3.5" /> Trusted & Verified
             </motion.span>
             <motion.h1 variants={fadeInUp} className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
@@ -256,18 +256,18 @@ export function FoodQualityPage() {
 
           {/* Animated illustration */}
           <motion.div variants={scaleIn} initial="hidden" animate="visible" className="relative flex items-center justify-center h-80">
-            <div className="absolute h-64 w-64 rounded-full bg-gradient-to-br from-green-200/40 to-orange-200/40 blur-2xl" />
+            <div className="absolute h-64 w-64 rounded-full bg-gradient-to-br from-primary-200/40 to-accent-200/40 blur-2xl" />
             <motion.div animate={{ y: [0, -14, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }} className="relative glass-card p-10 rounded-[2.5rem] shadow-2xl">
               <div className="relative h-40 w-40 flex items-center justify-center">
-                <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }} className="absolute inset-0 rounded-full border-2 border-dashed border-green-300/60" />
-                <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }} className="h-28 w-28 rounded-full bg-gradient-to-br from-green-500 to-orange-500 flex items-center justify-center shadow-xl">
+                <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }} className="absolute inset-0 rounded-full border-2 border-dashed border-primary-300/60" />
+                <motion.div animate={{ scale: [1, 1.08, 1] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }} className="h-28 w-28 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center shadow-xl">
                   <UtensilsCrossed className="h-12 w-12 text-white" />
                 </motion.div>
                 <motion.div animate={{ y: [0, -8, 0] }} transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }} className="absolute -top-2 -right-2 h-12 w-12 rounded-full bg-white shadow-lg flex items-center justify-center">
-                  <ShieldCheck className="h-7 w-7 text-green-600" />
+                  <ShieldCheck className="h-7 w-7 text-primary-600" />
                 </motion.div>
                 <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }} className="absolute -bottom-2 -left-2 h-12 w-12 rounded-full bg-white shadow-lg flex items-center justify-center">
-                  <CheckCircle2 className="h-7 w-7 text-orange-500" />
+                  <CheckCircle2 className="h-7 w-7 text-accent-500" />
                 </motion.div>
               </div>
             </motion.div>
@@ -279,7 +279,7 @@ export function FoodQualityPage() {
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto">
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true, margin: '-80px' }} className="glass-card p-8 sm:p-12">
           <motion.div variants={fadeInUp} className="text-center mb-10">
-            <span className="badge bg-orange-100 text-orange-700 mb-3"><Sparkles className="h-3.5 w-3.5" /> Live Assessment</span>
+            <span className="badge bg-accent-100 text-accent-700 mb-3"><Sparkles className="h-3.5 w-3.5" /> Live Assessment</span>
             <h2 className="section-title">Overall Quality Score</h2>
             <p className="section-subtitle">A composite score from our six-step inspection process.</p>
           </motion.div>
@@ -291,7 +291,7 @@ export function FoodQualityPage() {
                   <span className="font-medium text-gray-700 dark:text-gray-200">{c.label}</span>
                   <div className="flex gap-0.5">
                     {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`h-5 w-5 ${i < c.stars ? 'text-orange-400 fill-orange-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                      <Star key={i} className={`h-5 w-5 ${i < c.stars ? 'text-accent-400 fill-accent-400' : 'text-gray-300 dark:text-gray-600'}`} />
                     ))}
                   </div>
                 </div>
@@ -304,7 +304,7 @@ export function FoodQualityPage() {
       {/* INSPECTION PROCESS TIMELINE */}
       <section id="process" className="px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto">
         <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-12">
-          <span className="badge bg-green-100 text-green-700 mb-3"><ClipboardCheck className="h-3.5 w-3.5" /> Step by Step</span>
+          <span className="badge bg-primary-100 text-primary-700 mb-3"><ClipboardCheck className="h-3.5 w-3.5" /> Step by Step</span>
           <h2 className="section-title">Quality Inspection Process</h2>
           <p className="section-subtitle">Every donation passes through six rigorous verification stages.</p>
         </motion.div>
@@ -328,15 +328,15 @@ export function FoodQualityPage() {
       {/* FOOD SAFETY CHECKLIST */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-5xl mx-auto">
         <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-10">
-          <span className="badge bg-orange-100 text-orange-700 mb-3"><CheckCircle2 className="h-3.5 w-3.5" /> Interactive</span>
+          <span className="badge bg-accent-100 text-accent-700 mb-3"><CheckCircle2 className="h-3.5 w-3.5" /> Interactive</span>
           <h2 className="section-title">Food Safety Checklist</h2>
           <p className="section-subtitle">Tap each item to confirm it has been verified.</p>
         </motion.div>
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-2 gap-4">
           {safetyChecklist.map((item, i) => (
             <motion.button key={item.label} variants={fadeInUp} onClick={() => toggle(i)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-4 p-4 rounded-2xl border transition-all text-left ${checked[i] ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' : 'bg-white/60 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700'}`}>
-              <div className={`h-10 w-10 rounded-xl flex items-center justify-center transition-all ${checked[i] ? 'bg-gradient-to-br from-green-500 to-emerald-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'}`}>
+              className={`flex items-center gap-4 p-4 rounded-2xl border transition-all text-left ${checked[i] ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800' : 'bg-white/60 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700'}`}>
+              <div className={`h-10 w-10 rounded-xl flex items-center justify-center transition-all ${checked[i] ? 'bg-gradient-to-br from-primary-500 to-primary-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'}`}>
                 <AnimatePresence mode="wait">
                   {checked[i] ? (
                     <motion.span key="check" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0 }}><CheckCircle2 className="h-5 w-5" /></motion.span>
@@ -345,7 +345,7 @@ export function FoodQualityPage() {
                   )}
                 </AnimatePresence>
               </div>
-              <span className={`font-medium ${checked[i] ? 'text-green-700 dark:text-green-300' : 'text-gray-600 dark:text-gray-300'}`}>{item.label}</span>
+              <span className={`font-medium ${checked[i] ? 'text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-gray-300'}`}>{item.label}</span>
             </motion.button>
           ))}
         </motion.div>
@@ -354,7 +354,7 @@ export function FoodQualityPage() {
       {/* QUALITY BADGES */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto">
         <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-10">
-          <span className="badge bg-green-100 text-green-700 mb-3"><BadgeCheck className="h-3.5 w-3.5" /> Certified</span>
+          <span className="badge bg-primary-100 text-primary-700 mb-3"><BadgeCheck className="h-3.5 w-3.5" /> Certified</span>
           <h2 className="section-title">Food Quality Badges</h2>
           <p className="section-subtitle">Each verified donation earns these trust badges.</p>
         </motion.div>
@@ -373,7 +373,7 @@ export function FoodQualityPage() {
       {/* GALLERY — mission illustrations */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto">
         <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-10">
-          <span className="badge bg-orange-100 text-orange-700 mb-3"><Eye className="h-3.5 w-3.5" /> Gallery</span>
+          <span className="badge bg-accent-100 text-accent-700 mb-3"><Eye className="h-3.5 w-3.5" /> Gallery</span>
           <h2 className="section-title">The Journey of a Donation</h2>
           <p className="section-subtitle">From a kitchen with extra to a family in need — illustrated.</p>
         </motion.div>
@@ -392,7 +392,7 @@ export function FoodQualityPage() {
       {/* APPROVAL STATUS */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto">
         <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-10">
-          <span className="badge bg-green-100 text-green-700 mb-3"><ClipboardCheck className="h-3.5 w-3.5" /> Status</span>
+          <span className="badge bg-primary-100 text-primary-700 mb-3"><ClipboardCheck className="h-3.5 w-3.5" /> Status</span>
           <h2 className="section-title">Donation Approval Status</h2>
           <p className="section-subtitle">Every donation receives one of these outcomes after inspection.</p>
         </motion.div>
@@ -413,7 +413,7 @@ export function FoodQualityPage() {
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto">
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="glass-card p-8 sm:p-12">
           <motion.div variants={fadeInUp} className="text-center mb-10">
-            <span className="badge bg-orange-100 text-orange-700 mb-3"><Sparkles className="h-3.5 w-3.5" /> Live</span>
+            <span className="badge bg-accent-100 text-accent-700 mb-3"><Sparkles className="h-3.5 w-3.5" /> Live</span>
             <h2 className="section-title">Live Quality Statistics</h2>
           </motion.div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
@@ -433,7 +433,7 @@ export function FoodQualityPage() {
       {/* QUALITY CERTIFICATE */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-6xl mx-auto">
         <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-10">
-          <span className="badge bg-green-100 text-green-700 mb-3"><Award className="h-3.5 w-3.5" /> Verified</span>
+          <span className="badge bg-primary-100 text-primary-700 mb-3"><Award className="h-3.5 w-3.5" /> Verified</span>
           <h2 className="section-title">Quality Certificate</h2>
           <p className="section-subtitle">Each verified donation is backed by a FoodBridge quality certificate.</p>
         </motion.div>
@@ -445,10 +445,10 @@ export function FoodQualityPage() {
           whileInView="visible"
           viewport={{ once: true, margin: '-50px' }}
           whileHover={{ y: -6 }}
-          className="glass-card p-6 sm:p-8 relative group transition-all duration-500 hover:shadow-2xl hover:shadow-green-500/10"
+          className="glass-card p-6 sm:p-8 relative group transition-all duration-500 hover:shadow-2xl hover:shadow-primary-500/10"
         >
           {/* Glowing border on hover */}
-          <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-green-500/20 via-amber-500/20 to-orange-500/20 blur-md -z-10" />
+          <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-primary-500/20 via-gold-500/20 to-accent-500/20 blur-md -z-10" />
 
           {/* Certificate preview */}
           <div className="overflow-x-auto pb-4">
@@ -457,10 +457,10 @@ export function FoodQualityPage() {
 
           {/* Certificate details */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-sm mt-6 mb-6">
-            <div><Calendar className="h-5 w-5 text-green-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Inspection Date</p><p className="font-medium text-xs">{certificateInfo.inspectionDate}</p></div>
-            <div><Hash className="h-5 w-5 text-orange-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Certificate ID</p><p className="font-medium text-xs">{certificateInfo.id}</p></div>
-            <div><ShieldCheck className="h-5 w-5 text-green-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Unique ID</p><p className="font-medium text-xs">{certificateInfo.uniqueId}</p></div>
-            <div><Award className="h-5 w-5 text-orange-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Quality Grade</p><p className="font-medium text-xs text-green-600">{certificateInfo.grade}</p></div>
+            <div><Calendar className="h-5 w-5 text-primary-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Inspection Date</p><p className="font-medium text-xs">{certificateInfo.inspectionDate}</p></div>
+            <div><Hash className="h-5 w-5 text-accent-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Certificate ID</p><p className="font-medium text-xs">{certificateInfo.id}</p></div>
+            <div><ShieldCheck className="h-5 w-5 text-primary-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Unique ID</p><p className="font-medium text-xs">{certificateInfo.uniqueId}</p></div>
+            <div><Award className="h-5 w-5 text-accent-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Quality Grade</p><p className="font-medium text-xs text-primary-600">{certificateInfo.grade}</p></div>
           </div>
 
           {/* Action buttons */}
@@ -493,7 +493,7 @@ export function FoodQualityPage() {
               {/* Modal header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <Award className="h-6 w-6 text-green-600" />
+                  <Award className="h-6 w-6 text-primary-600" />
                   <h3 className="font-display text-xl font-bold">Food Quality Certificate</h3>
                 </div>
                 <button onClick={() => setCertModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
@@ -520,32 +520,32 @@ export function FoodQualityPage() {
                 {/* Certificate details sidebar */}
                 <div className="space-y-4">
                   <div className="glass-card p-5">
-                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Hash className="h-4 w-4 text-green-500" /> Certificate ID</h4>
+                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Hash className="h-4 w-4 text-primary-500" /> Certificate ID</h4>
                     <p className="text-sm font-mono text-gray-600 dark:text-gray-300">{certificateInfo.id}</p>
                   </div>
                   <div className="glass-card p-5">
-                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Building2 className="h-4 w-4 text-orange-500" /> Hotel Name</h4>
+                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Building2 className="h-4 w-4 text-accent-500" /> Hotel Name</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-300">{certificateInfo.issuedTo}</p>
                   </div>
                   <div className="glass-card p-5">
-                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Calendar className="h-4 w-4 text-green-500" /> Inspection Date</h4>
+                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Calendar className="h-4 w-4 text-primary-500" /> Inspection Date</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-300">{certificateInfo.inspectionDate}</p>
                   </div>
                   <div className="glass-card p-5">
-                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Sparkles className="h-4 w-4 text-orange-500" /> Food Quality Grade</h4>
-                    <p className="font-display text-3xl font-bold text-green-600">{certificateInfo.grade}</p>
+                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Sparkles className="h-4 w-4 text-accent-500" /> Food Quality Grade</h4>
+                    <p className="font-display text-3xl font-bold text-primary-600">{certificateInfo.grade}</p>
                   </div>
                   <div className="glass-card p-5">
-                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-green-500" /> Inspector</h4>
+                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary-500" /> Inspector</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-300">{certificateInfo.inspector}</p>
                   </div>
                   <div className="glass-card p-5">
-                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><QrCode className="h-4 w-4 text-orange-500" /> QR Verification Status</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-green-500" /> QR Verified & Active</p>
+                    <h4 className="font-display font-bold mb-3 flex items-center gap-2"><QrCode className="h-4 w-4 text-accent-500" /> QR Verification Status</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary-500" /> QR Verified & Active</p>
                   </div>
-                  <div className="glass-card p-5 bg-green-50 dark:bg-green-900/20">
-                    <h4 className="font-display font-bold mb-2 flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-green-500" /> Status</h4>
-                    <p className="text-sm font-semibold text-green-700 dark:text-green-300 flex items-center gap-2">
+                  <div className="glass-card p-5 bg-primary-50 dark:bg-primary-900/20">
+                    <h4 className="font-display font-bold mb-2 flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary-500" /> Status</h4>
+                    <p className="text-sm font-semibold text-primary-700 dark:text-primary-300 flex items-center gap-2">
                       <CheckCircle2 className="h-5 w-5" /> Verified
                     </p>
                   </div>
@@ -558,8 +558,8 @@ export function FoodQualityPage() {
 
       {/* BOTTOM CTA */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto">
-        <motion.div variants={scaleIn} initial="hidden" whileInView="visible" viewport={{ once: true }} className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-green-600 via-green-500 to-emerald-600 p-10 sm:p-16 text-center shadow-2xl">
-          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-orange-400/30 blur-2xl" />
+        <motion.div variants={scaleIn} initial="hidden" whileInView="visible" viewport={{ once: true }} className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-primary-600 via-primary-500 to-primary-600 p-10 sm:p-16 text-center shadow-2xl">
+          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-accent-400/30 blur-2xl" />
           <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
           <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="relative">
             <HandHeart className="h-12 w-12 text-white mx-auto mb-4" />
@@ -567,7 +567,7 @@ export function FoodQualityPage() {
             <p className="text-white/90 mt-3 max-w-xl mx-auto">Every verified meal brings hope to someone in need.</p>
             <div className="flex flex-wrap justify-center gap-3 mt-8">
               <Link to="/donate-food"><RippleButton variant="secondary"><UtensilsCrossed className="h-4 w-4" /> Donate Food</RippleButton></Link>
-              <Link to="/register"><RippleButton className="bg-white text-green-700 hover:bg-white/90 shadow-lg"><Heart className="h-4 w-4" /> Join FoodBridge</RippleButton></Link>
+              <Link to="/register"><RippleButton className="bg-white text-primary-700 hover:bg-white/90 shadow-lg"><Heart className="h-4 w-4" /> Join FoodBridge</RippleButton></Link>
             </div>
           </motion.div>
         </motion.div>

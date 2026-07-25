@@ -9,15 +9,15 @@ import { useNotifications } from '@/context/NotificationContext';
 import type { Notification, NotificationType } from '@/types';
 
 const typeMeta: Record<NotificationType, { icon: typeof Bell; gradient: string; label: string }> = {
-  new_donation: { icon: UtensilsCrossed, gradient: 'from-emerald-500 to-green-600', label: 'Donation' },
-  volunteer_assigned: { icon: HeartHandshake, gradient: 'from-lime-500 to-green-600', label: 'Volunteer' },
-  donation_approved: { icon: ShieldCheck, gradient: 'from-teal-500 to-cyan-600', label: 'Approved' },
-  pickup_started: { icon: Truck, gradient: 'from-blue-500 to-indigo-600', label: 'Pickup' },
-  delivery_completed: { icon: PartyPopper, gradient: 'from-primary-500 to-emerald-600', label: 'Delivered' },
-  certificate_generated: { icon: Award, gradient: 'from-amber-500 to-orange-500', label: 'Certificate' },
-  volunteer_arrived: { icon: MapPin, gradient: 'from-cyan-500 to-blue-600', label: 'Arrived' },
-  food_expiring: { icon: AlertTriangle, gradient: 'from-orange-500 to-red-500', label: 'Expiring' },
-  thank_you: { icon: Heart, gradient: 'from-rose-500 to-pink-600', label: 'Thanks' },
+  new_donation: { icon: UtensilsCrossed, gradient: 'from-primary-500 to-primary-600', label: 'Donation' },
+  volunteer_assigned: { icon: HeartHandshake, gradient: 'from-primary-500 to-primary-600', label: 'Volunteer' },
+  donation_approved: { icon: ShieldCheck, gradient: 'from-primary-500 to-primary-600', label: 'Approved' },
+  pickup_started: { icon: Truck, gradient: 'from-secondary-500 to-secondary-600', label: 'Pickup' },
+  delivery_completed: { icon: PartyPopper, gradient: 'from-primary-500 to-primary-600', label: 'Delivered' },
+  certificate_generated: { icon: Award, gradient: 'from-gold-500 to-accent-500', label: 'Certificate' },
+  volunteer_arrived: { icon: MapPin, gradient: 'from-primary-500 to-secondary-600', label: 'Arrived' },
+  food_expiring: { icon: AlertTriangle, gradient: 'from-accent-500 to-red-500', label: 'Expiring' },
+  thank_you: { icon: Heart, gradient: 'from-red-500 to-pink-600', label: 'Thanks' },
 };
 
 type Filter = 'all' | 'unread' | 'today' | 'week';
@@ -107,7 +107,7 @@ export function NotificationBell() {
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
               transition={{ type: 'spring', stiffness: 500, damping: 20 }}
-              className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-br from-accent-500 to-orange-600 text-white text-[10px] font-bold flex items-center justify-center shadow-md"
+              className="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 rounded-full bg-gradient-to-br from-accent-500 to-accent-600 text-white text-[10px] font-bold flex items-center justify-center shadow-md"
             >
               {unreadCount > 9 ? '9+' : unreadCount}
             </motion.span>

@@ -92,9 +92,9 @@ export function AdminDashboardPage() {
         {/* Stats */}
         <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Total Users', value: stats.users, icon: Users, color: 'from-blue-500 to-primary-500', trend: '+12%' },
+            { label: 'Total Users', value: stats.users, icon: Users, color: 'from-secondary-500 to-primary-500', trend: '+12%' },
             { label: 'Active Donations', value: stats.available, icon: Package, color: 'from-primary-500 to-primary-600', trend: '+8%' },
-            { label: 'Delivered', value: stats.delivered, icon: CheckCircle2, color: 'from-primary-600 to-emerald-500', trend: '+24%' },
+            { label: 'Delivered', value: stats.delivered, icon: CheckCircle2, color: 'from-primary-600 to-primary-500', trend: '+24%' },
             { label: 'Unread Messages', value: stats.messages, icon: Bell, color: 'from-accent-500 to-red-500', trend: '-3%' },
           ].map((s) => (
             <motion.div key={s.label} variants={fadeInUp} className="card p-5">
@@ -151,8 +151,8 @@ export function AdminDashboardPage() {
                   <div className="space-y-3">
                     {[
                       { label: 'Available', value: stats.available, color: 'bg-primary-500' },
-                      { label: 'Delivered', value: stats.delivered, color: 'bg-emerald-500' },
-                      { label: 'Claimed', value: donations.filter((d) => d.status === 'claimed').length, color: 'bg-blue-500' },
+                      { label: 'Delivered', value: stats.delivered, color: 'bg-primary-500' },
+                      { label: 'Claimed', value: donations.filter((d) => d.status === 'claimed').length, color: 'bg-secondary-500' },
                       { label: 'Expired', value: donations.filter((d) => d.status === 'expired').length, color: 'bg-red-500' },
                     ].map((b) => (
                       <div key={b.label}>
@@ -169,7 +169,7 @@ export function AdminDashboardPage() {
                   <h3 className="text-sm font-semibold mb-4">Users by Role</h3>
                   <div className="space-y-3">
                     {[
-                      { label: 'Donors', value: stats.donors, color: 'bg-blue-500' },
+                      { label: 'Donors', value: stats.donors, color: 'bg-secondary-500' },
                       { label: 'Volunteers', value: stats.volunteers, color: 'bg-primary-500' },
                       { label: 'Admins', value: users.filter((u) => u.role === 'admin').length, color: 'bg-accent-500' },
                       { label: 'NGOs', value: users.filter((u) => u.role === 'ngo').length, color: 'bg-purple-500' },
@@ -196,7 +196,7 @@ export function AdminDashboardPage() {
                         <p className="text-xs text-gray-400">{d.organization}</p>
                       </div>
                       {d.freshness_status && <FoodQualityBadge freshness={d.freshness_status} score={d.quality_score} size="sm" showScore />}
-                      <span className={`badge text-[10px] ${d.status === 'available' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : d.status === 'delivered' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>{d.status}</span>
+                      <span className={`badge text-[10px] ${d.status === 'available' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : d.status === 'delivered' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>{d.status}</span>
                     </div>
                   ))}
                   {donations.length === 0 && <p className="text-center text-gray-400 py-4">No donations yet</p>}

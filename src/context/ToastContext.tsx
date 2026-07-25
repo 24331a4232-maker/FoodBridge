@@ -26,7 +26,7 @@ const icons = {
 const colors = {
   success: 'text-primary-600 bg-primary-50 dark:bg-primary-900/30',
   error: 'text-red-600 bg-red-50 dark:bg-red-900/30',
-  info: 'text-blue-600 bg-blue-50 dark:bg-blue-900/30',
+  info: 'text-secondary-600 bg-secondary-50 dark:bg-secondary-900/30',
   warning: 'text-accent-600 bg-accent-50 dark:bg-accent-900/30',
 };
 

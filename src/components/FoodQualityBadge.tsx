@@ -49,7 +49,7 @@ export function FoodQualityBadge({
         </span>
       )}
       {showPriority && priority && (
-        <span className={`badge ${priority === 'high' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : priority === 'medium' ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300' : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'} ${sizeClasses[size]} inline-flex items-center`}>
+        <span className={`badge ${priority === 'high' ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : priority === 'medium' ? 'bg-gold-100 dark:bg-gold-900/30 text-gold-700 dark:text-gold-300' : 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'} ${sizeClasses[size]} inline-flex items-center`}>
           {priority === 'high' ? 'High Priority' : priority === 'medium' ? 'Medium' : 'Low'}
         </span>
       )}

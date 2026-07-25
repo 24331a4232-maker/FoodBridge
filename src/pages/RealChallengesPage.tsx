@@ -27,33 +27,33 @@ const sections: Section[] = [
 ];
 
 const wasteStats = [
-  { value: 1300, suffix: 'M', label: 'tonnes of food wasted globally each year', icon: Recycle, color: 'from-accent-500 to-orange-500' },
-  { value: 40, suffix: '%', label: 'of food produced in India is wasted', icon: TrendingDown, color: 'from-red-500 to-rose-500' },
-  { value: 931, suffix: 'M', label: 'tonnes of food lost or wasted worldwide', icon: BarChart3, color: 'from-amber-500 to-yellow-500' },
-  { value: 33, suffix: '%', label: 'of all food produced is never consumed', icon: Droplet, color: 'from-blue-500 to-cyan-500' },
+  { value: 1300, suffix: 'M', label: 'tonnes of food wasted globally each year', icon: Recycle, color: 'from-accent-500 to-accent-500' },
+  { value: 40, suffix: '%', label: 'of food produced in India is wasted', icon: TrendingDown, color: 'from-red-500 to-red-500' },
+  { value: 931, suffix: 'M', label: 'tonnes of food lost or wasted worldwide', icon: BarChart3, color: 'from-gold-500 to-yellow-500' },
+  { value: 33, suffix: '%', label: 'of all food produced is never consumed', icon: Droplet, color: 'from-secondary-500 to-primary-500' },
 ];
 
 const hungerStats = [
-  { value: 828, suffix: 'M', label: 'people go to bed hungry every night', icon: Users, color: 'from-red-500 to-orange-500' },
-  { value: 189, suffix: 'M', label: 'Indians are undernourished', icon: Heart, color: 'from-rose-500 to-pink-500' },
-  { value: 14, suffix: 'K', label: 'children die daily from hunger-related causes', icon: UtensilsCrossed, color: 'from-amber-500 to-red-500' },
-  { value: 25, suffix: '%', label: 'of the world faces moderate to severe food insecurity', icon: ShieldCheck, color: 'from-orange-500 to-yellow-500' },
+  { value: 828, suffix: 'M', label: 'people go to bed hungry every night', icon: Users, color: 'from-red-500 to-accent-500' },
+  { value: 189, suffix: 'M', label: 'Indians are undernourished', icon: Heart, color: 'from-red-500 to-pink-500' },
+  { value: 14, suffix: 'K', label: 'children die daily from hunger-related causes', icon: UtensilsCrossed, color: 'from-gold-500 to-red-500' },
+  { value: 25, suffix: '%', label: 'of the world faces moderate to severe food insecurity', icon: ShieldCheck, color: 'from-accent-500 to-yellow-500' },
 ];
 
 const envStats = [
-  { value: 8, suffix: '%', label: 'of global greenhouse gas emissions from food waste', icon: Cloud, color: 'from-teal-500 to-emerald-500' },
+  { value: 8, suffix: '%', label: 'of global greenhouse gas emissions from food waste', icon: Cloud, color: 'from-primary-500 to-primary-500' },
   { value: 4.4, suffix: 'Gt', label: 'CO2 equivalent emitted by wasted food annually', icon: Cloud, color: 'from-slate-500 to-gray-500' },
-  { value: 25, suffix: '%', label: 'of global freshwater used to grow wasted food', icon: Droplet, color: 'from-blue-500 to-cyan-500' },
-  { value: 1.4, suffix: 'B ha', label: 'of land used to produce food that is never eaten', icon: Leaf, color: 'from-primary-500 to-emerald-500' },
+  { value: 25, suffix: '%', label: 'of global freshwater used to grow wasted food', icon: Droplet, color: 'from-secondary-500 to-primary-500' },
+  { value: 1.4, suffix: 'B ha', label: 'of land used to produce food that is never eaten', icon: Leaf, color: 'from-primary-500 to-primary-500' },
 ];
 
 const sdgs = [
-  { num: '2', title: 'Zero Hunger', desc: 'End hunger, achieve food security and improved nutrition, and promote sustainable agriculture.', color: 'from-amber-500 to-yellow-500' },
-  { num: '3', title: 'Good Health & Well-being', desc: 'Ensure healthy lives and promote well-being for all, at all ages.', color: 'from-green-500 to-emerald-500' },
-  { num: '11', title: 'Sustainable Cities', desc: 'Make cities and human settlements inclusive, safe, resilient, and sustainable.', color: 'from-orange-500 to-amber-500' },
-  { num: '12', title: 'Responsible Consumption', desc: 'Ensure sustainable consumption and production patterns.', color: 'from-yellow-500 to-amber-600' },
-  { num: '13', title: 'Climate Action', desc: 'Take urgent action to combat climate change and its impacts.', color: 'from-teal-500 to-green-500' },
-  { num: '17', title: 'Partnerships for Goals', desc: 'Strengthen the means of implementation and revitalize global partnerships.', color: 'from-blue-500 to-primary-500' },
+  { num: '2', title: 'Zero Hunger', desc: 'End hunger, achieve food security and improved nutrition, and promote sustainable agriculture.', color: 'from-gold-500 to-yellow-500' },
+  { num: '3', title: 'Good Health & Well-being', desc: 'Ensure healthy lives and promote well-being for all, at all ages.', color: 'from-primary-500 to-primary-500' },
+  { num: '11', title: 'Sustainable Cities', desc: 'Make cities and human settlements inclusive, safe, resilient, and sustainable.', color: 'from-accent-500 to-gold-500' },
+  { num: '12', title: 'Responsible Consumption', desc: 'Ensure sustainable consumption and production patterns.', color: 'from-yellow-500 to-gold-600' },
+  { num: '13', title: 'Climate Action', desc: 'Take urgent action to combat climate change and its impacts.', color: 'from-primary-500 to-primary-500' },
+  { num: '17', title: 'Partnerships for Goals', desc: 'Strengthen the means of implementation and revitalize global partnerships.', color: 'from-secondary-500 to-primary-500' },
 ];
 
 const whyReasons = [
@@ -263,7 +263,7 @@ export function RealChallengesPage() {
             <div className="hidden lg:block space-y-16 lg:space-y-20">
               <SectionCard id="statistics">
                 <h2 className="font-display text-2xl sm:text-3xl font-bold flex items-center gap-3">
-                  <span className="h-10 w-10 rounded-xl bg-gradient-to-br from-accent-500 to-orange-500 text-white flex items-center justify-center"><BarChart3 className="h-5 w-5" /></span>
+                  <span className="h-10 w-10 rounded-xl bg-gradient-to-br from-accent-500 to-accent-500 text-white flex items-center justify-center"><BarChart3 className="h-5 w-5" /></span>
                   Food Waste Statistics
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-2xl">The scale of food waste is staggering - and it happens while millions go hungry. Here is the data behind the crisis.</p>
@@ -272,7 +272,7 @@ export function RealChallengesPage() {
 
               <SectionCard id="hunger">
                 <h2 className="font-display text-2xl sm:text-3xl font-bold flex items-center gap-3">
-                  <span className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-rose-500 text-white flex items-center justify-center"><Heart className="h-5 w-5" /></span>
+                  <span className="h-10 w-10 rounded-xl bg-gradient-to-br from-red-500 to-red-500 text-white flex items-center justify-center"><Heart className="h-5 w-5" /></span>
                   Hunger Challenges
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-2xl">Hunger is not a problem of scarcity - it is a problem of distribution. These numbers reveal the human cost.</p>
@@ -281,7 +281,7 @@ export function RealChallengesPage() {
 
               <SectionCard id="environment">
                 <h2 className="font-display text-2xl sm:text-3xl font-bold flex items-center gap-3">
-                  <span className="h-10 w-10 rounded-xl bg-gradient-to-br from-teal-500 to-emerald-500 text-white flex items-center justify-center"><Leaf className="h-5 w-5" /></span>
+                  <span className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-500 text-white flex items-center justify-center"><Leaf className="h-5 w-5" /></span>
                   Environmental Impact
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-2xl">Wasted food is not just wasted nourishment - it is wasted land, water, and a major source of greenhouse gas emissions.</p>
@@ -292,7 +292,7 @@ export function RealChallengesPage() {
                   <div className="space-y-3">
                     {[
                       { name: 'China', val: 11, color: 'bg-red-500' },
-                      { name: 'USA', val: 6.5, color: 'bg-blue-500' },
+                      { name: 'USA', val: 6.5, color: 'bg-secondary-500' },
                       { name: 'Food Waste', val: 4.4, color: 'bg-accent-500' },
                       { name: 'India', val: 2.7, color: 'bg-primary-500' },
                     ].map((c) => (
@@ -317,7 +317,7 @@ export function RealChallengesPage() {
 
               <SectionCard id="sdgs">
                 <h2 className="font-display text-2xl sm:text-3xl font-bold flex items-center gap-3">
-                  <span className="h-10 w-10 rounded-xl bg-gradient-to-br from-blue-500 to-primary-500 text-white flex items-center justify-center"><Globe2 className="h-5 w-5" /></span>
+                  <span className="h-10 w-10 rounded-xl bg-gradient-to-br from-secondary-500 to-primary-500 text-white flex items-center justify-center"><Globe2 className="h-5 w-5" /></span>
                   UN SDG Goals
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-2xl">FoodBridge directly contributes to 6 United Nations Sustainable Development Goals.</p>
@@ -355,7 +355,7 @@ export function RealChallengesPage() {
 
               <SectionCard id="stories">
                 <h2 className="font-display text-2xl sm:text-3xl font-bold flex items-center gap-3">
-                  <span className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white flex items-center justify-center"><Award className="h-5 w-5" /></span>
+                  <span className="h-10 w-10 rounded-xl bg-gradient-to-br from-gold-500 to-accent-500 text-white flex items-center justify-center"><Award className="h-5 w-5" /></span>
                   Real Success Stories
                 </h2>
                 <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-2xl">Behind every number is a real person, a real meal, and a real story of change.</p>
@@ -437,7 +437,7 @@ export function RealChallengesPage() {
                   <div className="space-y-2">
                     {[
                       { name: 'China', val: 11, color: 'bg-red-500' },
-                      { name: 'USA', val: 6.5, color: 'bg-blue-500' },
+                      { name: 'USA', val: 6.5, color: 'bg-secondary-500' },
                       { name: 'Food Waste', val: 4.4, color: 'bg-accent-500' },
                       { name: 'India', val: 2.7, color: 'bg-primary-500' },
                     ].map((c) => (

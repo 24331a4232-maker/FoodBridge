@@ -293,22 +293,22 @@ export function CertificatePage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-card p-6 mt-8 max-w-2xl mx-auto print:hidden">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-sm">
               <div>
-                <Calendar className="h-5 w-5 text-green-500 mx-auto mb-1" />
+                <Calendar className="h-5 w-5 text-primary-500 mx-auto mb-1" />
                 <p className="text-gray-400 text-xs">Issue Date</p>
                 <p className="font-medium">{issueDateFormatted}</p>
               </div>
               <div>
-                <Hash className="h-5 w-5 text-orange-500 mx-auto mb-1" />
+                <Hash className="h-5 w-5 text-accent-500 mx-auto mb-1" />
                 <p className="text-gray-400 text-xs">Certificate ID</p>
                 <p className="font-medium text-xs">{certData.certificateNumber}</p>
               </div>
               <div>
-                <Award className="h-5 w-5 text-green-500 mx-auto mb-1" />
+                <Award className="h-5 w-5 text-primary-500 mx-auto mb-1" />
                 <p className="text-gray-400 text-xs">Deliveries</p>
                 <p className="font-medium">{certData.deliveriesCount}</p>
               </div>
               <div>
-                <ShieldCheck className="h-5 w-5 text-orange-500 mx-auto mb-1" />
+                <ShieldCheck className="h-5 w-5 text-accent-500 mx-auto mb-1" />
                 <p className="text-gray-400 text-xs">Unique ID</p>
                 <p className="font-medium text-xs">{certData.uniqueId}</p>
               </div>
@@ -349,7 +349,7 @@ export function CertificatePage() {
                   style={{
                     left: `${10 + i * 7}%`,
                     top: '-10px',
-                    background: i % 3 === 0 ? '#16a34a' : i % 3 === 1 ? '#f97316' : '#fbbf24',
+                    background: i % 3 === 0 ? '#0F766E' : i % 3 === 1 ? '#C2410C' : '#A66B3C',
                   }}
                   initial={{ y: -20, opacity: 1 }}
                   animate={{ y: [0, 300, 400], opacity: [1, 1, 0], rotate: 360 }}
@@ -361,7 +361,7 @@ export function CertificatePage() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                className="h-20 w-20 rounded-full bg-gradient-to-br from-green-500 to-orange-500 flex items-center justify-center mx-auto mb-5 shadow-xl"
+                className="h-20 w-20 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center mx-auto mb-5 shadow-xl"
               >
                 <PartyPopper className="h-10 w-10 text-white" />
               </motion.div>
@@ -369,9 +369,9 @@ export function CertificatePage() {
               <p className="text-sm text-gray-500 mb-1">Your certificate has been downloaded successfully.</p>
               {certData && (
                 <div className="flex items-center justify-center gap-2 text-xs text-gray-400 mb-6">
-                  <Sparkles className="h-3 w-3 text-orange-500" />
+                  <Sparkles className="h-3 w-3 text-accent-500" />
                   Certificate No: {certData.certificateNumber}
-                  <Sparkles className="h-3 w-3 text-orange-500" />
+                  <Sparkles className="h-3 w-3 text-accent-500" />
                 </div>
               )}
               <div className="flex flex-col gap-3">

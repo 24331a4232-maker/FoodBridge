@@ -424,11 +424,11 @@ export function DonateFoodPage() {
                             <XCircle className="h-4 w-4" /> Expired
                           </span>
                         ) : quality.isCloseToExpiry ? (
-                          <span className="badge bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
+                          <span className="badge bg-gold-100 dark:bg-gold-900/30 text-gold-700 dark:text-gold-300">
                             <AlertTriangle className="h-4 w-4" /> Consume Soon
                           </span>
                         ) : (
-                          <span className="badge bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+                          <span className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
                             <ShieldCheck className="h-4 w-4" /> Fresh
                           </span>
                         )}
@@ -440,7 +440,7 @@ export function DonateFoodPage() {
                       <div className="flex items-center gap-3">
                         <div className="flex-1">
                           <div className="flex items-baseline gap-1">
-                            <span className={`font-display text-3xl font-bold ${quality.score >= 80 ? 'text-green-600' : quality.score >= 60 ? 'text-amber-600' : quality.score >= 40 ? 'text-orange-600' : 'text-red-600'}`}>
+                            <span className={`font-display text-3xl font-bold ${quality.score >= 80 ? 'text-primary-600' : quality.score >= 60 ? 'text-gold-600' : quality.score >= 40 ? 'text-accent-600' : 'text-red-600'}`}>
                               {quality.score}%
                             </span>
                             <span className="text-xs text-gray-400">
@@ -464,7 +464,7 @@ export function DonateFoodPage() {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      className="p-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white flex items-center gap-3"
+                      className="p-4 rounded-2xl bg-gradient-to-r from-gold-500 to-accent-500 text-white flex items-center gap-3"
                     >
                       <Flame className="h-6 w-6 shrink-0" />
                       <div>
@@ -490,12 +490,12 @@ export function DonateFoodPage() {
                   )}
 
                   {/* Safety Tips */}
-                  <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
-                    <p className="text-sm font-semibold mb-2 flex items-center gap-1.5"><Info className="h-4 w-4 text-blue-500" /> Food Safety Tips</p>
+                  <div className="p-4 rounded-2xl bg-secondary-50 dark:bg-secondary-900/20 border border-secondary-100 dark:border-secondary-800">
+                    <p className="text-sm font-semibold mb-2 flex items-center gap-1.5"><Info className="h-4 w-4 text-secondary-500" /> Food Safety Tips</p>
                     <ul className="space-y-1.5">
                       {quality.safetyTips.map((tip, i) => (
                         <li key={i} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-2">
-                          <ShieldCheck className="h-3.5 w-3.5 text-blue-500 shrink-0 mt-0.5" />
+                          <ShieldCheck className="h-3.5 w-3.5 text-secondary-500 shrink-0 mt-0.5" />
                           {tip}
                         </li>
                       ))}
@@ -520,7 +520,7 @@ export function DonateFoodPage() {
                       </div>
                       {/* Recommended Recipient */}
                       <div className="p-3 rounded-xl bg-white dark:bg-gray-800/70 flex items-center gap-3">
-                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-accent-500 to-orange-500 text-white flex items-center justify-center shrink-0">
+                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-accent-500 to-accent-500 text-white flex items-center justify-center shrink-0">
                           {(() => {
                             const Icon = recipientIcons[quality.recipientIcon] ?? Home;
                             return <Icon className="h-5 w-5" />;
@@ -533,7 +533,7 @@ export function DonateFoodPage() {
                       </div>
                       {/* Priority Level */}
                       <div className="p-3 rounded-xl bg-white dark:bg-gray-800/70 flex items-center gap-3">
-                        <div className={`h-10 w-10 rounded-xl text-white flex items-center justify-center shrink-0 ${quality.priority === 'high' ? 'bg-gradient-to-br from-red-500 to-rose-500' : quality.priority === 'medium' ? 'bg-gradient-to-br from-amber-500 to-yellow-500' : 'bg-gradient-to-br from-green-500 to-emerald-500'}`}>
+                        <div className={`h-10 w-10 rounded-xl text-white flex items-center justify-center shrink-0 ${quality.priority === 'high' ? 'bg-gradient-to-br from-red-500 to-red-500' : quality.priority === 'medium' ? 'bg-gradient-to-br from-gold-500 to-yellow-500' : 'bg-gradient-to-br from-primary-500 to-primary-500'}`}>
                           <Zap className="h-5 w-5" />
                         </div>
                         <div>
@@ -562,7 +562,7 @@ export function DonateFoodPage() {
               </RippleButton>
             </div>
             {geoError && (
-              <div className="mb-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 text-sm flex items-start gap-2">
+              <div className="mb-3 p-3 rounded-xl bg-gold-50 dark:bg-gold-900/20 text-gold-700 dark:text-gold-300 text-sm flex items-start gap-2">
                 <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
                 <span>{geoError}</span>
               </div>
@@ -581,7 +581,7 @@ export function DonateFoodPage() {
             />
             {coords && (
               <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
-                <MapPin className="h-3 w-3 text-green-500" />
+                <MapPin className="h-3 w-3 text-primary-500" />
                 Coordinates: {coords.lat.toFixed(6)}, {coords.lng.toFixed(6)}
               </p>
             )}

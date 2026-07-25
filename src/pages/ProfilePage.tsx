@@ -56,7 +56,7 @@ function SectionCard({ icon: Icon, title, children, accent = 'primary' }: { icon
   return (
     <motion.div variants={fadeInUp} className="glass-card p-6">
       <div className="flex items-center gap-2 mb-5">
-        <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${accent === 'primary' ? 'from-primary-500 to-primary-600' : 'from-accent-500 to-orange-600'} text-white flex items-center justify-center shadow-md`}>
+        <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${accent === 'primary' ? 'from-primary-500 to-primary-600' : 'from-accent-500 to-accent-600'} text-white flex items-center justify-center shadow-md`}>
           <Icon className="h-4.5 w-4.5" />
         </div>
         <h3 className="font-display text-lg font-bold">{title}</h3>
@@ -203,12 +203,12 @@ export function ProfilePage() {
   const memberSince = new Date(profile.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long' });
 
   const activityStats = [
-    { label: 'Meals Donated', value: mealsDonated, icon: UtensilsCrossed, gradient: 'from-emerald-500 to-green-600' },
-    { label: 'Meals Delivered', value: mealsDelivered, icon: HeartHandshake, gradient: 'from-teal-500 to-cyan-600' },
-    { label: 'Certificates Earned', value: certs.length, icon: Award, gradient: 'from-amber-500 to-orange-500' },
-    { label: 'Volunteer Hours', value: Math.round(profile.total_hours), icon: Clock, gradient: 'from-blue-500 to-indigo-600' },
-    { label: 'Partner Hotels', value: donations.length, icon: Hotel, gradient: 'from-lime-500 to-green-600' },
-    { label: 'Impact Score', value: points, icon: Activity, gradient: 'from-rose-500 to-pink-600' },
+    { label: 'Meals Donated', value: mealsDonated, icon: UtensilsCrossed, gradient: 'from-primary-500 to-primary-600' },
+    { label: 'Meals Delivered', value: mealsDelivered, icon: HeartHandshake, gradient: 'from-primary-500 to-primary-600' },
+    { label: 'Certificates Earned', value: certs.length, icon: Award, gradient: 'from-gold-500 to-accent-500' },
+    { label: 'Volunteer Hours', value: Math.round(profile.total_hours), icon: Clock, gradient: 'from-secondary-500 to-secondary-600' },
+    { label: 'Partner Hotels', value: donations.length, icon: Hotel, gradient: 'from-primary-500 to-primary-600' },
+    { label: 'Impact Score', value: points, icon: Activity, gradient: 'from-red-500 to-pink-600' },
   ];
 
   return (
@@ -241,7 +241,7 @@ export function ProfilePage() {
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="font-display text-2xl font-bold">{profile.full_name}</h1>
                 {profile.is_verified && (
-                  <span className="inline-flex items-center gap-1 badge bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                  <span className="inline-flex items-center gap-1 badge bg-secondary-100 dark:bg-secondary-900/30 text-secondary-700 dark:text-secondary-300">
                     <ShieldCheck className="h-3 w-3" /> Verified
                   </span>
                 )}
@@ -386,9 +386,9 @@ export function ProfilePage() {
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {certs.map((c) => (
-                        <div key={c.id} className="p-4 rounded-2xl bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 border border-amber-200 dark:border-amber-800/40">
+                        <div key={c.id} className="p-4 rounded-2xl bg-gradient-to-br from-gold-50 to-accent-50 dark:from-gold-900/20 dark:to-accent-900/20 border border-gold-200 dark:border-gold-800/40">
                           <div className="flex items-center gap-3 mb-3">
-                            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-md">
+                            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-gold-500 to-accent-500 text-white flex items-center justify-center shadow-md">
                               <Award className="h-5 w-5" />
                             </div>
                             <div>
@@ -419,7 +419,7 @@ export function ProfilePage() {
                             <AI className="h-5 w-5" />
                           </div>
                           <p className="text-[10px] font-medium leading-tight">{a.label}</p>
-                          {isEarned && <Check className="h-3 w-3 text-emerald-500 mt-1" />}
+                          {isEarned && <Check className="h-3 w-3 text-primary-500 mt-1" />}
                         </motion.div>
                       );
                     })}
@@ -548,9 +548,9 @@ export function ProfilePage() {
                 <SectionCard icon={Palette} title="Theme Selection">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {[
-                      { value: 'light' as const, label: 'Light Mode', icon: Sun, gradient: 'from-amber-300 to-yellow-400' },
+                      { value: 'light' as const, label: 'Light Mode', icon: Sun, gradient: 'from-gold-300 to-yellow-400' },
                       { value: 'dark' as const, label: 'Dark Mode', icon: Moon, gradient: 'from-slate-700 to-gray-900' },
-                      { value: 'system' as const, label: 'System Theme', icon: Monitor, gradient: 'from-blue-400 to-indigo-500' },
+                      { value: 'system' as const, label: 'System Theme', icon: Monitor, gradient: 'from-secondary-400 to-secondary-500' },
                     ].map((opt) => {
                       const OI = opt.icon;
                       const active = prefs.theme === opt.value;

@@ -30,12 +30,12 @@ const timeline = [
 ];
 
 const sdgs = [
-  { num: '2', title: 'Zero Hunger', desc: 'End hunger, achieve food security and improved nutrition.', color: 'from-amber-500 to-yellow-500' },
-  { num: '12', title: 'Responsible Consumption', desc: 'Ensure sustainable consumption and production patterns.', color: 'from-yellow-500 to-amber-600' },
-  { num: '3', title: 'Good Health', desc: 'Ensure healthy lives and promote well-being for all.', color: 'from-green-500 to-emerald-500' },
-  { num: '11', title: 'Sustainable Cities', desc: 'Make cities inclusive, safe, resilient and sustainable.', color: 'from-orange-500 to-amber-500' },
-  { num: '13', title: 'Climate Action', desc: 'Take urgent action to combat climate change and impacts.', color: 'from-teal-500 to-green-500' },
-  { num: '17', title: 'Partnerships', desc: 'Strengthen the means of implementation and revitalize partnerships.', color: 'from-blue-500 to-primary-500' },
+  { num: '2', title: 'Zero Hunger', desc: 'End hunger, achieve food security and improved nutrition.', color: 'from-gold-500 to-yellow-500' },
+  { num: '12', title: 'Responsible Consumption', desc: 'Ensure sustainable consumption and production patterns.', color: 'from-yellow-500 to-gold-600' },
+  { num: '3', title: 'Good Health', desc: 'Ensure healthy lives and promote well-being for all.', color: 'from-primary-500 to-primary-500' },
+  { num: '11', title: 'Sustainable Cities', desc: 'Make cities inclusive, safe, resilient and sustainable.', color: 'from-accent-500 to-gold-500' },
+  { num: '13', title: 'Climate Action', desc: 'Take urgent action to combat climate change and impacts.', color: 'from-primary-500 to-primary-500' },
+  { num: '17', title: 'Partnerships', desc: 'Strengthen the means of implementation and revitalize partnerships.', color: 'from-secondary-500 to-primary-500' },
 ];
 
 const foodWasteStats = [

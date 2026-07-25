@@ -274,7 +274,7 @@ export function HelpCenterPage() {
                 </span>
               </a>
               <a href="tel:+919876543210" className="flex items-center gap-4 group">
-                <span className="h-12 w-12 rounded-2xl bg-gradient-to-br from-accent-500 to-orange-500 text-white flex items-center justify-center shadow-lg shadow-accent-500/30 group-hover:scale-110 transition-transform">
+                <span className="h-12 w-12 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-500 text-white flex items-center justify-center shadow-lg shadow-accent-500/30 group-hover:scale-110 transition-transform">
                   <Phone className="h-6 w-6" />
                 </span>
                 <span>

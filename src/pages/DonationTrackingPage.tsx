@@ -13,9 +13,9 @@ import { useGeolocation } from '@/lib/geo';
 import { DonationStatusTracker } from '@/components/DonationStatusTracker';
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof Package }> = {
-  available: { label: 'Available', color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300', icon: Package },
-  claimed: { label: 'Claimed', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300', icon: Clock },
-  in_progress: { label: 'In Progress', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300', icon: Truck },
+  available: { label: 'Available', color: 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300', icon: Package },
+  claimed: { label: 'Claimed', color: 'bg-secondary-100 dark:bg-secondary-900/30 text-secondary-700 dark:text-secondary-300', icon: Clock },
+  in_progress: { label: 'In Progress', color: 'bg-gold-100 dark:bg-gold-900/30 text-gold-700 dark:text-gold-300', icon: Truck },
   delivered: { label: 'Delivered', color: 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300', icon: CheckCircle2 },
 };
 
@@ -75,9 +75,9 @@ export function DonationTrackingPage() {
             {/* Stats */}
             <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-3 gap-4 mt-8 mb-8">
               {[
-                { label: 'Active', value: active.length, color: 'from-amber-500 to-orange-500', icon: Truck },
+                { label: 'Active', value: active.length, color: 'from-gold-500 to-accent-500', icon: Truck },
                 { label: 'Completed', value: completed.length, color: 'from-primary-500 to-primary-600', icon: CheckCircle2 },
-                { label: 'Total', value: pickups.length, color: 'from-blue-500 to-indigo-500', icon: Package },
+                { label: 'Total', value: pickups.length, color: 'from-secondary-500 to-secondary-500', icon: Package },
               ].map((s) => (
                 <motion.div key={s.label} variants={fadeInUp} className="card p-4 sm:p-5 text-center">
                   <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center mx-auto mb-2 shadow-lg`}>

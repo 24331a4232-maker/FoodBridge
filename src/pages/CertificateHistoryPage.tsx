@@ -77,10 +77,10 @@ export function CertificateHistoryPage() {
         {certs.length > 0 && (
           <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {[
-              { label: 'Certificates', value: certs.length, icon: Award, color: 'from-green-500 to-green-600' },
-              { label: 'Total Deliveries', value: totalDeliveries, icon: Package, color: 'from-orange-500 to-red-500' },
-              { label: 'Hours Served', value: Math.round(totalHours), icon: Clock, color: 'from-blue-500 to-green-500' },
-              { label: 'Meals Saved', value: totalMeals, icon: Sparkles, color: 'from-yellow-500 to-orange-500' },
+              { label: 'Certificates', value: certs.length, icon: Award, color: 'from-primary-500 to-primary-600' },
+              { label: 'Total Deliveries', value: totalDeliveries, icon: Package, color: 'from-accent-500 to-red-500' },
+              { label: 'Hours Served', value: Math.round(totalHours), icon: Clock, color: 'from-secondary-500 to-primary-500' },
+              { label: 'Meals Saved', value: totalMeals, icon: Sparkles, color: 'from-yellow-500 to-accent-500' },
             ].map((s) => (
               <motion.div key={s.label} variants={fadeInUp} className="card p-5">
                 <div className={`h-11 w-11 rounded-xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center mb-3 shadow-lg`}>
@@ -126,11 +126,11 @@ export function CertificateHistoryPage() {
                 className="card p-6 relative overflow-hidden group"
               >
                 {/* Accent bar */}
-                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-green-500 to-orange-500" />
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-500 to-accent-500" />
 
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-green-500 to-orange-500 flex items-center justify-center text-white shadow-lg">
+                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white shadow-lg">
                       <Award className="h-6 w-6" />
                     </div>
                     <div>
@@ -141,7 +141,7 @@ export function CertificateHistoryPage() {
                     </div>
                   </div>
                   {cert.is_valid ? (
-                    <span className="badge bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+                    <span className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">
                       <ShieldCheck className="h-3 w-3" /> Valid
                     </span>
                   ) : (
@@ -151,12 +151,12 @@ export function CertificateHistoryPage() {
 
                 <div className="grid grid-cols-3 gap-2 mb-4">
                   <div className="text-center p-2 rounded-xl bg-gray-50 dark:bg-gray-800/50">
-                    <Package className="h-4 w-4 text-orange-500 mx-auto mb-1" />
+                    <Package className="h-4 w-4 text-accent-500 mx-auto mb-1" />
                     <p className="font-bold text-sm">{cert.deliveries_count}</p>
                     <p className="text-[10px] text-gray-400">Deliveries</p>
                   </div>
                   <div className="text-center p-2 rounded-xl bg-gray-50 dark:bg-gray-800/50">
-                    <Clock className="h-4 w-4 text-green-500 mx-auto mb-1" />
+                    <Clock className="h-4 w-4 text-primary-500 mx-auto mb-1" />
                     <p className="font-bold text-sm">{Math.round(cert.hours_served)}</p>
                     <p className="text-[10px] text-gray-400">Hours</p>
                   </div>

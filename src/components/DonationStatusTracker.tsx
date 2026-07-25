@@ -295,8 +295,8 @@ export function DonationStatusTracker({ donation, pickup, certificate, compact =
               />
               <defs>
                 <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#16a34a" />
-                  <stop offset="100%" stopColor="#f97316" />
+                  <stop offset="0%" stopColor="#0F766E" />
+                  <stop offset="100%" stopColor="#C2410C" />
                 </linearGradient>
               </defs>
             </svg>
@@ -336,7 +336,7 @@ export function DonationStatusTracker({ donation, pickup, certificate, compact =
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ type: 'spring', stiffness: 300, damping: 24 }}
-            className="mb-5 relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 via-primary-500 to-emerald-500 p-4 shadow-lg shadow-primary-600/30"
+            className="mb-5 relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-600 via-primary-500 to-primary-500 p-4 shadow-lg shadow-primary-600/30"
           >
             <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-white/10" />
             <div className="absolute -right-2 -bottom-8 h-16 w-16 rounded-full bg-white/10" />
@@ -381,8 +381,8 @@ export function DonationStatusTracker({ donation, pickup, certificate, compact =
             />
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#16a34a" />
-                <stop offset="100%" stopColor="#f97316" />
+                <stop offset="0%" stopColor="#0F766E" />
+                <stop offset="100%" stopColor="#C2410C" />
               </linearGradient>
             </defs>
           </svg>

@@ -205,9 +205,9 @@ export function HomePage() {
             />
             <defs>
               <linearGradient id="journeyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#16A34A" />
-                <stop offset="60%" stopColor="#22C55E" />
-                <stop offset="100%" stopColor="#F97316" />
+                <stop offset="0%" stopColor="#0F766E" />
+                <stop offset="60%" stopColor="#14B8A6" />
+                <stop offset="100%" stopColor="#C2410C" />
               </linearGradient>
             </defs>
           </svg>

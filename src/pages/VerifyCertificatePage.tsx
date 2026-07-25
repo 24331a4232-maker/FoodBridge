@@ -50,7 +50,7 @@ export function VerifyCertificatePage() {
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-          <div className="inline-flex h-16 w-16 rounded-2xl bg-gradient-to-br from-green-500 to-orange-500 items-center justify-center mb-4 shadow-lg shadow-green-500/30">
+          <div className="inline-flex h-16 w-16 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 items-center justify-center mb-4 shadow-lg shadow-primary-500/30">
             <ShieldCheck className="h-8 w-8 text-white" />
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-bold">Verify Certificate</h1>
@@ -79,7 +79,7 @@ export function VerifyCertificatePage() {
         {/* Searching */}
         {result === 'searching' && (
           <div className="text-center py-12">
-            <div className="h-12 w-12 rounded-full border-4 border-green-200 border-t-green-600 animate-spin mx-auto" />
+            <div className="h-12 w-12 rounded-full border-4 border-primary-200 border-t-primary-600 animate-spin mx-auto" />
             <p className="text-gray-500 mt-4">Verifying certificate...</p>
           </div>
         )}
@@ -100,7 +100,7 @@ export function VerifyCertificatePage() {
                 transition={{ type: 'spring', stiffness: 200 }}
                 className="flex justify-center"
               >
-                <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 text-white font-bold shadow-lg shadow-green-500/40">
+                <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-primary-500 to-primary-600 text-white font-bold shadow-lg shadow-primary-500/40">
                   <CheckCircle2 className="h-6 w-6" />
                   <span className="text-lg">VERIFIED</span>
                   <Sparkles className="h-5 w-5" />
@@ -109,10 +109,10 @@ export function VerifyCertificatePage() {
 
               {/* Status banner */}
               <div className="glass-card p-6 text-center">
-                <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle2 className="h-8 w-8 text-green-600" />
+                <div className="h-16 w-16 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle2 className="h-8 w-8 text-primary-600" />
                 </div>
-                <h2 className="font-display text-2xl font-bold text-green-600 mb-1">Certificate Status: VALID</h2>
+                <h2 className="font-display text-2xl font-bold text-primary-600 mb-1">Certificate Status: VALID</h2>
                 <p className="text-sm text-gray-500">This is an authentic FoodBridge volunteer certificate.</p>
               </div>
 
@@ -124,46 +124,46 @@ export function VerifyCertificatePage() {
                 className="glass-card p-6"
               >
                 <h3 className="font-display text-lg font-bold mb-4 flex items-center gap-2">
-                  <Award className="h-5 w-5 text-green-500" /> Certificate Details
+                  <Award className="h-5 w-5 text-primary-500" /> Certificate Details
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                    <User className="h-5 w-5 text-green-500 mt-0.5" />
+                    <User className="h-5 w-5 text-primary-500 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-400">Volunteer Name</p>
                       <p className="font-semibold">{cert.volunteer?.full_name ?? cert.volunteer_name ?? 'Unknown'}</p>
                     </div>
                   </motion.div>
                   <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                    <Hash className="h-5 w-5 text-orange-500 mt-0.5" />
+                    <Hash className="h-5 w-5 text-accent-500 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-400">Certificate ID</p>
                       <p className="font-semibold">{cert.certificate_number}</p>
                     </div>
                   </motion.div>
                   <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                    <Calendar className="h-5 w-5 text-green-500 mt-0.5" />
+                    <Calendar className="h-5 w-5 text-primary-500 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-400">Issue Date</p>
                       <p className="font-semibold">{new Date(cert.issue_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     </div>
                   </motion.div>
                   <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                    <Package className="h-5 w-5 text-orange-500 mt-0.5" />
+                    <Package className="h-5 w-5 text-accent-500 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-400">Completed Deliveries</p>
                       <p className="font-semibold">{cert.deliveries_count}</p>
                     </div>
                   </motion.div>
                   <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                    <Clock className="h-5 w-5 text-green-500 mt-0.5" />
+                    <Clock className="h-5 w-5 text-primary-500 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-400">Hours Served</p>
                       <p className="font-semibold">{Math.round(cert.hours_served)}</p>
                     </div>
                   </motion.div>
                   <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                    <Building2 className="h-5 w-5 text-orange-500 mt-0.5" />
+                    <Building2 className="h-5 w-5 text-accent-500 mt-0.5" />
                     <div>
                       <p className="text-xs text-gray-400">Organization</p>
                       <p className="font-semibold">{cert.organization_name ?? 'FoodBridge'}</p>
@@ -172,7 +172,7 @@ export function VerifyCertificatePage() {
                 </div>
 
                 {/* Project line */}
-                <div className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-green-50 to-orange-50 dark:from-green-900/20 dark:to-orange-900/20">
+                <div className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20">
                   <p className="text-xs text-gray-400 mb-1">Project</p>
                   <p className="font-semibold text-sm">{PROJECT_NAME}</p>
                 </div>

@@ -102,7 +102,7 @@ function AchievementCard({ a, earned, index }: { a: Achievement; earned: boolean
           >
             <Icon className="h-8 w-8" />
             {earned ? (
-              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 text-white flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
+              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary-500 text-white flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
                 <Check className="h-3 w-3" />
               </span>
             ) : (
@@ -113,7 +113,7 @@ function AchievementCard({ a, earned, index }: { a: Achievement; earned: boolean
           </motion.div>
           <p className="font-display font-bold text-sm mt-3">{a.label}</p>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{a.description}</p>
-          <span className={`text-[10px] mt-2 px-2 py-0.5 rounded-full ${earned ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`}>
+          <span className={`text-[10px] mt-2 px-2 py-0.5 rounded-full ${earned ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`}>
             {earned ? 'Unlocked' : `${a.threshold} ${a.metric}`}
           </span>
         </div>
@@ -123,7 +123,7 @@ function AchievementCard({ a, earned, index }: { a: Achievement; earned: boolean
 }
 
 function LeaderboardCard({ entry, rank }: { entry: LeaderboardEntry; rank: number }) {
-  const medal = rank === 1 ? { bg: 'bg-gradient-to-br from-yellow-400 to-amber-500', ring: 'ring-yellow-300', label: 'Gold' } : rank === 2 ? { bg: 'bg-gradient-to-br from-slate-300 to-slate-400', ring: 'ring-slate-200', label: 'Silver' } : rank === 3 ? { bg: 'bg-gradient-to-br from-amber-600 to-orange-700', ring: 'ring-amber-400', label: 'Bronze' } : { bg: 'bg-gray-100 dark:bg-gray-800', ring: 'ring-gray-200 dark:ring-gray-700', label: '' };
+  const medal = rank === 1 ? { bg: 'bg-gradient-to-br from-yellow-400 to-gold-500', ring: 'ring-yellow-300', label: 'Gold' } : rank === 2 ? { bg: 'bg-gradient-to-br from-slate-300 to-slate-400', ring: 'ring-slate-200', label: 'Silver' } : rank === 3 ? { bg: 'bg-gradient-to-br from-gold-600 to-accent-700', ring: 'ring-gold-400', label: 'Bronze' } : { bg: 'bg-gray-100 dark:bg-gray-800', ring: 'ring-gray-200 dark:ring-gray-700', label: '' };
   const isPodium = rank <= 3;
   return (
     <motion.div
@@ -334,7 +334,7 @@ export function AchievementsPage() {
         {/* Monthly Challenges */}
         <div className="mt-16">
           <motion.h3 variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="font-display text-2xl font-bold mb-8 flex items-center gap-2">
-            <Trophy className="h-6 w-6 text-orange-500" /> Monthly Challenges
+            <Trophy className="h-6 w-6 text-accent-500" /> Monthly Challenges
           </motion.h3>
           <motion.div
             variants={staggerContainer}
@@ -390,7 +390,7 @@ export function AchievementsPage() {
                   key={t.id}
                   onClick={() => setActiveTab(t.id)}
                   className={isActive
-                    ? 'px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-primary-600 to-green-600 text-white shadow-lg'
+                    ? 'px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-primary-600 to-primary-600 text-white shadow-lg'
                     : 'px-4 py-2 rounded-full text-sm font-medium glass text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/20'}
                 >
                   {t.label}
@@ -418,14 +418,14 @@ export function AchievementsPage() {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="mt-16 relative overflow-hidden rounded-[28px] bg-gradient-to-br from-emerald-600 via-green-600 to-green-700 p-8 sm:p-12 text-center text-white"
+          className="mt-16 relative overflow-hidden rounded-[28px] bg-gradient-to-br from-primary-600 via-primary-600 to-primary-700 p-8 sm:p-12 text-center text-white"
         >
           <div className="absolute -top-12 -right-12 h-48 w-48 rounded-full bg-white/10 blur-3xl" />
-          <div className="absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-orange-400/20 blur-3xl" />
+          <div className="absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-accent-400/20 blur-3xl" />
           <h2 className="font-display text-2xl sm:text-3xl font-bold mb-4 relative z-10">Climb the Leaderboard</h2>
           <p className="text-white/90 max-w-lg mx-auto mb-8 relative z-10">Every delivery earns points, unlocks badges, and moves you up the ranks.</p>
           <div className="flex flex-wrap items-center justify-center gap-4 relative z-10">
-            <Link to="/volunteer"><RippleButton className="bg-white text-green-700 hover:bg-gray-50">Go to Dashboard <ArrowRight className="h-4 w-4" /></RippleButton></Link>
+            <Link to="/volunteer"><RippleButton className="bg-white text-primary-700 hover:bg-gray-50">Go to Dashboard <ArrowRight className="h-4 w-4" /></RippleButton></Link>
             <Link to="/profile"><RippleButton variant="ghost" className="text-white hover:bg-white/10">View Profile</RippleButton></Link>
           </div>
         </motion.div>

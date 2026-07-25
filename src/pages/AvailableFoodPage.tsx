@@ -207,8 +207,8 @@ export function AvailableFoodPage() {
           <span className="text-xs text-gray-400 shrink-0 font-medium">Quality:</span>
           {([
             { value: 'all', label: 'All', dot: 'bg-gray-400' },
-            { value: 'fresh', label: 'Fresh', dot: 'bg-green-500' },
-            { value: 'consume_soon', label: 'Consume Soon', dot: 'bg-amber-500' },
+            { value: 'fresh', label: 'Fresh', dot: 'bg-primary-500' },
+            { value: 'consume_soon', label: 'Consume Soon', dot: 'bg-gold-500' },
             { value: 'expired', label: 'Expired', dot: 'bg-red-500' },
           ] as { value: FreshnessStatus | 'all'; label: string; dot: string }[]).map((f) => (
             <button
@@ -332,7 +332,7 @@ export function AvailableFoodPage() {
                       const dist = haversineKm([position.lat, position.lng], [d.latitude!, d.longitude!]);
                       const ttm = estimateTravelTimeMin(dist);
                       return (
-                        <span className="badge bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                        <span className="badge bg-secondary-50 dark:bg-secondary-900/30 text-secondary-700 dark:text-secondary-300">
                           <MapPin className="h-3 w-3" /> {dist.toFixed(1)} km • ~{Math.round(ttm)} min
                         </span>
                       );

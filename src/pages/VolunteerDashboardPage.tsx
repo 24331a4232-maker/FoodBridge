@@ -27,9 +27,9 @@ interface LeaderboardEntry {
 }
 
 const achievements = [
-  { icon: Flame, title: 'First Delivery', desc: 'Complete your first pickup', color: 'from-orange-500 to-red-500' },
+  { icon: Flame, title: 'First Delivery', desc: 'Complete your first pickup', color: 'from-accent-500 to-red-500' },
   { icon: Medal, title: '10 Deliveries', desc: 'Reach 10 successful deliveries', color: 'from-primary-500 to-primary-600' },
-  { icon: Star, title: '50 Deliveries', desc: 'Reach 50 successful deliveries', color: 'from-yellow-500 to-amber-500' },
+  { icon: Star, title: '50 Deliveries', desc: 'Reach 50 successful deliveries', color: 'from-yellow-500 to-gold-500' },
   { icon: Trophy, title: 'Top Volunteer', desc: 'Reach top 3 on leaderboard', color: 'from-accent-500 to-accent-600' },
 ];
 
@@ -233,10 +233,10 @@ export function VolunteerDashboardPage() {
         {/* Stats */}
         <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Reward Points', value: points, icon: Zap, color: 'from-yellow-500 to-amber-500' },
+            { label: 'Reward Points', value: points, icon: Zap, color: 'from-yellow-500 to-gold-500' },
             { label: 'Deliveries', value: deliveries, icon: Package, color: 'from-primary-500 to-primary-600' },
-            { label: 'Active Tasks', value: activeTasks.length, icon: Clock, color: 'from-blue-500 to-primary-500' },
-            { label: 'Completed', value: completed.length, icon: CheckCircle2, color: 'from-primary-600 to-emerald-500' },
+            { label: 'Active Tasks', value: activeTasks.length, icon: Clock, color: 'from-secondary-500 to-primary-500' },
+            { label: 'Completed', value: completed.length, icon: CheckCircle2, color: 'from-primary-600 to-primary-500' },
           ].map((s) => (
             <motion.div key={s.label} variants={fadeInUp} whileHover={{ y: -4 }} className="card-hover p-5 relative overflow-hidden group">
               <div className={`absolute -top-8 -right-8 h-20 w-20 rounded-full bg-gradient-to-br ${s.color} opacity-10 blur-2xl group-hover:opacity-20 transition-opacity`} />
@@ -290,7 +290,7 @@ export function VolunteerDashboardPage() {
                             <span className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-[10px]">{d.quantity} {d.quantity_unit}</span>
                             {d.is_urgent && <span className="badge bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-[10px]"><Flame className="h-2.5 w-2.5" /> Urgent</span>}
                             {d.freshness_status && <FoodQualityBadge freshness={d.freshness_status} score={d.quality_score} size="sm" showScore />}
-                            {dist != null && <span className="badge bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-[10px]"><MapPin className="h-2.5 w-2.5" /> {dist.toFixed(1)} km</span>}
+                            {dist != null && <span className="badge bg-secondary-100 dark:bg-secondary-900/30 text-secondary-700 dark:text-secondary-300 text-[10px]"><MapPin className="h-2.5 w-2.5" /> {dist.toFixed(1)} km</span>}
                           </div>
                         </div>
                         <div className="flex flex-col gap-1.5 shrink-0">
@@ -377,7 +377,7 @@ export function VolunteerDashboardPage() {
               <div className="space-y-2">
                 {leaderboard.map((l, i) => (
                   <div key={l.name + i} className={`flex items-center gap-3 p-2 rounded-xl ${i === 0 ? 'bg-yellow-50 dark:bg-yellow-900/20' : ''} ${l.isMe ? 'ring-2 ring-primary-400' : ''}`}>
-                    <span className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-yellow-400 text-white' : i === 1 ? 'bg-gray-300 text-white' : i === 2 ? 'bg-orange-400 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>{i + 1}</span>
+                    <span className={`h-7 w-7 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? 'bg-yellow-400 text-white' : i === 1 ? 'bg-gray-300 text-white' : i === 2 ? 'bg-accent-400 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>{i + 1}</span>
                     <div className="h-8 w-8 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-sm font-bold">{l.avatar}</div>
                     <div className="flex-1">
                       <p className="text-sm font-medium">{l.name}{l.isMe && <span className="text-xs text-primary-600 ml-1">(You)</span>}</p>
