@@ -38,6 +38,13 @@ const socials = [
   { icon: Linkedin, href: '#', label: 'LinkedIn' },
 ];
 
+const linkGroups = [
+  { title: 'Features', links: features },
+  { title: 'Dashboards', links: dashboards },
+  { title: 'Certificates', links: certificates },
+  { title: 'Resources', links: resources },
+];
+
 export function Footer() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -62,27 +69,26 @@ export function Footer() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
-    <footer className="relative mt-20 overflow-hidden bg-gradient-to-b from-primary-50/50 to-white dark:from-primary-950/20 dark:to-gray-950 border-t border-gray-100 dark:border-gray-800">
-      <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-96 rounded-full bg-primary-300/10 blur-3xl" />
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-8 lg:gap-10">
+    <footer className="relative overflow-hidden bg-secondary-900 dark:bg-secondary-950 text-cream border-t border-secondary-800">
+      <div className="relative max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 py-20">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-10 lg:gap-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-3 lg:col-span-4">
-            <Link to="/" className="flex items-center gap-2.5 mb-4">
+            <Link to="/" className="flex items-center gap-2.5 mb-5">
               <img src="/logo.png" alt="FoodBridge" className="h-11 w-11 object-contain" />
-              <span className="font-display text-xl font-bold gradient-text">FoodBridge</span>
+              <span className="font-display text-xl font-semibold text-cream">FoodBridge</span>
             </Link>
-            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4 max-w-sm">
-              FoodBridge redirects surplus food from events & hotels to those in need - reducing food waste while fighting hunger through technology.
+            <p className="text-sm text-cream/60 leading-relaxed mb-6 max-w-sm">
+              Redirecting surplus food from events &amp; hotels to those who need it most — reducing food waste while fighting hunger, one bridge at a time.
             </p>
-            <div className="flex gap-3">
+            <div className="flex gap-2.5">
               {socials.map((s) => (
                 <motion.a
                   key={s.label}
                   href={s.href}
                   aria-label={s.label}
-                  whileHover={{ y: -3, scale: 1.1 }}
-                  className="h-10 w-10 rounded-full glass flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  whileHover={{ y: -3 }}
+                  className="h-9 w-9 rounded-full bg-secondary-800 hover:bg-primary-600 flex items-center justify-center text-cream/70 hover:text-cream transition-colors"
                 >
                   <s.icon className="h-4 w-4" />
                 </motion.a>
@@ -92,71 +98,34 @@ export function Footer() {
 
           {/* Link groups */}
           <div className="col-span-2 md:col-span-3 lg:col-span-5 grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div>
-              <h3 className="font-display font-semibold mb-4 text-sm">Features</h3>
-              <ul className="space-y-2.5">
-                {features.map((l) => (
-                  <li key={l.path}>
-                    <Link to={l.path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                      {l.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-display font-semibold mb-4 text-sm">Dashboards</h3>
-              <ul className="space-y-2.5">
-                {dashboards.map((l) => (
-                  <li key={l.path}>
-                    <Link to={l.path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                      {l.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-display font-semibold mb-4 text-sm">Certificates</h3>
-              <ul className="space-y-2.5">
-                {certificates.map((l) => (
-                  <li key={l.path}>
-                    <Link to={l.path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                      {l.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-display font-semibold mb-4 text-sm">Resources</h3>
-              <ul className="space-y-2.5">
-                {resources.map((l) => (
-                  <li key={l.path}>
-                    <Link to={l.path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                      {l.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {linkGroups.map((group) => (
+              <div key={group.title}>
+                <h3 className="font-display font-semibold mb-4 text-sm text-cream">{group.title}</h3>
+                <ul className="space-y-2.5">
+                  {group.links.map((l) => (
+                    <li key={l.path}>
+                      <Link to={l.path} className="text-sm text-cream/55 hover:text-primary-300 transition-colors">
+                        {l.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
 
           {/* Contact + Newsletter */}
           <div className="col-span-2 md:col-span-3 lg:col-span-3">
-            <h3 className="font-display font-semibold mb-4">Stay Connected</h3>
-            <div className="space-y-3 mb-5">
-              <a href="mailto:hello@foodbridge.org" className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 transition-colors">
-                <Mail className="h-4 w-4 text-primary-500" /> hello@foodbridge.org
+            <h3 className="font-display font-semibold mb-4 text-cream">Stay connected</h3>
+            <div className="space-y-3 mb-6">
+              <a href="mailto:hello@foodbridge.org" className="flex items-center gap-3 text-sm text-cream/60 hover:text-primary-300 transition-colors">
+                <Mail className="h-4 w-4 text-primary-400 shrink-0" /> hello@foodbridge.org
               </a>
-              <a href="tel:+918012345678" className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 transition-colors">
-                <Phone className="h-4 w-4 text-primary-500" /> +91 80 1234 5678
+              <a href="tel:+918012345678" className="flex items-center gap-3 text-sm text-cream/60 hover:text-primary-300 transition-colors">
+                <Phone className="h-4 w-4 text-primary-400 shrink-0" /> +91 80 1234 5678
               </a>
-              <p className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400">
-                <MapPin className="h-4 w-4 text-primary-500" /> MG Road, Bangalore, India
+              <p className="flex items-center gap-3 text-sm text-cream/60">
+                <MapPin className="h-4 w-4 text-primary-400 shrink-0" /> MG Road, Bangalore, India
               </p>
             </div>
             <div className="flex gap-2">
@@ -164,8 +133,8 @@ export function Footer() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="Subscribe to newsletter"
-                className="input-field text-sm py-2.5"
+                placeholder="Newsletter email"
+                className="w-full px-4 py-2.5 rounded-xl-premium bg-secondary-800 border border-secondary-700 text-cream placeholder-cream/40 focus:outline-none focus:ring-2 focus:ring-primary-500/30 focus:border-primary-500 transition-all text-sm"
                 aria-label="Email for newsletter"
               />
               <motion.button
@@ -182,16 +151,16 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-            Made with <Heart className="h-4 w-4 text-red-500 fill-red-500" /> by FoodBridge &copy; {new Date().getFullYear()}
+        <div className="mt-16 pt-8 border-t border-secondary-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-cream/50 flex items-center gap-1.5">
+            Made with <Heart className="h-3.5 w-3.5 text-primary-400 fill-primary-400" /> by FoodBridge &copy; {new Date().getFullYear()}
           </p>
           <div className="flex items-center gap-4">
-            <span className="text-xs text-gray-400">FoodBridge</span>
+            <span className="text-xs text-cream/40">No plate left empty.</span>
             <motion.button
               whileHover={{ y: -3 }}
               onClick={scrollToTop}
-              className="h-10 w-10 rounded-full bg-gradient-to-br from-primary-600 to-primary-500 text-white flex items-center justify-center shadow-lg shadow-primary-600/30"
+              className="h-10 w-10 rounded-full bg-primary-600 hover:bg-primary-700 text-cream flex items-center justify-center transition-colors"
               aria-label="Back to top"
             >
               <ArrowUp className="h-4 w-4" />
