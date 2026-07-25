@@ -18,6 +18,8 @@ import {
   Star,
   Quote,
   ChevronDown,
+  Building2,
+  Globe2,
 } from 'lucide-react';
 import { AnimatedCounter, SectionHeading, fadeInUp, fadeIn, scaleIn, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
@@ -113,47 +115,13 @@ const testimonials = [
 
 const partners = ['Taj Hotels', 'The Leela', 'ITC Group', 'Hyatt', 'Marriott', 'Oberoi'];
 
-const galleryImages = [
-  {
-    url: 'https://images.pexels.com/photos/4488647/pexels-photo-4488647.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    title: 'Volunteers collecting surplus food from a hotel kitchen',
-    span: 'lg:row-span-2',
-  },
-  {
-    url: 'https://images.pexels.com/photos/6211629/pexels-photo-6211629.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    title: 'Hotel staff handing packed food to a FoodBridge volunteer',
-    span: '',
-  },
-  {
-    url: 'https://images.pexels.com/photos/6211623/pexels-photo-6211623.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    title: 'Volunteers delivering food packets to children and elderly people',
-    span: '',
-  },
-  {
-    url: 'https://images.pexels.com/photos/6211621/pexels-photo-6211621.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    title: 'Families receiving fresh meals with happy expressions',
-    span: 'lg:row-span-2',
-  },
-  {
-    url: 'https://images.pexels.com/photos/3933251/pexels-photo-3933251.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    title: 'Volunteers packing food hygienically with gloves, masks & hairnets',
-    span: '',
-  },
-  {
-    url: 'https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    title: 'Community food distribution event with organized serving',
-    span: '',
-  },
-  {
-    url: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    title: 'Fresh, neatly packed food containers ready for delivery',
-    span: '',
-  },
-  {
-    url: 'https://images.pexels.com/photos/6646890/pexels-photo-6646890.jpeg?auto=compress&cs=tinysrgb&w=1200',
-    title: 'Team of FoodBridge volunteers standing together',
-    span: 'lg:row-span-2',
-  },
+const impactStats = [
+  { label: 'Meals Rescued', value: 128450, suffix: '+', icon: UtensilsCrossed, gradient: 'from-emerald-500 to-green-600', glow: 'shadow-emerald-500/30' },
+  { label: 'Families Served', value: 38900, suffix: '+', icon: Users, gradient: 'from-orange-500 to-amber-500', glow: 'shadow-orange-500/30' },
+  { label: 'Partner Hotels', value: 340, suffix: '+', icon: Hotel, gradient: 'from-teal-500 to-cyan-600', glow: 'shadow-teal-500/30' },
+  { label: 'NGOs Connected', value: 185, suffix: '+', icon: Building2, gradient: 'from-rose-500 to-pink-600', glow: 'shadow-rose-500/30' },
+  { label: 'Active Volunteers', value: 1560, suffix: '+', icon: HeartHandshake, gradient: 'from-lime-500 to-green-600', glow: 'shadow-lime-500/30' },
+  { label: 'Food Waste Reduced', value: 42, suffix: ' tons', icon: Globe2, gradient: 'from-emerald-600 to-teal-600', glow: 'shadow-emerald-600/30' },
 ];
 
 const faqs = [
@@ -462,32 +430,73 @@ export function HomePage() {
         </p>
       </section>
 
-      {/* Gallery */}
+      {/* Our Impact Stats */}
+      <section className="section bg-gradient-to-b from-primary-50/30 to-white dark:from-primary-950/10 dark:to-gray-950">
+        <SectionHeading badge="Our Impact" title="Real change, in real numbers" subtitle="Every meal rescued, every family served, every volunteer hour - tracked and celebrated." />
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 mt-14"
+        >
+          {impactStats.map((s) => {
+            const StatIcon = s.icon;
+            return (
+              <motion.div
+                key={s.label}
+                variants={scaleIn}
+                whileHover={{ y: -8, scale: 1.02 }}
+                className="glass-card p-6 sm:p-8 relative overflow-hidden group"
+              >
+                <div className={`absolute -top-12 -right-12 h-32 w-32 rounded-full bg-gradient-to-br ${s.gradient} opacity-10 blur-2xl group-hover:opacity-25 transition-opacity duration-500`} />
+                <div className="relative flex items-center gap-4">
+                  <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br ${s.gradient} text-white flex items-center justify-center shadow-lg ${s.glow} group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300`}>
+                    <StatIcon className="h-7 w-7" />
+                  </div>
+                  <div>
+                    <p className="font-display text-3xl sm:text-4xl font-bold gradient-text">
+                      <AnimatedCounter value={s.value} suffix={s.suffix} />
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{s.label}</p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
+      </section>
+
+      {/* CTA */}
       <section className="section">
-        <SectionHeading badge="Gallery" title="Impact in pictures" subtitle="Moments captured from our food redistribution drives across the country." />
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 mt-14 auto-rows-[200px]">
-          {galleryImages.map((img, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ duration: 0.6, delay: (i % 4) * 0.1 }}
-              className={`relative group rounded-[20px] overflow-hidden cursor-pointer shadow-md hover:shadow-2xl transition-shadow duration-500 ${img.span}`}
-            >
-              <img
-                src={img.url}
-                alt={img.title}
-                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                loading="lazy"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
-              <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                <p className="text-white font-medium text-sm leading-snug drop-shadow-lg">{img.title}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500 p-8 sm:p-14 text-center text-white"
+        >
+          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
+          <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-orange-400/20 blur-2xl" />
+          <motion.h2 variants={fadeInUp} className="font-display text-3xl sm:text-4xl font-bold mb-4 relative z-10">
+            Together We Can End Food Waste
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-white/90 max-w-xl mx-auto mb-8 relative z-10">
+            Every meal donated brings hope to someone in need.
+          </motion.p>
+          <motion.div variants={fadeInUp} className="flex flex-wrap items-center justify-center gap-4 relative z-10">
+            <Link to="/donate-food">
+              <RippleButton className="bg-white text-primary-700 hover:bg-gray-50 text-base px-7 py-3.5">
+                Donate Food <ArrowRight className="h-4 w-4" />
+              </RippleButton>
+            </Link>
+            <Link to="/register">
+              <RippleButton variant="ghost" className="text-white hover:bg-white/10 text-base px-7 py-3.5">
+                Become a Volunteer <HeartHandshake className="h-4 w-4" />
+              </RippleButton>
+            </Link>
+          </motion.div>
+        </motion.div>
       </section>
 
       {/* FAQ */}
@@ -515,37 +524,6 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="section">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500 p-8 sm:p-14 text-center text-white"
-        >
-          <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-          <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-          <motion.h2 variants={fadeInUp} className="font-display text-3xl sm:text-4xl font-bold mb-4">
-            Ready to bridge the gap?
-          </motion.h2>
-          <motion.p variants={fadeInUp} className="text-white/90 max-w-xl mx-auto mb-8">
-            Join thousands of donors and volunteers reducing food waste and fighting hunger every single day.
-          </motion.p>
-          <motion.div variants={fadeInUp} className="flex flex-wrap items-center justify-center gap-4">
-            <Link to="/register">
-              <RippleButton className="bg-white text-primary-700 hover:bg-gray-50 text-base px-7 py-3.5">
-                Get Started Free <ArrowRight className="h-4 w-4" />
-              </RippleButton>
-            </Link>
-            <Link to="/contact">
-              <RippleButton variant="ghost" className="text-white hover:bg-white/10 text-base px-7 py-3.5">
-                Contact Us
-              </RippleButton>
-            </Link>
-          </motion.div>
-        </motion.div>
-      </section>
     </div>
   );
 }
