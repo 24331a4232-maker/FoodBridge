@@ -20,6 +20,8 @@ import {
   ChevronDown,
   Building2,
   Globe2,
+  Truck,
+  Heart,
 } from 'lucide-react';
 import { AnimatedCounter, SectionHeading, fadeInUp, fadeIn, scaleIn, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
@@ -34,10 +36,19 @@ const stats = [
 ];
 
 const steps = [
-  { icon: Hotel, title: 'Donor Lists Food', desc: 'Hotels, restaurants and event organizers post surplus food with pickup details and quantity.' },
-  { icon: Search, title: 'Volunteer Finds', desc: 'Nearby volunteers browse available donations and accept pickups that match their route.' },
-  { icon: Package, title: 'Safe Pickup', desc: 'Volunteer collects food at the scheduled time using hygiene-safe handling protocols.' },
-  { icon: HeartHandshake, title: 'Delivered', desc: 'Food reaches orphanages, shelters and people in need - verified and tracked end-to-end.' },
+  { icon: Hotel, title: 'Food Donation', desc: 'Hotels, restaurants, and event organizers donate surplus food through FoodBridge.' },
+  { icon: ShieldCheck, title: 'Food Quality Verification', desc: 'Food is checked for freshness, hygiene, packaging, and safety before approval.' },
+  { icon: HeartHandshake, title: 'Volunteer Assignment', desc: 'The nearest available volunteer receives the pickup request.' },
+  { icon: Truck, title: 'Pickup & Delivery', desc: 'The volunteer collects the food and delivers it safely to the assigned NGO or beneficiaries.' },
+  { icon: Heart, title: 'Community Impact', desc: 'Meals reach people in need, reducing food waste and fighting hunger.' },
+];
+
+const processStats = [
+  { label: 'Meals Delivered', value: 128450, suffix: '+', icon: UtensilsCrossed, gradient: 'from-emerald-500 to-green-600', glow: 'shadow-emerald-500/30' },
+  { label: 'Partner Hotels', value: 340, suffix: '+', icon: Hotel, gradient: 'from-teal-500 to-cyan-600', glow: 'shadow-teal-500/30' },
+  { label: 'Volunteers', value: 1560, suffix: '+', icon: HeartHandshake, gradient: 'from-lime-500 to-green-600', glow: 'shadow-lime-500/30' },
+  { label: 'NGOs', value: 185, suffix: '+', icon: Building2, gradient: 'from-orange-500 to-amber-500', glow: 'shadow-orange-500/30' },
+  { label: 'Food Waste Reduced', value: 42, suffix: ' tons', icon: Globe2, gradient: 'from-emerald-600 to-teal-600', glow: 'shadow-emerald-600/30' },
 ];
 
 const features = [
@@ -257,37 +268,105 @@ export function HomePage() {
       {/* Impact Dashboard */}
       <ImpactDashboard />
 
-      {/* How It Works */}
-      <section className="section bg-gradient-to-b from-primary-50/30 to-white dark:from-primary-950/10 dark:to-gray-950">
-        <SectionHeading badge="How It Works" title="From surplus to served in 4 steps" subtitle="A simple, transparent process that gets food to those who need it - fast." />
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-14">
-          {steps.map((step, i) => (
+      {/* How FoodBridge Works */}
+      <section className="section bg-gradient-to-b from-primary-50/30 to-white dark:from-primary-950/10 dark:to-gray-950 relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-72 w-72 rounded-full bg-primary-300/10 blur-3xl pointer-events-none" />
+        <SectionHeading badge="How FoodBridge Works" title="How FoodBridge Works" subtitle="A simple and efficient process that connects food donors, volunteers, and people in need." />
+
+        {/* Horizontal timeline */}
+        <div className="relative mt-16 max-w-7xl mx-auto">
+          {/* Animated connecting line (desktop) */}
+          <div className="hidden lg:block absolute top-14 left-[10%] right-[10%] h-1 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
             <motion.div
-              key={step.title}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className="relative"
-            >
-              <div className="card p-6 h-full hover:shadow-2xl hover:-translate-y-2 transition-all duration-300">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-primary-600 to-primary-500 text-white flex items-center justify-center shadow-lg shadow-primary-600/30">
-                    <step.icon className="h-7 w-7" />
+              initial={{ scaleX: 0 }}
+              whileInView={{ scaleX: 1 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 1.4, ease: 'easeInOut' }}
+              className="h-full origin-left rounded-full bg-gradient-to-r from-primary-500 via-accent-500 to-primary-500"
+            />
+          </div>
+
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-80px' }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 lg:gap-4"
+          >
+            {steps.map((step, i) => {
+              const StepIcon = step.icon;
+              return (
+                <motion.div key={step.title} variants={scaleIn} className="relative flex flex-col items-center text-center group">
+                  {/* Step number badge on the timeline */}
+                  <div className="relative z-10 mb-5">
+                    <motion.div
+                      whileHover={{ scale: 1.12, rotate: 6 }}
+                      transition={{ type: 'spring', stiffness: 300 }}
+                      className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary-600 to-accent-500 text-white flex items-center justify-center shadow-xl shadow-primary-600/30 ring-4 ring-white dark:ring-gray-950"
+                    >
+                      <StepIcon className="h-7 w-7" />
+                    </motion.div>
+                    <span className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-white dark:bg-gray-900 border-2 border-primary-500 text-primary-600 text-xs font-bold flex items-center justify-center shadow-md">
+                      {i + 1}
+                    </span>
                   </div>
-                  <span className="font-display text-5xl font-bold text-primary-100 dark:text-primary-900/40">0{i + 1}</span>
-                </div>
-                <h3 className="font-display font-semibold text-lg mb-2">{step.title}</h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{step.desc}</p>
-              </div>
-              {i < steps.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2 -right-3 z-10 text-primary-300">
-                  <ArrowRight className="h-6 w-6" />
-                </div>
-              )}
-            </motion.div>
-          ))}
+
+                  {/* Glassmorphism card */}
+                  <motion.div
+                    whileHover={{ y: -8 }}
+                    transition={{ type: 'spring', stiffness: 300 }}
+                    className="glass-card p-5 w-full relative overflow-hidden"
+                  >
+                    <div className="absolute -top-8 -right-8 h-20 w-20 rounded-full bg-gradient-to-br from-primary-400/15 to-accent-400/15 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <h3 className="font-display font-semibold text-base mb-2 relative z-10">{step.title}</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed relative z-10">{step.desc}</p>
+                  </motion.div>
+
+                  {/* Down arrow (mobile) */}
+                  {i < steps.length - 1 && (
+                    <motion.div
+                      animate={{ y: [0, 6, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.2 }}
+                      className="lg:hidden text-primary-400 mt-4"
+                    >
+                      <ChevronDown className="h-6 w-6" />
+                    </motion.div>
+                  )}
+                </motion.div>
+              );
+            })}
+          </motion.div>
         </div>
+
+        {/* Animated statistics */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-5 mt-16 max-w-7xl mx-auto"
+        >
+          {processStats.map((s) => {
+            const StatIcon = s.icon;
+            return (
+              <motion.div
+                key={s.label}
+                variants={scaleIn}
+                whileHover={{ y: -6, scale: 1.03 }}
+                className="glass-card p-5 text-center relative overflow-hidden group"
+              >
+                <div className={`absolute -top-10 -right-10 h-24 w-24 rounded-full bg-gradient-to-br ${s.gradient} opacity-10 blur-2xl group-hover:opacity-25 transition-opacity duration-500`} />
+                <div className={`inline-flex h-12 w-12 rounded-2xl bg-gradient-to-br ${s.gradient} text-white items-center justify-center mb-3 shadow-lg ${s.glow} group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300`}>
+                  <StatIcon className="h-6 w-6" />
+                </div>
+                <p className="font-display text-2xl sm:text-3xl font-bold gradient-text">
+                  <AnimatedCounter value={s.value} suffix={s.suffix} />
+                </p>
+                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">{s.label}</p>
+              </motion.div>
+            );
+          })}
+        </motion.div>
       </section>
 
       {/* Why FoodBridge - Features */}
