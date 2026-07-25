@@ -1,35 +1,247 @@
-import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
-import { Home, ArrowLeft, Compass } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Home,
+  UtensilsCrossed,
+  Phone,
+  Search,
+  HeartHandshake,
+  Info,
+  ShoppingBasket,
+  LayoutDashboard,
+  Mail,
+  Leaf,
+  ChevronRight,
+} from 'lucide-react';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { fadeInUp, staggerContainer, scaleIn } from '@/lib/animations';
+
+const quickLinks = [
+  { name: 'Home', path: '/', icon: Home },
+  { name: 'About', path: '/about', icon: Info },
+  { name: 'Donate Food', path: '/donate-food', icon: UtensilsCrossed },
+  { name: 'Available Donations', path: '/available-food', icon: ShoppingBasket },
+  { name: 'Volunteer Dashboard', path: '/volunteer', icon: LayoutDashboard },
+  { name: 'Contact', path: '/contact', icon: Phone },
+];
+
+const searchablePages = [
+  ...quickLinks,
+  { name: 'Food Quality', path: '/food-quality', icon: Leaf },
+  { name: 'Help Center', path: '/help', icon: Mail },
+  { name: 'Achievements', path: '/achievements', icon: HeartHandshake },
+  { name: 'Certificate', path: '/certificate', icon: HeartHandshake },
+  { name: 'Verify Certificate', path: '/verify-certificate', icon: HeartHandshake },
+];
+
+const floatingIcons = [
+  { Icon: UtensilsCrossed, className: 'top-[18%] left-[12%]', delay: 0, color: 'text-primary-400' },
+  { Icon: HeartHandshake, className: 'top-[28%] right-[14%]', delay: 0.5, color: 'text-accent-400' },
+  { Icon: Leaf, className: 'bottom-[24%] left-[16%]', delay: 1, color: 'text-primary-500' },
+  { Icon: ShoppingBasket, className: 'bottom-[18%] right-[12%]', delay: 1.5, color: 'text-accent-500' },
+];
 
 export function NotFoundPage() {
+  const [query, setQuery] = useState('');
+  const navigate = useNavigate();
+
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return [];
+    return searchablePages.filter((p) => p.name.toLowerCase().includes(q)).slice(0, 5);
+  }, [query]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (results.length > 0) {
+      navigate(results[0].path);
+    }
+  };
+
   return (
-    <div className="pt-20 min-h-screen flex items-center justify-center px-4 gradient-bg relative overflow-hidden">
+    <div className="pt-20 min-h-screen flex items-center justify-center px-4 py-12 gradient-bg relative overflow-hidden">
+      {/* Floating background blobs */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-20 h-72 w-72 rounded-full bg-primary-300/20 blur-3xl animate-blob" />
-        <div className="absolute bottom-20 right-20 h-72 w-72 rounded-full bg-accent-300/20 blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-primary-300/20 blur-3xl animate-blob" />
+        <div className="absolute bottom-10 right-10 h-72 w-72 rounded-full bg-accent-300/20 blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-primary-200/10 blur-3xl" />
       </div>
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative text-center"
-      >
+
+      {/* Floating icons */}
+      {floatingIcons.map(({ Icon, className, delay, color }, i) => (
         <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', delay: 0.2 }}
-          className="inline-flex h-20 w-20 rounded-3xl bg-gradient-to-br from-primary-500 to-accent-500 items-center justify-center mb-6 shadow-xl"
+          key={i}
+          className={`absolute hidden md:block ${className} ${color}`}
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 0.4, scale: 1, y: [0, -16, 0] }}
+          transition={{
+            opacity: { delay, duration: 0.6 },
+            scale: { delay, duration: 0.6 },
+            y: { repeat: Infinity, duration: 4 + i, ease: 'easeInOut', delay },
+          }}
         >
-          <Compass className="h-10 w-10 text-white animate-spin-slow" />
+          <Icon className="h-12 w-12" />
         </motion.div>
-        <h1 className="font-display text-7xl sm:text-9xl font-bold gradient-text">404</h1>
-        <h2 className="font-display text-2xl font-bold mt-2 mb-2">Page Not Found</h2>
-        <p className="text-gray-500 max-w-md mx-auto mb-8">The page you are looking for might have been moved, deleted, or never existed.</p>
-        <div className="flex flex-wrap justify-center gap-3">
-          <Link to="/"><RippleButton variant="primary"><Home className="h-4 w-4" /> Back Home</RippleButton></Link>
-          <button onClick={() => window.history.back()}><RippleButton variant="secondary"><ArrowLeft className="h-4 w-4" /> Go Back</RippleButton></button>
-        </div>
+      ))}
+
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        animate="visible"
+        className="relative w-full max-w-2xl"
+      >
+        <motion.div variants={scaleIn} className="glass-card p-8 sm:p-12 text-center relative overflow-hidden">
+          <div className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-primary-500/10 blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-accent-500/10 blur-3xl" />
+
+          {/* Logo */}
+          <motion.div variants={fadeInUp} className="flex justify-center mb-6">
+            <Link to="/" className="flex items-center gap-2.5 group">
+              <motion.img
+                src="/logo.png"
+                alt="FoodBridge"
+                className="h-14 w-14 sm:h-16 sm:w-16 object-contain"
+                whileHover={{ rotate: 10, scale: 1.05 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              />
+              <span className="font-display text-xl sm:text-2xl font-bold gradient-text">FoodBridge</span>
+            </Link>
+          </motion.div>
+
+          {/* Illustration */}
+          <motion.div variants={scaleIn} className="relative mx-auto mb-6 w-full max-w-sm aspect-[16/10] rounded-2xl overflow-hidden shadow-xl shadow-primary-500/10">
+            <img
+              src="https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=900"
+              alt="Volunteers sharing food with the community"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-primary-900/40 via-transparent to-transparent" />
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+              className="absolute top-3 right-3 h-10 w-10 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-lg"
+            >
+              <HeartHandshake className="h-5 w-5 text-primary-600" />
+            </motion.div>
+          </motion.div>
+
+          {/* 404 */}
+          <motion.h1
+            variants={fadeInUp}
+            className="font-display text-7xl sm:text-8xl font-bold gradient-text leading-none"
+          >
+            404
+          </motion.h1>
+          <motion.h2 variants={fadeInUp} className="font-display text-xl sm:text-2xl font-bold mt-3">
+            Page Not Found
+          </motion.h2>
+          <motion.p variants={fadeInUp} className="text-gray-500 dark:text-gray-400 max-w-md mx-auto mt-2">
+            Oops! The page you're looking for doesn't exist or may have been moved.
+          </motion.p>
+
+          {/* Search */}
+          <motion.form variants={fadeInUp} onSubmit={handleSearch} className="relative max-w-md mx-auto mt-6">
+            <div className="relative">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search website..."
+                className="input-field pl-12 pr-4 py-3 text-base"
+              />
+            </div>
+            <AnimatePresence>
+              {results.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  className="absolute z-20 left-0 right-0 mt-2 glass-card p-2 text-left"
+                >
+                  {results.map((r) => {
+                    const Icon = r.icon;
+                    return (
+                      <button
+                        key={r.path}
+                        type="button"
+                        onClick={() => navigate(r.path)}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors"
+                      >
+                        <Icon className="h-4 w-4 text-primary-600" />
+                        <span className="text-sm font-medium flex-1 text-left">{r.name}</span>
+                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                      </button>
+                    );
+                  })}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.form>
+
+          {/* Buttons */}
+          <motion.div variants={fadeInUp} className="flex flex-wrap items-center justify-center gap-3 mt-6">
+            <Link to="/">
+              <RippleButton variant="primary" className="text-sm px-5 py-3">
+                <Home className="h-4 w-4" /> Back to Home
+              </RippleButton>
+            </Link>
+            <Link to="/donate-food">
+              <RippleButton variant="accent" className="text-sm px-5 py-3">
+                <UtensilsCrossed className="h-4 w-4" /> Donate Food
+              </RippleButton>
+            </Link>
+            <Link to="/contact">
+              <RippleButton variant="ghost" className="text-sm px-5 py-3">
+                <Phone className="h-4 w-4" /> Contact Us
+              </RippleButton>
+            </Link>
+            <button type="button" onClick={() => (document.querySelector('input[placeholder="Search website..."]') as HTMLInputElement)?.focus()}>
+              <RippleButton variant="secondary" className="text-sm px-5 py-3">
+                <Search className="h-4 w-4" /> Search Website
+              </RippleButton>
+            </button>
+          </motion.div>
+        </motion.div>
+
+        {/* You may be looking for */}
+        <motion.div variants={fadeInUp} className="mt-8">
+          <p className="text-center text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">
+            You may be looking for:
+          </p>
+          <motion.div
+            variants={staggerContainer}
+            initial="hidden"
+            animate="visible"
+            className="grid grid-cols-2 sm:grid-cols-3 gap-3"
+          >
+            {quickLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <motion.div key={link.path} variants={scaleIn} whileHover={{ y: -4 }}>
+                  <Link
+                    to={link.path}
+                    className="glass-card p-4 flex items-center gap-3 group hover:shadow-lg transition-shadow"
+                  >
+                    <span className="h-9 w-9 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center shadow-md group-hover:scale-110 transition-transform">
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <span className="text-sm font-medium">{link.name}</span>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </motion.div>
+
+        {/* Footer message */}
+        <motion.p
+          variants={fadeInUp}
+          className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8 italic"
+        >
+          "Every meal matters. Let's continue making a difference together."
+        </motion.p>
       </motion.div>
     </div>
   );
