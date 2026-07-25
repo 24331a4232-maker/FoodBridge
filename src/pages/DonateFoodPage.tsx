@@ -226,7 +226,7 @@ export function DonateFoodPage() {
       description: form.description,
       contact_phone: form.contact_phone,
       is_urgent: form.is_urgent || quality?.isCloseToExpiry || false,
-      image_url: form.image_url || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
+      image_url: form.image_url || null,
     });
     setSubmitting(false);
     if (error) {

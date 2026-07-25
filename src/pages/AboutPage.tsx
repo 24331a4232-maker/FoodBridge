@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { SectionHeading, AnimatedCounter, fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { Illustration } from '@/components/Illustration';
 
 const timeline = [
   { year: '2023', title: 'The Idea', desc: 'A group of engineering students witnessed massive food waste at a college fest and decided to act.', icon: Lightbulb },
@@ -45,10 +46,10 @@ const foodWasteStats = [
 ];
 
 const team = [
-  { name: 'Arjun Sharma', role: 'Founder & CEO', bio: 'Final year Computer Science student passionate about using technology for social good.', img: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg' },
-  { name: 'Priya Nair', role: 'Co-Founder & CTO', bio: 'Full-stack developer leading the platform engineering and data systems.', img: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg' },
-  { name: 'Karthik Reddy', role: 'Operations Lead', bio: 'Manages partner relationships with hotels and NGOs across 28 cities.', img: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg' },
-  { name: 'Sneha Patel', role: 'Volunteer Coordinator', bio: 'Builds and trains the volunteer network, ensuring safe deliveries.', img: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg' },
+  { name: 'Arjun Sharma', role: 'Founder & CEO', bio: 'Final year Computer Science student passionate about using technology for social good.' },
+  { name: 'Priya Nair', role: 'Co-Founder & CTO', bio: 'Full-stack developer leading the platform engineering and data systems.' },
+  { name: 'Karthik Reddy', role: 'Operations Lead', bio: 'Manages partner relationships with hotels and NGOs across 28 cities.' },
+  { name: 'Sneha Patel', role: 'Volunteer Coordinator', bio: 'Builds and trains the volunteer network, ensuring safe deliveries.' },
 ];
 
 const volunteerStories = [
@@ -217,7 +218,7 @@ export function AboutPage() {
             >
               <div className="relative w-24 h-24 mx-auto mb-4">
                 <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
-                <img src={member.img} alt={member.name} className="relative rounded-full w-24 h-24 object-cover" loading="lazy" />
+                <div className="relative rounded-full w-24 h-24 flex items-center justify-center bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 font-display text-2xl font-semibold">{member.name[0]}</div>
               </div>
               <h3 className="font-display font-semibold text-lg">{member.name}</h3>
               <p className="text-sm text-primary-600 dark:text-primary-400 font-medium mb-2">{member.role}</p>
@@ -241,7 +242,7 @@ export function AboutPage() {
             "We started FoodBridge because we could not ignore the contradiction around us - mountains of food being thrown away while people went to bed hungry. Technology gave us the tool, but it is the community that makes it work. Every volunteer, every donor, every recipient is a bridge. Together, we are making sure no plate stays empty."
           </motion.p>
           <motion.div variants={fadeInUp} className="flex items-center gap-4">
-            <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg" alt="Founder" className="h-14 w-14 rounded-full object-cover" />
+            <div className="h-14 w-14 rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 flex items-center justify-center font-display text-xl font-semibold">A</div>
             <div>
               <p className="font-display font-semibold">Arjun Sharma</p>
               <p className="text-sm text-gray-500">Founder & CEO, FoodBridge</p>
@@ -303,25 +304,20 @@ export function AboutPage() {
         </motion.div>
       </section>
 
-      {/* Gallery */}
+      {/* Gallery — mission illustrations */}
       <section className="section">
-        <SectionHeading badge="Gallery" title="Moments of change" />
+        <SectionHeading badge="Gallery" title="Moments of change" subtitle="The journey of a donation, illustrated." />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-12">
-          {[
-            'https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg',
-            'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg',
-            'https://images.pexels.com/photos/262896/pexels-photo-262896.jpeg',
-            'https://images.pexels.com/photos/4488647/pexels-photo-4488647.jpeg',
-          ].map((url, i) => (
+          {(['donation', 'volunteers', 'delivery', 'community'] as const).map((v, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="rounded-2xl overflow-hidden aspect-square group cursor-pointer"
+              className="rounded-2xl overflow-hidden aspect-square group cursor-pointer bg-cream dark:bg-secondary-900 border border-linen/60 dark:border-secondary-800/60 flex items-center justify-center p-4"
             >
-              <img src={url} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+              <Illustration variant={v} className="w-full h-full group-hover:scale-110 transition-transform duration-500" />
             </motion.div>
           ))}
         </div>

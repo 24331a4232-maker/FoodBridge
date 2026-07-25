@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { PageNav } from '@/components/PageNav';
+import { Illustration } from '@/components/Illustration';
 import { fadeInUp, staggerContainer, scaleIn } from '@/lib/animations';
 
 const quickLinks = [
@@ -112,14 +113,8 @@ export function NotFoundPage() {
           </motion.div>
 
           {/* Illustration */}
-          <motion.div variants={scaleIn} className="relative mx-auto mb-6 w-full max-w-sm aspect-[16/10] rounded-2xl overflow-hidden shadow-xl shadow-primary-500/10">
-            <img
-              src="https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=900"
-              alt="Volunteers sharing food with the community"
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-primary-900/40 via-transparent to-transparent" />
+          <motion.div variants={scaleIn} className="relative mx-auto mb-6 w-full max-w-sm aspect-[16/10] rounded-2xl overflow-hidden shadow-xl shadow-primary-500/10 bg-cream dark:bg-secondary-900 flex items-center justify-center">
+            <Illustration variant="community" className="w-3/4 h-3/4" />
             <motion.div
               animate={{ y: [0, -8, 0] }}
               transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}

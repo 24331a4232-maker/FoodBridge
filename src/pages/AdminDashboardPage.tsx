@@ -8,6 +8,7 @@ import { useToast } from '@/context/ToastContext';
 import type { Profile, FoodDonation, ContactMessage } from '@/types';
 import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
 import { FoodQualityBadge } from '@/components/FoodQualityBadge';
+import { DonationImage } from '@/components/Illustration';
 
 type Tab = 'overview' | 'users' | 'donations' | 'reports' | 'messages';
 
@@ -179,7 +180,7 @@ export function AdminDashboardPage() {
                 <div className="space-y-2">
                   {donations.slice(0, 5).map((d) => (
                     <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
-                      <img src={d.image_url || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'} alt="" className="h-10 w-10 rounded-lg object-cover" />
+                      <DonationImage src={d.image_url} alt="" variant="donation" className="h-10 w-10 rounded-lg object-cover shrink-0" />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{d.food_name}</p>
                         <p className="text-xs text-gray-400">{d.organization}</p>

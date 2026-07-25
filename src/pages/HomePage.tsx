@@ -24,17 +24,17 @@ import {
   ClipboardCheck,
   Mail,
   Phone,
-  Sparkles,
   ChevronDown,
 } from 'lucide-react';
 import { AnimatedCounter, SectionHeading, fadeInUp, fadeIn, scaleIn, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { Illustration } from '@/components/Illustration';
 
 const steps = [
-  { icon: Hotel, title: 'A kitchen has extra', desc: 'A wedding ends. A banquet finishes. A hotel breakfast service closes. There is food — fresh, untouched, perfectly good — that has nowhere to go.' },
-  { icon: ShieldCheck, title: 'We verify it', desc: 'Temperature, hygiene, packaging, freshness. Every donation is checked against a real safety checklist before it is approved for pickup.' },
-  { icon: HeartHandshake, title: 'A neighbour steps up', desc: 'The nearest available volunteer receives the request. They accept, they ride, they carry. They are the bridge.' },
-  { icon: Truck, title: 'It reaches a plate', desc: 'Within four hours, the food arrives at a shelter, a school, a community kitchen. Surplus becomes a meal. Waste becomes dignity.' },
+  { title: 'A kitchen has extra', desc: 'A wedding ends. A banquet finishes. A hotel breakfast service closes. There is food — fresh, untouched, perfectly good — that has nowhere to go.', illustration: 'donation' as const },
+  { title: 'We verify it', desc: 'Temperature, hygiene, packaging, freshness. Every donation is checked against a real safety checklist before it is approved for pickup.', illustration: 'quality' as const },
+  { title: 'A neighbour steps up', desc: 'The nearest available volunteer receives the request. They accept, they ride, they carry. They are the bridge.', illustration: 'volunteers' as const },
+  { title: 'It reaches a plate', desc: 'Within four hours, the food arrives at a shelter, a school, a community kitchen. Surplus becomes a meal. Waste becomes dignity.', illustration: 'delivery' as const },
 ];
 
 const impactStats = [
@@ -57,19 +57,16 @@ const testimonials = [
     name: 'Rajesh Mehra',
     role: 'Hotel Manager, Mumbai',
     text: 'We used to throw away trays of food after every banquet. Now a volunteer is at our door before the last guest leaves. It changed how our whole team thinks about surplus.',
-    photo: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=200',
   },
   {
     name: 'Ananya Krishnan',
     role: 'Student Volunteer, Bangalore',
     text: 'I signed up on a Sunday. By Tuesday I had delivered my first meal. The look on a child\'s face when you hand over warm food — that stays with you.',
-    photo: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=200',
   },
   {
     name: 'Sister Maria Pinto',
     role: 'Shelter Coordinator, Goa',
     text: 'Before FoodBridge we never knew if we would have dinner. Now we plan around it. Reliability is the real gift — the food is secondary.',
-    photo: 'https://images.pexels.com/photos/5905786/pexels-photo-5905786.jpeg?auto=compress&cs=tinysrgb&w=200',
   },
 ];
 
@@ -108,50 +105,85 @@ export function HomePage() {
           <div className="absolute bottom-10 right-0 h-96 w-96 rounded-full bg-accent-200/30 blur-3xl" />
         </div>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
-          <motion.span
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.15 }}
-            className="eyebrow mb-7"
-          >
-            <Leaf className="h-3.5 w-3.5" /> A community against food waste
-          </motion.span>
+        <div className="relative z-10 max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center w-full">
+          <div className="text-center lg:text-left">
+            <motion.span
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}
+              className="eyebrow mb-7"
+            >
+              <Leaf className="h-3.5 w-3.5" /> A community against food waste
+            </motion.span>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25, duration: 0.8 }}
-            className="font-display text-[2.75rem] sm:text-6xl lg:text-7xl font-medium tracking-[-0.03em] leading-[1.02] text-ink dark:text-cream text-balance"
-          >
-            No plate<br />left empty.
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.25, duration: 0.8 }}
+              className="font-display text-[2.75rem] sm:text-6xl lg:text-7xl font-medium tracking-[-0.03em] leading-[1.02] text-ink dark:text-cream text-balance"
+            >
+              No plate<br />left empty.
+            </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.45 }}
-            className="text-lg sm:text-xl text-ink-soft dark:text-cream/70 mt-8 max-w-xl mx-auto leading-relaxed text-pretty"
-          >
-            FoodBridge redirects surplus food from weddings, hotels and events to the people who need it most — within four hours, before it ever becomes waste.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45 }}
+              className="text-lg sm:text-xl text-ink-soft dark:text-cream/70 mt-8 max-w-xl mx-auto lg:mx-0 leading-relaxed text-pretty"
+            >
+              FoodBridge redirects surplus food from weddings, hotels and events to the people who need it most — within four hours, before it ever becomes waste.
+            </motion.p>
 
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-10"
+            >
+              <Link to="/donate-food">
+                <RippleButton variant="primary" className="text-base px-7 py-3.5">
+                  Donate food <ArrowRight className="h-4 w-4" />
+                </RippleButton>
+              </Link>
+              <Link to="/register">
+                <RippleButton variant="secondary" className="text-base px-7 py-3.5">
+                  Become a volunteer
+                </RippleButton>
+              </Link>
+            </motion.div>
+          </div>
+
+          {/* Premium hero illustration — community & donation */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-3 mt-10"
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.5, duration: 0.9, ease: [0.25, 0.4, 0.25, 1] }}
+            className="relative hidden lg:flex items-center justify-center"
           >
-            <Link to="/donate-food">
-              <RippleButton variant="primary" className="text-base px-7 py-3.5">
-                Donate food <ArrowRight className="h-4 w-4" />
-              </RippleButton>
-            </Link>
-            <Link to="/register">
-              <RippleButton variant="secondary" className="text-base px-7 py-3.5">
-                Become a volunteer
-              </RippleButton>
-            </Link>
+            <div className="relative w-full max-w-md aspect-square">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-100/60 via-accent-100/40 to-secondary-100/50 blur-2xl" />
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                className="relative"
+              >
+                <Illustration variant="community" className="w-full h-full drop-shadow-premium" />
+              </motion.div>
+              <motion.div
+                animate={{ y: [0, 10, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
+                className="absolute -bottom-2 -left-2 w-28 h-28"
+              >
+                <Illustration variant="delivery" className="w-full h-full" />
+              </motion.div>
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
+                className="absolute -top-2 -right-2 w-24 h-24"
+              >
+                <Illustration variant="donation" className="w-full h-full" />
+              </motion.div>
+            </div>
           </motion.div>
         </div>
 
@@ -204,7 +236,6 @@ export function HomePage() {
           />
           <div className="mt-20 space-y-20">
             {steps.map((step, i) => {
-              const StepIcon = step.icon;
               const reverse = i % 2 === 1;
               return (
                 <motion.div
@@ -229,8 +260,8 @@ export function HomePage() {
                   <div className="flex justify-center md:justify-start">
                     <div className="relative">
                       <div className="absolute inset-0 rounded-full bg-primary-100 dark:bg-primary-900/30 blur-2xl scale-150" />
-                      <div className="relative h-28 w-28 rounded-full bg-white dark:bg-secondary-900 border border-linen dark:border-secondary-800 flex items-center justify-center shadow-soft">
-                        <StepIcon className="h-10 w-10 text-primary-600 dark:text-primary-400" strokeWidth={1.5} />
+                      <div className="relative h-40 w-40">
+                        <Illustration variant={step.illustration} className="w-full h-full drop-shadow-soft" />
                       </div>
                     </div>
                   </div>
@@ -343,7 +374,9 @@ export function HomePage() {
                   {t.text}
                 </blockquote>
                 <figcaption className="flex items-center gap-3 mt-7 pt-6 border-t border-linen dark:border-secondary-800">
-                  <img src={t.photo} alt={t.name} className="h-11 w-11 rounded-full object-cover ring-1 ring-linen dark:ring-secondary-700" loading="lazy" />
+                  <div className="h-11 w-11 rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 flex items-center justify-center font-display font-semibold text-lg ring-1 ring-linen dark:ring-secondary-700">
+                    {t.name[0]}
+                  </div>
                   <div>
                     <p className="font-medium text-sm text-ink dark:text-cream">{t.name}</p>
                     <p className="text-xs text-ink-soft dark:text-cream/50 mt-0.5">{t.role}</p>
@@ -408,7 +441,12 @@ export function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <Sparkles className="h-7 w-7 text-accent-500 mx-auto mb-6" strokeWidth={1.5} />
+            <div className="flex justify-center mb-6">
+              <div className="relative w-24 h-24">
+                <div className="absolute inset-0 rounded-full bg-accent-100/60 dark:bg-accent-900/30 blur-xl" />
+                <Illustration variant="bridge" className="relative w-full h-full" />
+              </div>
+            </div>
             <h2 className="font-display text-3xl sm:text-5xl font-medium tracking-[-0.02em] text-ink dark:text-cream text-balance leading-[1.1]">
               Tonight, somewhere near you, a kitchen will have too much.
             </h2>

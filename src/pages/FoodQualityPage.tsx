@@ -9,6 +9,7 @@ import {
   ZoomIn, ZoomOut, Maximize, Printer, ScanLine,
 } from 'lucide-react';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { Illustration } from '@/components/Illustration';
 import { fadeInUp, scaleIn, slideInRight, staggerContainer } from '@/lib/animations';
 
 const IVORY = '#FFFDF8';
@@ -41,11 +42,11 @@ const qualityBadges = [
 ];
 
 const galleryItems = [
-  { title: 'Fresh Meals', url: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=800' },
-  { title: 'Rice Packs', url: 'https://images.pexels.com/photos/1457327/pexels-photo-1457327.jpeg?auto=compress&cs=tinysrgb&w=800' },
-  { title: 'Vegetables', url: 'https://images.pexels.com/photos/1656663/pexels-photo-1656663.jpeg?auto=compress&cs=tinysrgb&w=800' },
-  { title: 'Hotel Packed Food', url: 'https://images.pexels.com/photos/326278/pexels-photo-326278.jpeg?auto=compress&cs=tinysrgb&w=800' },
-  { title: 'Volunteer Inspection', url: 'https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=800' },
+  { title: 'Donation Handover', illustration: 'donation' as const },
+  { title: 'Volunteer Inspection', illustration: 'quality' as const },
+  { title: 'Delivery Run', illustration: 'delivery' as const },
+  { title: 'Community Sharing', illustration: 'community' as const },
+  { title: 'Shelter Arrival', illustration: 'shelter' as const },
 ];
 
 const approvalStatuses = [
@@ -225,7 +226,6 @@ function CertificateDocument({ scale = 1 }: { scale?: number }) {
 import { PageNav } from '@/components/PageNav';
 export function FoodQualityPage() {
   const [checked, setChecked] = useState<Record<number, boolean>>({ 0: true, 1: true, 2: true, 3: true, 4: true, 5: true, 6: true });
-  const [zoom, setZoom] = useState<string | null>(null);
   const [certModal, setCertModal] = useState(false);
   const [certScale, setCertScale] = useState(1);
 
@@ -370,33 +370,24 @@ export function FoodQualityPage() {
         </motion.div>
       </section>
 
-      {/* GALLERY */}
+      {/* GALLERY — mission illustrations */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto">
         <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-center mb-10">
           <span className="badge bg-orange-100 text-orange-700 mb-3"><Eye className="h-3.5 w-3.5" /> Gallery</span>
-          <h2 className="section-title">Food Photos Gallery</h2>
-          <p className="section-subtitle">A glimpse of verified donations from our partners.</p>
+          <h2 className="section-title">The Journey of a Donation</h2>
+          <p className="section-subtitle">From a kitchen with extra to a family in need — illustrated.</p>
         </motion.div>
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
           {galleryItems.map((g) => (
-            <motion.div key={g.title} variants={scaleIn} whileHover={{ scale: 1.04 }} onClick={() => setZoom(g.url)} className="relative aspect-square rounded-2xl overflow-hidden cursor-pointer shadow-lg group">
-              <img src={g.url} alt={g.title} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-              <p className="absolute bottom-3 left-3 text-white font-semibold text-sm">{g.title}</p>
+            <motion.div key={g.title} variants={scaleIn} whileHover={{ y: -6 }} className="relative aspect-square rounded-2xl overflow-hidden shadow-soft group bg-cream dark:bg-secondary-900 border border-linen/60 dark:border-secondary-800/60">
+              <div className="absolute inset-0 flex items-center justify-center p-4">
+                <Illustration variant={g.illustration} className="w-full h-full transition-transform duration-500 group-hover:scale-105" />
+              </div>
+              <p className="absolute bottom-3 left-3 right-3 text-center font-display font-semibold text-sm text-ink dark:text-cream">{g.title}</p>
             </motion.div>
           ))}
         </motion.div>
       </section>
-
-      {/* Lightbox */}
-      <AnimatePresence>
-        {zoom && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setZoom(null)} className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-            <button className="absolute top-6 right-6 text-white/80 hover:text-white"><X className="h-8 w-8" /></button>
-            <motion.img src={zoom} alt="zoom" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }} className="max-h-[85vh] max-w-[85vw] rounded-2xl shadow-2xl" />
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* APPROVAL STATUS */}
       <section className="px-4 sm:px-6 lg:px-8 py-16 max-w-7xl mx-auto">

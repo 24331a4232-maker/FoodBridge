@@ -15,6 +15,7 @@ import { LeafletMap, haversineKm, estimateTravelTimeMin, type MapPoint } from '@
 import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
 import { createCertificateRecord } from '@/lib/certificate';
 import { FoodQualityBadge } from '@/components/FoodQualityBadge';
+import { DonationImage } from '@/components/Illustration';
 
 interface LeaderboardEntry {
   name: string;
@@ -280,7 +281,7 @@ export function VolunteerDashboardPage() {
                     const dist = position ? nearbyWithDistance.find((x) => x.d.id === d.id)?.dist : null;
                     return (
                       <motion.div key={d.id} variants={fadeInUp} initial="hidden" animate="visible" className="flex items-center gap-4 p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors">
-                        <img src={d.image_url || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'} alt="" className="h-16 w-16 rounded-xl object-cover shrink-0" />
+                        <DonationImage src={d.image_url} alt="" variant="donation" className="h-16 w-16 rounded-xl object-cover shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="font-semibold text-sm truncate">{d.food_name}</p>
                           <p className="text-xs text-gray-500 truncate">{d.organization} - {d.city}</p>

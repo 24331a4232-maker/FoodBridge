@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { AnimatedCounter, fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { Illustration } from '@/components/Illustration';
 
 interface Section {
   id: string;
@@ -67,19 +68,19 @@ const whyReasons = [
 const successStories = [
   {
     name: 'The Grand Hotel, Bangalore',
-    img: 'https://images.pexels.com/photos/262047/pexels-photo-262047.jpeg',
+    illustration: 'donation' as const,
     quote: 'We used to throw away 40+ meals after every banquet. FoodBridge now redirects all of it to a nearby shelter the same night. Zero waste, full hearts.',
     meals: 12400, period: '8 months',
   },
   {
     name: 'Sunrise Orphanage, Delhi',
-    img: 'https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg',
+    illustration: 'shelter' as const,
     quote: 'Our children get warm, fresh meals every evening from partner hotels. The quality verification gives us complete peace of mind about what they eat.',
     meals: 8600, period: '6 months',
   },
   {
     name: 'Rahul Verma, Volunteer',
-    img: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg',
+    illustration: 'volunteers' as const,
     quote: 'I have completed 45 deliveries. The certificate I earned helped me in my college application. FoodBridge gave me purpose and a community.',
     meals: 45, period: '6 months',
   },
@@ -369,11 +370,10 @@ export function RealChallengesPage() {
                       whileHover={{ y: -8 }}
                       className="card overflow-hidden group"
                     >
-                      <div className="relative h-44 overflow-hidden">
-                        <img src={story.img} alt={story.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      <div className="relative h-44 overflow-hidden bg-cream dark:bg-secondary-900 flex items-center justify-center p-6">
+                        <Illustration variant={story.illustration} className="w-full h-full group-hover:scale-105 transition-transform duration-500" />
                         <div className="absolute bottom-3 left-3 right-3">
-                          <p className="text-white font-display font-semibold text-sm">{story.name}</p>
+                          <p className="font-display font-semibold text-sm text-ink dark:text-cream">{story.name}</p>
                           <p className="text-white/70 text-xs">{story.period}</p>
                         </div>
                       </div>
@@ -489,10 +489,9 @@ export function RealChallengesPage() {
                 <div className="space-y-4">
                   {successStories.map((story) => (
                     <div key={story.name} className="card overflow-hidden">
-                      <div className="relative h-36 overflow-hidden">
-                        <img src={story.img} alt={story.name} className="w-full h-full object-cover" loading="lazy" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <p className="absolute bottom-2 left-3 text-white font-display font-semibold text-sm">{story.name}</p>
+                      <div className="relative h-36 overflow-hidden bg-cream dark:bg-secondary-900 flex items-center justify-center p-4">
+                        <Illustration variant={story.illustration} className="w-full h-full" />
+                        <p className="absolute bottom-2 left-3 font-display font-semibold text-sm text-ink dark:text-cream">{story.name}</p>
                       </div>
                       <div className="p-4">
                         <Quote className="h-5 w-5 text-primary-200 dark:text-primary-900/40 mb-2" />

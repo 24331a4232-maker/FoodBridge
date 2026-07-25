@@ -11,6 +11,7 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { LeafletMap, haversineKm, estimateTravelTimeMin, type MapPoint } from '@/components/LeafletMap';
 import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
 import { FoodQualityBadge } from '@/components/FoodQualityBadge';
+import { DonationImage } from '@/components/Illustration';
 import type { FreshnessStatus } from '@/types';
 
 const categories: { value: FoodCategory | 'all'; label: string }[] = [
@@ -299,7 +300,7 @@ export function AvailableFoodPage() {
                 className="card overflow-hidden cursor-pointer group"
               >
                 <div className="relative h-48 overflow-hidden">
-                  <img src={d.image_url || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'} alt={d.food_name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                  <DonationImage src={d.image_url} alt={d.food_name} variant="donation" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                   {d.is_urgent && (
                     <span className="absolute top-3 left-3 badge bg-red-500 text-white">
                       <Flame className="h-3 w-3" /> Urgent
@@ -404,7 +405,7 @@ export function AvailableFoodPage() {
               className="glass-card max-w-lg w-full overflow-hidden max-h-[90vh] overflow-y-auto"
             >
               <div className="relative h-56">
-                <img src={selected.image_url || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'} alt={selected.food_name} className="w-full h-full object-cover" />
+                <DonationImage src={selected.image_url} alt={selected.food_name} variant="donation" className="w-full h-full object-cover" />
                 <button onClick={() => setSelected(null)} className="absolute top-3 right-3 h-9 w-9 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center">
                   <X className="h-5 w-5" />
                 </button>
