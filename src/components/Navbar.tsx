@@ -4,76 +4,92 @@ import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-
 import {
   Menu, X, Moon, Sun, LogOut, ChevronDown, LayoutDashboard, User as UserIcon,
   Award, Package, Search, ShieldCheck, MapPin, Truck,
-  Building2, FileText, Lock, HelpCircle, Home, Info, Phone, Search as SearchIcon, Globe2,
-  type LucideIcon,
+  Building2, FileText, Lock, HelpCircle, Home, Info, Phone, Search as SearchIcon,
+  Settings, LogIn, UserPlus, ChevronRight, type LucideIcon,
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
 import { NotificationBell } from '@/components/NotificationBell';
 
-interface NavItem {
+interface MenuLink {
   name: string;
-  path?: string;
+  path: string;
   icon: LucideIcon;
-  children?: { name: string; path: string; icon: LucideIcon }[];
+}
+interface MenuSection {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  accent: 'green' | 'orange';
+  links: MenuLink[];
 }
 
-const navItems: NavItem[] = [
+const primaryLinks: MenuLink[] = [
   { name: 'Home', path: '/', icon: Home },
   { name: 'About', path: '/about', icon: Info },
+  { name: 'Contact', path: '/contact', icon: Phone },
+];
+
+const menuSections: MenuSection[] = [
   {
-    name: 'Features',
+    id: 'account',
+    label: 'Account',
+    icon: UserIcon,
+    accent: 'green',
+    links: [
+      { name: 'My Profile', path: '/profile', icon: UserIcon },
+      { name: 'Profile Settings', path: '/profile', icon: Settings },
+    ],
+  },
+  {
+    id: 'certificates',
+    label: 'Certificates',
+    icon: Award,
+    accent: 'orange',
+    links: [
+      { name: 'My Certificates', path: '/certificate', icon: Award },
+      { name: 'Certificate Verification', path: '/verify-certificate', icon: ShieldCheck },
+    ],
+  },
+  {
+    id: 'dashboards',
+    label: 'Dashboards',
+    icon: LayoutDashboard,
+    accent: 'green',
+    links: [
+      { name: 'Volunteer Dashboard', path: '/volunteer', icon: LayoutDashboard },
+      { name: 'Admin Dashboard', path: '/admin', icon: Building2 },
+    ],
+  },
+  {
+    id: 'features',
+    label: 'Features',
     icon: Package,
-    children: [
+    accent: 'orange',
+    links: [
       { name: 'Donate Food', path: '/donate-food', icon: Package },
       { name: 'Available Donations', path: '/available-food', icon: Search },
-      { name: 'Food Quality Verification', path: '/food-quality', icon: ShieldCheck },
+      { name: 'Food Quality', path: '/food-quality', icon: ShieldCheck },
       { name: 'Donation Tracking', path: '/tracking', icon: Truck },
       { name: 'Current Location Map', path: '/location', icon: MapPin },
     ],
   },
   {
-    name: 'Dashboards',
-    icon: LayoutDashboard,
-    children: [
-      { name: 'Volunteer Dashboard', path: '/volunteer', icon: LayoutDashboard },
-      { name: 'Admin Dashboard', path: '/admin', icon: Building2 },
-      { name: 'Profile & Settings', path: '/profile', icon: UserIcon },
-    ],
-  },
-  {
-    name: 'Certificates',
-    icon: Award,
-    children: [
-      { name: 'Volunteer Certificate', path: '/certificate', icon: Award },
-      { name: 'Certificate Verification', path: '/verify-certificate', icon: ShieldCheck },
-    ],
-  },
-  {
-    name: 'Resources',
+    id: 'resources',
+    label: 'Resources',
     icon: FileText,
-    children: [
+    accent: 'green',
+    links: [
       { name: 'FAQ', path: '/help', icon: HelpCircle },
-      { name: 'Real Challenges', path: '/challenges', icon: Globe2 },
       { name: 'Privacy Policy', path: '/privacy', icon: Lock },
       { name: 'Terms & Conditions', path: '/terms', icon: FileText },
     ],
   },
-  { name: 'Contact', path: '/contact', icon: Phone },
 ];
-
-function isActive(pathname: string, path?: string, children?: { path: string }[]): boolean {
-  if (path) return pathname === path;
-  if (children) return children.some((c) => pathname === c.path);
-  return false;
-}
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
-  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
-  const [userMenu, setUserMenu] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { theme, toggleTheme } = useTheme();
@@ -86,29 +102,24 @@ export function Navbar() {
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     const prev = prevY.current;
-    if (latest > prev && latest > 160 && !mobileOpen) {
-      setHidden(true);
-    } else {
-      setHidden(false);
-    }
+    if (latest > prev && latest > 160 && !drawerOpen) setHidden(true);
+    else setHidden(false);
     prevY.current = latest;
     setScrolled(latest > 20);
   });
 
   useEffect(() => {
-    setMobileOpen(false);
-    setOpenDropdown(null);
-    setUserMenu(false);
-    setMobileExpanded(null);
+    setDrawerOpen(false);
     setSearchOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
-    document.body.style.overflow = mobileOpen ? 'hidden' : '';
+    document.body.style.overflow = drawerOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
-  }, [mobileOpen]);
+  }, [drawerOpen]);
 
   const handleSignOut = async () => {
+    setDrawerOpen(false);
     await signOut();
     navigate('/');
   };
@@ -119,366 +130,317 @@ export function Navbar() {
     setSearchOpen(false);
     setSearchQuery('');
     if (!q) return;
-    const match = navItems.flatMap((i) => i.children ?? [{ name: i.name, path: i.path }]).find((c) => c.name.toLowerCase().includes(q));
+    const all = menuSections.flatMap((s) => s.links).concat(primaryLinks);
+    const match = all.find((c) => c.name.toLowerCase().includes(q));
     if (match?.path) navigate(match.path);
   };
 
+  const accentClasses = {
+    green: {
+      icon: 'text-secondary-600 dark:text-secondary-400',
+      chip: 'bg-secondary-100 dark:bg-secondary-900/40 text-secondary-700 dark:text-secondary-300',
+      dot: 'bg-secondary-500',
+      hover: 'hover:bg-secondary-50 dark:hover:bg-secondary-900/30',
+      activeIcon: 'bg-secondary-600 text-cream',
+    },
+    orange: {
+      icon: 'text-accent-600 dark:text-accent-400',
+      chip: 'bg-accent-100 dark:bg-accent-900/40 text-accent-700 dark:text-accent-300',
+      dot: 'bg-accent-500',
+      hover: 'hover:bg-accent-50 dark:hover:bg-accent-900/30',
+      activeIcon: 'bg-accent-600 text-cream',
+    },
+  };
+
   return (
-    <motion.nav
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: hidden ? -100 : 0, opacity: 1 }}
-      transition={{ duration: 0.35, ease: [0.25, 0.4, 0.25, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled ? 'glass-nav shadow-soft' : 'bg-cream/60 dark:bg-secondary-950/60 backdrop-blur-md'
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16 sm:h-18">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2.5 group shrink-0">
-            <motion.img
-              src="/logo.png"
-              alt="FoodBridge"
-              className="h-9 w-9 sm:h-10 sm:w-10 object-contain"
-              whileHover={{ rotate: 10, scale: 1.05 }}
-              transition={{ type: 'spring', stiffness: 300 }}
-            />
-            <span className="font-display text-lg sm:text-xl font-semibold gradient-text-soft">FoodBridge</span>
-          </Link>
+    <>
+      <motion.nav
+        initial={{ y: -80, opacity: 0 }}
+        animate={{ y: hidden ? -100 : 0, opacity: 1 }}
+        transition={{ duration: 0.35, ease: [0.25, 0.4, 0.25, 1] }}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled ? 'glass-nav shadow-soft' : 'bg-cream/60 dark:bg-secondary-950/60 backdrop-blur-md'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-18">
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-2.5 group shrink-0">
+              <motion.img
+                src="/logo.png"
+                alt="FoodBridge"
+                className="h-9 w-9 sm:h-10 sm:w-10 object-contain"
+                whileHover={{ rotate: 10, scale: 1.05 }}
+                transition={{ type: 'spring', stiffness: 300 }}
+              />
+              <span className="font-display text-lg sm:text-xl font-semibold gradient-text-soft">FoodBridge</span>
+            </Link>
 
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-0.5">
-            {navItems.map((item) => {
-              const active = isActive(location.pathname, item.path, item.children);
-              const TopIcon = item.icon;
-              if (item.children) {
+            {/* Primary links — desktop */}
+            <div className="hidden md:flex items-center gap-1">
+              {primaryLinks.map((item) => {
+                const active = location.pathname === item.path;
+                const Icon = item.icon;
                 return (
-                  <div
+                  <Link
                     key={item.name}
-                    className="relative"
-                    onMouseEnter={() => setOpenDropdown(item.name)}
-                    onMouseLeave={() => setOpenDropdown((cur) => (cur === item.name ? null : cur))}
+                    to={item.path}
+                    className={`relative flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
+                      active
+                        ? 'text-primary-700 dark:text-primary-300'
+                        : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'
+                    }`}
                   >
-                    <button
-                      className={`relative flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
-                        active
-                          ? 'text-primary-700 dark:text-primary-300'
-                          : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'
-                      }`}
-                    >
-                      <TopIcon className="h-4 w-4 opacity-70" />
-                      {item.name}
-                      <motion.span animate={{ rotate: openDropdown === item.name ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                        <ChevronDown className="h-3.5 w-3.5" />
-                      </motion.span>
-                      {active && (
-                        <motion.span layoutId="navUnderline" className="absolute left-3.5 right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />
-                      )}
-                    </button>
-                    <AnimatePresence>
-                      {openDropdown === item.name && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10, scale: 0.97 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: 10, scale: 0.97 }}
-                          transition={{ duration: 0.18, ease: 'easeOut' }}
-                          className="absolute left-0 top-full pt-2.5 w-64"
-                        >
-                          <div className="bg-white dark:bg-secondary-900 rounded-2xl-premium p-2 shadow-premium border border-linen/70 dark:border-secondary-800/60">
-                            <div className="absolute -top-1.5 left-6 h-3 w-3 rotate-45 bg-white dark:bg-secondary-900 border-l border-t border-linen/70 dark:border-secondary-800/60" />
-                            {item.children.map((child) => {
-                              const ChildIcon = child.icon;
-                              const childActive = location.pathname === child.path;
-                              return (
-                                <Link
-                                  key={child.path}
-                                  to={child.path}
-                                  className={`flex items-center gap-3 px-3 py-2.5 rounded-xl-premium transition-all duration-200 ${
-                                    childActive
-                                      ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                                      : 'hover:bg-oat dark:hover:bg-secondary-800 text-ink-soft dark:text-cream/70'
-                                  }`}
-                                >
-                                  <span className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${childActive ? 'bg-primary-600 text-cream' : 'bg-oat dark:bg-secondary-800 text-primary-500'}`}>
-                                    <ChildIcon className="h-4 w-4" />
-                                  </span>
-                                  <span className="text-sm font-medium">{child.name}</span>
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
+                    <Icon className="h-4 w-4 opacity-70" />
+                    {item.name}
+                    {active && (
+                      <motion.span layoutId="navUnderline" className="absolute left-3.5 right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />
+                    )}
+                  </Link>
                 );
-              }
-              return (
-                <Link
-                  key={item.name}
-                  to={item.path!}
-                  className={`relative flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
-                    active
-                      ? 'text-primary-700 dark:text-primary-300'
-                      : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'
-                  }`}
-                >
-                  <TopIcon className="h-4 w-4 opacity-70" />
-                  {item.name}
-                  {active && (
-                    <motion.span layoutId="navUnderline" className="absolute left-3.5 right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />
+              })}
+            </div>
+
+            {/* Right side — minimal: search, theme, bell, avatar, hamburger */}
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <button
+                onClick={() => setSearchOpen(!searchOpen)}
+                className="p-2 rounded-full hover:bg-oat dark:hover:bg-secondary-800 transition-colors"
+                aria-label="Search"
+              >
+                <SearchIcon className="h-5 w-5 text-ink-soft dark:text-cream/70" />
+              </button>
+
+              <button
+                onClick={toggleTheme}
+                className="p-2 rounded-full hover:bg-oat dark:hover:bg-secondary-800 transition-colors"
+                aria-label="Toggle theme"
+              >
+                <AnimatePresence mode="wait">
+                  {theme === 'light' ? (
+                    <motion.div key="moon" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
+                      <Moon className="h-5 w-5 text-ink-soft" />
+                    </motion.div>
+                  ) : (
+                    <motion.div key="sun" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
+                      <Sun className="h-5 w-5 text-accent-400" />
+                    </motion.div>
                   )}
-                </Link>
-              );
-            })}
-          </div>
+                </AnimatePresence>
+              </button>
 
-          {/* Right side */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <button
-              onClick={() => setSearchOpen(!searchOpen)}
-              className="p-2 rounded-full hover:bg-oat dark:hover:bg-secondary-800 transition-colors"
-              aria-label="Search"
-            >
-              <SearchIcon className="h-5 w-5 text-ink-soft dark:text-cream/70" />
-            </button>
+              {user && <NotificationBell />}
 
-            {user && <NotificationBell />}
-
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-full hover:bg-oat dark:hover:bg-secondary-800 transition-colors"
-              aria-label="Toggle theme"
-            >
-              <AnimatePresence mode="wait">
-                {theme === 'light' ? (
-                  <motion.div key="moon" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
-                    <Moon className="h-5 w-5 text-ink-soft" />
-                  </motion.div>
-                ) : (
-                  <motion.div key="sun" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
-                    <Sun className="h-5 w-5 text-accent-400" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </button>
-
-            {user ? (
-              <div className="relative hidden sm:block">
-                <button
-                  onClick={() => setUserMenu(!userMenu)}
+              {user ? (
+                <Link
+                  to="/profile"
                   className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full glass hover:shadow-soft transition-all"
+                  aria-label="My profile"
                 >
                   <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center text-cream text-sm font-bold">
                     {profile?.full_name?.[0]?.toUpperCase() ?? 'U'}
                   </div>
-                  <span className="text-sm font-medium max-w-[100px] truncate text-ink dark:text-cream">{profile?.full_name?.split(' ')[0] ?? 'User'}</span>
-                  <ChevronDown className="h-3.5 w-3.5 text-ink-soft dark:text-cream/50" />
-                </button>
-                <AnimatePresence>
-                  {userMenu && (
-                    <>
-                      <div className="fixed inset-0 z-10" onClick={() => setUserMenu(false)} />
-                      <motion.div
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 mt-2 w-56 bg-white dark:bg-secondary-900 rounded-2xl-premium p-2 shadow-premium border border-linen/70 dark:border-secondary-800/60 z-20"
-                      >
-                        <div className="px-3 py-2 mb-1 border-b border-linen dark:border-secondary-800">
-                          <p className="text-sm font-semibold truncate text-ink dark:text-cream">{profile?.full_name ?? 'User'}</p>
-                          <p className="text-xs text-ink-soft dark:text-cream/50 truncate mt-0.5">{profile?.email ?? user.email}</p>
-                        </div>
-                        <Link to="/profile" className="flex items-center gap-3 px-3 py-2.5 rounded-xl-premium hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">
-                          <UserIcon className="h-4 w-4 text-primary-600" />
-                          <span className="text-sm text-ink dark:text-cream">My Profile</span>
-                        </Link>
-                        <Link to="/volunteer" className="flex items-center gap-3 px-3 py-2.5 rounded-xl-premium hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">
-                          <LayoutDashboard className="h-4 w-4 text-primary-600" />
-                          <span className="text-sm text-ink dark:text-cream">Dashboard</span>
-                        </Link>
-                        <Link to="/certificate" className="flex items-center gap-3 px-3 py-2.5 rounded-xl-premium hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">
-                          <Award className="h-4 w-4 text-primary-600" />
-                          <span className="text-sm text-ink dark:text-cream">Certificate</span>
-                        </Link>
-                        {profile?.role === 'admin' && (
-                          <Link to="/admin" className="flex items-center gap-3 px-3 py-2.5 rounded-xl-premium hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">
-                            <Building2 className="h-4 w-4 text-accent-600" />
-                            <span className="text-sm text-ink dark:text-cream">Admin Panel</span>
-                          </Link>
-                        )}
-                        <button onClick={handleSignOut} className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl-premium hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 transition-colors">
-                          <LogOut className="h-4 w-4" />
-                          <span className="text-sm">Sign Out</span>
-                        </button>
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <div className="hidden sm:flex items-center gap-2">
-                <Link to="/login" className="btn-ghost text-sm">Login</Link>
-                <Link to="/register" className="btn-primary text-sm">Register</Link>
-              </div>
-            )}
+                  <span className="hidden sm:block text-sm font-medium max-w-[110px] truncate text-ink dark:text-cream">
+                    {profile?.full_name?.split(' ')[0] ?? 'User'}
+                  </span>
+                </Link>
+              ) : (
+                <div className="hidden sm:flex items-center gap-2">
+                  <Link to="/login" className="btn-ghost text-sm">Login</Link>
+                  <Link to="/register" className="btn-primary text-sm">Register</Link>
+                </div>
+              )}
 
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2 rounded-full hover:bg-oat dark:hover:bg-secondary-800 transition-colors"
-              aria-label="Menu"
-            >
-              <AnimatePresence mode="wait">
-                {mobileOpen ? (
-                  <motion.div key="x" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }}>
-                    <X className="h-6 w-6 text-ink dark:text-cream" />
-                  </motion.div>
-                ) : (
-                  <motion.div key="menu" initial={{ rotate: 90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }}>
-                    <Menu className="h-6 w-6 text-ink dark:text-cream" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Search bar */}
-      <AnimatePresence>
-        {searchOpen && (
-          <motion.form
-            onSubmit={handleSearch}
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="lg:hidden overflow-hidden border-t border-linen dark:border-secondary-800"
-          >
-            <div className="px-4 py-3 flex gap-2">
-              <input
-                autoFocus
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search pages..."
-                className="input-field text-sm"
-              />
-              <button type="submit" className="btn-primary px-4 py-2.5 shrink-0">
-                <SearchIcon className="h-4 w-4" />
+              {/* Hamburger — opens the drawer */}
+              <button
+                onClick={() => setDrawerOpen(true)}
+                className="p-2 rounded-full hover:bg-oat dark:hover:bg-secondary-800 transition-colors"
+                aria-label="Open menu"
+              >
+                <motion.div initial={false} animate={{ rotate: drawerOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
+                  <Menu className="h-6 w-6 text-ink dark:text-cream" />
+                </motion.div>
               </button>
             </div>
-          </motion.form>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
 
-      {/* Mobile menu */}
+        {/* Search bar */}
+        <AnimatePresence>
+          {searchOpen && (
+            <motion.form
+              onSubmit={handleSearch}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="overflow-hidden border-t border-linen dark:border-secondary-800"
+            >
+              <div className="px-4 py-3 flex gap-2">
+                <input
+                  autoFocus
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search pages..."
+                  className="input-field text-sm"
+                />
+                <button type="submit" className="btn-primary px-4 py-2.5 shrink-0">
+                  <SearchIcon className="h-4 w-4" />
+                </button>
+              </div>
+            </motion.form>
+          )}
+        </AnimatePresence>
+      </motion.nav>
+
+      {/* Premium glassmorphism drawer */}
       <AnimatePresence>
-        {mobileOpen && (
+        {drawerOpen && (
           <>
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setMobileOpen(false)}
-              className="lg:hidden fixed inset-0 top-16 bg-ink/20 backdrop-blur-sm z-40"
+              onClick={() => setDrawerOpen(false)}
+              className="fixed inset-0 z-[60] bg-ink/30 backdrop-blur-sm"
             />
-            <motion.div
+            <motion.aside
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-              className="lg:hidden fixed top-16 right-0 bottom-0 w-[85%] max-w-sm bg-cream dark:bg-secondary-950 z-40 overflow-y-auto border-l border-linen dark:border-secondary-800"
+              transition={{ type: 'spring', stiffness: 320, damping: 34 }}
+              className="fixed top-0 right-0 bottom-0 z-[70] w-full max-w-md flex flex-col"
             >
-              <div className="px-4 py-5 space-y-1">
-                {navItems.map((item) => {
-                  const active = isActive(location.pathname, item.path, item.children);
-                  const TopIcon = item.icon;
-                  if (item.children) {
-                    const expanded = mobileExpanded === item.name;
-                    return (
-                      <div key={item.name}>
-                        <button
-                          onClick={() => setMobileExpanded(expanded ? null : item.name)}
-                          className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl-premium text-sm font-medium transition-colors ${
-                            active
-                              ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300'
-                              : 'hover:bg-oat dark:hover:bg-secondary-800 text-ink dark:text-cream'
-                          }`}
-                        >
-                          <span className="flex items-center gap-2.5">
-                            <TopIcon className="h-4 w-4 text-primary-500" />
-                            {item.name}
-                          </span>
-                          <motion.span animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 0.2 }}>
-                            <ChevronDown className="h-4 w-4" />
-                          </motion.span>
-                        </button>
-                        <AnimatePresence initial={false}>
-                          {expanded && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.25 }}
-                              className="overflow-hidden pl-3 mt-1 space-y-0.5"
-                            >
-                              {item.children.map((child) => {
-                                const ChildIcon = child.icon;
-                                const childActive = location.pathname === child.path;
-                                return (
-                                  <Link
-                                    key={child.path}
-                                    to={child.path}
-                                    className={`flex items-center gap-3 px-4 py-2.5 rounded-xl-premium text-sm transition-colors ${
-                                      childActive
-                                        ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                                        : 'hover:bg-oat dark:hover:bg-secondary-800 text-ink-soft dark:text-cream/70'
-                                    }`}
-                                  >
-                                    <ChildIcon className="h-4 w-4 text-primary-500" />
-                                    {child.name}
-                                  </Link>
-                                );
-                              })}
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    );
-                  }
-                  return (
-                    <Link
-                      key={item.name}
-                      to={item.path!}
-                      className={`flex items-center gap-2.5 px-4 py-3 rounded-2xl-premium text-sm font-medium transition-colors ${
-                        active
-                          ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300'
-                          : 'hover:bg-oat dark:hover:bg-secondary-800 text-ink dark:text-cream'
-                      }`}
-                    >
-                      <TopIcon className="h-4 w-4 text-primary-500" />
-                      {item.name}
-                    </Link>
-                  );
-                })}
-
-                {user ? (
-                  <button onClick={handleSignOut} className="w-full text-left px-4 py-3 rounded-2xl-premium text-sm font-medium text-red-600 hover:bg-red-50 dark:hover:bg-red-900/30 flex items-center gap-2.5">
-                    <LogOut className="h-4 w-4" /> Sign Out
+              <div className="h-full m-3 rounded-3xl overflow-hidden flex flex-col bg-cream/90 dark:bg-secondary-950/90 backdrop-blur-2xl border border-linen/70 dark:border-secondary-800/60 shadow-premium-lg">
+                {/* Drawer header */}
+                <div className="flex items-center justify-between px-5 py-4 border-b border-linen/70 dark:border-secondary-800/60">
+                  <div className="flex items-center gap-2.5">
+                    <img src="/logo.png" alt="FoodBridge" className="h-8 w-8 object-contain" />
+                    <span className="font-display text-lg font-semibold gradient-text-soft">Menu</span>
+                  </div>
+                  <button
+                    onClick={() => setDrawerOpen(false)}
+                    className="p-2 rounded-full hover:bg-oat dark:hover:bg-secondary-800 transition-colors"
+                    aria-label="Close menu"
+                  >
+                    <X className="h-5 w-5 text-ink dark:text-cream" />
                   </button>
-                ) : (
-                  <div className="flex gap-2 pt-3">
-                    <Link to="/login" className="btn-secondary flex-1 text-sm">Login</Link>
-                    <Link to="/register" className="btn-primary flex-1 text-sm">Register</Link>
+                </div>
+
+                {/* User card (when signed in) */}
+                {user && (
+                  <div className="mx-4 mt-4 p-4 rounded-2xl-premium bg-gradient-to-br from-secondary-700 to-secondary-800 text-cream">
+                    <div className="flex items-center gap-3">
+                      <div className="h-11 w-11 rounded-full bg-cream/15 backdrop-blur flex items-center justify-center text-cream font-bold text-lg">
+                        {profile?.full_name?.[0]?.toUpperCase() ?? 'U'}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{profile?.full_name ?? 'User'}</p>
+                        <p className="text-xs text-cream/70 truncate">{profile?.email ?? user.email}</p>
+                      </div>
+                    </div>
                   </div>
                 )}
+
+                {/* Scrollable sections */}
+                <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6 no-scrollbar">
+                  {menuSections.map((section) => {
+                    const SectionIcon = section.icon;
+                    const accent = accentClasses[section.accent];
+                    return (
+                      <div key={section.id}>
+                        <div className="flex items-center gap-2 px-1 mb-2">
+                          <span className={`h-7 w-7 rounded-lg flex items-center justify-center ${accent.chip}`}>
+                            <SectionIcon className="h-4 w-4" strokeWidth={1.75} />
+                          </span>
+                          <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft dark:text-cream/50">
+                            {section.label}
+                          </h3>
+                          <span className={`flex-1 h-px ml-1 ${accent.dot} opacity-20`} style={{ backgroundColor: 'currentColor' }} />
+                        </div>
+                        <div className="space-y-0.5">
+                          {section.links.map((link) => {
+                            const active = location.pathname === link.path;
+                            const LinkIcon = link.icon;
+                            return (
+                              <Link
+                                key={link.path + link.name}
+                                to={link.path}
+                                className={`group flex items-center gap-3 px-3 py-2.5 rounded-xl-premium transition-all duration-200 ${
+                                  active
+                                    ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                                    : `${accent.hover} text-ink-soft dark:text-cream/70`
+                                }`}
+                              >
+                                <span className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                                  active ? accent.activeIcon : 'bg-oat dark:bg-secondary-800 ' + accent.icon
+                                }`}>
+                                  <LinkIcon className="h-4 w-4" strokeWidth={1.75} />
+                                </span>
+                                <span className="text-sm font-medium flex-1">{link.name}</span>
+                                <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-60 transition-opacity" />
+                              </Link>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {/* Account actions */}
+                  <div>
+                    <div className="flex items-center gap-2 px-1 mb-2">
+                      <span className="h-7 w-7 rounded-lg flex items-center justify-center bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400">
+                        <LogOut className="h-4 w-4" strokeWidth={1.75} />
+                      </span>
+                      <h3 className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft dark:text-cream/50">
+                        Account Actions
+                      </h3>
+                    </div>
+                    {user ? (
+                      <button
+                        onClick={handleSignOut}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl-premium hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 transition-colors"
+                      >
+                        <span className="h-8 w-8 rounded-lg flex items-center justify-center bg-red-100 dark:bg-red-900/40 text-red-600">
+                          <LogOut className="h-4 w-4" strokeWidth={1.75} />
+                        </span>
+                        <span className="text-sm font-medium">Logout</span>
+                      </button>
+                    ) : (
+                      <div className="space-y-0.5">
+                        <Link
+                          to="/login"
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl-premium hover:bg-oat dark:hover:bg-secondary-800 text-ink-soft dark:text-cream/70 transition-colors"
+                        >
+                          <span className="h-8 w-8 rounded-lg flex items-center justify-center bg-oat dark:bg-secondary-800 text-primary-600">
+                            <LogIn className="h-4 w-4" strokeWidth={1.75} />
+                          </span>
+                          <span className="text-sm font-medium">Login</span>
+                        </Link>
+                        <Link
+                          to="/register"
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl-premium hover:bg-oat dark:hover:bg-secondary-800 text-ink-soft dark:text-cream/70 transition-colors"
+                        >
+                          <span className="h-8 w-8 rounded-lg flex items-center justify-center bg-oat dark:bg-secondary-800 text-accent-600">
+                            <UserPlus className="h-4 w-4" strokeWidth={1.75} />
+                          </span>
+                          <span className="text-sm font-medium">Register</span>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Drawer footer */}
+                <div className="px-5 py-3.5 border-t border-linen/70 dark:border-secondary-800/60 text-center">
+                  <p className="text-xs text-ink-soft/70 dark:text-cream/40">No plate left empty.</p>
+                </div>
               </div>
-            </motion.div>
+            </motion.aside>
           </>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </>
   );
 }
