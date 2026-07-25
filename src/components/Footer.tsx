@@ -26,6 +26,7 @@ const certificates = [
 
 const resources = [
   { name: 'FAQ', path: '/help' },
+  { name: 'Real Challenges', path: '/challenges' },
   { name: 'Privacy Policy', path: '/privacy' },
   { name: 'Terms & Conditions', path: '/terms' },
 ];

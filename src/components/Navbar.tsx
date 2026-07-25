@@ -54,6 +54,7 @@ const navItems: NavItem[] = [
     icon: FileText,
     children: [
       { name: 'FAQ', path: '/help', icon: HelpCircle },
+      { name: 'Real Challenges', path: '/challenges', icon: Globe2 },
       { name: 'Privacy Policy', path: '/privacy', icon: Lock },
       { name: 'Terms & Conditions', path: '/terms', icon: FileText },
     ],
