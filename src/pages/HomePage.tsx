@@ -55,12 +55,46 @@ const testimonials = [
 const partners = ['Taj Hotels', 'The Leela', 'ITC Group', 'Hyatt', 'Marriott', 'Oberoi'];
 
 const galleryImages = [
-  { url: 'https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg', title: 'Community Kitchen' },
-  { url: 'https://images.pexels.com/photos/699953/pexels-photo-699953.jpeg', title: 'Fresh Meals' },
-  { url: 'https://images.pexels.com/photos/262896/pexels-photo-262896.jpeg', title: 'Food Drive' },
-  { url: 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg', title: 'Volunteer Team' },
-  { url: 'https://images.pexels.com/photos/4488647/pexels-photo-4488647.jpeg', title: 'Distribution' },
-  { url: 'https://images.pexels.com/photos/3214329/pexels-photo-3214329.jpeg', title: 'Happy Faces' },
+  {
+    url: 'https://images.pexels.com/photos/4488647/pexels-photo-4488647.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    title: 'Volunteers collecting surplus food from a hotel kitchen',
+    span: 'lg:row-span-2',
+  },
+  {
+    url: 'https://images.pexels.com/photos/6211629/pexels-photo-6211629.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    title: 'Hotel staff handing packed food to a FoodBridge volunteer',
+    span: '',
+  },
+  {
+    url: 'https://images.pexels.com/photos/6211623/pexels-photo-6211623.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    title: 'Volunteers delivering food packets to children and elderly people',
+    span: '',
+  },
+  {
+    url: 'https://images.pexels.com/photos/6211621/pexels-photo-6211621.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    title: 'Families receiving fresh meals with happy expressions',
+    span: 'lg:row-span-2',
+  },
+  {
+    url: 'https://images.pexels.com/photos/3933251/pexels-photo-3933251.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    title: 'Volunteers packing food hygienically with gloves, masks & hairnets',
+    span: '',
+  },
+  {
+    url: 'https://images.pexels.com/photos/6646917/pexels-photo-6646917.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    title: 'Community food distribution event with organized serving',
+    span: '',
+  },
+  {
+    url: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    title: 'Fresh, neatly packed food containers ready for delivery',
+    span: '',
+  },
+  {
+    url: 'https://images.pexels.com/photos/6646890/pexels-photo-6646890.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    title: 'Team of FoodBridge volunteers standing together',
+    span: 'lg:row-span-2',
+  },
 ];
 
 const faqs = [
@@ -337,20 +371,26 @@ export function HomePage() {
       {/* Gallery */}
       <section className="section">
         <SectionHeading badge="Gallery" title="Impact in pictures" subtitle="Moments captured from our food redistribution drives across the country." />
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-14">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5 mt-14 auto-rows-[200px]">
           {galleryImages.map((img, i) => (
             <motion.div
               key={i}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              whileHover={{ scale: 1.03 }}
-              className="relative group rounded-2xl overflow-hidden aspect-[4/3] cursor-pointer"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.6, delay: (i % 4) * 0.1 }}
+              className={`relative group rounded-[20px] overflow-hidden cursor-pointer shadow-md hover:shadow-2xl transition-shadow duration-500 ${img.span}`}
             >
-              <img src={img.url} alt={img.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-              <p className="absolute bottom-4 left-4 text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity">{img.title}</p>
+              <img
+                src={img.url}
+                alt={img.title}
+                className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-500" />
+              <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
+                <p className="text-white font-medium text-sm leading-snug drop-shadow-lg">{img.title}</p>
+              </div>
             </motion.div>
           ))}
         </div>
