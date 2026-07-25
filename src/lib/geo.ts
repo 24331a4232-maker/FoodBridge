@@ -54,6 +54,18 @@ export async function geocodeAddress(address: string): Promise<{ lat: number; ln
   return null;
 }
 
+export async function reverseGeocode(lat: number, lng: number): Promise<string | null> {
+  try {
+    const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`;
+    const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+    const data = await res.json();
+    if (data && data.display_name) return data.display_name as string;
+  } catch {
+    // network or parse error
+  }
+  return null;
+}
+
 export interface RouteInfo {
   distanceKm: number;
   durationMin: number;

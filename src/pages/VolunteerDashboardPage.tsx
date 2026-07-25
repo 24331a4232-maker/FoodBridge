@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  Package, CheckCircle2, Clock, Award, MapPin, Trophy, Star, Medal, Flame, Download, ArrowRight, Zap, Target, Navigation, Loader2,
+  Package, CheckCircle2, Clock, Award, MapPin, Trophy, Star, Medal, Flame, Download, ArrowRight, Zap, Target, Navigation, Loader2, X, Ruler,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
@@ -10,7 +10,7 @@ import { useToast } from '@/context/ToastContext';
 import type { FoodDonation, Pickup, Profile } from '@/types';
 import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
-import { LeafletMap, type MapPoint, haversineKm } from '@/components/LeafletMap';
+import { LeafletMap, haversineKm, estimateTravelTimeMin, type MapPoint } from '@/components/LeafletMap';
 import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
 import { createCertificateRecord } from '@/lib/certificate';
 
@@ -42,6 +42,8 @@ export function VolunteerDashboardPage() {
   const [route, setRoute] = useState<RouteInfo | null>(null);
   const [routeLoading, setRouteLoading] = useState(false);
   const [routeTarget, setRouteTarget] = useState<FoodDonation | null>(null);
+  const [mapModalDonation, setMapModalDonation] = useState<FoodDonation | null>(null);
+  const [radius, setRadius] = useState(10);
 
   const loadLeaderboard = async () => {
     const { data } = await supabase
@@ -170,6 +172,7 @@ export function VolunteerDashboardPage() {
     ? available
         .filter((d) => d.latitude != null && d.longitude != null)
         .map((d) => ({ d, dist: haversineKm([position.lat, position.lng], [d.latitude!, d.longitude!]) }))
+        .filter((x) => x.dist <= radius)
         .sort((a, b) => a.dist - b.dist)
     : [];
 
@@ -223,7 +226,20 @@ export function VolunteerDashboardPage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="font-display text-xl font-bold flex items-center gap-2"><MapPin className="h-5 w-5 text-primary-500" /> Nearby Donations</h2>
-                <Link to="/available-food" className="text-sm text-primary-600 hover:underline flex items-center gap-1">View all <ArrowRight className="h-3 w-3" /></Link>
+                <div className="flex items-center gap-3">
+                  {position && (
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-xs text-gray-500">Radius:</span>
+                      <select value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="text-xs px-2 py-1 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                        <option value={5}>5 km</option>
+                        <option value={10}>10 km</option>
+                        <option value={25}>25 km</option>
+                        <option value={50}>50 km</option>
+                      </select>
+                    </div>
+                  )}
+                  <Link to="/available-food" className="text-sm text-primary-600 hover:underline flex items-center gap-1">View all <ArrowRight className="h-3 w-3" /></Link>
+                </div>
               </div>
               {loading ? (
                 <div className="space-y-3">
@@ -249,6 +265,11 @@ export function VolunteerDashboardPage() {
                         </div>
                         <div className="flex flex-col gap-1.5 shrink-0">
                           <RippleButton onClick={() => acceptPickup(d)} variant="primary" className="text-xs px-4 py-2">Accept</RippleButton>
+                          {d.latitude != null && d.longitude != null && (
+                            <RippleButton onClick={() => setMapModalDonation(d)} variant="ghost" className="text-xs px-3 py-1.5">
+                              <MapPin className="h-3 w-3" /> View on Map
+                            </RippleButton>
+                          )}
                           {position && d.latitude != null && d.longitude != null && (
                             <RippleButton onClick={() => generateRoute(d)} variant="ghost" className="text-xs px-3 py-1.5" disabled={routeLoading}>
                               <Navigation className="h-3 w-3" /> Route
@@ -421,6 +442,69 @@ export function VolunteerDashboardPage() {
           </div>
         </div>
       </section>
+
+      {/* Map Modal */}
+      <AnimatePresence>
+        {mapModalDonation && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+            onClick={() => setMapModalDonation(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="glass-card p-6 max-w-2xl w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-display text-lg font-bold flex items-center gap-2"><MapPin className="h-5 w-5 text-primary-500" /> {mapModalDonation.food_name}</h3>
+                <button onClick={() => setMapModalDonation(null)} className="text-gray-400 hover:text-gray-600"><X className="h-5 w-5" /></button>
+              </div>
+              <LeafletMap
+                points={[
+                  ...(position ? [{ lat: position.lat, lng: position.lng, type: 'user' as const, popup: '<strong>Volunteer Location</strong><br/>You are here' }] : []),
+                  { lat: mapModalDonation.latitude!, lng: mapModalDonation.longitude!, type: 'donor' as const, popup: `<div style='min-width:180px'><strong>${mapModalDonation.food_name}</strong><br/><span style='color:#666'>${mapModalDonation.organization}</span><br/><br/><b>Quantity:</b> ${mapModalDonation.quantity} ${mapModalDonation.quantity_unit}<br/><b>Pickup:</b> ${new Date(mapModalDonation.pickup_time).toLocaleString()}<br/><b>Address:</b> ${mapModalDonation.address}, ${mapModalDonation.city}</div>` },
+                ]}
+                height="h-72"
+                fitBounds={!!position}
+                zoom={14}
+              />
+              <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+                <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                  <p className="text-xs text-gray-400">Address</p>
+                  <p className="font-medium">{mapModalDonation.address}, {mapModalDonation.city}</p>
+                </div>
+                <div className="p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                  <p className="text-xs text-gray-400">Pickup Time</p>
+                  <p className="font-medium">{new Date(mapModalDonation.pickup_time).toLocaleString()}</p>
+                </div>
+                {position && mapModalDonation.latitude != null && mapModalDonation.longitude != null && (() => {
+                  const dist = haversineKm([position.lat, position.lng], [mapModalDonation.latitude!, mapModalDonation.longitude!]);
+                  const ttm = estimateTravelTimeMin(dist);
+                  return (
+                    <div className="p-3 rounded-xl bg-primary-50 dark:bg-primary-900/20 col-span-2 flex items-center gap-2">
+                      <Ruler className="h-4 w-4 text-primary-500" />
+                      <span className="font-medium">Distance: {dist.toFixed(1)} km • Estimated travel: ~{Math.round(ttm)} min</span>
+                    </div>
+                  );
+                })()}
+              </div>
+              <div className="mt-4 flex gap-2">
+                <RippleButton onClick={() => acceptPickup(mapModalDonation)} variant="primary" fullWidth>Accept Pickup</RippleButton>
+                {position && mapModalDonation.latitude != null && mapModalDonation.longitude != null && (
+                  <RippleButton onClick={() => { generateRoute(mapModalDonation); setMapModalDonation(null); }} variant="secondary" fullWidth disabled={routeLoading}>
+                    <Navigation className="h-4 w-4" /> Get Route
+                  </RippleButton>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

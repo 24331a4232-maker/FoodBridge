@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, MapPin, UtensilsCrossed, Hotel, Calendar, Package, CheckCircle2, Sparkles, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { Upload, MapPin, UtensilsCrossed, Hotel, Calendar, Package, CheckCircle2, Sparkles, Image as ImageIcon, Loader2, Crosshair, Hand, Locate } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
@@ -9,7 +9,7 @@ import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Link } from 'react-router-dom';
 import { LeafletMap, type MapPoint } from '@/components/LeafletMap';
-import { geocodeAddress } from '@/lib/geo';
+import { geocodeAddress, reverseGeocode } from '@/lib/geo';
 
 const orgTypes: { value: OrganizationType; label: string }[] = [
   { value: 'hotel', label: 'Hotel' },
@@ -36,6 +36,10 @@ export function DonateFoodPage() {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [mapPoints, setMapPoints] = useState<MapPoint[]>([]);
   const [geocoding, setGeocoding] = useState(false);
+  const [locating, setLocating] = useState(false);
+  const [pickMode, setPickMode] = useState(false);
+  const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
+  const [geoError, setGeoError] = useState('');
   const [form, setForm] = useState({
     donor_name: profile?.full_name ?? '',
     organization: '',
@@ -70,6 +74,60 @@ export function DonateFoodPage() {
     reader.readAsDataURL(file);
   };
 
+  const useCurrentLocation = () => {
+    setGeoError('');
+    setLocating(true);
+    if (!navigator.geolocation) {
+      setGeoError('Geolocation is not supported by your browser. Please pick a location on the map.');
+      setLocating(false);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        setCoords({ lat: latitude, lng: longitude });
+        setMapPoints([{ lat: latitude, lng: longitude, type: 'donor', popup: '<strong>Donor Location</strong><br/>Your current location' }]);
+        setLocating(false);
+        // Reverse geocode to fill address
+        setGeocoding(true);
+        const addr = await reverseGeocode(latitude, longitude);
+        setGeocoding(false);
+        if (addr) {
+          setForm((f) => ({ ...f, address: addr }));
+          toast('Location detected and address filled automatically.', 'success');
+        } else {
+          toast('Location detected. Please fill the address manually.', 'info');
+        }
+      },
+      (err) => {
+        setLocating(false);
+        let msg = 'Could not get your location. ';
+        if (err.code === err.PERMISSION_DENIED) msg += 'Permission denied. You can pick a location on the map instead.';
+        else if (err.code === err.POSITION_UNAVAILABLE) msg += 'Position unavailable. Try picking on the map.';
+        else if (err.code === err.TIMEOUT) msg += 'Request timed out. Try again or pick on the map.';
+        setGeoError(msg);
+        toast(msg, 'error');
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
+
+  const handleMapClick = async (lat: number, lng: number) => {
+    if (!pickMode) return;
+    setCoords({ lat, lng });
+    setMapPoints([{ lat, lng, type: 'donor', popup: '<strong>Donor Location</strong><br/>Selected on map' }]);
+    setGeocoding(true);
+    const addr = await reverseGeocode(lat, lng);
+    setGeocoding(false);
+    if (addr) {
+      setForm((f) => ({ ...f, address: addr }));
+      toast('Location selected and address filled automatically.', 'success');
+    } else {
+      toast('Location selected. Please fill the address manually.', 'info');
+    }
+    setPickMode(false);
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!user) {
@@ -81,16 +139,22 @@ export function DonateFoodPage() {
       return;
     }
     setSubmitting(true);
-    setGeocoding(true);
-    const fullAddress = `${form.address}, ${form.city}`.trim().replace(/,$/, '');
-    const geo = await geocodeAddress(fullAddress);
-    setGeocoding(false);
-    if (!geo) {
-      toast('Could not find this address on the map. Please check the address.', 'error');
-      setSubmitting(false);
-      return;
+    let lat = coords?.lat;
+    let lng = coords?.lng;
+    if (lat == null || lng == null) {
+      setGeocoding(true);
+      const fullAddress = `${form.address}, ${form.city}`.trim().replace(/,$/, '');
+      const geo = await geocodeAddress(fullAddress);
+      setGeocoding(false);
+      if (!geo) {
+        toast('Could not find this address on the map. Please check the address or use the map to pick a location.', 'error');
+        setSubmitting(false);
+        return;
+      }
+      lat = geo.lat;
+      lng = geo.lng;
+      setMapPoints([{ lat, lng, type: 'donor', popup: `<strong>${form.organization}</strong><br/>${form.food_name}` }]);
     }
-    setMapPoints([{ lat: geo.lat, lng: geo.lng, type: 'donor', popup: form.organization, label: form.food_name }]);
     const { error } = await supabase.from('food_donations').insert({
       donor_id: user.id,
       donor_name: form.donor_name || profile?.full_name || '',
@@ -104,8 +168,8 @@ export function DonateFoodPage() {
       expiry_time: new Date(form.expiry_time).toISOString(),
       address: form.address,
       city: form.city,
-      latitude: geo.lat,
-      longitude: geo.lng,
+      latitude: lat,
+      longitude: lng,
       description: form.description,
       contact_phone: form.contact_phone,
       is_urgent: form.is_urgent,
@@ -140,7 +204,7 @@ export function DonateFoodPage() {
           <p className="text-gray-600 dark:text-gray-400 mb-6">Your donation has been listed. Nearby volunteers will be notified to pick it up soon.</p>
           <div className="flex flex-col gap-3">
             <Link to="/available-food"><RippleButton variant="primary" fullWidth>View Available Food</RippleButton></Link>
-            <button onClick={() => { setSuccess(false); setForm({ ...form, food_name: '', quantity: '', description: '' }); }} className="btn-ghost">
+            <button onClick={() => { setSuccess(false); setForm({ ...form, food_name: '', quantity: '', description: '' }); setMapPoints([]); setCoords(null); }} className="btn-ghost">
               Donate More
             </button>
           </div>
@@ -250,11 +314,51 @@ export function DonateFoodPage() {
             </div>
           </motion.div>
 
+          {/* Location section */}
+          <motion.div variants={fadeInUp}>
+            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><MapPin className="h-4 w-4 text-primary-500" /> Location *</label>
+            <div className="flex flex-wrap gap-2 mb-3">
+              <RippleButton type="button" onClick={useCurrentLocation} variant="secondary" className="text-sm" disabled={locating}>
+                {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crosshair className="h-4 w-4" />}
+                Use My Current Location
+              </RippleButton>
+              <RippleButton type="button" onClick={() => { setPickMode((m) => !m); }} variant={pickMode ? 'primary' : 'ghost'} className="text-sm">
+                {pickMode ? <Locate className="h-4 w-4" /> : <Hand className="h-4 w-4" />}
+                {pickMode ? 'Click on map to pick...' : 'Pick Location on Map'}
+              </RippleButton>
+            </div>
+            {geoError && (
+              <div className="mb-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-300 text-sm flex items-start gap-2">
+                <MapPin className="h-4 w-4 shrink-0 mt-0.5" />
+                <span>{geoError}</span>
+              </div>
+            )}
+            {pickMode && (
+              <div className="mb-3 p-3 rounded-xl bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 text-sm">
+                Click anywhere on the map below to set your donor location.
+              </div>
+            )}
+            <LeafletMap
+              points={mapPoints}
+              onMapClick={handleMapClick}
+              height="h-64"
+              fitBounds={false}
+              zoom={12}
+            />
+            {coords && (
+              <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+                <MapPin className="h-3 w-3 text-green-500" />
+                Coordinates: {coords.lat.toFixed(6)}, {coords.lng.toFixed(6)}
+              </p>
+            )}
+          </motion.div>
+
           {/* Address */}
           <motion.div variants={fadeInUp} className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><MapPin className="h-4 w-4 text-primary-500" /> Address *</label>
               <input name="address" value={form.address} onChange={handleChange} className="input-field" placeholder="12 MG Road" required />
+              {geocoding && <p className="text-xs text-gray-400 mt-1 flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> Looking up address...</p>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">City</label>
@@ -285,21 +389,6 @@ export function DonateFoodPage() {
                 </div>
               )}
             </label>
-          </motion.div>
-
-          {/* Map */}
-          <motion.div variants={fadeInUp}>
-            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><MapPin className="h-4 w-4 text-primary-500" /> Location Preview</label>
-            {mapPoints.length > 0 ? (
-              <LeafletMap points={mapPoints} height="h-56" />
-            ) : (
-              <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 h-56 bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400">Fill the address fields and submit to pin your location</p>
-                </div>
-              </div>
-            )}
           </motion.div>
 
           <motion.div variants={fadeInUp}>

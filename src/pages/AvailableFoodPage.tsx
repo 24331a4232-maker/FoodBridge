@@ -1,14 +1,14 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, MapPin, Clock, UtensilsCrossed, Hotel, Package, ChevronLeft, ChevronRight, Flame, X, CheckCircle2, Loader2, Navigation, Crosshair } from 'lucide-react';
+import { Search, Filter, MapPin, Clock, UtensilsCrossed, Hotel, Package, ChevronLeft, ChevronRight, Flame, X, CheckCircle2, Loader2, Navigation, Crosshair, Ruler } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import type { FoodDonation, FoodCategory } from '@/types';
 import { useToast } from '@/context/ToastContext';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
-import { LeafletMap, haversineKm } from '@/components/LeafletMap';
+import { LeafletMap, haversineKm, estimateTravelTimeMin, type MapPoint } from '@/components/LeafletMap';
 import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
 
 const categories: { value: FoodCategory | 'all'; label: string }[] = [
@@ -53,6 +53,8 @@ export function AvailableFoodPage() {
   const [showMap, setShowMap] = useState(false);
   const [route, setRoute] = useState<RouteInfo | null>(null);
   const [routeLoading, setRouteLoading] = useState(false);
+  const [radius, setRadius] = useState(10);
+  const [selectedMapPoint, setSelectedMapPoint] = useState<MapPoint | null>(null);
   const { position, loading: geoLoading, error: geoError, request: requestGeo } = useGeolocation();
   const { toast } = useToast();
   const { user, profile } = useAuth();
@@ -128,7 +130,7 @@ export function AvailableFoodPage() {
         d.organization.toLowerCase().includes(search.toLowerCase()) ||
         d.city.toLowerCase().includes(search.toLowerCase());
       const matchCat = category === 'all' || d.category === category;
-      const matchNearby = !position || (d.latitude != null && d.longitude != null && haversineKm([position.lat, position.lng], [d.latitude!, d.longitude!]) <= 50);
+      const matchNearby = !position || (d.latitude != null && d.longitude != null && haversineKm([position.lat, position.lng], [d.latitude!, d.longitude!]) <= radius);
       return matchSearch && matchCat && matchNearby;
     }).sort((a, b) => {
       if (!position) return 0;
@@ -136,7 +138,7 @@ export function AvailableFoodPage() {
       const db = b.latitude != null && b.longitude != null ? haversineKm([position.lat, position.lng], [b.latitude!, b.longitude!]) : Infinity;
       return da - db;
     });
-  }, [donations, search, category, position]);
+  }, [donations, search, category, position, radius]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const current = useMemo(() => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filtered, page]);
@@ -200,7 +202,18 @@ export function AvailableFoodPage() {
               {position ? 'Location Active' : 'Find Nearby'}
             </RippleButton>
             {geoError && <span className="text-xs text-red-500">{geoError}</span>}
-            {position && <span className="text-xs text-gray-500">Showing donations within 50 km of you</span>}
+            {position && (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-500">Radius:</span>
+                <select value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="text-xs px-2 py-1 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                  <option value={5}>5 km</option>
+                  <option value={10}>10 km</option>
+                  <option value={25}>25 km</option>
+                  <option value={50}>50 km</option>
+                  <option value={100}>100 km</option>
+                </select>
+              </div>
+            )}
           </div>
           <RippleButton onClick={() => setShowMap((s) => !s)} variant="ghost" className="text-sm">
             <MapPin className="h-4 w-4" /> {showMap ? 'Hide Map' : 'Show Map'}
@@ -212,16 +225,17 @@ export function AvailableFoodPage() {
           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-8">
             <LeafletMap
               points={[
-                ...(position ? [{ lat: position.lat, lng: position.lng, type: 'user' as const, popup: 'You are here' }] : []),
-                ...current.filter((d) => d.latitude != null && d.longitude != null).map((d) => ({ lat: d.latitude!, lng: d.longitude!, type: 'donor' as const, popup: `<strong>${d.food_name}</strong><br/>${d.organization}` })),
+                ...(position ? [{ lat: position.lat, lng: position.lng, type: 'user' as const, popup: '<strong>Volunteer Location</strong><br/>You are here' }] : []),
+                ...current.filter((d) => d.latitude != null && d.longitude != null).map((d) => ({ lat: d.latitude!, lng: d.longitude!, type: 'donor' as const, popup: `<div style='min-width:180px'><strong>${d.food_name}</strong><br/><span style='color:#666'>${d.organization}</span><br/><br/><b>Quantity:</b> ${d.quantity} ${d.quantity_unit}<br/><b>Pickup:</b> ${new Date(d.pickup_time).toLocaleString()}<br/><b>Address:</b> ${d.address}, ${d.city}${position ? `<br/><b>Distance:</b> ${haversineKm([position.lat, position.lng], [d.latitude!, d.longitude!]).toFixed(1)} km` : ''}</div>` })),
               ]}
               showRoute={!!route}
               routeCoords={route?.coordinates ?? []}
               height="h-80"
+              selectedPoint={selectedMapPoint}
             />
             {route && (
               <div className="mt-2 flex items-center justify-between text-sm bg-primary-50 dark:bg-primary-900/20 rounded-xl p-3">
-                <span className="font-medium">Route: {route.distanceKm.toFixed(1)} km • ~{Math.round(route.durationMin)} min</span>
+                <span className="font-medium flex items-center gap-2"><Ruler className="h-4 w-4 text-primary-500" /> Route: {route.distanceKm.toFixed(1)} km • ~{Math.round(route.durationMin)} min</span>
                 <button onClick={() => setRoute(null)} className="text-xs text-gray-500 hover:text-gray-700">Clear route</button>
               </div>
             )}
@@ -276,11 +290,27 @@ export function AvailableFoodPage() {
                     <span className="badge bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
                       <Clock className="h-3 w-3" /> {formatTime(d.expiry_time)}
                     </span>
+                    {position && d.latitude != null && d.longitude != null && (() => {
+                      const dist = haversineKm([position.lat, position.lng], [d.latitude!, d.longitude!]);
+                      const ttm = estimateTravelTimeMin(dist);
+                      return (
+                        <span className="badge bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                          <MapPin className="h-3 w-3" /> {dist.toFixed(1)} km • ~{Math.round(ttm)} min
+                        </span>
+                      );
+                    })()}
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
                     <MapPin className="h-4 w-4 text-primary-500 shrink-0 mt-0.5" />
                     <span>{d.address}, {d.city}</span>
                   </p>
+                  {d.latitude != null && d.longitude != null && (
+                    <div className="mt-3">
+                      <RippleButton onClick={(e) => { e.stopPropagation(); setShowMap(true); setSelectedMapPoint({ lat: d.latitude!, lng: d.longitude!, type: 'donor', popup: `<strong>${d.food_name}</strong><br/>${d.organization}` }); }} variant="ghost" className="text-xs px-3 py-1.5">
+                        <MapPin className="h-3 w-3" /> View on Map
+                      </RippleButton>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}
