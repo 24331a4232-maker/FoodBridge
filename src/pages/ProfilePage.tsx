@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, MapPin, Award, Clock, Package, Settings, Edit3, Check, X, Medal, Star, TrendingUp } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Award, Clock, Package, Settings, Edit3, Check, X, Medal, Star, TrendingUp, Trophy } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { supabase } from '@/lib/supabase';
 import type { Pickup } from '@/types';
 import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { getLevel, getNextLevel, getLevelProgress, getEarnedAchievements, volunteerAchievements, donorAchievements, type AchievementTier } from '@/lib/achievements';
 
 const allBadges = ['First Step', 'Hunger Hero', 'Green Guardian', 'Community Star', 'Fast Mover', 'Top Performer'];
 
@@ -49,8 +50,16 @@ export function ProfilePage() {
     );
   }
 
+  const points = profile.reward_points ?? 0;
+  const currentLevel = getLevel(points);
+  const nextLevel = getNextLevel(points);
+  const levelProgress = getLevelProgress(points);
+  const tier: AchievementTier = profile.role === 'donor' ? 'donor' : 'volunteer';
+  const stats = { deliveries: profile.total_deliveries ?? 0, meals: (profile.total_deliveries ?? 0) * 5, donations: profile.role === 'donor' ? profile.total_deliveries ?? 0 : 0 };
+  const earned = getEarnedAchievements(tier, stats);
   const earnedBadges = allBadges.slice(0, Math.min(profile.total_deliveries, allBadges.length));
   const completed = pickups.filter((p) => p.status === 'delivered');
+  const achievementList = tier === 'donor' ? donorAchievements : volunteerAchievements;
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
@@ -80,6 +89,27 @@ export function ProfilePage() {
             <RippleButton onClick={() => setEditing(!editing)} variant="secondary">
               {editing ? <><X className="h-4 w-4" /> Cancel</> : <><Edit3 className="h-4 w-4" /> Edit Profile</>}
             </RippleButton>
+          </div>
+        </motion.div>
+
+        {/* Level + Rank banner */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 mb-6 relative overflow-hidden">
+          <div className={`absolute -top-12 -right-12 h-40 w-40 rounded-full bg-gradient-to-br ${currentLevel.gradient} opacity-20 blur-3xl`} />
+          <div className="relative flex flex-col sm:flex-row items-center gap-6">
+            <div className={`h-16 w-16 rounded-2xl bg-gradient-to-br ${currentLevel.gradient} text-white flex items-center justify-center shadow-lg shrink-0`}>
+              {(() => { const LevelIcon = currentLevel.icon; return <LevelIcon className="h-8 w-8" />; })()}
+            </div>
+            <div className="flex-1 text-center sm:text-left">
+              <p className="text-xs text-gray-400 uppercase tracking-wide">Current Level</p>
+              <h2 className="font-display text-xl font-bold">Level {currentLevel.level} — {currentLevel.name}</h2>
+              <div className="mt-2 max-w-md mx-auto sm:mx-0">
+                <div className="flex justify-between text-xs text-gray-400 mb-1"><span>{points.toLocaleString()} pts</span><span>{nextLevel ? `${nextLevel.minPoints.toLocaleString()} to ${nextLevel.name}` : 'Max'}</span></div>
+                <div className="h-2.5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${levelProgress}%` }} transition={{ duration: 1.2, ease: 'easeOut' }} className={`h-full rounded-full bg-gradient-to-r ${currentLevel.gradient}`} />
+                </div>
+              </div>
+            </div>
+            <Link to="/achievements"><RippleButton variant="secondary"><Trophy className="h-4 w-4" /> View Achievements</RippleButton></Link>
           </div>
         </motion.div>
 
@@ -171,26 +201,25 @@ export function ProfilePage() {
             </motion.div>
           </div>
 
-          {/* Badges */}
+          {/* Achievements grid */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card p-6 h-fit">
-            <h3 className="font-display font-semibold mb-4 flex items-center gap-2"><Medal className="h-5 w-5 text-primary-500" /> Badges</h3>
-            <div className="space-y-2">
-              {allBadges.map((b, i) => {
-                const earned = i < earnedBadges.length;
+            <h3 className="font-display font-semibold mb-4 flex items-center gap-2"><Medal className="h-5 w-5 text-primary-500" /> Achievements ({earned.length}/{achievementList.length})</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {achievementList.map((a) => {
+                const isEarned = earned.some((e) => e.id === a.id);
+                const AchIcon = a.icon;
                 return (
-                  <div key={b} className={`flex items-center gap-3 p-3 rounded-xl ${earned ? 'bg-primary-50 dark:bg-primary-900/20' : 'bg-gray-50 dark:bg-gray-800/30 opacity-50'}`}>
-                    <div className={`h-8 w-8 rounded-full flex items-center justify-center ${earned ? 'bg-gradient-to-br from-primary-500 to-accent-500 text-white' : 'bg-gray-200 dark:bg-gray-700 text-gray-400'}`}>
-                      <Star className="h-4 w-4" />
+                  <div key={a.id} className={`flex flex-col items-center text-center p-3 rounded-xl ${isEarned ? 'bg-primary-50 dark:bg-primary-900/20' : 'bg-gray-50 dark:bg-gray-800/30 opacity-50'}`}>
+                    <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${a.gradient} text-white flex items-center justify-center mb-2 ${isEarned ? '' : 'grayscale'}`}>
+                      <AchIcon className="h-5 w-5" />
                     </div>
-                    <span className={`text-sm ${earned ? 'font-medium' : 'text-gray-400'}`}>{b}</span>
-                    {earned && <Check className="h-4 w-4 text-primary-500 ml-auto" />}
+                    <p className="text-[10px] font-medium leading-tight">{a.label}</p>
+                    {isEarned && <Check className="h-3 w-3 text-emerald-500 mt-1" />}
                   </div>
                 );
               })}
             </div>
-            <div className="mt-4 p-3 rounded-xl bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20">
-              <p className="text-xs text-gray-500 flex items-center gap-1"><TrendingUp className="h-3 w-3" /> Earn {profile.total_deliveries + 1 - earnedBadges.length} more deliveries to unlock the next badge!</p>
-            </div>
+            <Link to="/achievements" className="block mt-4"><RippleButton variant="ghost" fullWidth className="text-xs">View All Achievements</RippleButton></Link>
           </motion.div>
         </div>
       </section>
