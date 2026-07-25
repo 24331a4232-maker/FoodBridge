@@ -448,6 +448,7 @@ interface StepCardProps {
 const StepCard = forwardRef<HTMLLIElement, StepCardProps>(function StepCard({
   step, index, isExpanded, onToggle, compact, cancelled,
 }, _ref) {
+    const Icon = step.icon;
     const isCompleted = step.status === 'completed';
     const isCurrent = step.status === 'current';
 
