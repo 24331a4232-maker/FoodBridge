@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useInView, useMotionValue, useSpring } from 'f
 import {
   UtensilsCrossed, Heart, Globe2, Users, TrendingUp, Sparkles,
   Sunrise, Sun, Sunset, Moon, Trophy, Medal, Award, Star,
-  Gauge, Activity, Trees, ArrowRight, MapPin, CheckCircle2, Package, Truck, HeartHandshake,
+  Gauge, Activity, Trees, MapPin, CheckCircle2, Package, Truck, HeartHandshake,
 } from 'lucide-react';
 import type { Profile, FoodDonation } from '@/types';
 
@@ -682,7 +682,6 @@ function DonationFlow({ donations }: { donations: FoodDonation[] }) {
             const x = i * (colW + gap);
             const h = (n.value / total) * maxH;
             const y = (maxH - h) / 2;
-            const Icon = n.icon;
             return (
               <motion.g
                 key={n.label}
@@ -706,7 +705,6 @@ function DonationFlow({ donations }: { donations: FoodDonation[] }) {
       {/* Mobile icon labels */}
       <div className="flex justify-between mt-3 sm:hidden">
         {nodes.map((n) => {
-          const Icon = n.icon;
           return (
             <div key={n.label} className="flex flex-col items-center text-center" style={{ width: '24%' }}>
               <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: n.color }}>
@@ -822,7 +820,6 @@ function LiveActivityMap({ donations }: { donations: FoodDonation[] }) {
       {/* Legend */}
       <div className="flex flex-wrap gap-4 mt-4">
         {mapStatuses.map((s) => {
-          const Icon = s.icon;
           return (
             <div key={s.key} className="flex items-center gap-2 text-xs">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: s.color }} />

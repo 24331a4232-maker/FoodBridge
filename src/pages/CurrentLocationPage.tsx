@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Navigation, Loader2, Building2, Truck, User, Crosshair } from 'lucide-react';
+import { MapPin, Navigation, Loader2, Building2, Truck, Crosshair } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/context/AuthContext';
 import type { FoodDonation, Profile } from '@/types';
 import { SectionHeading, fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
@@ -11,7 +10,6 @@ import { useGeolocation } from '@/lib/geo';
 
 import { PageNav } from '@/components/PageNav';
 export function CurrentLocationPage() {
-  const { user, profile } = useAuth();
   const { position, loading: geoLoading, error: geoError, request: requestGeo } = useGeolocation();
   const [donations, setDonations] = useState<FoodDonation[]>([]);
   const [volunteers, setVolunteers] = useState<Profile[]>([]);

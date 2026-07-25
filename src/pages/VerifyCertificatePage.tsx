@@ -40,7 +40,6 @@ export function VerifyCertificatePage() {
       setCertNumber(initial);
       verify(initial);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [certificateId, params]);
 
   return (

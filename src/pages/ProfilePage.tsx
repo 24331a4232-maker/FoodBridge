@@ -5,14 +5,14 @@ import {
   User, Mail, Phone, MapPin, Award, Clock, Package, Settings, Edit3, Check, X,
   Medal, Trophy, Camera, ShieldCheck, Bell, Lock, Eye, Palette, Globe, Trash2,
   UtensilsCrossed, HeartHandshake, Hotel, Activity, KeyRound, Monitor, Sun, Moon,
-  ChevronRight, FileText, Download, ExternalLink, Sparkles, LogOut,
+  FileText, Download, ExternalLink, LogOut,
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { useTheme } from '@/context/ThemeContext';
 import { useNotifications } from '@/context/NotificationContext';
 import { supabase } from '@/lib/supabase';
-import type { Pickup, FoodDonation, Certificate, NotificationSettings, PrivacySettings, Preferences } from '@/types';
+import type { FoodDonation, Certificate, NotificationSettings, PrivacySettings, Preferences } from '@/types';
 import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import {
@@ -74,7 +74,6 @@ export function ProfilePage() {
   const { theme, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('profile');
   const [editing, setEditing] = useState(false);
-  const [pickups, setPickups] = useState<Pickup[]>([]);
   const [donations, setDonations] = useState<FoodDonation[]>([]);
   const [certs, setCerts] = useState<Certificate[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -108,8 +107,6 @@ export function ProfilePage() {
       if (profile.preferences) setPrefs(profile.preferences);
     }
     if (user) {
-      supabase.from('pickups').select('*, donation:food_donations(*)').eq('volunteer_id', user.id)
-        .order('created_at', { ascending: false }).then(({ data }) => setPickups((data as Pickup[]) ?? []));
       supabase.from('food_donations').select('*').eq('donor_id', user.id)
         .order('created_at', { ascending: false }).then(({ data }) => setDonations((data as FoodDonation[]) ?? []));
       supabase.from('certificates').select('*').eq('volunteer_id', user.id)
@@ -199,7 +196,6 @@ export function ProfilePage() {
   const stats = { deliveries: profile.total_deliveries ?? 0, meals: mealsDelivered, donations: donations.length };
   const earned = getEarnedAchievements(tier, stats);
   const achievementList = tier === 'donor' ? donorAchievements : volunteerAchievements;
-  const completed = pickups.filter((p) => p.status === 'delivered');
   const memberSince = new Date(profile.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long' });
 
   const activityStats = [

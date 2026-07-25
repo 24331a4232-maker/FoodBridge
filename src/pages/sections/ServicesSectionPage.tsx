@@ -5,7 +5,6 @@ import {
   ArrowRight, UtensilsCrossed,
 } from 'lucide-react';
 import { SectionPageHeader } from '@/components/SectionPageHeader';
-import { type LucideIcon } from 'lucide-react';
 
 const services = [
   { title: 'Donate Food', desc: 'List surplus food for pickup with quantity, type, and pickup window.', icon: Package, path: '/services/donate-food', color: 'from-primary-500 to-primary-700' },

@@ -176,7 +176,6 @@ export function resolveTracker(
     let status: TrackerStepStatus = 'pending';
     if (i < currentIndex) status = 'completed';
     else if (i === currentIndex && !cancelled) status = 'current';
-    else if (i < currentIndex) status = 'completed';
     return {
       id: def.id,
       title: def.title,
@@ -449,10 +448,8 @@ interface StepCardProps {
 const StepCard = forwardRef<HTMLLIElement, StepCardProps>(function StepCard({
   step, index, isExpanded, onToggle, compact, cancelled,
 }, _ref) {
-    const Icon = step.icon;
     const isCompleted = step.status === 'completed';
     const isCurrent = step.status === 'current';
-    const isPending = step.status === 'pending';
 
     const nodeClasses = isCompleted
       ? 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-600/40'

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import {
   HelpCircle, Phone, Lock, FileText, MessageSquare,
   ArrowRight, Search, ChevronDown,
-  type LucideIcon,
 } from 'lucide-react';
 import { useState } from 'react';
 import { SectionPageHeader } from '@/components/SectionPageHeader';

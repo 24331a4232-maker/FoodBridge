@@ -1,13 +1,11 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+
 import {
   Globe2, Recycle, TrendingDown, BarChart3, Droplet, Users, Heart,
-  UtensilsCrossed, ShieldCheck, Cloud, Leaf, Zap, Truck, Award,
-  ArrowRight, Target, Handshake, MapPin,
+  UtensilsCrossed, ShieldCheck, Cloud, Leaf, Zap,
+  Target, Handshake, MapPin,
 } from 'lucide-react';
-import { SectionHeading, AnimatedCounter, fadeInUp, staggerContainer } from '@/lib/animations';
-import { RippleButton } from '@/components/ui/RippleButton';
-import { Illustration } from '@/components/Illustration';
+import { SectionHeading, AnimatedCounter } from '@/lib/animations';
 import { SectionPageHeader } from '@/components/SectionPageHeader';
 import { SectionTabs } from '@/components/SectionTabs';
 

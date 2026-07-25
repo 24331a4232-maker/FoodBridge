@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Package, Clock, MapPin, CheckCircle2, Truck, Loader2, ArrowRight, Award } from 'lucide-react';
+import { Package, Clock, MapPin, CheckCircle2, Truck, Loader2, Award } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
-import { useToast } from '@/context/ToastContext';
-import type { FoodDonation, Pickup, Certificate } from '@/types';
+import type { Pickup } from '@/types';
 import { fadeInUp, staggerContainer, SectionHeading } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { LeafletMap, haversineKm, type MapPoint } from '@/components/LeafletMap';
@@ -21,8 +20,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: typeof 
 
 import { PageNav } from '@/components/PageNav';
 export function DonationTrackingPage() {
-  const { user, profile } = useAuth();
-  const { toast } = useToast();
+  const { user } = useAuth();
   const { position, loading: geoLoading, request: requestGeo } = useGeolocation();
   const [pickups, setPickups] = useState<Pickup[]>([]);
   const [loading, setLoading] = useState(true);

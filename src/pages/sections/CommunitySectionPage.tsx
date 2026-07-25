@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  Users, Heart, Quote, Star, Award, Package, MapPin, ArrowRight,
-  Trophy, Medal, Building2, Sparkles,
+  Users, Heart, Quote, Star, MapPin, ArrowRight,
+  Building2, Sparkles,
 } from 'lucide-react';
 import { SectionHeading, fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
