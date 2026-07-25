@@ -21,6 +21,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { ContactPage } from '@/pages/ContactPage';
+import { HelpCenterPage } from '@/pages/HelpCenterPage';
 import { CertificatePage } from '@/pages/CertificatePage';
 import { AchievementsPage } from '@/pages/AchievementsPage';
 import { CertificateHistoryPage } from '@/pages/CertificateHistoryPage';
@@ -51,6 +52,7 @@ function AnimatedRoutes() {
         <Route path="/register" element={<PageTransition><RegisterPage /></PageTransition>} />
         <Route path="/profile" element={<ProtectedRoute><PageTransition><ProfilePage /></PageTransition></ProtectedRoute>} />
         <Route path="/contact" element={<PageTransition><ContactPage /></PageTransition>} />
+        <Route path="/help" element={<PageTransition><HelpCenterPage /></PageTransition>} />
         <Route path="/achievements" element={<PageTransition><AchievementsPage /></PageTransition>} />
         <Route path="/certificate" element={<ProtectedRoute><PageTransition><CertificatePage /></PageTransition></ProtectedRoute>} />
         <Route path="/my-certificates" element={<ProtectedRoute><PageTransition><CertificateHistoryPage /></PageTransition></ProtectedRoute>} />

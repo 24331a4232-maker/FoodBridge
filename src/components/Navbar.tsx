@@ -13,6 +13,7 @@ const navLinks = [
   { name: 'Donate Food', path: '/donate-food' },
   { name: 'Volunteer', path: '/volunteer' },
   { name: 'Achievements', path: '/achievements' },
+  { name: 'Help', path: '/help' },
   { name: 'Contact', path: '/contact' },
 ];
 
