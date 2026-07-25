@@ -1,8 +1,8 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, useInView, useMotionValue, useSpring } from 'framer-motion';
 import {
   ResponsiveContainer, LineChart, Line, BarChart, Bar, AreaChart, Area,
-  PieChart, Pie, Cell, XAxis, YAxis, Tooltip, CartesianGrid, RadialBarChart, RadialBar, Legend,
+  PieChart, Pie, Cell, XAxis, YAxis, Tooltip, CartesianGrid,
 } from 'recharts';
 import {
   UtensilsCrossed, Users, Recycle, Heart, TrendingUp, BarChart3,
@@ -90,18 +90,18 @@ function Counter({ value, suffix = '' }: { value: number; suffix?: string }) {
   const mv = useMotionValue(0);
   const spring = useSpring(mv, { stiffness: 70, damping: 22 });
 
-  useInViewChange(inView, value, mv);
-  useSpringChange(spring, ref, suffix);
+  useEffect(() => {
+    if (inView) mv.set(value);
+  }, [inView, value, mv]);
+
+  useEffect(() => {
+    const unsub = spring.on('change', (v: number) => {
+      if (ref.current) ref.current.textContent = `${Math.round(v).toLocaleString()}${suffix}`;
+    });
+    return () => { unsub(); };
+  }, [spring, suffix]);
+
   return <span ref={ref}>0{suffix}</span>;
-}
-
-function useInViewChange(inView: boolean, value: number, mv: ReturnType<typeof useMotionValue>) {
-  if (inView) mv.set(value);
-}
-
-function useSpringChange(spring: ReturnType<typeof useSpring>, ref: React.RefObject<HTMLSpanElement>, suffix: string) {
-  const cb = (v: number) => { if (ref.current) ref.current.textContent = `${Math.round(v).toLocaleString()}${suffix}`; };
-  spring.on('change', cb);
 }
 
 /* ---------- Chart card wrapper ---------- */
