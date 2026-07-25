@@ -705,6 +705,7 @@ function DonationFlow({ donations }: { donations: FoodDonation[] }) {
       {/* Mobile icon labels */}
       <div className="flex justify-between mt-3 sm:hidden">
         {nodes.map((n) => {
+          const Icon = n.icon;
           return (
             <div key={n.label} className="flex flex-col items-center text-center" style={{ width: '24%' }}>
               <div className="h-8 w-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: n.color }}>
