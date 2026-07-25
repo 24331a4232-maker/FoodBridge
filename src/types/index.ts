@@ -4,6 +4,26 @@ export type FoodCategory = 'cooked' | 'raw' | 'packaged' | 'beverages' | 'bakery
 export type DonationStatus = 'available' | 'claimed' | 'picked_up' | 'delivered' | 'expired' | 'cancelled';
 export type PickupStatus = 'accepted' | 'in_progress' | 'delivered' | 'cancelled';
 
+export interface NotificationSettings {
+  email: boolean;
+  push: boolean;
+  donations: boolean;
+  certificates: boolean;
+  volunteer: boolean;
+  quality: boolean;
+}
+
+export interface PrivacySettings {
+  profileVisible: boolean;
+  locationOnPickup: boolean;
+  hidePhone: boolean;
+}
+
+export interface Preferences {
+  theme: 'light' | 'dark' | 'system';
+  language: 'en' | 'te' | 'hi';
+}
+
 export interface Profile {
   id: string;
   full_name: string;
@@ -13,6 +33,8 @@ export interface Profile {
   organization: string | null;
   address: string | null;
   city: string | null;
+  state: string | null;
+  pincode: string | null;
   avatar_url: string | null;
   bio: string | null;
   reward_points: number;
@@ -20,6 +42,9 @@ export interface Profile {
   total_hours: number;
   badges: string[];
   is_verified: boolean;
+  notification_settings: NotificationSettings | null;
+  privacy_settings: PrivacySettings | null;
+  preferences: Preferences | null;
   created_at: string;
   updated_at: string;
 }
