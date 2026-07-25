@@ -25,6 +25,7 @@ import {
   ClipboardCheck,
   Mail,
   Phone,
+  Sparkles,
 } from 'lucide-react';
 import { AnimatedCounter, SectionHeading, fadeInUp, fadeIn, scaleIn, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
@@ -38,8 +39,8 @@ const steps = [
 ];
 
 const impactStats = [
-  { label: 'Meals Rescued', value: 128450, suffix: '+', icon: UtensilsCrossed, gradient: 'from-emerald-500 to-green-600', glow: 'shadow-emerald-500/30' },
-  { label: 'Families Served', value: 38900, suffix: '+', icon: Users, gradient: 'from-orange-500 to-amber-500', glow: 'shadow-orange-500/30' },
+  { label: 'Meals Rescued', value: 128450, suffix: '+', icon: UtensilsCrossed, gradient: 'from-primary-600 to-primary-500', glow: 'shadow-glow-green' },
+  { label: 'Families Served', value: 38900, suffix: '+', icon: Users, gradient: 'from-accent-500 to-orange-500', glow: 'shadow-glow-orange' },
   { label: 'Partner Hotels', value: 340, suffix: '+', icon: Hotel, gradient: 'from-teal-500 to-cyan-600', glow: 'shadow-teal-500/30' },
   { label: 'NGOs Connected', value: 185, suffix: '+', icon: Building2, gradient: 'from-rose-500 to-pink-600', glow: 'shadow-rose-500/30' },
   { label: 'Active Volunteers', value: 1560, suffix: '+', icon: HeartHandshake, gradient: 'from-lime-500 to-green-600', glow: 'shadow-lime-500/30' },
@@ -106,13 +107,14 @@ export function HomePage() {
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
 
   return (
-    <div>
+    <div className="gradient-bg-soft">
       {/* Hero */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden gradient-bg pt-20">
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-20 -left-20 h-72 w-72 rounded-full bg-primary-300/30 blur-3xl animate-blob" />
           <div className="absolute top-40 right-0 h-96 w-96 rounded-full bg-accent-300/20 blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
           <div className="absolute bottom-0 left-1/3 h-80 w-80 rounded-full bg-primary-400/20 blur-3xl animate-blob" style={{ animationDelay: '4s' }} />
+          <div className="absolute inset-0 bg-grid-pattern opacity-40" />
         </div>
 
         <motion.div style={{ y: heroY, opacity: heroOpacity }} className="relative z-10 max-w-5xl mx-auto px-4 text-center">
@@ -120,18 +122,18 @@ export function HomePage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="badge bg-white/60 dark:bg-gray-800/60 text-primary-700 dark:text-primary-300 mb-6 backdrop-blur-md border border-primary-200 dark:border-primary-800"
+            className="badge bg-white/70 dark:bg-gray-800/60 text-primary-700 dark:text-primary-300 mb-6 backdrop-blur-md border border-primary-200/60 dark:border-primary-800/50 shadow-soft"
           >
-            <Leaf className="h-3.5 w-3.5" /> FoodBridge Initiative
+            <Sparkles className="h-3.5 w-3.5" /> FoodBridge Initiative
           </motion.span>
 
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3, duration: 0.7 }}
-            className="font-display text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-balance"
+            className="font-display text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-balance leading-[1.05]"
           >
-            Bridging <span className="gradient-text">Surplus Food</span> with Empty Plates
+            Bridging <span className="gradient-text">Surplus Food</span><br className="hidden sm:block" /> with Empty Plates
           </motion.h1>
 
           <motion.p
@@ -165,28 +167,43 @@ export function HomePage() {
               </RippleButton>
             </Link>
           </motion.div>
+
+          {/* Floating stat preview */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9 }}
+            className="mt-14 flex flex-wrap items-center justify-center gap-x-10 gap-y-4"
+          >
+            {[
+              { label: 'Meals Rescued', value: 128450, suffix: '+' },
+              { label: 'Volunteers', value: 1560, suffix: '+' },
+              { label: 'Partner Hotels', value: 340, suffix: '+' },
+            ].map((s) => (
+              <div key={s.label} className="text-center">
+                <p className="font-stat text-2xl sm:text-3xl font-bold gradient-text">
+                  <AnimatedCounter value={s.value} suffix={s.suffix} />
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{s.label}</p>
+              </div>
+            ))}
+          </motion.div>
         </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.5 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
         >
           <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.5, repeat: Infinity }} className="text-gray-400">
             <ChevronDown className="h-6 w-6" />
           </motion.div>
         </motion.div>
-
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" className="w-full h-[60px] sm:h-[100px]" preserveAspectRatio="none">
-            <path d="M0,60 C320,100 640,20 960,50 C1280,80 1440,40 1440,60 L1440,120 L0,120 Z" className="fill-white dark:fill-gray-950" />
-          </svg>
-        </div>
       </section>
 
       {/* How FoodBridge Works */}
-      <section className="section bg-gradient-to-b from-primary-50/30 to-white dark:from-primary-950/10 dark:to-gray-950">
+      <section className="section">
         <SectionHeading badge="How It Works" title="How FoodBridge Works" subtitle="A simple process that connects food donors, volunteers, and people in need." />
         <div className="relative mt-14 max-w-7xl mx-auto">
           <div className="hidden lg:block absolute top-14 left-[10%] right-[10%] h-1 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
@@ -213,11 +230,11 @@ export function HomePage() {
                     <motion.div
                       whileHover={{ scale: 1.12 }}
                       transition={{ type: 'spring', stiffness: 300 }}
-                      className="h-16 w-16 rounded-2xl bg-gradient-to-br from-primary-600 to-accent-500 text-white flex items-center justify-center shadow-xl shadow-primary-600/30 ring-4 ring-white dark:ring-gray-950"
+                      className="h-16 w-16 rounded-2xl-premium bg-gradient-to-br from-primary-600 to-accent-500 text-white flex items-center justify-center shadow-glow-green ring-4 ring-ivory dark:ring-gray-950"
                     >
                       <StepIcon className="h-7 w-7" />
                     </motion.div>
-                    <span className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-white dark:bg-gray-900 border-2 border-primary-500 text-primary-600 text-xs font-bold flex items-center justify-center shadow-md">
+                    <span className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-white dark:bg-gray-900 border-2 border-primary-500 text-primary-600 text-xs font-bold flex items-center justify-center shadow-soft">
                       {i + 1}
                     </span>
                   </div>
@@ -238,7 +255,7 @@ export function HomePage() {
       </section>
 
       {/* Food Quality Section */}
-      <section className="section">
+      <section className="section bg-gradient-to-b from-primary-50/40 to-ivory dark:from-primary-950/10 dark:to-gray-950">
         <SectionHeading badge="Food Safety" title="Verified Food Quality" subtitle="Every donation goes through a rigorous quality check before it reaches those in need." />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-5xl mx-auto">
           {qualitySteps.map((q, i) => {
@@ -251,9 +268,9 @@ export function HomePage() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
                 whileHover={{ y: -6 }}
-                className="glass-card p-6 text-center group"
+                className="card-hover p-6 text-center group"
               >
-                <div className="inline-flex h-14 w-14 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-white items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform">
+                <div className="inline-flex h-14 w-14 rounded-2xl-premium bg-gradient-to-br from-primary-500 to-accent-500 text-white items-center justify-center mb-4 shadow-glow-green group-hover:scale-110 transition-transform">
                   <QI className="h-7 w-7" />
                 </div>
                 <h3 className="font-display font-semibold text-lg mb-2">{q.title}</h3>
@@ -272,7 +289,7 @@ export function HomePage() {
       </section>
 
       {/* Our Impact - Animated Statistics */}
-      <section className="section bg-gradient-to-b from-primary-50/30 to-white dark:from-primary-950/10 dark:to-gray-950">
+      <section className="section">
         <SectionHeading badge="Our Impact" title="Real change, in real numbers" subtitle="Every meal rescued, every family served, every volunteer hour — tracked and celebrated." />
         <motion.div
           variants={staggerContainer}
@@ -284,12 +301,12 @@ export function HomePage() {
           {impactStats.map((s) => {
             const StatIcon = s.icon;
             return (
-              <motion.div key={s.label} variants={scaleIn} whileHover={{ y: -6 }} className="glass-card p-5 sm:p-6 text-center relative overflow-hidden group">
+              <motion.div key={s.label} variants={scaleIn} whileHover={{ y: -6 }} className="card-hover p-5 sm:p-6 text-center relative overflow-hidden group">
                 <div className={`absolute -top-10 -right-10 h-24 w-24 rounded-full bg-gradient-to-br ${s.gradient} opacity-10 blur-2xl group-hover:opacity-25 transition-opacity duration-500`} />
-                <div className={`inline-flex h-12 w-12 rounded-2xl bg-gradient-to-br ${s.gradient} text-white items-center justify-center mb-3 shadow-lg ${s.glow} group-hover:scale-110 transition-transform duration-300`}>
+                <div className={`inline-flex h-12 w-12 rounded-2xl-premium bg-gradient-to-br ${s.gradient} text-white items-center justify-center mb-3 ${s.glow} group-hover:scale-110 transition-transform duration-300`}>
                   <StatIcon className="h-6 w-6" />
                 </div>
-                <p className="font-display text-2xl sm:text-3xl font-bold gradient-text">
+                <p className="font-stat text-2xl sm:text-3xl font-bold gradient-text">
                   <AnimatedCounter value={s.value} suffix={s.suffix} />
                 </p>
                 <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">{s.label}</p>
@@ -300,7 +317,7 @@ export function HomePage() {
       </section>
 
       {/* Testimonials */}
-      <section className="section">
+      <section className="section bg-gradient-to-b from-accent-50/30 to-ivory dark:from-accent-950/10 dark:to-gray-950">
         <SectionHeading badge="Testimonials" title="Real Stories. Real Impact." subtitle="Every meal shared creates hope, dignity, and a stronger community." />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-6xl mx-auto">
           {testimonials.map((t, i) => (
@@ -311,10 +328,10 @@ export function HomePage() {
               viewport={{ once: true, margin: '-40px' }}
               transition={{ duration: 0.6, delay: i * 0.12 }}
               whileHover={{ y: -8 }}
-              className="glass-card p-6 sm:p-7 flex flex-col relative overflow-hidden group"
+              className="card-hover p-6 sm:p-7 flex flex-col relative overflow-hidden group"
             >
               <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-gradient-to-br from-primary-400/15 to-accent-400/15 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center shadow-lg mb-5">
+              <div className="h-12 w-12 rounded-2xl-premium bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center shadow-glow-green mb-5">
                 <Quote className="h-6 w-6" />
               </div>
               <div className="flex gap-0.5 mb-3">
@@ -341,7 +358,7 @@ export function HomePage() {
       </section>
 
       {/* Partner Hotels & NGOs */}
-      <section className="section bg-gradient-to-b from-primary-50/30 to-white dark:from-primary-950/10 dark:to-gray-950">
+      <section className="section">
         <SectionHeading badge="Our Partners" title="Partner Hotels & NGOs" subtitle="Trusted by leading hospitality brands and NGOs across India." />
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-12 max-w-4xl mx-auto">
           {partners.map((p, i) => (
@@ -352,7 +369,7 @@ export function HomePage() {
               viewport={{ once: true }}
               transition={{ delay: i * 0.05 }}
               whileHover={{ y: -4 }}
-              className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl glass-card ${p.type === 'Hotel' ? 'border-primary-200/50' : 'border-accent-200/50'}`}
+              className={`flex items-center gap-2.5 px-5 py-3 rounded-2xl-premium glass-card ${p.type === 'Hotel' ? 'border-primary-200/50' : 'border-accent-200/50'}`}
             >
               {p.type === 'Hotel' ? (
                 <Hotel className="h-5 w-5 text-primary-500" />
@@ -366,7 +383,7 @@ export function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section className="section">
+      <section className="section bg-gradient-to-b from-primary-50/30 to-ivory dark:from-primary-950/10 dark:to-gray-950">
         <SectionHeading badge="FAQ" title="Frequently asked questions" subtitle="Everything you need to know about donating and volunteering with FoodBridge." />
         <div className="max-w-3xl mx-auto mt-12 space-y-3">
           {faqs.map((faq, i) => (
@@ -389,13 +406,13 @@ export function HomePage() {
       </section>
 
       {/* Contact CTA */}
-      <section className="section bg-gradient-to-b from-primary-50/30 to-white dark:from-primary-950/10 dark:to-gray-950">
+      <section className="section">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true }}
-          className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500 p-8 sm:p-14 text-center text-white max-w-4xl mx-auto"
+          className="relative overflow-hidden rounded-2xl-premium bg-gradient-to-br from-primary-600 via-primary-500 to-accent-500 p-8 sm:p-14 text-center text-white max-w-4xl mx-auto shadow-premium-lg"
         >
           <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-orange-400/20 blur-2xl" />

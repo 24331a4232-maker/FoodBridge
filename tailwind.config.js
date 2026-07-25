@@ -31,10 +31,26 @@ export default {
           900: '#7c2d12',
           950: '#431407',
         },
+        ivory: '#FFFDF8',
+        'light-gray': '#F8FAFC',
+        'dark-text': '#1F2937',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
         display: ['Poppins', 'system-ui', 'sans-serif'],
+        stat: ['Manrope', 'system-ui', 'sans-serif'],
+      },
+      borderRadius: {
+        'xl-premium': '18px',
+        '2xl-premium': '22px',
+      },
+      boxShadow: {
+        'soft': '0 2px 8px -2px rgba(16, 163, 74, 0.06), 0 4px 16px -4px rgba(0, 0, 0, 0.04)',
+        'premium': '0 4px 24px -6px rgba(16, 163, 74, 0.08), 0 8px 32px -8px rgba(0, 0, 0, 0.06)',
+        'premium-lg': '0 8px 40px -8px rgba(16, 163, 74, 0.12), 0 16px 48px -12px rgba(0, 0, 0, 0.08)',
+        'glow-green': '0 8px 32px -8px rgba(22, 163, 74, 0.35)',
+        'glow-orange': '0 8px 32px -8px rgba(249, 115, 22, 0.35)',
+        'inner-soft': 'inset 0 1px 2px rgba(0, 0, 0, 0.04)',
       },
       animation: {
         'blob': 'blob 7s infinite',
@@ -42,6 +58,7 @@ export default {
         'gradient': 'gradient 8s ease infinite',
         'ripple': 'ripple 0.6s linear',
         'spin-slow': 'spin 3s linear infinite',
+        'shimmer': 'shimmer 2.5s linear infinite',
       },
       keyframes: {
         blob: {
@@ -60,6 +77,10 @@ export default {
         ripple: {
           '0%': { transform: 'scale(0)', opacity: '1' },
           '100%': { transform: 'scale(4)', opacity: '0' },
+        },
+        shimmer: {
+          '0%': { 'background-position': '-1000px 0' },
+          '100%': { 'background-position': '1000px 0' },
         },
       },
       backgroundImage: {

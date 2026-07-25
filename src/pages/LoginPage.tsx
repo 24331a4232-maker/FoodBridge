@@ -45,7 +45,7 @@ export function LoginPage() {
   };
 
   return (
-    <div className="pt-20 min-h-screen flex items-center justify-center px-4 py-10 gradient-bg relative overflow-hidden">
+    <div className="pt-20 min-h-screen flex items-center justify-center px-4 py-10 gradient-bg-soft relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-primary-300/20 blur-3xl animate-blob" />
         <div className="absolute bottom-10 right-10 h-72 w-72 rounded-full bg-accent-300/20 blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
@@ -72,7 +72,7 @@ export function LoginPage() {
 
         <motion.form variants={staggerContainer} initial="hidden" animate="visible" onSubmit={handleSubmit} className="space-y-5">
           <motion.div variants={fadeInUp}>
-            <label className="block text-sm font-medium mb-1.5">Email</label>
+            <label className="input-label">Email</label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
@@ -87,7 +87,7 @@ export function LoginPage() {
           </motion.div>
 
           <motion.div variants={fadeInUp}>
-            <label className="block text-sm font-medium mb-1.5">Password</label>
+            <label className="input-label">Password</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
@@ -122,7 +122,7 @@ export function LoginPage() {
 
           <motion.div variants={fadeInUp} className="relative">
             <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-200 dark:border-gray-700" /></div>
-            <div className="relative flex justify-center text-xs"><span className="bg-white dark:bg-gray-900 px-3 text-gray-400">or</span></div>
+            <div className="relative flex justify-center text-xs"><span className="bg-ivory dark:bg-gray-900 px-3 text-gray-400">or</span></div>
           </motion.div>
 
           <motion.div variants={fadeInUp}>

@@ -52,7 +52,7 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="pt-20 min-h-screen flex items-center justify-center px-4 py-10 gradient-bg relative overflow-hidden">
+    <div className="pt-20 min-h-screen flex items-center justify-center px-4 py-10 gradient-bg-soft relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 right-10 h-72 w-72 rounded-full bg-primary-300/20 blur-3xl animate-blob" />
         <div className="absolute bottom-10 left-10 h-72 w-72 rounded-full bg-accent-300/20 blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
@@ -79,7 +79,7 @@ export function RegisterPage() {
               type="button"
               onClick={() => setRole(r.value)}
               whileHover={{ y: -3 }}
-              className={`p-4 rounded-2xl text-center transition-all ${
+              className={`p-4 rounded-2xl-premium text-center transition-all ${
                 role === r.value
                   ? 'bg-gradient-to-br from-primary-600 to-primary-500 text-white shadow-lg shadow-primary-600/30'
                   : 'glass hover:bg-primary-50 dark:hover:bg-primary-900/20'
@@ -97,7 +97,7 @@ export function RegisterPage() {
 
         <motion.form variants={staggerContainer} initial="hidden" animate="visible" onSubmit={handleSubmit} className="space-y-5">
           <motion.div variants={fadeInUp}>
-            <label className="block text-sm font-medium mb-1.5">Full Name</label>
+            <label className="input-label">Full Name</label>
             <div className="relative">
               <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} className={`input-field pl-12 ${errors.fullName ? 'border-red-400' : ''}`} placeholder="John Doe" />
@@ -107,7 +107,7 @@ export function RegisterPage() {
 
           {(role === 'donor' || role === 'ngo') && (
             <motion.div variants={fadeInUp}>
-              <label className="block text-sm font-medium mb-1.5">Organization Name</label>
+              <label className="input-label">Organization Name</label>
               <div className="relative">
                 <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input value={form.organization} onChange={(e) => setForm({ ...form, organization: e.target.value })} className={`input-field pl-12 ${errors.organization ? 'border-red-400' : ''}`} placeholder="The Grand Hotel" />
@@ -117,7 +117,7 @@ export function RegisterPage() {
           )}
 
           <motion.div variants={fadeInUp}>
-            <label className="block text-sm font-medium mb-1.5">Email</label>
+            <label className="input-label">Email</label>
             <div className="relative">
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={`input-field pl-12 ${errors.email ? 'border-red-400' : ''}`} placeholder="you@example.com" />
@@ -126,7 +126,7 @@ export function RegisterPage() {
           </motion.div>
 
           <motion.div variants={fadeInUp}>
-            <label className="block text-sm font-medium mb-1.5">Password</label>
+            <label className="input-label">Password</label>
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input type={show ? 'text' : 'password'} value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} className={`input-field pl-12 pr-12 ${errors.password ? 'border-red-400' : ''}`} placeholder="******" />

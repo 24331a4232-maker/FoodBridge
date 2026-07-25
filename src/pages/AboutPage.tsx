@@ -66,7 +66,7 @@ export function AboutPage() {
   return (
     <div className="pt-20">
       {/* Hero */}
-      <section className="relative py-20 px-4 sm:px-6 lg:px-8 gradient-bg overflow-hidden">
+      <section className="relative py-20 px-4 sm:px-6 lg:px-8 gradient-bg-soft overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-primary-300/20 blur-3xl animate-blob" />
           <div className="absolute bottom-10 right-10 h-72 w-72 rounded-full bg-accent-300/20 blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
@@ -190,7 +190,7 @@ export function AboutPage() {
               className="card p-6 text-center"
             >
               <s.icon className="h-10 w-10 text-accent-500 mx-auto mb-3" />
-              <p className="font-display text-2xl sm:text-3xl font-bold gradient-text">{s.value}</p>
+              <p className="font-stat text-2xl sm:text-3xl font-bold gradient-text">{s.value}</p>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">{s.label}</p>
             </motion.div>
           ))}
@@ -267,11 +267,11 @@ export function AboutPage() {
                 </div>
                 <div className="flex gap-4 text-right">
                   <div>
-                    <p className="font-display font-bold text-primary-600">{v.hours}h</p>
+                    <p className="font-stat font-bold text-primary-600">{v.hours}h</p>
                     <p className="text-xs text-gray-400">Hours</p>
                   </div>
                   <div>
-                    <p className="font-display font-bold text-accent-500">{v.deliveries}</p>
+                    <p className="font-stat font-bold text-accent-500">{v.deliveries}</p>
                     <p className="text-xs text-gray-400">Deliveries</p>
                   </div>
                 </div>
@@ -289,7 +289,7 @@ export function AboutPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {impactStats.map((s) => (
               <motion.div key={s.label} variants={fadeInUp} className="text-center">
-                <p className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold">
+                <p className="font-stat text-3xl sm:text-4xl lg:text-5xl font-bold">
                   <AnimatedCounter value={s.value} suffix={s.suffix} />
                 </p>
                 <p className="text-sm text-white/80 mt-2">{s.label}</p>

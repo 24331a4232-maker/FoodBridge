@@ -100,11 +100,11 @@ export function CertificatePage() {
   };
 
   return (
-    <div className="pt-20 min-h-screen gradient-bg">
+    <div className="pt-20 min-h-screen gradient-bg-soft">
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <span className="badge bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 mb-4">
+          <span className="badge bg-primary-100/80 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 mb-4 border border-primary-200/50 dark:border-primary-800/50">
             <Award className="h-3.5 w-3.5" /> Volunteer Appreciation
           </span>
           <h1 className="font-display text-3xl sm:text-4xl font-bold">Your Certificate of Appreciation</h1>
@@ -200,15 +200,15 @@ export function CertificatePage() {
                 {/* Stats */}
                 <div className="flex gap-6 mt-4 text-xs">
                   <div className="text-center">
-                    <p className="font-display text-lg font-bold text-green-600">{certData.deliveriesCount}</p>
+                    <p className="font-stat text-lg font-bold text-green-600">{certData.deliveriesCount}</p>
                     <p className="text-[10px] text-gray-400 uppercase tracking-wide">Deliveries</p>
                   </div>
                   <div className="text-center">
-                    <p className="font-display text-lg font-bold text-orange-500">{Math.round(certData.hoursServed)}</p>
+                    <p className="font-stat text-lg font-bold text-orange-500">{Math.round(certData.hoursServed)}</p>
                     <p className="text-[10px] text-gray-400 uppercase tracking-wide">Hours</p>
                   </div>
                   <div className="text-center">
-                    <p className="font-display text-lg font-bold text-green-600">{certData.totalMeals}</p>
+                    <p className="font-stat text-lg font-bold text-green-600">{certData.totalMeals}</p>
                     <p className="text-[10px] text-gray-400 uppercase tracking-wide">Meals Saved</p>
                   </div>
                 </div>

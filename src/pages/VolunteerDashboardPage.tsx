@@ -211,7 +211,7 @@ export function VolunteerDashboardPage() {
   };
 
   return (
-    <div className="pt-20 min-h-screen gradient-bg">
+    <div className="pt-20 min-h-screen gradient-bg-soft">
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -233,11 +233,12 @@ export function VolunteerDashboardPage() {
             { label: 'Active Tasks', value: activeTasks.length, icon: Clock, color: 'from-blue-500 to-primary-500' },
             { label: 'Completed', value: completed.length, icon: CheckCircle2, color: 'from-primary-600 to-emerald-500' },
           ].map((s) => (
-            <motion.div key={s.label} variants={fadeInUp} className="card p-5">
-              <div className={`h-11 w-11 rounded-xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center mb-3 shadow-lg`}>
+            <motion.div key={s.label} variants={fadeInUp} whileHover={{ y: -4 }} className="card-hover p-5 relative overflow-hidden group">
+              <div className={`absolute -top-8 -right-8 h-20 w-20 rounded-full bg-gradient-to-br ${s.color} opacity-10 blur-2xl group-hover:opacity-20 transition-opacity`} />
+              <div className={`h-11 w-11 rounded-2xl-premium bg-gradient-to-br ${s.color} text-white flex items-center justify-center mb-3 shadow-lg`}>
                 <s.icon className="h-5 w-5" />
               </div>
-              <p className="font-display text-2xl font-bold"><AnimatedCounter value={s.value} /></p>
+              <p className="font-stat text-2xl font-bold"><AnimatedCounter value={s.value} /></p>
               <p className="text-xs text-gray-500">{s.label}</p>
             </motion.div>
           ))}

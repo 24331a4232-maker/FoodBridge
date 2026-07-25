@@ -191,7 +191,7 @@ export function RealChallengesPage() {
   };
 
   return (
-    <div className="pt-16 min-h-screen gradient-bg">
+    <div className="pt-16 min-h-screen gradient-bg-soft">
       {/* Hero */}
       <section ref={heroRef} className="relative py-16 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">

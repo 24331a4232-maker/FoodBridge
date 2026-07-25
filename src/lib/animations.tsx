@@ -51,7 +51,7 @@ export function AnimatedCounter({ value, suffix = '', prefix = '', className = '
   const ref = useRef<HTMLSpanElement>(null);
   const inView = useInView(ref, { once: true, margin: '-50px' });
   const motionValue = useMotionValue(0);
-  const spring = useSpring(motionValue, { stiffness: 60, damping: 20 });
+  const spring = useSpring(motionValue, { stiffness: 80, damping: 24 });
 
   useEffect(() => {
     if (inView) motionValue.set(value);
@@ -66,7 +66,7 @@ export function AnimatedCounter({ value, suffix = '', prefix = '', className = '
   }, [spring, prefix, suffix]);
 
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} className={`font-stat font-bold tabular-nums ${className}`}>
       {prefix}0{suffix}
     </span>
   );
@@ -89,7 +89,7 @@ export function SectionHeading({ badge, title, subtitle, center = true }: Sectio
       className={center ? 'text-center' : ''}
     >
       {badge && (
-        <motion.span variants={fadeInUp} className="badge bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 mb-4">
+        <motion.span variants={fadeInUp} className="badge bg-primary-100/80 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 mb-4 border border-primary-200/50 dark:border-primary-800/50">
           {badge}
         </motion.span>
       )}

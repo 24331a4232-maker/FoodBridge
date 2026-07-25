@@ -244,7 +244,7 @@ export function DonateFoodPage() {
 
   if (success) {
     return (
-      <div className="pt-20 min-h-screen flex items-center justify-center px-4 gradient-bg">
+      <div className="pt-20 min-h-screen flex items-center justify-center px-4 gradient-bg-soft">
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -272,10 +272,10 @@ export function DonateFoodPage() {
   }
 
   return (
-    <div className="pt-20 min-h-screen gradient-bg">
+    <div className="pt-20 min-h-screen gradient-bg-soft">
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
-          <span className="badge bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 mb-4">
+          <span className="badge bg-primary-100/80 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 mb-4 border border-primary-200/50 dark:border-primary-800/50">
             <Sparkles className="h-3.5 w-3.5" /> Make a Difference
           </span>
           <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold">Donate Surplus Food</h1>
