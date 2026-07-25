@@ -46,10 +46,68 @@ const features = [
   { icon: TrendingDown, title: 'Impact Analytics', desc: 'See exactly how much food you saved, CO2 reduced, and lives touched - in real numbers.' },
 ];
 
+const storyStats = [
+  { value: 50000, suffix: '+', label: 'Meals Shared', icon: UtensilsCrossed },
+  { value: 8000, suffix: '+', label: 'Families Helped', icon: Users },
+  { value: 250, suffix: '+', label: 'Partner Hotels', icon: Hotel },
+  { value: 1500, suffix: '+', label: 'Volunteers', icon: HeartHandshake },
+];
+
 const testimonials = [
-  { name: 'Ananya Krishnan', role: 'Volunteer, Bangalore', text: 'FoodBridge changed how I spend my weekends. I have delivered over 200 meals and earned a certificate that helped my college application.', rating: 5 },
-  { name: 'Rajesh Mehra', role: 'Manager, The Grand Hotel', text: 'We used to throw away buffet leftovers every night. Now FoodBridge volunteers pick it up within hours. It feels great to give back.', rating: 5 },
-  { name: 'Sister Maria', role: 'Hope Orphanage', text: 'Thanks to FoodBridge, our children get fresh, warm meals from events we could never afford. This is a blessing for our community.', rating: 5 },
+  {
+    name: 'Rajesh Mehra',
+    role: 'Hotel Manager',
+    city: 'Mumbai',
+    date: 'March 2026',
+    rating: 5,
+    text: 'Our hotel has reduced food waste significantly while helping hundreds of people through FoodBridge. The pickup process is seamless and the team is incredibly professional.',
+    photo: 'https://images.pexels.com/photos/2182970/pexels-photo-2182970.jpeg?auto=compress&cs=tinysrgb&w=400',
+  },
+  {
+    name: 'Ananya Krishnan',
+    role: 'Student Volunteer',
+    city: 'Bangalore',
+    date: 'February 2026',
+    rating: 5,
+    text: 'Volunteering with FoodBridge has been one of the most meaningful experiences of my life. Every delivery reminds me why small actions create big change.',
+    photo: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400',
+  },
+  {
+    name: 'Sister Maria Pinto',
+    role: 'NGO Partner',
+    city: 'Goa',
+    date: 'January 2026',
+    rating: 5,
+    text: 'Our NGO now receives food on time, every single week. FoodBridge has become a lifeline for the children and elderly we care for.',
+    photo: 'https://images.pexels.com/photos/5905786/pexels-photo-5905786.jpeg?auto=compress&cs=tinysrgb&w=400',
+  },
+  {
+    name: 'Lakshmi Devi',
+    role: 'Beneficiary',
+    city: 'Chennai',
+    date: 'March 2026',
+    rating: 5,
+    text: 'My children slept with full stomachs because of FoodBridge. Thank you for your kindness. I will never forget the warmth you brought to our family.',
+    photo: 'https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg?auto=compress&cs=tinysrgb&w=400',
+  },
+  {
+    name: 'Vikram Singh',
+    role: 'Event Organizer',
+    city: 'Delhi',
+    date: 'February 2026',
+    rating: 5,
+    text: 'FoodBridge made it incredibly easy to donate surplus food after our wedding event. Knowing the meals reached families instead of going to waste was deeply satisfying.',
+    photo: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=400',
+  },
+  {
+    name: 'Priya Nair',
+    role: 'Volunteer',
+    city: 'Kochi',
+    date: 'January 2026',
+    rating: 5,
+    text: 'This initiative deserves to be in every city. The quality checks, the coordination, the smiles on faces — FoodBridge does it all with genuine care.',
+    photo: 'https://images.pexels.com/photos/3760790/pexels-photo-3760790.jpeg?auto=compress&cs=tinysrgb&w=400',
+  },
 ];
 
 const partners = ['Taj Hotels', 'The Leela', 'ITC Group', 'Hyatt', 'Marriott', 'Oberoi'];
@@ -334,38 +392,93 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="section bg-gradient-to-b from-white to-primary-50/30 dark:from-gray-950 dark:to-primary-950/10">
-        <SectionHeading badge="Testimonials" title="Stories from our community" subtitle="Real people, real impact. Hear from donors, volunteers, and recipients." />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
+      {/* Success Stories */}
+      <section className="section bg-gradient-to-b from-white via-primary-50/20 to-white dark:from-gray-950 dark:via-primary-950/10 dark:to-gray-950">
+        <SectionHeading badge="Success Stories" title="Real Stories. Real Impact." subtitle="Every meal shared creates hope, dignity, and a stronger community." />
+
+        {/* Animated counters */}
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mt-12 mb-14"
+        >
+          {storyStats.map((s) => (
+            <motion.div key={s.label} variants={scaleIn} className="glass-card p-5 sm:p-6 text-center">
+              <div className="inline-flex h-11 w-11 sm:h-12 sm:w-12 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-white items-center justify-center mb-3 shadow-lg">
+                <s.icon className="h-5 w-5 sm:h-6 sm:w-6" />
+              </div>
+              <p className="font-display text-2xl sm:text-3xl font-bold gradient-text">
+                <AnimatedCounter value={s.value} suffix={s.suffix} />
+              </p>
+              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">{s.label}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Testimonial cards - grid on desktop, scroll-snap carousel on mobile */}
+        <div className="lg:grid lg:grid-cols-3 lg:gap-6 flex overflow-x-auto snap-x snap-mandatory gap-4 lg:overflow-visible px-1 lg:px-0 pb-4 lg:pb-0 scroll-smooth">
           {testimonials.map((t, i) => (
-            <motion.div
+            <motion.article
               key={t.name}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className="card p-6 relative hover:-translate-y-2 transition-transform duration-300"
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.6, delay: (i % 3) * 0.12 }}
+              whileHover={{ y: -8 }}
+              className="snap-center min-w-[85%] sm:min-w-[60%] lg:min-w-0 glass-card p-6 sm:p-7 flex flex-col relative overflow-hidden group"
             >
-              <Quote className="h-10 w-10 text-primary-200 dark:text-primary-900/50 mb-4" />
-              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-5">"{t.text}"</p>
-              <div className="flex gap-0.5 mb-4">
+              {/* Accent gradient corner */}
+              <div className="absolute -top-10 -right-10 h-28 w-28 rounded-full bg-gradient-to-br from-primary-400/15 to-accent-400/15 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+              {/* Animated quote icon */}
+              <motion.div
+                animate={{ rotate: [0, -8, 0] }}
+                transition={{ duration: 4, repeat: Infinity, delay: i * 0.3 }}
+                className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center shadow-lg mb-5"
+              >
+                <Quote className="h-6 w-6" />
+              </motion.div>
+
+              {/* Rating */}
+              <div className="flex gap-0.5 mb-3">
                 {Array.from({ length: t.rating }).map((_, j) => (
                   <Star key={j} className="h-4 w-4 fill-accent-500 text-accent-500" />
                 ))}
               </div>
-              <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold">
-                  {t.name[0]}
+
+              {/* Testimonial text */}
+              <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 leading-relaxed mb-6 flex-1">
+                "{t.text}"
+              </p>
+
+              {/* Profile + meta */}
+              <div className="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
+                <div className="h-12 w-12 rounded-full overflow-hidden ring-2 ring-primary-200 dark:ring-primary-800 flex-shrink-0">
+                  <img
+                    src={t.photo}
+                    alt={t.name}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    loading="lazy"
+                  />
                 </div>
-                <div>
-                  <p className="font-semibold text-sm">{t.name}</p>
-                  <p className="text-xs text-gray-500">{t.role}</p>
+                <div className="min-w-0">
+                  <p className="font-display font-bold text-sm truncate">{t.name}</p>
+                  <p className="text-xs text-primary-600 dark:text-primary-400 font-medium">{t.role}</p>
+                  <p className="text-xs text-gray-400 flex items-center gap-1.5 mt-0.5">
+                    <MapPin className="h-3 w-3" /> {t.city} · {t.date}
+                  </p>
                 </div>
               </div>
-            </motion.div>
+            </motion.article>
           ))}
         </div>
+
+        {/* Mobile scroll hint */}
+        <p className="lg:hidden text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1.5">
+          <ChevronDown className="h-3.5 w-3.5 rotate-[-90deg]" /> Swipe to explore more stories
+        </p>
       </section>
 
       {/* Gallery */}
