@@ -43,7 +43,7 @@
   }
 
   .glass-card {
-    @apply glass rounded-3xl shadow-xl shadow-primary-900/5;
+    @apply glass rounded-[22px] shadow-xl shadow-primary-900/5;
   }
 
   .gradient-text {
