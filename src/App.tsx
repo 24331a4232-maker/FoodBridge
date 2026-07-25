@@ -14,6 +14,7 @@ import { HomePage } from '@/pages/HomePage';
 import { AboutPage } from '@/pages/AboutPage';
 import { AvailableFoodPage } from '@/pages/AvailableFoodPage';
 import { DonateFoodPage } from '@/pages/DonateFoodPage';
+import { FoodQualityPage } from '@/pages/FoodQualityPage';
 import { VolunteerDashboardPage } from '@/pages/VolunteerDashboardPage';
 import { AdminDashboardPage } from '@/pages/AdminDashboardPage';
 import { LoginPage } from '@/pages/LoginPage';
@@ -42,6 +43,7 @@ function AnimatedRoutes() {
         <Route path="/about" element={<PageTransition><AboutPage /></PageTransition>} />
         <Route path="/available-food" element={<PageTransition><AvailableFoodPage /></PageTransition>} />
         <Route path="/donate-food" element={<PageTransition><DonateFoodPage /></PageTransition>} />
+        <Route path="/food-quality" element={<PageTransition><FoodQualityPage /></PageTransition>} />
         <Route path="/volunteer" element={<ProtectedRoute><PageTransition><VolunteerDashboardPage /></PageTransition></ProtectedRoute>} />
         <Route path="/admin" element={<ProtectedRoute roles={['admin']}><PageTransition><AdminDashboardPage /></PageTransition></ProtectedRoute>} />
         <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
