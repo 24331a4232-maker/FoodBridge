@@ -128,7 +128,7 @@ const faqs = [
   { q: 'How does FoodBridge ensure food safety?', a: 'Every donor and volunteer is verified. We enforce hygiene protocols, temperature checks, and a strict 4-hour delivery window for cooked food. All pickups are tracked end-to-end.' },
   { q: 'Who can donate food?', a: 'Hotels, restaurants, event organizers, marriage halls, caterers, and even corporate cafeterias. As long as the food is edible and safe, you can list it.' },
   { q: 'How do I become a volunteer?', a: 'Register as a volunteer, complete your profile, and start accepting nearby pickups. You earn reward points and can download an official certificate.' },
-  { q: 'Is FoodBridge free to use?', a: 'Yes, FoodBridge is completely free for donors, volunteers, and recipient organizations. We are a non-profit initiative under The Last Plate.' },
+  { q: 'Is FoodBridge free to use?', a: 'Yes, FoodBridge is completely free for donors, volunteers, and recipient organizations. We are a non-profit initiative by FoodBridge.' },
   { q: 'What happens to food that is not picked up?', a: 'Listings expire automatically after the pickup window. Urgent donations are prioritized and pushed to more volunteers to minimize waste.' },
 ];
 
@@ -185,7 +185,7 @@ export function HomePage() {
             transition={{ delay: 0.2 }}
             className="badge bg-white/60 dark:bg-gray-800/60 text-primary-700 dark:text-primary-300 mb-6 backdrop-blur-md border border-primary-200 dark:border-primary-800"
           >
-            <Leaf className="h-3.5 w-3.5" /> The Last Plate Initiative
+            <Leaf className="h-3.5 w-3.5" /> FoodBridge
           </motion.span>
 
           <motion.h1

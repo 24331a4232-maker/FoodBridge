@@ -7,7 +7,7 @@ import type { Certificate } from '@/types';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 
-const PROJECT_NAME = 'The Last Plate – Redirecting Surplus Food from Events & Hotels to Those in Need';
+const PROJECT_NAME = 'FoodBridge';
 
 export function VerifyCertificatePage() {
   const { certificateId } = useParams<{ certificateId?: string }>();

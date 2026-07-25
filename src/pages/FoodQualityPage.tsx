@@ -170,7 +170,7 @@ function CertificateDocument({ scale = 1 }: { scale?: number }) {
         </div>
         {/* Logo */}
         <motion.img src="/logo.png" alt="FoodBridge" initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ type: 'spring' }} className="h-16 w-16 object-contain mb-2 relative z-10" />
-        <p className="text-[10px] font-semibold text-green-700 uppercase tracking-[0.25em] mb-1">The Last Plate Initiative</p>
+        <p className="text-[10px] font-semibold text-green-700 uppercase tracking-[0.25em] mb-1">FoodBridge</p>
         {/* Title */}
         <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">Food Quality Certificate</h2>
         <p className="text-xs sm:text-sm text-gray-500 mb-2">Certified Safe for Redistribution</p>

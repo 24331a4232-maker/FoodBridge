@@ -3,7 +3,7 @@ import QRCode from 'qrcode';
 import { supabase } from './supabase';
 
 const ORG_NAME = 'FoodBridge';
-const PROJECT_NAME = 'The Last Plate – Redirecting Surplus Food from Events & Hotels to Those in Need';
+const PROJECT_NAME = 'FoodBridge';
 const SIGNATORY = 'Arjun Sharma';
 const SIGNATORY_TITLE = 'Founder, FoodBridge';
 

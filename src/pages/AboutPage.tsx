@@ -24,7 +24,7 @@ const timeline = [
   { year: '2023', title: 'First Pilot', desc: 'Connected 5 hotels with 2 orphanages in Bangalore. Saved 1,200 meals in the first month.', icon: UtensilsCrossed },
   { year: '2024', title: 'Going Digital', desc: 'Launched the FoodBridge web platform with real-time matching and volunteer tracking.', icon: Globe2 },
   { year: '2024', title: 'Scaling Up', desc: 'Expanded to 28 cities, 340+ partner hotels, and 1,500+ active volunteers.', icon: TrendingDown },
-  { year: '2025', title: 'The Last Plate', desc: 'Officially launched The Last Plate Initiative with certification programs for volunteers.', icon: Award },
+  { year: '2025', title: 'FoodBridge', desc: 'Officially launched FoodBridge with certification programs for volunteers.', icon: Award },
 ];
 
 const sdgs = [
@@ -84,7 +84,7 @@ export function AboutPage() {
             We are on a mission to <span className="gradient-text">end food waste</span>
           </h1>
           <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 mt-6 max-w-2xl mx-auto">
-            FoodBridge is a smart surplus food redistribution platform under The Last Plate Initiative. We connect those who have surplus food with those who need it - using technology, trust, and a passionate community.
+            FoodBridge is a smart surplus food redistribution platform. We connect those who have surplus food with those who need it - using technology, trust, and a passionate community.
           </p>
         </motion.div>
       </section>

@@ -99,7 +99,7 @@ export function CertificatePage() {
             <Award className="h-3.5 w-3.5" /> Volunteer Appreciation
           </span>
           <h1 className="font-display text-3xl sm:text-4xl font-bold">Your Certificate of Appreciation</h1>
-          <p className="text-gray-500 mt-2">Download, print, and share your contribution to The Last Plate Initiative.</p>
+          <p className="text-gray-500 mt-2">Download, print, and share your contribution to FoodBridge.</p>
         </motion.div>
 
         {generating && (
@@ -163,7 +163,7 @@ export function CertificatePage() {
                   transition={{ delay: 0.3, type: 'spring' }}
                   className="h-16 w-16 object-contain mb-2 relative z-10"
                 />
-                <p className="text-[10px] font-semibold text-green-600 uppercase tracking-[0.2em] mb-1">The Last Plate Initiative</p>
+                <p className="text-[10px] font-semibold text-green-600 uppercase tracking-[0.2em] mb-1">FoodBridge</p>
 
                 {/* Title */}
                 <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">

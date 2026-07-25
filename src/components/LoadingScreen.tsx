@@ -24,7 +24,7 @@ export function LoadingScreen() {
           className="text-center"
         >
           <h1 className="font-display text-2xl font-bold gradient-text">FoodBridge</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">The Last Plate Initiative</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">FoodBridge</p>
         </motion.div>
         <div className="flex gap-1.5">
           {[0, 1, 2].map((i) => (

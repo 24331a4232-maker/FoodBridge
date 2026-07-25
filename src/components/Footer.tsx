@@ -64,7 +64,7 @@ export function Footer() {
               <span className="font-display text-xl font-bold gradient-text">FoodBridge</span>
             </Link>
             <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-4 max-w-sm">
-              Redirecting surplus food from events & hotels to those in need. The Last Plate Initiative - reducing food waste while fighting hunger through technology.
+              FoodBridge redirects surplus food from events & hotels to those in need - reducing food waste while fighting hunger through technology.
             </p>
             <div className="flex gap-3">
               {socials.map((s) => (
@@ -151,7 +151,7 @@ export function Footer() {
             Made with <Heart className="h-4 w-4 text-red-500 fill-red-500" /> by FoodBridge &copy; {new Date().getFullYear()}
           </p>
           <div className="flex items-center gap-4">
-            <span className="text-xs text-gray-400">The Last Plate Initiative</span>
+            <span className="text-xs text-gray-400">FoodBridge</span>
             <motion.button
               whileHover={{ y: -3 }}
               onClick={scrollToTop}
