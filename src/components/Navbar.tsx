@@ -3,9 +3,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-motion';
 import {
   Menu, X, Moon, Sun, LogOut, ChevronDown, LayoutDashboard, User as UserIcon,
-  Award, Package, Search, ShieldCheck, MapPin, Truck,
+  Award, Package, Search, ShieldCheck, Truck,
   Building2, FileText, Lock, HelpCircle, Home, Info, Phone, Search as SearchIcon,
-  Settings, LogIn, UserPlus, ChevronRight, type LucideIcon,
+  Settings, LogIn, UserPlus, ChevronRight, QrCode, type LucideIcon,
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
@@ -15,13 +15,7 @@ interface MenuLink {
   name: string;
   path: string;
   icon: LucideIcon;
-}
-interface MenuSection {
-  id: string;
-  label: string;
-  icon: LucideIcon;
-  accent: 'green' | 'orange';
-  links: MenuLink[];
+  description?: string;
 }
 
 const primaryLinks: MenuLink[] = [
@@ -30,15 +24,36 @@ const primaryLinks: MenuLink[] = [
   { name: 'Contact', path: '/contact', icon: Phone },
 ];
 
-const menuSections: MenuSection[] = [
+const servicesLinks: MenuLink[] = [
+  { name: 'Donate Food', path: '/donate-food', icon: Package, description: 'List surplus food for pickup' },
+  { name: 'Available Donations', path: '/available-food', icon: Search, description: 'Browse and claim nearby food' },
+  { name: 'Food Quality Verification', path: '/food-quality', icon: ShieldCheck, description: 'Check food safety standards' },
+  { name: 'Donation Tracking', path: '/tracking', icon: Truck, description: 'Track deliveries in real time' },
+  { name: 'QR Certificate Verification', path: '/verify-certificate', icon: QrCode, description: 'Verify a certificate by QR or ID' },
+];
+
+const dashboardLinks: MenuLink[] = [
+  { name: 'Volunteer Dashboard', path: '/volunteer', icon: LayoutDashboard, description: 'Manage your deliveries and impact' },
+  { name: 'Admin Dashboard', path: '/admin', icon: Building2, description: 'Oversee platform operations' },
+];
+
+interface DrawerSection {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+  accent: 'green' | 'orange';
+  links: MenuLink[];
+}
+
+const drawerSections: DrawerSection[] = [
   {
     id: 'account',
     label: 'Account',
     icon: UserIcon,
     accent: 'green',
     links: [
-      { name: 'My Profile', path: '/profile', icon: UserIcon },
-      { name: 'Profile Settings', path: '/profile', icon: Settings },
+      { name: 'Profile', path: '/profile', icon: UserIcon },
+      { name: 'Settings', path: '/profile', icon: Settings },
     ],
   },
   {
@@ -48,30 +63,6 @@ const menuSections: MenuSection[] = [
     accent: 'orange',
     links: [
       { name: 'My Certificates', path: '/certificate', icon: Award },
-      { name: 'Certificate Verification', path: '/verify-certificate', icon: ShieldCheck },
-    ],
-  },
-  {
-    id: 'dashboards',
-    label: 'Dashboards',
-    icon: LayoutDashboard,
-    accent: 'green',
-    links: [
-      { name: 'Volunteer Dashboard', path: '/volunteer', icon: LayoutDashboard },
-      { name: 'Admin Dashboard', path: '/admin', icon: Building2 },
-    ],
-  },
-  {
-    id: 'features',
-    label: 'Features',
-    icon: Package,
-    accent: 'orange',
-    links: [
-      { name: 'Donate Food', path: '/donate-food', icon: Package },
-      { name: 'Available Donations', path: '/available-food', icon: Search },
-      { name: 'Food Quality', path: '/food-quality', icon: ShieldCheck },
-      { name: 'Donation Tracking', path: '/tracking', icon: Truck },
-      { name: 'Current Location Map', path: '/location', icon: MapPin },
     ],
   },
   {
@@ -92,6 +83,7 @@ export function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [openDropdown, setOpenDropdown] = useState<'services' | 'dashboard' | null>(null);
   const { theme, toggleTheme } = useTheme();
   const { user, profile, signOut } = useAuth();
   const location = useLocation();
@@ -99,6 +91,7 @@ export function Navbar() {
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
   const prevY = useRef(0);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     const prev = prevY.current;
@@ -111,12 +104,23 @@ export function Navbar() {
   useEffect(() => {
     setDrawerOpen(false);
     setSearchOpen(false);
+    setOpenDropdown(null);
   }, [location.pathname]);
 
   useEffect(() => {
     document.body.style.overflow = drawerOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [drawerOpen]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
+      }
+    };
+    if (openDropdown) document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openDropdown]);
 
   const handleSignOut = async () => {
     setDrawerOpen(false);
@@ -130,7 +134,7 @@ export function Navbar() {
     setSearchOpen(false);
     setSearchQuery('');
     if (!q) return;
-    const all = menuSections.flatMap((s) => s.links).concat(primaryLinks);
+    const all = [...servicesLinks, ...dashboardLinks, ...primaryLinks, ...drawerSections.flatMap((s) => s.links)];
     const match = all.find((c) => c.name.toLowerCase().includes(q));
     if (match?.path) navigate(match.path);
   };
@@ -150,6 +154,78 @@ export function Navbar() {
       hover: 'hover:bg-accent-50 dark:hover:bg-accent-900/30',
       activeIcon: 'bg-accent-600 text-cream',
     },
+  };
+
+  const isPathInLinks = (path: string, links: MenuLink[]) => links.some((l) => l.path === path);
+
+  const renderDropdown = (id: 'services' | 'dashboard', label: string, icon: LucideIcon, links: MenuLink[]) => {
+    const isOpen = openDropdown === id;
+    const isActive = isPathInLinks(location.pathname, links);
+    const Icon = icon;
+    return (
+      <div className="relative">
+        <button
+          onClick={() => setOpenDropdown(isOpen ? null : id)}
+          onMouseEnter={() => setOpenDropdown(id)}
+          className={`relative flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
+            isActive || isOpen
+              ? 'text-primary-700 dark:text-primary-300'
+              : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'
+          }`}
+        >
+          <Icon className="h-4 w-4 opacity-70" />
+          {label}
+          <ChevronDown className={`h-3.5 w-3.5 opacity-60 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+          {isActive && (
+            <motion.span layoutId="navUnderline" className="absolute left-3.5 right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />
+          )}
+        </button>
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: 8, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.97 }}
+              transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+              className="absolute left-0 top-full mt-2 w-72 rounded-2xl glass-nav shadow-premium-lg border border-linen/70 dark:border-secondary-800/60 overflow-hidden p-2"
+              onMouseLeave={() => setOpenDropdown(null)}
+            >
+              {links.map((link) => {
+                const LinkIcon = link.icon;
+                const active = location.pathname === link.path;
+                return (
+                  <Link
+                    key={link.path + link.name}
+                    to={link.path}
+                    className={`group flex items-start gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 ${
+                      active
+                        ? 'bg-primary-50 dark:bg-primary-900/30'
+                        : 'hover:bg-oat dark:hover:bg-secondary-800/60'
+                    }`}
+                  >
+                    <span className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 transition-colors ${
+                      active
+                        ? 'bg-primary-600 text-cream'
+                        : 'bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 group-hover:bg-primary-200 dark:group-hover:bg-primary-800/60'
+                    }`}>
+                      <LinkIcon className="h-4.5 w-4.5" strokeWidth={1.75} />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className={`text-sm font-semibold ${active ? 'text-primary-700 dark:text-primary-300' : 'text-ink dark:text-cream'}`}>
+                        {link.name}
+                      </p>
+                      {link.description && (
+                        <p className="text-xs text-ink-soft dark:text-cream/50 mt-0.5 leading-snug">{link.description}</p>
+                      )}
+                    </div>
+                  </Link>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    );
   };
 
   return (
@@ -176,8 +252,8 @@ export function Navbar() {
               <span className="font-display text-lg sm:text-xl font-semibold gradient-text-soft">FoodBridge</span>
             </Link>
 
-            {/* Primary links — desktop */}
-            <div className="hidden md:flex items-center gap-1">
+            {/* Primary links + dropdowns — desktop */}
+            <div ref={dropdownRef} className="hidden md:flex items-center gap-1">
               {primaryLinks.map((item) => {
                 const active = location.pathname === item.path;
                 const Icon = item.icon;
@@ -199,9 +275,11 @@ export function Navbar() {
                   </Link>
                 );
               })}
+              {renderDropdown('services', 'Services', Package, servicesLinks)}
+              {renderDropdown('dashboard', 'Dashboard', LayoutDashboard, dashboardLinks)}
             </div>
 
-            {/* Right side — minimal: search, theme, bell, avatar, hamburger */}
+            {/* Right side — search, theme, bell, avatar, hamburger */}
             <div className="flex items-center gap-1.5 sm:gap-2">
               <button
                 onClick={() => setSearchOpen(!searchOpen)}
@@ -327,6 +405,31 @@ export function Navbar() {
                   </button>
                 </div>
 
+                {/* Quick access — Services & Dashboards */}
+                <div className="px-4 pt-4 space-y-3">
+                  <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-soft dark:text-cream/50 px-1">
+                    Quick Access
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link to="/donate-food" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-800/40 transition-colors">
+                      <Package className="h-4 w-4 text-primary-600 dark:text-primary-400" strokeWidth={1.75} />
+                      <span className="text-sm font-medium text-ink dark:text-cream">Donate Food</span>
+                    </Link>
+                    <Link to="/available-food" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-secondary-50 dark:bg-secondary-900/30 hover:bg-secondary-100 dark:hover:bg-secondary-800/40 transition-colors">
+                      <Search className="h-4 w-4 text-secondary-600 dark:text-secondary-400" strokeWidth={1.75} />
+                      <span className="text-sm font-medium text-ink dark:text-cream">Available</span>
+                    </Link>
+                    <Link to="/volunteer" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-800/40 transition-colors">
+                      <LayoutDashboard className="h-4 w-4 text-accent-600 dark:text-accent-400" strokeWidth={1.75} />
+                      <span className="text-sm font-medium text-ink dark:text-cream">Volunteer</span>
+                    </Link>
+                    <Link to="/admin" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-800/40 transition-colors">
+                      <Building2 className="h-4 w-4 text-primary-600 dark:text-primary-400" strokeWidth={1.75} />
+                      <span className="text-sm font-medium text-ink dark:text-cream">Admin</span>
+                    </Link>
+                  </div>
+                </div>
+
                 {/* User card (when signed in) */}
                 {user && (
                   <div className="mx-4 mt-4 p-4 rounded-2xl-premium bg-gradient-to-br from-secondary-700 to-secondary-800 text-cream">
@@ -344,7 +447,7 @@ export function Navbar() {
 
                 {/* Scrollable sections */}
                 <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6 no-scrollbar">
-                  {menuSections.map((section) => {
+                  {drawerSections.map((section) => {
                     const SectionIcon = section.icon;
                     const accent = accentClasses[section.accent];
                     return (
