@@ -6,6 +6,7 @@ import { useToast } from '@/context/ToastContext';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { LeafletMap, type MapPoint } from '@/components/LeafletMap';
 
 const contactInfo = [
   { icon: Mail, label: 'Email', value: 'hello@foodbridge.org', href: 'mailto:hello@foodbridge.org' },
@@ -93,16 +94,17 @@ export function ContactPage() {
               ))}
             </motion.div>
 
-            {/* Map placeholder */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl overflow-hidden h-64 bg-gradient-to-br from-primary-100 to-primary-50 dark:from-primary-900/30 dark:to-gray-800 relative border border-gray-200 dark:border-gray-700">
-              <div className="absolute inset-0 bg-grid-pattern opacity-50" />
-              <div className="relative h-full flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="h-10 w-10 text-primary-500 mx-auto mb-2 animate-bounce" />
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-300">FoodBridge HQ</p>
-                  <p className="text-xs text-gray-400">MG Road, Bangalore</p>
-                </div>
-              </div>
+            {/* Map */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
+              <LeafletMap
+                center={[12.9756, 77.6053]}
+                zoom={15}
+                height="h-64"
+                points={[
+                  { lat: 12.9756, lng: 77.6053, type: 'donor', popup: '<strong>FoodBridge HQ</strong><br/>MG Road, Bangalore' },
+                ] as MapPoint[]}
+              />
+              <p className="text-xs text-gray-400 flex items-center gap-1"><MapPin className="h-3 w-3" /> FoodBridge HQ - MG Road, Bangalore</p>
             </motion.div>
 
             {/* Social */}

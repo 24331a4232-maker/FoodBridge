@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, MapPin, UtensilsCrossed, Hotel, Calendar, Package, CheckCircle2, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Upload, MapPin, UtensilsCrossed, Hotel, Calendar, Package, CheckCircle2, Sparkles, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
@@ -8,6 +8,8 @@ import type { OrganizationType, FoodCategory } from '@/types';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Link } from 'react-router-dom';
+import { LeafletMap, type MapPoint } from '@/components/LeafletMap';
+import { geocodeAddress } from '@/lib/geo';
 
 const orgTypes: { value: OrganizationType; label: string }[] = [
   { value: 'hotel', label: 'Hotel' },
@@ -32,6 +34,8 @@ export function DonateFoodPage() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>('');
+  const [mapPoints, setMapPoints] = useState<MapPoint[]>([]);
+  const [geocoding, setGeocoding] = useState(false);
   const [form, setForm] = useState({
     donor_name: profile?.full_name ?? '',
     organization: '',
@@ -77,6 +81,16 @@ export function DonateFoodPage() {
       return;
     }
     setSubmitting(true);
+    setGeocoding(true);
+    const fullAddress = `${form.address}, ${form.city}`.trim().replace(/,$/, '');
+    const geo = await geocodeAddress(fullAddress);
+    setGeocoding(false);
+    if (!geo) {
+      toast('Could not find this address on the map. Please check the address.', 'error');
+      setSubmitting(false);
+      return;
+    }
+    setMapPoints([{ lat: geo.lat, lng: geo.lng, type: 'donor', popup: form.organization, label: form.food_name }]);
     const { error } = await supabase.from('food_donations').insert({
       donor_id: user.id,
       donor_name: form.donor_name || profile?.full_name || '',
@@ -90,6 +104,8 @@ export function DonateFoodPage() {
       expiry_time: new Date(form.expiry_time).toISOString(),
       address: form.address,
       city: form.city,
+      latitude: geo.lat,
+      longitude: geo.lng,
       description: form.description,
       contact_phone: form.contact_phone,
       is_urgent: form.is_urgent,
@@ -271,21 +287,24 @@ export function DonateFoodPage() {
             </label>
           </motion.div>
 
-          {/* Map placeholder */}
+          {/* Map */}
           <motion.div variants={fadeInUp}>
-            <label className="block text-sm font-medium mb-1.5">Location Preview</label>
-            <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 h-48 bg-gradient-to-br from-primary-100 to-primary-50 dark:from-primary-900/30 dark:to-gray-800 flex items-center justify-center relative">
-              <div className="absolute inset-0 bg-grid-pattern opacity-50" />
-              <div className="relative text-center">
-                <MapPin className="h-8 w-8 text-primary-500 mx-auto mb-2 animate-bounce" />
-                <p className="text-sm text-gray-500">Map preview - enter address to set location</p>
+            <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><MapPin className="h-4 w-4 text-primary-500" /> Location Preview</label>
+            {mapPoints.length > 0 ? (
+              <LeafletMap points={mapPoints} height="h-56" />
+            ) : (
+              <div className="rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 h-56 bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center">
+                <div className="text-center">
+                  <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                  <p className="text-sm text-gray-400">Fill the address fields and submit to pin your location</p>
+                </div>
               </div>
-            </div>
+            )}
           </motion.div>
 
           <motion.div variants={fadeInUp}>
-            <RippleButton type="submit" variant="primary" fullWidth disabled={submitting || !user}>
-              {submitting ? 'Submitting...' : 'Submit Donation'}
+            <RippleButton type="submit" variant="primary" fullWidth disabled={submitting || geocoding || !user}>
+              {submitting || geocoding ? <><Loader2 className="h-4 w-4 animate-spin" /> {geocoding ? 'Locating address...' : 'Submitting...'}</> : 'Submit Donation'}
             </RippleButton>
           </motion.div>
         </motion.form>

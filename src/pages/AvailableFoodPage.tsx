@@ -1,13 +1,15 @@
 import { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, MapPin, Clock, UtensilsCrossed, Hotel, Package, ChevronLeft, ChevronRight, Flame, X, CheckCircle2, Loader2 } from 'lucide-react';
+import { Search, Filter, MapPin, Clock, UtensilsCrossed, Hotel, Package, ChevronLeft, ChevronRight, Flame, X, CheckCircle2, Loader2, Navigation, Crosshair } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import type { FoodDonation, FoodCategory } from '@/types';
 import { useToast } from '@/context/ToastContext';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { LeafletMap, haversineKm } from '@/components/LeafletMap';
+import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
 
 const categories: { value: FoodCategory | 'all'; label: string }[] = [
   { value: 'all', label: 'All' },
@@ -48,9 +50,23 @@ export function AvailableFoodPage() {
   const [selected, setSelected] = useState<FoodDonation | null>(null);
   const [accepting, setAccepting] = useState(false);
   const [acceptedId, setAcceptedId] = useState<string | null>(null);
+  const [showMap, setShowMap] = useState(false);
+  const [route, setRoute] = useState<RouteInfo | null>(null);
+  const [routeLoading, setRouteLoading] = useState(false);
+  const { position, loading: geoLoading, error: geoError, request: requestGeo } = useGeolocation();
   const { toast } = useToast();
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+
+  const generateRoute = async (donation: FoodDonation) => {
+    if (!position) { toast('Enable location first to generate a route', 'info'); return; }
+    if (donation.latitude == null || donation.longitude == null) { toast('This donation has no map coordinates', 'error'); return; }
+    setRouteLoading(true);
+    const r = await getRoute([position.lat, position.lng], [donation.latitude, donation.longitude]);
+    setRouteLoading(false);
+    if (r) { setRoute(r); setShowMap(true); toast(`Route: ${r.distanceKm.toFixed(1)} km, ~${Math.round(r.durationMin)} min`, 'success'); }
+    else toast('Could not generate route. Please try again.', 'error');
+  };
 
   const acceptPickup = async (donation: FoodDonation) => {
     if (!user) {
@@ -112,9 +128,15 @@ export function AvailableFoodPage() {
         d.organization.toLowerCase().includes(search.toLowerCase()) ||
         d.city.toLowerCase().includes(search.toLowerCase());
       const matchCat = category === 'all' || d.category === category;
-      return matchSearch && matchCat;
+      const matchNearby = !position || (d.latitude != null && d.longitude != null && haversineKm([position.lat, position.lng], [d.latitude!, d.longitude!]) <= 50);
+      return matchSearch && matchCat && matchNearby;
+    }).sort((a, b) => {
+      if (!position) return 0;
+      const da = a.latitude != null && a.longitude != null ? haversineKm([position.lat, position.lng], [a.latitude!, a.longitude!]) : Infinity;
+      const db = b.latitude != null && b.longitude != null ? haversineKm([position.lat, position.lng], [b.latitude!, b.longitude!]) : Infinity;
+      return da - db;
     });
-  }, [donations, search, category]);
+  }, [donations, search, category, position]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const current = useMemo(() => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filtered, page]);
@@ -169,6 +191,42 @@ export function AvailableFoodPage() {
             ))}
           </div>
         </div>
+
+        {/* Geolocation bar */}
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+          <div className="flex items-center gap-2">
+            <RippleButton onClick={requestGeo} variant={position ? 'ghost' : 'secondary'} className="text-sm" disabled={geoLoading}>
+              {geoLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Crosshair className="h-4 w-4" />}
+              {position ? 'Location Active' : 'Find Nearby'}
+            </RippleButton>
+            {geoError && <span className="text-xs text-red-500">{geoError}</span>}
+            {position && <span className="text-xs text-gray-500">Showing donations within 50 km of you</span>}
+          </div>
+          <RippleButton onClick={() => setShowMap((s) => !s)} variant="ghost" className="text-sm">
+            <MapPin className="h-4 w-4" /> {showMap ? 'Hide Map' : 'Show Map'}
+          </RippleButton>
+        </div>
+
+        {/* Map view */}
+        {showMap && (
+          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="mb-8">
+            <LeafletMap
+              points={[
+                ...(position ? [{ lat: position.lat, lng: position.lng, type: 'user' as const, popup: 'You are here' }] : []),
+                ...current.filter((d) => d.latitude != null && d.longitude != null).map((d) => ({ lat: d.latitude!, lng: d.longitude!, type: 'donor' as const, popup: `<strong>${d.food_name}</strong><br/>${d.organization}` })),
+              ]}
+              showRoute={!!route}
+              routeCoords={route?.coordinates ?? []}
+              height="h-80"
+            />
+            {route && (
+              <div className="mt-2 flex items-center justify-between text-sm bg-primary-50 dark:bg-primary-900/20 rounded-xl p-3">
+                <span className="font-medium">Route: {route.distanceKm.toFixed(1)} km • ~{Math.round(route.durationMin)} min</span>
+                <button onClick={() => setRoute(null)} className="text-xs text-gray-500 hover:text-gray-700">Clear route</button>
+              </div>
+            )}
+          </motion.div>
+        )}
 
         {/* Grid */}
         {loading ? (
@@ -301,9 +359,16 @@ export function AvailableFoodPage() {
                     <CheckCircle2 className="h-5 w-5" /> Accepted! Redirecting...
                   </div>
                 ) : (
-                  <RippleButton onClick={() => acceptPickup(selected)} variant="primary" fullWidth disabled={accepting}>
-                    {accepting ? <><Loader2 className="h-4 w-4 animate-spin" /> Accepting...</> : 'Accept Pickup'}
-                  </RippleButton>
+                  <div className="mt-6 space-y-2">
+                    <RippleButton onClick={() => acceptPickup(selected)} variant="primary" fullWidth disabled={accepting}>
+                      {accepting ? <><Loader2 className="h-4 w-4 animate-spin" /> Accepting...</> : 'Accept Pickup'}
+                    </RippleButton>
+                    {position && selected.latitude != null && selected.longitude != null && (
+                      <RippleButton onClick={() => generateRoute(selected)} variant="ghost" fullWidth disabled={routeLoading}>
+                        {routeLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Navigation className="h-4 w-4" />} {routeLoading ? 'Calculating...' : 'Get Route'}
+                      </RippleButton>
+                    )}
+                  </div>
                 )}
               </div>
             </motion.div>

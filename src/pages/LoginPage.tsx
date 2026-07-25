@@ -109,7 +109,7 @@ export function LoginPage() {
               <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="h-4 w-4 rounded text-primary-600 focus:ring-primary-500" />
               <span className="text-gray-600 dark:text-gray-400">Remember me</span>
             </label>
-            <button type="button" onClick={() => toast('Password reset link sent to your email', 'info')} className="text-primary-600 hover:underline">
+            <button type="button" onClick={() => toast('Password reset is not available in this demo. Contact support@foodbridge.org.', 'info')} className="text-primary-600 hover:underline">
               Forgot password?
             </button>
           </motion.div>
@@ -128,7 +128,7 @@ export function LoginPage() {
           <motion.div variants={fadeInUp}>
             <button
               type="button"
-              onClick={() => toast('Google login is a UI demo. Use email/password.', 'info')}
+              onClick={() => toast('Google login requires backend setup. Please use email/password.', 'info')}
               className="w-full flex items-center justify-center gap-3 px-6 py-3 rounded-full border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all font-medium text-sm"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">

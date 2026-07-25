@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  Package, CheckCircle2, Clock, Award, MapPin, Trophy, Star, Medal, Flame, Download, ArrowRight, Zap, Target,
+  Package, CheckCircle2, Clock, Award, MapPin, Trophy, Star, Medal, Flame, Download, ArrowRight, Zap, Target, Navigation, Loader2,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
@@ -10,6 +10,8 @@ import { useToast } from '@/context/ToastContext';
 import type { FoodDonation, Pickup, Profile } from '@/types';
 import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { LeafletMap, type MapPoint, haversineKm } from '@/components/LeafletMap';
+import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
 
 interface LeaderboardEntry {
   name: string;
@@ -35,6 +37,10 @@ export function VolunteerDashboardPage() {
   const [myPickups, setMyPickups] = useState<Pickup[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const { position, loading: geoLoading, error: geoError, request: requestGeo } = useGeolocation();
+  const [route, setRoute] = useState<RouteInfo | null>(null);
+  const [routeLoading, setRouteLoading] = useState(false);
+  const [routeTarget, setRouteTarget] = useState<FoodDonation | null>(null);
 
   const loadLeaderboard = async () => {
     const { data } = await supabase
@@ -127,6 +133,37 @@ export function VolunteerDashboardPage() {
   const deliveries = profile?.total_deliveries ?? 0;
   const progress = Math.min(100, (deliveries / 50) * 100);
 
+  const mapPoints: MapPoint[] = [];
+  if (position) mapPoints.push({ lat: position.lat, lng: position.lng, type: 'user', popup: 'You are here' });
+  activeTasks.forEach((t) => {
+    if (t.donation?.latitude != null && t.donation?.longitude != null) {
+      mapPoints.push({
+        lat: t.donation.latitude,
+        lng: t.donation.longitude,
+        type: 'donor',
+        popup: `<strong>${t.donation.food_name}</strong><br/>${t.donation.organization}`,
+      });
+    }
+  });
+
+  const nearbyWithDistance = position
+    ? available
+        .filter((d) => d.latitude != null && d.longitude != null)
+        .map((d) => ({ d, dist: haversineKm([position.lat, position.lng], [d.latitude!, d.longitude!]) }))
+        .sort((a, b) => a.dist - b.dist)
+    : [];
+
+  const generateRoute = async (donation: FoodDonation) => {
+    if (!position) { toast('Enable location first to generate a route', 'info'); return; }
+    if (donation.latitude == null || donation.longitude == null) { toast('This donation has no map coordinates', 'error'); return; }
+    setRouteLoading(true);
+    setRouteTarget(donation);
+    const r = await getRoute([position.lat, position.lng], [donation.latitude, donation.longitude]);
+    setRouteLoading(false);
+    if (r) { setRoute(r); toast(`Route ready: ${r.distanceKm.toFixed(1)} km, ~${Math.round(r.durationMin)} min`, 'success'); }
+    else toast('Could not generate route. Please try again.', 'error');
+  };
+
   return (
     <div className="pt-20 min-h-screen gradient-bg">
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
@@ -173,20 +210,31 @@ export function VolunteerDashboardPage() {
                 <p className="text-center text-gray-400 py-8">No donations available right now. Check back soon!</p>
               ) : (
                 <div className="space-y-3">
-                  {available.map((d) => (
-                    <motion.div key={d.id} variants={fadeInUp} initial="hidden" animate="visible" className="flex items-center gap-4 p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors">
-                      <img src={d.image_url || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'} alt="" className="h-16 w-16 rounded-xl object-cover shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm truncate">{d.food_name}</p>
-                        <p className="text-xs text-gray-500 truncate">{d.organization} - {d.city}</p>
-                        <div className="flex gap-2 mt-1">
-                          <span className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-[10px]">{d.quantity} {d.quantity_unit}</span>
-                          {d.is_urgent && <span className="badge bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-[10px]"><Flame className="h-2.5 w-2.5" /> Urgent</span>}
+                  {(position ? nearbyWithDistance.map((x) => x.d) : available).map((d) => {
+                    const dist = position ? nearbyWithDistance.find((x) => x.d.id === d.id)?.dist : null;
+                    return (
+                      <motion.div key={d.id} variants={fadeInUp} initial="hidden" animate="visible" className="flex items-center gap-4 p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors">
+                        <img src={d.image_url || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg'} alt="" className="h-16 w-16 rounded-xl object-cover shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm truncate">{d.food_name}</p>
+                          <p className="text-xs text-gray-500 truncate">{d.organization} - {d.city}</p>
+                          <div className="flex flex-wrap gap-2 mt-1">
+                            <span className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-[10px]">{d.quantity} {d.quantity_unit}</span>
+                            {d.is_urgent && <span className="badge bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-[10px]"><Flame className="h-2.5 w-2.5" /> Urgent</span>}
+                            {dist != null && <span className="badge bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-[10px]"><MapPin className="h-2.5 w-2.5" /> {dist.toFixed(1)} km</span>}
+                          </div>
                         </div>
-                      </div>
-                      <RippleButton onClick={() => acceptPickup(d)} variant="primary" className="text-xs px-4 py-2 shrink-0">Accept</RippleButton>
-                    </motion.div>
-                  ))}
+                        <div className="flex flex-col gap-1.5 shrink-0">
+                          <RippleButton onClick={() => acceptPickup(d)} variant="primary" className="text-xs px-4 py-2">Accept</RippleButton>
+                          {position && d.latitude != null && d.longitude != null && (
+                            <RippleButton onClick={() => generateRoute(d)} variant="ghost" className="text-xs px-3 py-1.5" disabled={routeLoading}>
+                              <Navigation className="h-3 w-3" /> Route
+                            </RippleButton>
+                          )}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               )}
             </motion.div>
@@ -292,13 +340,60 @@ export function VolunteerDashboardPage() {
               </div>
             </motion.div>
 
-            {/* Map */}
+            {/* Map & Route */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card p-6">
-              <h3 className="font-display font-semibold mb-3 flex items-center gap-2"><MapPin className="h-5 w-5 text-primary-500" /> Your Route</h3>
-              <div className="rounded-2xl overflow-hidden h-40 bg-gradient-to-br from-primary-100 to-primary-50 dark:from-primary-900/30 dark:to-gray-800 flex items-center justify-center relative">
-                <div className="absolute inset-0 bg-grid-pattern opacity-50" />
-                <MapPin className="relative h-8 w-8 text-primary-500 animate-bounce" />
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-display font-semibold flex items-center gap-2"><Navigation className="h-5 w-5 text-primary-500" /> Your Route</h3>
+                {!position && (
+                  <RippleButton onClick={requestGeo} variant="secondary" className="text-xs px-3 py-1.5" disabled={geoLoading}>
+                    {geoLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <MapPin className="h-3 w-3" />} Detect Location
+                  </RippleButton>
+                )}
               </div>
+              {geoError && <p className="text-xs text-red-500 mb-2">{geoError}</p>}
+              {position ? (
+                <>
+                  <LeafletMap
+                    points={mapPoints}
+                    showRoute={!!route}
+                    routeCoords={route?.coordinates ?? []}
+                    height="h-56"
+                  />
+                  {route && routeTarget && (
+                    <div className="mt-3 flex items-center justify-between text-sm bg-primary-50 dark:bg-primary-900/20 rounded-xl p-3">
+                      <div>
+                        <p className="font-medium">Route to {routeTarget.food_name}</p>
+                        <p className="text-xs text-gray-500">{route.distanceKm.toFixed(1)} km • ~{Math.round(route.durationMin)} min drive</p>
+                      </div>
+                      <a
+                        href={`https://www.openstreetmap.org/directions?from=${position.lat}%2C${position.lng}&to=${routeTarget.latitude}%2C${routeTarget.longitude}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-primary-600 hover:underline text-xs flex items-center gap-1"
+                      >
+                        Open in OSM <ArrowRight className="h-3 w-3" />
+                      </a>
+                    </div>
+                  )}
+                  {activeTasks.length > 0 && !route && (
+                    <div className="mt-3 space-y-2">
+                      {activeTasks.map((t) => t.donation?.latitude != null && t.donation?.longitude != null ? (
+                        <RippleButton key={t.id} onClick={() => generateRoute(t.donation!)} variant="ghost" fullWidth disabled={routeLoading}>
+                          {routeLoading && routeTarget?.id === t.donation?.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Navigation className="h-3.5 w-3.5" />}
+                          Route to {t.donation?.food_name}
+                        </RippleButton>
+                      ) : null)}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="rounded-2xl overflow-hidden h-56 bg-gray-50 dark:bg-gray-800/50 flex items-center justify-center">
+                  <div className="text-center">
+                    <MapPin className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                    <p className="text-sm text-gray-400">Click "Detect Location" to see your route</p>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </div>
         </div>
