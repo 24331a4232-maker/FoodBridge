@@ -1,10 +1,13 @@
 import { useEffect, useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Filter, MapPin, Clock, UtensilsCrossed, Hotel, Package, ChevronLeft, ChevronRight, Flame, X } from 'lucide-react';
+import { Search, Filter, MapPin, Clock, UtensilsCrossed, Hotel, Package, ChevronLeft, ChevronRight, Flame, X, CheckCircle2, Loader2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
 import type { FoodDonation, FoodCategory } from '@/types';
 import { useToast } from '@/context/ToastContext';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
+import { RippleButton } from '@/components/ui/RippleButton';
 
 const categories: { value: FoodCategory | 'all'; label: string }[] = [
   { value: 'all', label: 'All' },
@@ -43,7 +46,45 @@ export function AvailableFoodPage() {
   const [category, setCategory] = useState<FoodCategory | 'all'>('all');
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<FoodDonation | null>(null);
+  const [accepting, setAccepting] = useState(false);
+  const [acceptedId, setAcceptedId] = useState<string | null>(null);
   const { toast } = useToast();
+  const { user, profile } = useAuth();
+  const navigate = useNavigate();
+
+  const acceptPickup = async (donation: FoodDonation) => {
+    if (!user) {
+      toast('Please login as a volunteer to accept pickups', 'info');
+      navigate('/login', { state: { from: '/available-food' } });
+      return;
+    }
+    if (profile?.role !== 'volunteer' && profile?.role !== 'admin') {
+      toast('Only volunteer accounts can accept pickups', 'error');
+      return;
+    }
+    setAccepting(true);
+    const { error } = await supabase.from('pickups').insert({
+      donation_id: donation.id,
+      volunteer_id: user.id,
+      status: 'accepted',
+      points_earned: donation.is_urgent ? 50 : 25,
+    });
+    if (error) {
+      setAccepting(false);
+      toast('Could not accept this pickup. It may already be claimed.', 'error');
+      return;
+    }
+    await supabase.from('food_donations').update({ status: 'claimed' }).eq('id', donation.id);
+    setAccepting(false);
+    setAcceptedId(donation.id);
+    setDonations((d) => d.filter((x) => x.id !== donation.id));
+    toast('Pickup accepted! Redirecting to your dashboard...', 'success');
+    setTimeout(() => {
+      setSelected(null);
+      setAcceptedId(null);
+      navigate('/volunteer');
+    }, 1800);
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -255,12 +296,15 @@ export function AvailableFoodPage() {
                   <div className="card p-3 col-span-2"><p className="text-gray-400 text-xs">Address</p><p className="font-semibold">{selected.address}, {selected.city}</p></div>
                   {selected.contact_phone && <div className="card p-3 col-span-2"><p className="text-gray-400 text-xs">Contact</p><p className="font-semibold">{selected.contact_phone}</p></div>}
                 </div>
-                <button
-                  onClick={() => { toast('Please login as a volunteer to accept this pickup', 'info'); setSelected(null); }}
-                  className="btn-primary w-full mt-6"
-                >
-                  Accept Pickup
-                </button>
+                {acceptedId === selected.id ? (
+                  <div className="mt-6 flex items-center justify-center gap-2 py-3 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium">
+                    <CheckCircle2 className="h-5 w-5" /> Accepted! Redirecting...
+                  </div>
+                ) : (
+                  <RippleButton onClick={() => acceptPickup(selected)} variant="primary" fullWidth disabled={accepting}>
+                    {accepting ? <><Loader2 className="h-4 w-4 animate-spin" /> Accepting...</> : 'Accept Pickup'}
+                  </RippleButton>
+                )}
               </div>
             </motion.div>
           </motion.div>

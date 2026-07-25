@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Download, Printer, Award, ShieldCheck, Calendar, Hash, QrCode } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Download, Printer, Award, ShieldCheck, Calendar, Hash, QrCode, PartyPopper, X, Sparkles } from 'lucide-react';
 import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
 import { useAuth } from '@/context/AuthContext';
@@ -14,6 +15,7 @@ export function CertificatePage() {
   const [qrUrl, setQrUrl] = useState('');
   const [certNumber, setCertNumber] = useState('');
   const [uniqueId, setUniqueId] = useState('');
+  const [showSuccess, setShowSuccess] = useState(false);
   const certificateRef = useRef<HTMLDivElement>(null);
 
   const issueDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
@@ -123,6 +125,7 @@ export function CertificatePage() {
 
     pdf.save(`FoodBridge-Certificate-${profile?.full_name ?? 'volunteer'}.pdf`);
     toast('Certificate downloaded!', 'success');
+    setShowSuccess(true);
   };
 
   return (
@@ -235,6 +238,66 @@ export function CertificatePage() {
           </div>
         </motion.div>
       </section>
+
+      {/* Success Popup */}
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4"
+            onClick={() => setShowSuccess(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 20, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.8, y: 20, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 200, damping: 20 }}
+              className="glass-card p-8 sm:p-10 text-center max-w-md relative overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Confetti dots */}
+              {Array.from({ length: 12 }).map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute h-2 w-2 rounded-full"
+                  style={{
+                    left: `${10 + i * 7}%`,
+                    top: '-10px',
+                    background: i % 3 === 0 ? '#16a34a' : i % 3 === 1 ? '#f97316' : '#fbbf24',
+                  }}
+                  initial={{ y: -20, opacity: 1 }}
+                  animate={{ y: [0, 300, 400], opacity: [1, 1, 0], rotate: 360 }}
+                  transition={{ duration: 2, delay: i * 0.1, repeat: Infinity, repeatDelay: 1 }}
+                />
+              ))}
+              <button onClick={() => setShowSuccess(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><X className="h-5 w-5" /></button>
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+                className="h-20 w-20 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mx-auto mb-5 shadow-xl shadow-primary-500/40"
+              >
+                <PartyPopper className="h-10 w-10 text-white" />
+              </motion.div>
+              <h2 className="font-display text-2xl font-bold mb-2">Certificate Generated!</h2>
+              <p className="text-sm text-gray-500 mb-1">Your certificate has been downloaded successfully.</p>
+              <div className="flex items-center justify-center gap-2 text-xs text-gray-400 mb-6">
+                <Sparkles className="h-3 w-3 text-accent-500" />
+                Certificate No: {certNumber}
+                <Sparkles className="h-3 w-3 text-accent-500" />
+              </div>
+              <div className="flex flex-col gap-3">
+                <RippleButton onClick={() => setShowSuccess(false)} variant="primary" fullWidth>View Certificate</RippleButton>
+                <Link to="/verify-certificate" onClick={() => setShowSuccess(false)}>
+                  <RippleButton variant="ghost" fullWidth>Verify Certificate</RippleButton>
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
