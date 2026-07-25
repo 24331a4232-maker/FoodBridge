@@ -295,8 +295,8 @@ export function DonationStatusTracker({ donation, pickup, certificate, compact =
               />
               <defs>
                 <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#0F766E" />
-                  <stop offset="100%" stopColor="#C2410C" />
+                  <stop offset="0%" stopColor="#1B4332" />
+                  <stop offset="100%" stopColor="#8B5E3C" />
                 </linearGradient>
               </defs>
             </svg>
@@ -381,8 +381,8 @@ export function DonationStatusTracker({ donation, pickup, certificate, compact =
             />
             <defs>
               <linearGradient id="pathGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#0F766E" />
-                <stop offset="100%" stopColor="#C2410C" />
+                <stop offset="0%" stopColor="#1B4332" />
+                <stop offset="100%" stopColor="#8B5E3C" />
               </linearGradient>
             </defs>
           </svg>

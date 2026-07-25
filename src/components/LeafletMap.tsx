@@ -14,35 +14,35 @@ const defaultIcon = L.icon({
 L.Marker.prototype.options.icon = defaultIcon;
 
 const userIcon = L.divIcon({
-  html: '<div style="background:#1E3A8A;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #1E3A8A,0 2px 6px rgba(0,0,0,0.3)"></div>',
+  html: '<div style="background:#4F8060;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #4F8060,0 2px 6px rgba(0,0,0,0.3)"></div>',
   iconSize: [18, 18],
   iconAnchor: [9, 9],
   className: '',
 });
 
 const donorIcon = L.divIcon({
-  html: '<div style="background:#0F766E;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #0F766E,0 2px 6px rgba(0,0,0,0.3)"></div>',
+  html: '<div style="background:#1B4332;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #1B4332,0 2px 6px rgba(0,0,0,0.3)"></div>',
   iconSize: [18, 18],
   iconAnchor: [9, 9],
   className: '',
 });
 
 const volunteerIcon = L.divIcon({
-  html: '<div style="background:#C2410C;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #C2410C,0 2px 6px rgba(0,0,0,0.3)"></div>',
+  html: '<div style="background:#8B5E3C;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #8B5E3C,0 2px 6px rgba(0,0,0,0.3)"></div>',
   iconSize: [18, 18],
   iconAnchor: [9, 9],
   className: '',
 });
 
 const ngoIcon = L.divIcon({
-  html: '<div style="background:#1E3A8A;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #1E3A8A,0 2px 6px rgba(0,0,0,0.3)"></div>',
+  html: '<div style="background:#4F8060;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #4F8060,0 2px 6px rgba(0,0,0,0.3)"></div>',
   iconSize: [18, 18],
   iconAnchor: [9, 9],
   className: '',
 });
 
 const donationIcon = L.divIcon({
-  html: '<div style="background:#14B8A6;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #14B8A6,0 2px 6px rgba(0,0,0,0.3)"></div>',
+  html: '<div style="background:#74A57F;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #74A57F,0 2px 6px rgba(0,0,0,0.3)"></div>',
   iconSize: [18, 18],
   iconAnchor: [9, 9],
   className: '',
@@ -150,7 +150,7 @@ export function LeafletMap({
     }
     if (showRoute && routeCoords.length >= 2) {
       routeRef.current = L.polyline(routeCoords, {
-        color: '#0F766E',
+        color: '#1B4332',
         weight: 4,
         opacity: 0.7,
         dashArray: '8,8',

@@ -349,7 +349,7 @@ export function CertificatePage() {
                   style={{
                     left: `${10 + i * 7}%`,
                     top: '-10px',
-                    background: i % 3 === 0 ? '#0F766E' : i % 3 === 1 ? '#C2410C' : '#A66B3C',
+                    background: i % 3 === 0 ? '#1B4332' : i % 3 === 1 ? '#8B5E3C' : '#C9A66B',
                   }}
                   initial={{ y: -20, opacity: 1 }}
                   animate={{ y: [0, 300, 400], opacity: [1, 1, 0], rotate: 360 }}

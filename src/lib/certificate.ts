@@ -29,7 +29,7 @@ export async function generateQRCode(verifyUrl: string): Promise<string> {
     return await QRCode.toDataURL(verifyUrl, {
       width: 200,
       margin: 1,
-      color: { dark: '#0F766E', light: '#ffffff' },
+      color: { dark: '#1B4332', light: '#ffffff' },
       errorCorrectionLevel: 'M',
     });
   } catch {
@@ -94,21 +94,21 @@ export async function generateCertificatePDF(data: CertificateData, qrDataUrl: s
   pdf.rect(0, 0, w, h, 'F');
 
   // Outer border — teal
-  pdf.setDrawColor(15, 118, 110);
+  pdf.setDrawColor(27, 67, 50);
   pdf.setLineWidth(2.5);
   pdf.rect(6, 6, w - 12, h - 12);
   // Inner border — copper
-  pdf.setDrawColor(194, 65, 12);
+  pdf.setDrawColor(139, 94, 60);
   pdf.setLineWidth(1);
   pdf.rect(10, 10, w - 20, h - 20);
   // Thin decorative line
-  pdf.setDrawColor(15, 118, 110);
+  pdf.setDrawColor(27, 67, 50);
   pdf.setLineWidth(0.3);
   pdf.rect(13, 13, w - 26, h - 26);
 
   // Corner ornaments
   const drawCorner = (x: number, y: number, dx: number, dy: number) => {
-    pdf.setDrawColor(194, 65, 12);
+    pdf.setDrawColor(139, 94, 60);
     pdf.setLineWidth(1.5);
     pdf.line(x, y, x + dx, y);
     pdf.line(x, y, x, y + dy);
@@ -119,14 +119,14 @@ export async function generateCertificatePDF(data: CertificateData, qrDataUrl: s
   drawCorner(w - 16, h - 16, -12, -12);
 
   // Watermark — light FoodBridge text
-  pdf.setTextColor(15, 118, 110);
+  pdf.setTextColor(27, 67, 50);
   pdf.setFontSize(60);
   pdf.setFont('helvetica', 'bold');
-  pdf.setTextColor(15, 118, 110, 18);
+  pdf.setTextColor(27, 67, 50, 18);
   pdf.text('FoodBridge', w / 2, h / 2 + 5, { align: 'center' });
 
   // Logo circle with "FB"
-  pdf.setFillColor(15, 118, 110);
+  pdf.setFillColor(27, 67, 50);
   pdf.circle(w / 2, 32, 11, 'F');
   pdf.setTextColor(255, 255, 255);
   pdf.setFontSize(16);
@@ -134,7 +134,7 @@ export async function generateCertificatePDF(data: CertificateData, qrDataUrl: s
   pdf.text('FB', w / 2, 35.5, { align: 'center' });
 
   // Title block
-  pdf.setTextColor(15, 118, 110);
+  pdf.setTextColor(27, 67, 50);
   pdf.setFontSize(26);
   pdf.setFont('helvetica', 'bold');
   pdf.text('Volunteer Appreciation Certificate', w / 2, 55, { align: 'center' });
@@ -145,7 +145,7 @@ export async function generateCertificatePDF(data: CertificateData, qrDataUrl: s
   pdf.text(PROJECT_NAME, w / 2, 62, { align: 'center' });
 
   // Divider
-  pdf.setDrawColor(249, 115, 22);
+  pdf.setDrawColor(201, 166, 107);
   pdf.setLineWidth(0.8);
   pdf.line(w / 2 - 30, 66, w / 2 + 30, 66);
 
@@ -162,7 +162,7 @@ export async function generateCertificatePDF(data: CertificateData, qrDataUrl: s
   pdf.text(data.volunteerName || 'Volunteer', w / 2, 88, { align: 'center' });
 
   // Underline under name
-  pdf.setDrawColor(249, 115, 22);
+  pdf.setDrawColor(201, 166, 107);
   pdf.setLineWidth(0.5);
   const nameWidth = Math.min(120, (data.volunteerName || 'Volunteer').length * 6);
   pdf.line(w / 2 - nameWidth / 2, 91, w / 2 + nameWidth / 2, 91);
@@ -183,7 +183,7 @@ export async function generateCertificatePDF(data: CertificateData, qrDataUrl: s
   pdf.text('Thank you for making a meaningful difference.', w / 2, bodyY + 17.5, { align: 'center' });
 
   // Stats row
-  pdf.setTextColor(15, 118, 110);
+  pdf.setTextColor(27, 67, 50);
   pdf.setFontSize(9);
   pdf.setFont('helvetica', 'bold');
   pdf.text(`${data.deliveriesCount} Deliveries`, w / 2 - 40, 128, { align: 'center' });
@@ -209,13 +209,13 @@ export async function generateCertificatePDF(data: CertificateData, qrDataUrl: s
   // Official seal (circle with text)
   const sealX = w / 2;
   const sealY = bottomY - 2;
-  pdf.setDrawColor(249, 115, 22);
+  pdf.setDrawColor(201, 166, 107);
   pdf.setLineWidth(1.5);
   pdf.circle(sealX, sealY, 13);
   pdf.setLineWidth(0.5);
   pdf.circle(sealX, sealY, 10.5);
   pdf.setFontSize(7);
-  pdf.setTextColor(194, 65, 12);
+  pdf.setTextColor(139, 94, 60);
   pdf.setFont('helvetica', 'bold');
   pdf.text('OFFICIAL', sealX, sealY - 3, { align: 'center' });
   pdf.text('SEAL', sealX, sealY + 1, { align: 'center' });

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 
-const COLORS = ['#0F766E', '#14B8A6', '#C2410C', '#1E3A8A', '#2563EB', '#5EEAD4'];
+const COLORS = ['#1B4332', '#74A57F', '#8B5E3C', '#4F8060', '#3A6249', '#A8C5B0'];
 
 interface Particle {
   id: number;

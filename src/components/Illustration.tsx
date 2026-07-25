@@ -17,17 +17,19 @@ interface IllustrationProps {
 }
 
 const palette = {
-  primary: '#0F766E',
-  primaryLight: '#99F6E4',
-  primarySoft: '#F0FDFA',
-  secondary: '#1E3A8A',
-  secondaryLight: '#BFDBFE',
-  secondarySoft: '#EFF6FF',
-  accent: '#C2410C',
-  accentLight: '#FFEDD5',
-  ink: '#1F2937',
+  primary: '#1B4332',
+  primaryLight: '#74A57F',
+  primarySoft: '#E8F0EA',
+  secondary: '#4F8060',
+  secondaryLight: '#A8C5B0',
+  secondarySoft: '#D1E2D5',
+  accent: '#8B5E3C',
+  accentLight: '#EBD9CC',
+  gold: '#C9A66B',
+  goldLight: '#F5EBD3',
+  ink: '#2F241F',
   inkSoft: '#6B7280',
-  cream: '#FFFFFF',
+  cream: '#FFF9F3',
 };
 
 function Blob({ className = '', fill = palette.primarySoft }: { className?: string; fill?: string }) {

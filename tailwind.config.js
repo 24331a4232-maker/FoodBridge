@@ -5,68 +5,68 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary: Teal — trust, calm, professionalism
+        // Primary: Pine Green — trust, nature, depth
         primary: {
-          50: '#F0FDFA',
-          100: '#CCFBF1',
-          200: '#99F6E4',
-          300: '#5EEAD4',
-          400: '#2DD4BF',
-          500: '#14B8A6',
-          600: '#0D9488',
-          700: '#0F766E',
-          800: '#115E59',
-          900: '#134E4A',
-          950: '#042F2E',
+          50: '#E8F0EA',
+          100: '#D1E2D5',
+          200: '#A8C5B0',
+          300: '#7FA88A',
+          400: '#74A57F', // Moss Green (secondary)
+          500: '#4F8060',
+          600: '#3A6249',
+          700: '#1B4332', // Pine Green (primary)
+          800: '#163628',
+          900: '#112A20',
+          950: '#0A1A14',
         },
-        // Accent: Soft Copper — warmth, CTAs, recognition
+        // Accent: Mocha Brown — primary buttons, warmth, CTAs
         accent: {
-          50: '#FFF7ED',
-          100: '#FFEDD5',
-          200: '#FED7AA',
-          300: '#FDBA74',
-          400: '#FB923C',
-          500: '#EA580C',
-          600: '#C2410C',
-          700: '#9A3412',
-          800: '#7C2D12',
-          900: '#631C08',
-          950: '#431407',
+          50: '#F5EDE6',
+          100: '#EBD9CC',
+          200: '#D6B399',
+          300: '#C18D66',
+          400: '#AC774F',
+          500: '#8B5E3C', // Mocha Brown (primary button)
+          600: '#724B30',
+          700: '#5A3A26',
+          800: '#42291B',
+          900: '#2B1B12',
+          950: '#160D09',
         },
-        // Bronze — certificate seals, subtle warmth
+        // Gold — certificate seals, premium accents
         gold: {
-          50: '#FBF7F2',
-          100: '#F5E9DA',
-          200: '#E8CDB0',
-          300: '#D9AC84',
-          400: '#C68B5A',
-          500: '#A66B3C',
-          600: '#8A522B',
-          700: '#6E3F20',
-          800: '#523018',
-          900: '#3A2110',
-          950: '#1F1208',
+          50: '#FBF6EC',
+          100: '#F5EBD3',
+          200: '#EBD7A7',
+          300: '#E0C37B',
+          400: '#D5AF4F',
+          500: '#C9A66B', // Accent Gold
+          600: '#A8854A',
+          700: '#876A3A',
+          800: '#66502C',
+          900: '#44361D',
+          950: '#221B0E',
         },
-        // Neutral surfaces — white, slate, border
-        cream: '#FFFFFF',
-        oat: '#F1F5F9',
-        mist: '#F8FAFC',
-        linen: '#E5E7EB',
-        ink: '#1F2937',
-        'ink-soft': '#6B7280',
-        // Secondary: Navy — headers, footer, dashboard depth
+        // Neutral surfaces — warm cream, soft beige, warm borders
+        cream: '#FFF9F3', // Background
+        oat: '#F6F1E9', // Secondary Background
+        mist: '#F6F1E9',
+        linen: '#E8DDD0', // Borders
+        ink: '#2F241F', // Primary Text
+        'ink-soft': '#6B7280', // Secondary Text
+        // Secondary: Moss-to-Pine ramp — headers, footer, dashboard depth
         secondary: {
-          50: '#EFF6FF',
-          100: '#DBEAFE',
-          200: '#BFDBFE',
-          300: '#93C5FD',
-          400: '#60A5FA',
-          500: '#3B82F6',
-          600: '#2563EB',
-          700: '#1D4ED8',
-          800: '#1E40AF',
-          900: '#1E3A8A',
-          950: '#172554',
+          50: '#E8F0EA',
+          100: '#D1E2D5',
+          200: '#A8C5B0',
+          300: '#7FA88A',
+          400: '#74A57F',
+          500: '#4F8060',
+          600: '#3A6249',
+          700: '#1B4332',
+          800: '#163628',
+          900: '#112A20',
+          950: '#0A1A14',
         },
       },
       fontFamily: {
@@ -75,16 +75,17 @@ export default {
         stat: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
-        'xl-premium': '18px',
-        '2xl-premium': '22px',
+        'xl-premium': '20px',
+        '2xl-premium': '24px',
         '3xl-premium': '28px',
       },
       boxShadow: {
-        'soft': '0 2px 8px -2px rgba(31, 41, 55, 0.06), 0 4px 16px -4px rgba(31, 41, 55, 0.04)',
-        'premium': '0 4px 24px -6px rgba(31, 41, 55, 0.08), 0 8px 32px -8px rgba(31, 41, 55, 0.06)',
-        'premium-lg': '0 8px 40px -8px rgba(31, 41, 55, 0.12), 0 16px 48px -12px rgba(31, 41, 55, 0.08)',
-        'glow-green': '0 8px 32px -8px rgba(15, 118, 110, 0.35)',
-        'glow-orange': '0 8px 32px -8px rgba(194, 65, 12, 0.35)',
+        'soft': '0 2px 8px -2px rgba(47, 36, 31, 0.06), 0 4px 16px -4px rgba(47, 36, 31, 0.04)',
+        'premium': '0 4px 24px -6px rgba(47, 36, 31, 0.08), 0 8px 32px -8px rgba(47, 36, 31, 0.06)',
+        'premium-lg': '0 8px 40px -8px rgba(47, 36, 31, 0.12), 0 16px 48px -12px rgba(47, 36, 31, 0.08)',
+        'glow-green': '0 8px 32px -8px rgba(27, 67, 50, 0.35)',
+        'glow-orange': '0 8px 32px -8px rgba(139, 94, 60, 0.35)',
+        'glow-gold': '0 8px 32px -8px rgba(201, 166, 107, 0.40)',
         'inner-soft': 'inset 0 1px 2px rgba(0, 0, 0, 0.04)',
       },
       animation: {
@@ -95,6 +96,7 @@ export default {
         'spin-slow': 'spin 3s linear infinite',
         'shimmer': 'shimmer 2.5s linear infinite',
         'fade-up': 'fadeUp 0.7s ease-out forwards',
+        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
       },
       keyframes: {
         blob: {
@@ -122,9 +124,13 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(16px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        pulseSoft: {
+          '0%, 100%': { opacity: '1', transform: 'scale(1)' },
+          '50%': { opacity: '0.85', transform: 'scale(1.04)' },
+        },
       },
       backgroundImage: {
-        'grid-pattern': "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2316A34A' fill-opacity='0.04'%3E%3Cpath d='M0 0h1v1H0zM20 20h1v1h-1zM10 30h1v1h-1zM30 10h1v1h-1z'/%3E%3C/g%3E%3C/svg%3E\")",
+        'grid-pattern': "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%231B4332' fill-opacity='0.04'%3E%3Cpath d='M0 0h1v1H0zM20 20h1v1h-1zM10 30h1v1H-1zM30 10h1v1H-1z'/%3E%3C/g%3E%3C/svg%3E\")",
       },
     },
   },
