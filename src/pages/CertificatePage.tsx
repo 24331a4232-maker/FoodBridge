@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { createCertificateRecord, generateCertificatePDF, generateQRCode, type CertificateData } from '@/lib/certificate';
 
+import { PageNav } from '@/components/PageNav';
 export function CertificatePage() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
@@ -101,6 +102,8 @@ export function CertificatePage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg-soft">
+      <PageNav crumbs={[{ label: 'Certificates' }, { label: 'My Certificate', icon: Award }]} />
+
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">

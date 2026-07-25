@@ -11,9 +11,12 @@ const sections = [
   { icon: Shield, title: 'Third-Party Services', content: 'We use Supabase for database and authentication, and Google Maps for location services. These providers have their own privacy policies. We only share data necessary for the service to function.' },
 ];
 
+import { PageNav } from '@/components/PageNav';
 export function PrivacyPage() {
   return (
     <div className="pt-20 min-h-screen gradient-bg">
+      <PageNav crumbs={[{ label: 'Legal' }, { label: 'Privacy Policy', icon: Shield }]} />
+
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
           <div className="inline-flex h-14 w-14 rounded-2xl bg-gradient-to-br from-primary-500 to-primary-600 items-center justify-center mb-4 shadow-lg">

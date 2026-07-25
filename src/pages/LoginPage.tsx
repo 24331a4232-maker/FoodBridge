@@ -7,6 +7,7 @@ import { useToast } from '@/context/ToastContext';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 
+import { PageNav } from '@/components/PageNav';
 export function LoginPage() {
   const { signIn } = useAuth();
   const { toast } = useToast();
@@ -46,6 +47,8 @@ export function LoginPage() {
 
   return (
     <div className="pt-20 min-h-screen flex items-center justify-center px-4 py-10 gradient-bg-soft relative overflow-hidden">
+      <PageNav crumbs={[{ label: 'Login', icon: LogIn }]} />
+
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-primary-300/20 blur-3xl animate-blob" />
         <div className="absolute bottom-10 right-10 h-72 w-72 rounded-full bg-accent-300/20 blur-3xl animate-blob" style={{ animationDelay: '2s' }} />

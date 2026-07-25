@@ -222,6 +222,7 @@ function CertificateDocument({ scale = 1 }: { scale?: number }) {
   );
 }
 
+import { PageNav } from '@/components/PageNav';
 export function FoodQualityPage() {
   const [checked, setChecked] = useState<Record<number, boolean>>({ 0: true, 1: true, 2: true, 3: true, 4: true, 5: true, 6: true });
   const [zoom, setZoom] = useState<string | null>(null);
@@ -232,6 +233,8 @@ export function FoodQualityPage() {
 
   return (
     <div className="pt-20 min-h-screen" style={{ backgroundColor: IVORY }}>
+      <PageNav crumbs={[{ label: 'Features' }, { label: 'Food Quality', icon: ShieldCheck }]} />
+
       {/* HERO */}
       <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 pt-12 pb-16 max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-10 items-center">

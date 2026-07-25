@@ -9,6 +9,7 @@ import { fadeInUp, staggerContainer } from '@/lib/animations';
 
 const PROJECT_NAME = 'FoodBridge';
 
+import { PageNav } from '@/components/PageNav';
 export function VerifyCertificatePage() {
   const { certificateId } = useParams<{ certificateId?: string }>();
   const [params] = useSearchParams();
@@ -44,6 +45,8 @@ export function VerifyCertificatePage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
+      <PageNav crumbs={[{ label: 'Certificates' }, { label: 'Verify Certificate', icon: ShieldCheck }]} />
+
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-3xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">

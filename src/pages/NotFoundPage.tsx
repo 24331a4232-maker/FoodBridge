@@ -15,6 +15,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { PageNav } from '@/components/PageNav';
 import { fadeInUp, staggerContainer, scaleIn } from '@/lib/animations';
 
 const quickLinks = [
@@ -61,6 +62,7 @@ export function NotFoundPage() {
 
   return (
     <div className="pt-20 min-h-screen flex items-center justify-center px-4 py-12 gradient-bg relative overflow-hidden">
+      <PageNav crumbs={[{ label: 'Page Not Found', icon: Search }]} />
       {/* Floating background blobs */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 left-10 h-72 w-72 rounded-full bg-primary-300/20 blur-3xl animate-blob" />

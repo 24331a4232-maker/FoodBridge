@@ -9,6 +9,7 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { LeafletMap, haversineKm, estimateTravelTimeMin, type MapPoint } from '@/components/LeafletMap';
 import { useGeolocation } from '@/lib/geo';
 
+import { PageNav } from '@/components/PageNav';
 export function CurrentLocationPage() {
   const { user, profile } = useAuth();
   const { position, loading: geoLoading, error: geoError, request: requestGeo } = useGeolocation();
@@ -61,6 +62,8 @@ export function CurrentLocationPage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
+      <PageNav crumbs={[{ label: 'Maps' }, { label: 'Current Location', icon: MapPin }]} />
+
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         <SectionHeading badge="Live Map" title="Current Location Map" subtitle="See nearby donations, volunteers, and your position on an interactive map." center={false} />
 

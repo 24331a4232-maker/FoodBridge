@@ -66,6 +66,7 @@ function SectionCard({ icon: Icon, title, children, accent = 'primary' }: { icon
   );
 }
 
+import { PageNav } from '@/components/PageNav';
 export function ProfilePage() {
   const { user, profile, refreshProfile, signOut } = useAuth();
   const { toast } = useToast();
@@ -212,6 +213,7 @@ export function ProfilePage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
+      <PageNav crumbs={[{ label: 'Profile', icon: User }]} />
       <section className="py-8 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 sm:p-8 mb-6 relative overflow-hidden">

@@ -11,9 +11,12 @@ const sections = [
   { icon: RefreshCw, title: 'Modifications & Termination', content: 'We reserve the right to modify or discontinue features. We may terminate accounts that violate these terms. Users may delete their account at any time through profile settings.' },
 ];
 
+import { PageNav } from '@/components/PageNav';
 export function TermsPage() {
   return (
     <div className="pt-20 min-h-screen gradient-bg">
+      <PageNav crumbs={[{ label: 'Legal' }, { label: 'Terms of Service', icon: FileText }]} />
+
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
           <div className="inline-flex h-14 w-14 rounded-2xl bg-gradient-to-br from-accent-500 to-accent-600 items-center justify-center mb-4 shadow-lg">

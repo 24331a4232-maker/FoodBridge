@@ -120,6 +120,7 @@ const faqs: FaqItem[] = [
   },
 ];
 
+import { PageNav } from '@/components/PageNav';
 export function HelpCenterPage() {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState<CategoryId | 'all'>('all');
@@ -136,6 +137,8 @@ export function HelpCenterPage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
+      <PageNav crumbs={[{ label: 'Resources' }, { label: 'FAQ', icon: HelpCircle }]} />
+
       {/* Hero */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto text-center">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>

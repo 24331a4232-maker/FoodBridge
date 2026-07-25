@@ -15,6 +15,7 @@ const roles: { value: UserRole; label: string; icon: typeof Hotel; desc: string 
   { value: 'ngo', label: 'NGO / Shelter', icon: Building2, desc: 'Receive food donations' },
 ];
 
+import { PageNav } from '@/components/PageNav';
 export function RegisterPage() {
   const { signUp } = useAuth();
   const { toast } = useToast();
@@ -53,6 +54,8 @@ export function RegisterPage() {
 
   return (
     <div className="pt-20 min-h-screen flex items-center justify-center px-4 py-10 gradient-bg-soft relative overflow-hidden">
+      <PageNav crumbs={[{ label: 'Register', icon: UserPlus }]} />
+
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-10 right-10 h-72 w-72 rounded-full bg-primary-300/20 blur-3xl animate-blob" />
         <div className="absolute bottom-10 left-10 h-72 w-72 rounded-full bg-accent-300/20 blur-3xl animate-blob" style={{ animationDelay: '2s' }} />

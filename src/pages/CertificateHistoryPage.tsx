@@ -10,6 +10,7 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
 import { generateCertificatePDF, generateQRCode, type CertificateData } from '@/lib/certificate';
 
+import { PageNav } from '@/components/PageNav';
 export function CertificateHistoryPage() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
@@ -58,6 +59,8 @@ export function CertificateHistoryPage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
+      <PageNav crumbs={[{ label: 'Certificates' }, { label: 'My Certificates', icon: Award }]} />
+
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">

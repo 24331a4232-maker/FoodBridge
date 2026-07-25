@@ -15,6 +15,7 @@ import {
   Quote,
   Calendar,
   Lightbulb,
+  Info,
 } from 'lucide-react';
 import { SectionHeading, AnimatedCounter, fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
@@ -62,9 +63,12 @@ const impactStats = [
   { label: 'Volunteer Hours', value: 24500, suffix: '+' },
 ];
 
+import { PageNav } from '@/components/PageNav';
 export function AboutPage() {
   return (
     <div className="pt-20">
+      <PageNav crumbs={[{ label: 'About', icon: Info }]} />
+
       {/* Hero */}
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 gradient-bg-soft overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">

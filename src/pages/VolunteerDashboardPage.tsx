@@ -33,6 +33,7 @@ const achievements = [
 
 const badges = ['First Step', 'Hunger Hero', 'Green Guardian', 'Community Star', 'Fast Mover'];
 
+import { PageNav } from '@/components/PageNav';
 export function VolunteerDashboardPage() {
   const { user, profile, refreshProfile } = useAuth();
   const { toast } = useToast();
@@ -212,6 +213,8 @@ export function VolunteerDashboardPage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg-soft">
+      <PageNav crumbs={[{ label: 'Dashboards' }, { label: 'Volunteer Dashboard', icon: Package }]} />
+
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">

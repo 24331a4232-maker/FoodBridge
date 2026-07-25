@@ -181,6 +181,7 @@ function MobileAccordion({ id, label, icon: Icon, children }: { id: string; labe
   );
 }
 
+import { PageNav } from '@/components/PageNav';
 export function RealChallengesPage() {
   const active = useActiveSection();
   const heroRef = useRef<HTMLDivElement>(null);
@@ -192,6 +193,8 @@ export function RealChallengesPage() {
 
   return (
     <div className="pt-16 min-h-screen gradient-bg-soft">
+      <PageNav crumbs={[{ label: 'Resources' }, { label: 'Real Challenges', icon: Globe2 }]} />
+
       {/* Hero */}
       <section ref={heroRef} className="relative py-16 sm:py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">

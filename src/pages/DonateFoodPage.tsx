@@ -49,6 +49,7 @@ const recipientIcons: Record<string, typeof ChefHat> = {
   ChefHat, Heart, Baby, Home,
 };
 
+import { PageNav } from '@/components/PageNav';
 export function DonateFoodPage() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
@@ -273,6 +274,7 @@ export function DonateFoodPage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg-soft">
+      <PageNav crumbs={[{ label: 'Donate Food', icon: UtensilsCrossed }]} />
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-10">
           <span className="badge bg-primary-100/80 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 mb-4 border border-primary-200/50 dark:border-primary-800/50">

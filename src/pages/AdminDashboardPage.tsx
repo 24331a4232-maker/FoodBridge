@@ -11,6 +11,7 @@ import { FoodQualityBadge } from '@/components/FoodQualityBadge';
 
 type Tab = 'overview' | 'users' | 'donations' | 'reports' | 'messages';
 
+import { PageNav } from '@/components/PageNav';
 export function AdminDashboardPage() {
   const { toast } = useToast();
   const [tab, setTab] = useState<Tab>('overview');
@@ -66,6 +67,8 @@ export function AdminDashboardPage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
+      <PageNav crumbs={[{ label: 'Dashboards' }, { label: 'Admin Dashboard', icon: Users }]} />
+
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>

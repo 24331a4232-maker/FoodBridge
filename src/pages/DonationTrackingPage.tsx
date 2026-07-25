@@ -18,6 +18,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: typeof 
   delivered: { label: 'Delivered', color: 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300', icon: CheckCircle2 },
 };
 
+import { PageNav } from '@/components/PageNav';
 export function DonationTrackingPage() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
@@ -58,6 +59,8 @@ export function DonationTrackingPage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
+      <PageNav crumbs={[{ label: 'Tracking' }, { label: 'Donation Tracking', icon: Package }]} />
+
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
         <SectionHeading badge="Tracking" title="Donation Tracking" subtitle="Track every donation from pickup to delivery in real time." center={false} />
 

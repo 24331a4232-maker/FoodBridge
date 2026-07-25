@@ -156,6 +156,7 @@ function LeaderboardCard({ entry, rank }: { entry: LeaderboardEntry; rank: numbe
   );
 }
 
+import { PageNav } from '@/components/PageNav';
 export function AchievementsPage() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
@@ -234,6 +235,8 @@ export function AchievementsPage() {
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
+      <PageNav crumbs={[{ label: 'Community' }, { label: 'Achievements', icon: Trophy }]} />
+
       <Confetti trigger={confetti} />
       <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <SectionHeading badge="Rewards & Recognition" title="Community Impact & Achievements" subtitle="Recognizing every volunteer, donor, hotel, and NGO making a difference." />
