@@ -34,12 +34,26 @@ const volunteerIcon = L.divIcon({
   className: '',
 });
 
+const ngoIcon = L.divIcon({
+  html: '<div style="background:#7c3aed;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #7c3aed,0 2px 6px rgba(0,0,0,0.3)"></div>',
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
+  className: '',
+});
+
+const donationIcon = L.divIcon({
+  html: '<div style="background:#0891b2;width:18px;height:18px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 2px #0891b2,0 2px 6px rgba(0,0,0,0.3)"></div>',
+  iconSize: [18, 18],
+  iconAnchor: [9, 9],
+  className: '',
+});
+
 export interface MapPoint {
   lat: number;
   lng: number;
   label?: string;
   popup?: string;
-  type?: 'user' | 'donor' | 'volunteer' | 'default';
+  type?: 'user' | 'donor' | 'volunteer' | 'ngo' | 'donation' | 'default';
 }
 
 interface LeafletMapProps {
@@ -101,7 +115,18 @@ export function LeafletMap({
     markersRef.current = {};
 
     points.forEach((p) => {
-      const icon = p.type === 'user' ? userIcon : p.type === 'donor' ? donorIcon : p.type === 'volunteer' ? volunteerIcon : defaultIcon;
+      const icon =
+        p.type === 'user'
+          ? userIcon
+          : p.type === 'donor'
+            ? donorIcon
+            : p.type === 'volunteer'
+              ? volunteerIcon
+              : p.type === 'ngo'
+                ? ngoIcon
+                : p.type === 'donation'
+                  ? donationIcon
+                  : defaultIcon;
       const marker = L.marker([p.lat, p.lng], { icon }).addTo(map);
       const content = p.popup ?? p.label ?? '';
       if (content) marker.bindPopup(content, { maxWidth: 250, className: 'fb-popup' });

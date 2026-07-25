@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { AnimatedCounter, SectionHeading, fadeInUp, fadeIn, scaleIn, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { ImpactDashboard } from '@/components/ImpactDashboard';
 
 const stats = [
   { label: 'Meals Saved', value: 128450, suffix: '+', icon: UtensilsCrossed },
@@ -285,28 +286,8 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Statistics */}
-      <section className="section">
-        <motion.div
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6"
-        >
-          {stats.map((s) => (
-            <motion.div key={s.label} variants={scaleIn} whileHover={{ y: -8 }} className="card p-5 sm:p-6 text-center group">
-              <div className="inline-flex h-12 w-12 sm:h-14 sm:w-14 rounded-2xl bg-gradient-to-br from-primary-100 to-primary-50 dark:from-primary-900/40 dark:to-primary-800/20 items-center justify-center mb-3 group-hover:scale-110 transition-transform">
-                <s.icon className="h-6 w-6 text-primary-600" />
-              </div>
-              <div className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold gradient-text">
-                <AnimatedCounter value={s.value} suffix={s.suffix} />
-              </div>
-              <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-1">{s.label}</p>
-            </motion.div>
-          ))}
-        </motion.div>
-      </section>
+      {/* Impact Dashboard */}
+      <ImpactDashboard />
 
       {/* How It Works */}
       <section className="section bg-gradient-to-b from-primary-50/30 to-white dark:from-primary-950/10 dark:to-gray-950">
