@@ -2,10 +2,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import {
   FileText, ShieldCheck, CheckCircle2, UserCheck, MapPin, PackageCheck, Truck,
-  MapPinned, HandHeart, Award, BadgeCheck, ChevronDown, Sparkles, type LucideIcon,
+  MapPinned, HandHeart, Award, BadgeCheck, ChevronDown, Sparkles, Clock, User, Route, ShieldAlert, type LucideIcon,
 } from 'lucide-react';
-import type { FoodDonation, Pickup, Certificate } from '@/types';
+import type { FoodDonation, Pickup, Certificate, Profile } from '@/types';
 import { Confetti } from '@/components/Confetti';
+import { supabase } from '@/lib/supabase';
+import { haversineKm } from '@/components/LeafletMap';
 
 export type TrackerStepStatus = 'completed' | 'current' | 'pending';
 
@@ -213,8 +215,11 @@ export function DonationStatusTracker({ donation, pickup, certificate, compact =
   const { steps, currentIndex, progress, delivered, cancelled } = resolveTracker(donation, pickup, certificate);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [volunteerName, setVolunteerName] = useState<string | null>(null);
+  const [distanceKm, setDistanceKm] = useState<number | null>(null);
+  const [etaMin, setEtaMin] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const stepRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const stepRefs = useRef<(HTMLLIElement | null)[]>([]);
   const hasCelebrated = useRef(false);
 
   // Auto-scroll to current step
@@ -238,6 +243,34 @@ export function DonationStatusTracker({ donation, pickup, certificate, compact =
       return () => clearTimeout(t);
     }
   }, [delivered]);
+
+  // Fetch volunteer name and compute distance/ETA
+  useEffect(() => {
+    let active = true;
+    if (pickup?.volunteer_id) {
+      supabase.from('profiles').select('full_name').eq('id', pickup.volunteer_id).maybeSingle()
+        .then(({ data }) => {
+          if (active && data) setVolunteerName((data as Pick<Profile, 'full_name'>).full_name);
+        });
+    }
+    if (donation.latitude != null && donation.longitude != null) {
+      const dest: [number, number] = [donation.latitude, donation.longitude];
+      if (pickup?.donation?.latitude != null && pickup?.donation?.longitude != null) {
+        const d = haversineKm([pickup.donation.latitude, pickup.donation.longitude], dest);
+        if (active) {
+          setDistanceKm(Math.round(d * 10) / 10);
+          setEtaMin(Math.max(5, Math.round(d * 3.5)));
+        }
+      } else {
+        const d = haversineKm([donation.latitude, donation.longitude], dest);
+        if (active) {
+          setDistanceKm(Math.round(d * 10) / 10);
+          setEtaMin(Math.max(5, Math.round(d * 3.5)));
+        }
+      }
+    }
+    return () => { active = false; };
+  }, [pickup, donation]);
 
   const toggleExpand = (id: string) => {
     setExpandedId((prev) => (prev === id ? null : id));
@@ -369,6 +402,36 @@ export function DonationStatusTracker({ donation, pickup, certificate, compact =
             ))}
           </ol>
         </div>
+      </div>
+
+      {/* Summary info panel */}
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.4 }}
+        className="mt-5 grid grid-cols-2 sm:grid-cols-3 gap-3"
+      >
+        <SummaryTile icon={Clock} label="Estimated Delivery" value={delivered ? 'Delivered' : cancelled ? '-' : etaMin != null ? `${etaMin} mins` : '—'} accent="accent" />
+        <SummaryTile icon={User} label="Volunteer" value={volunteerName ?? (pickup?.volunteer_id ? 'Assigned' : 'Pending')} accent="primary" />
+        <SummaryTile icon={Route} label="Distance" value={distanceKm != null ? `${distanceKm} km` : '—'} accent="primary" />
+        <SummaryTile icon={HandHeart} label="Meal Status" value={donation.freshness_status ? donation.freshness_status.replace('_', ' ') : 'Fresh & Safe'} accent="primary" />
+        <SummaryTile icon={ShieldAlert} label="Quality Score" value={donation.quality_score != null ? `${donation.quality_score}/100` : 'Pending'} accent="accent" />
+        <SummaryTile icon={PackageCheck} label="Quantity" value={`${donation.quantity} ${donation.quantity_unit}`} accent="primary" />
+      </motion.div>
+    </div>
+  );
+}
+
+function SummaryTile({ icon: Icon, label, value, accent }: { icon: LucideIcon; label: string; value: string; accent: 'primary' | 'accent' }) {
+  const iconBg = accent === 'primary' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-300' : 'bg-accent-100 dark:bg-accent-900/30 text-accent-600 dark:text-accent-300';
+  return (
+    <div className="glass-card p-3 flex items-center gap-3">
+      <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
+        <Icon className="h-4 w-4" strokeWidth={2} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-[10px] uppercase tracking-wide text-ink-soft/60 dark:text-cream/40">{label}</p>
+        <p className="text-sm font-semibold text-ink dark:text-cream capitalize truncate">{value}</p>
       </div>
     </div>
   );
