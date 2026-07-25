@@ -15,6 +15,7 @@ const quickLinks = [
 ];
 
 const resources = [
+  { name: 'FAQ', path: '/help' },
   { name: 'Privacy Policy', path: '/privacy' },
   { name: 'Terms of Service', path: '/terms' },
   { name: 'Certificate Verification', path: '/verify-certificate' },

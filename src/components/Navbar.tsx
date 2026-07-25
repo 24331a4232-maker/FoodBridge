@@ -12,9 +12,6 @@ const navLinks = [
   { name: 'Available Food', path: '/available-food' },
   { name: 'Food Quality', path: '/food-quality' },
   { name: 'Donate Food', path: '/donate-food' },
-  { name: 'Volunteer', path: '/volunteer' },
-  { name: 'Achievements', path: '/achievements' },
-  { name: 'Help', path: '/help' },
   { name: 'Contact', path: '/contact' },
 ];
 
