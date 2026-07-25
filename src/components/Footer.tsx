@@ -5,22 +5,29 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 
-const quickLinks = [
-  { name: 'Home', path: '/' },
-  { name: 'About', path: '/about' },
-  { name: 'Available Food', path: '/available-food' },
+const features = [
   { name: 'Donate Food', path: '/donate-food' },
-  { name: 'Volunteer', path: '/volunteer' },
-  { name: 'Contact', path: '/contact' },
+  { name: 'Available Donations', path: '/available-food' },
+  { name: 'Food Quality Verification', path: '/food-quality' },
+  { name: 'Donation Tracking', path: '/tracking' },
+  { name: 'Current Location Map', path: '/location' },
+];
+
+const dashboards = [
+  { name: 'Volunteer Dashboard', path: '/volunteer' },
+  { name: 'Admin Dashboard', path: '/admin' },
+  { name: 'Profile & Settings', path: '/profile' },
+];
+
+const certificates = [
+  { name: 'Volunteer Certificate', path: '/certificate' },
+  { name: 'Certificate Verification', path: '/verify-certificate' },
 ];
 
 const resources = [
   { name: 'FAQ', path: '/help' },
   { name: 'Privacy Policy', path: '/privacy' },
-  { name: 'Terms of Service', path: '/terms' },
-  { name: 'Certificate Verification', path: '/verify-certificate' },
-  { name: 'Login', path: '/login' },
-  { name: 'Register', path: '/register' },
+  { name: 'Terms & Conditions', path: '/terms' },
 ];
 
 const socials = [
@@ -57,9 +64,9 @@ export function Footer() {
     <footer className="relative mt-20 overflow-hidden bg-gradient-to-b from-primary-50/50 to-white dark:from-primary-950/20 dark:to-gray-950 border-t border-gray-100 dark:border-gray-800">
       <div className="absolute -top-20 left-1/2 -translate-x-1/2 h-40 w-96 rounded-full bg-primary-300/10 blur-3xl" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-8 lg:gap-10">
           {/* Brand */}
-          <div className="lg:col-span-4">
+          <div className="col-span-2 md:col-span-3 lg:col-span-4">
             <Link to="/" className="flex items-center gap-2.5 mb-4">
               <img src="/logo.png" alt="FoodBridge" className="h-11 w-11 object-contain" />
               <span className="font-display text-xl font-bold gradient-text">FoodBridge</span>
@@ -82,36 +89,63 @@ export function Footer() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="lg:col-span-2">
-            <h3 className="font-display font-semibold mb-4">Quick Links</h3>
-            <ul className="space-y-2.5">
-              {quickLinks.map((l) => (
-                <li key={l.path}>
-                  <Link to={l.path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                    {l.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Link groups */}
+          <div className="col-span-2 md:col-span-3 lg:col-span-5 grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div>
+              <h3 className="font-display font-semibold mb-4 text-sm">Features</h3>
+              <ul className="space-y-2.5">
+                {features.map((l) => (
+                  <li key={l.path}>
+                    <Link to={l.path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                      {l.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-          {/* Resources */}
-          <div className="lg:col-span-2">
-            <h3 className="font-display font-semibold mb-4">Resources</h3>
-            <ul className="space-y-2.5">
-              {resources.map((l) => (
-                <li key={l.path}>
-                  <Link to={l.path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-                    {l.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <div>
+              <h3 className="font-display font-semibold mb-4 text-sm">Dashboards</h3>
+              <ul className="space-y-2.5">
+                {dashboards.map((l) => (
+                  <li key={l.path}>
+                    <Link to={l.path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                      {l.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-display font-semibold mb-4 text-sm">Certificates</h3>
+              <ul className="space-y-2.5">
+                {certificates.map((l) => (
+                  <li key={l.path}>
+                    <Link to={l.path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                      {l.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-display font-semibold mb-4 text-sm">Resources</h3>
+              <ul className="space-y-2.5">
+                {resources.map((l) => (
+                  <li key={l.path}>
+                    <Link to={l.path} className="text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+                      {l.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
           {/* Contact + Newsletter */}
-          <div className="lg:col-span-4">
+          <div className="col-span-2 md:col-span-3 lg:col-span-3">
             <h3 className="font-display font-semibold mb-4">Stay Connected</h3>
             <div className="space-y-3 mb-5">
               <a href="mailto:hello@foodbridge.org" className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 transition-colors">
