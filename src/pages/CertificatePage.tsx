@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Download, Printer, Award, ShieldCheck, Calendar, Hash, QrCode, PartyPopper, X, Sparkles, Save, Loader2, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
+import { useNotifications } from '@/context/NotificationContext';
 import { supabase } from '@/lib/supabase';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { createCertificateRecord, generateCertificatePDF, generateQRCode, type CertificateData } from '@/lib/certificate';
@@ -11,6 +12,7 @@ import { createCertificateRecord, generateCertificatePDF, generateQRCode, type C
 export function CertificatePage() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
+  const { pushToast, pushNotification } = useNotifications();
   const [certData, setCertData] = useState<CertificateData | null>(null);
   const [qrUrl, setQrUrl] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
@@ -53,6 +55,13 @@ export function CertificatePage() {
     const qr = await generateQRCode(certData.verifyUrl);
     await generateCertificatePDF(certData, qr);
     toast('Certificate PDF downloaded!', 'success');
+    pushToast('Certificate Generated Successfully', 'success');
+    pushNotification({
+      type: 'certificate_generated',
+      title: 'Certificate Generated',
+      description: `Your volunteer appreciation certificate (${certData.certificateNumber}) is ready to download.`,
+      actionUrl: '/certificate',
+    });
     setShowSuccess(true);
   };
 

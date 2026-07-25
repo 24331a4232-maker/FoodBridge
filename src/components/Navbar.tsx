@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X, Moon, Sun, LogOut, LayoutDashboard, User as UserIcon, Award } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
 import { useAuth } from '@/context/AuthContext';
+import { NotificationBell } from '@/components/NotificationBell';
 
 const navLinks = [
   { name: 'Home', path: '/' },
@@ -94,6 +95,7 @@ export function Navbar() {
 
           {/* Right side */}
           <div className="flex items-center gap-2 sm:gap-3">
+            {user && <NotificationBell />}
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"

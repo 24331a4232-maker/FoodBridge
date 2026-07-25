@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { AuthProvider } from '@/context/AuthContext';
+import { NotificationProvider } from '@/context/NotificationContext';
 import { ThemeProvider } from '@/context/ThemeContext';
 import { ToastProvider } from '@/context/ToastContext';
 import { Navbar } from '@/components/Navbar';
@@ -97,10 +98,12 @@ function App() {
     <ThemeProvider>
       <ToastProvider>
         <AuthProvider>
-          <BrowserRouter>
-            {loading && <LoadingScreen />}
-            <AppShell />
-          </BrowserRouter>
+          <NotificationProvider>
+            <BrowserRouter>
+              {loading && <LoadingScreen />}
+              <AppShell />
+            </BrowserRouter>
+          </NotificationProvider>
         </AuthProvider>
       </ToastProvider>
     </ThemeProvider>

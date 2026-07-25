@@ -97,6 +97,28 @@ export interface NewsletterSubscriber {
   created_at: string;
 }
 
+export type NotificationType =
+  | 'new_donation'
+  | 'volunteer_assigned'
+  | 'donation_approved'
+  | 'pickup_started'
+  | 'delivery_completed'
+  | 'certificate_generated'
+  | 'volunteer_arrived'
+  | 'food_expiring'
+  | 'thank_you';
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  title: string;
+  description: string;
+  is_read: boolean;
+  action_url: string | null;
+  created_at: string;
+}
+
 export interface Certificate {
   id: string;
   volunteer_id: string;

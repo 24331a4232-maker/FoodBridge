@@ -7,6 +7,7 @@ import {
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
+import { useNotifications } from '@/context/NotificationContext';
 import type { OrganizationType, FoodCategory, StorageMethod, FoodCondition } from '@/types';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
@@ -51,6 +52,7 @@ const recipientIcons: Record<string, typeof ChefHat> = {
 export function DonateFoodPage() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
+  const { pushNotification, pushToast } = useNotifications();
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [imagePreview, setImagePreview] = useState<string>('');
@@ -230,7 +232,13 @@ export function DonateFoodPage() {
       toast('Could not submit donation. Please try again.', 'error');
     } else {
       setSuccess(true);
-      toast('Donation listed successfully! Volunteers will be notified.', 'success');
+      pushToast('Donation Submitted Successfully', 'success');
+      pushNotification({
+        type: 'new_donation',
+        title: 'New Food Donation Listed',
+        description: `${form.food_name} from ${form.organization} is now available for pickup.`,
+        actionUrl: '/available-food',
+      });
     }
   };
 

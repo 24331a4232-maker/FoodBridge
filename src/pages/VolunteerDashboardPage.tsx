@@ -7,6 +7,7 @@ import {
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
+import { useNotifications } from '@/context/NotificationContext';
 import type { FoodDonation, Pickup, Profile } from '@/types';
 import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
@@ -35,6 +36,7 @@ const badges = ['First Step', 'Hunger Hero', 'Green Guardian', 'Community Star',
 export function VolunteerDashboardPage() {
   const { user, profile, refreshProfile } = useAuth();
   const { toast } = useToast();
+  const { pushNotification, pushToast } = useNotifications();
   const [available, setAvailable] = useState<FoodDonation[]>([]);
   const [myPickups, setMyPickups] = useState<Pickup[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
@@ -105,7 +107,13 @@ export function VolunteerDashboardPage() {
       toast('Could not accept this pickup', 'error');
     } else {
       await supabase.from('food_donations').update({ status: 'claimed' }).eq('id', donation.id);
-      toast('Pickup accepted! Check your tasks below.', 'success');
+      pushToast('Volunteer Assigned Successfully', 'success');
+      pushNotification({
+        type: 'volunteer_assigned',
+        title: 'Pickup Assigned to You',
+        description: `You are now assigned to pick up ${donation.food_name} from ${donation.organization}.`,
+        actionUrl: '/volunteer-dashboard',
+      });
       setAvailable((a) => a.filter((d) => d.id !== donation.id));
       const { data } = await supabase.from('pickups').select('*, donation:food_donations(*)').eq('volunteer_id', user.id).order('created_at', { ascending: false });
       setMyPickups((data as Pickup[]) ?? []);
@@ -126,6 +134,13 @@ export function VolunteerDashboardPage() {
       }).eq('id', profile.id);
     }
     toast('Delivery completed! Points earned.', 'success');
+    pushToast('Delivery Completed Successfully', 'success');
+    pushNotification({
+      type: 'delivery_completed',
+      title: 'Delivery Completed',
+      description: `You delivered ${pickup.donation?.food_name ?? 'a donation'} and earned ${pickup.points_earned ?? 25} points.`,
+      actionUrl: '/volunteer-dashboard',
+    });
 
     // Auto-generate certificate
     if (user && profile) {
@@ -139,6 +154,13 @@ export function VolunteerDashboardPage() {
       });
       if (cert) {
         toast('A new certificate has been generated for this delivery!', 'success');
+        pushToast('Certificate Generated Successfully', 'success');
+        pushNotification({
+          type: 'certificate_generated',
+          title: 'New Certificate Generated',
+          description: `A certificate for ${newDeliveries} deliveries has been added to your collection.`,
+          actionUrl: '/certificate',
+        });
       }
     }
 
