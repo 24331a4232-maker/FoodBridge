@@ -3,7 +3,6 @@ import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   HeartHandshake,
-  Users,
   Package,
   ShieldCheck,
   Truck,
@@ -12,14 +11,12 @@ import {
   ArrowRight,
   ArrowDown,
   Leaf,
-  UtensilsCrossed,
-  Globe2,
   Sparkles,
-  Target,
 } from 'lucide-react';
-import { AnimatedCounter, SectionHeading, fadeInUp, staggerContainer } from '@/lib/animations';
+import { SectionHeading } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Illustration } from '@/components/Illustration';
+import { ImpactAnalyticsDashboard } from '@/components/ImpactAnalyticsDashboard';
 
 const steps = [
   { title: 'Donate Food', desc: 'A hotel, event, or caterer lists surplus food on FoodBridge with quantity, type, and pickup window.', icon: Package, illustration: 'donation' as const },
@@ -28,13 +25,6 @@ const steps = [
   { title: 'Volunteer Pickup', desc: 'The nearest available volunteer accepts the request, navigates the route, and picks up the food.', icon: HeartHandshake, illustration: 'volunteers' as const },
   { title: 'Food Delivered', desc: 'Within four hours, the food reaches a shelter, school, or community kitchen — fresh and warm.', icon: Truck, illustration: 'delivery' as const },
   { title: 'Certificate Generated', desc: 'The volunteer earns reward points and an official certificate, verifiable by QR code.', icon: Award, illustration: 'bridge' as const },
-];
-
-const impactStats = [
-  { label: 'Meals Saved', value: 128450, suffix: '+', icon: UtensilsCrossed },
-  { label: 'Food Waste Reduced', value: 42, suffix: ' t', icon: Globe2 },
-  { label: 'Families Helped', value: 38900, suffix: '+', icon: Users },
-  { label: 'Volunteers', value: 1560, suffix: '+', icon: HeartHandshake },
 ];
 
 const featuredStories = [
@@ -243,47 +233,8 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Impact — animated statistics */}
-      <section className="relative overflow-hidden bg-secondary-800 dark:bg-secondary-900 py-28 px-6 text-cream">
-        <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none" />
-        <div className="relative max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-2xl"
-          >
-            <span className="eyebrow text-accent-300">Our Impact</span>
-            <h2 className="font-display text-3xl sm:text-4xl font-semibold mt-4 tracking-[-0.02em] text-balance">
-              Measured in meals, not metrics.
-            </h2>
-          </motion.div>
-          <motion.div
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12 mt-16"
-          >
-            {impactStats.map((s) => {
-              const StatIcon = s.icon;
-              return (
-                <motion.div
-                  key={s.label}
-                  variants={fadeInUp}
-                  className="border-t border-cream/15 pt-6"
-                >
-                  <StatIcon className="h-6 w-6 text-accent-300 mb-4" strokeWidth={1.5} />
-                  <p className="display-num text-4xl sm:text-5xl text-cream">
-                    <AnimatedCounter value={s.value} suffix={s.suffix} />
-                  </p>
-                  <p className="text-sm text-cream/60 mt-2">{s.label}</p>
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        </div>
-      </section>
+      {/* FoodBridge Impact Analytics — premium dashboard */}
+      <ImpactAnalyticsDashboard />
 
       {/* Featured Success Stories */}
       <section className="section bg-mist dark:bg-secondary-900">

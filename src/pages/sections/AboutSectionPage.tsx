@@ -18,10 +18,10 @@ const timeline = [
 ];
 
 const team = [
-  { name: 'Arjun Sharma', role: 'Founder & CEO', bio: 'Final year Computer Science student passionate about using technology for social good.' },
-  { name: 'Priya Nair', role: 'Co-Founder & CTO', bio: 'Full-stack developer leading the platform engineering and data systems.' },
-  { name: 'Karthik Reddy', role: 'Operations Lead', bio: 'Manages partner relationships with hotels and NGOs across 28 cities.' },
-  { name: 'Sneha Patel', role: 'Volunteer Coordinator', bio: 'Builds and trains the volunteer network, ensuring safe deliveries.' },
+  { name: 'Pranathi', role: 'Project Coordinator & Documentation', bio: 'Managed project planning, coordinated team activities, prepared documentation, and ensured smooth execution throughout the project.' },
+  { name: 'Yashoda', role: 'Full Stack Developer (Frontend & Backend)', bio: 'Designed and developed the complete application, including the frontend user interface, backend functionality, routing, database integration, API implementation, authentication, and overall system architecture while ensuring a seamless user experience.' },
+  { name: 'Rajesh', role: 'Backend Support & Database Management', bio: 'Assisted with backend development, database design, data management, API support, testing, and system optimization to ensure reliable application performance.' },
+  { name: 'Rahul', role: 'Frontend Support & Quality Assurance', bio: 'Contributed to frontend implementation, UI improvements, application testing, debugging, responsiveness, and quality assurance to deliver a smooth and user-friendly experience.' },
 ];
 
 const founderQuote =
@@ -122,8 +122,8 @@ function OurStoryTab() {
 function TeamTab() {
   return (
     <div>
-      <SectionHeading badge="Meet The Team" title="The people behind FoodBridge" subtitle="A passionate team of students, engineers, and changemakers." />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-14">
+      <SectionHeading badge="Meet Our Team" title="The passionate students behind FoodBridge" subtitle="Working together to reduce food waste and build a sustainable future through technology." />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-14 max-w-4xl mx-auto">
         {team.map((member, i) => (
           <motion.div
             key={member.name}
@@ -132,20 +132,35 @@ function TeamTab() {
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
             whileHover={{ y: -8 }}
-            className="card p-6 text-center group"
+            className="card p-7 group"
           >
-            <div className="relative w-24 h-24 mx-auto mb-4">
-              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
-              <div className="relative rounded-full w-24 h-24 flex items-center justify-center bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 font-display text-2xl font-semibold">{member.name[0]}</div>
+            <div className="flex items-start gap-5">
+              <div className="relative w-20 h-20 shrink-0">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
+                <div className="relative rounded-full w-20 h-20 flex items-center justify-center bg-gradient-to-br from-primary-100 to-gold-100 dark:from-primary-900/40 dark:to-gold-900/30 text-primary-700 dark:text-primary-300 font-display text-2xl font-semibold ring-2 ring-linen/60 dark:ring-secondary-800/60">{member.name[0]}</div>
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-display font-semibold text-lg text-ink dark:text-cream">{member.name}</h3>
+                <p className="text-sm text-primary-600 dark:text-primary-400 font-medium mb-3">{member.role}</p>
+                <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed">{member.bio}</p>
+              </div>
             </div>
-            <h3 className="font-display font-semibold text-lg text-ink dark:text-cream">{member.name}</h3>
-            <p className="text-sm text-primary-600 dark:text-primary-400 font-medium mb-2">{member.role}</p>
-            <p className="text-xs text-ink-soft dark:text-cream/50 leading-relaxed">{member.bio}</p>
           </motion.div>
         ))}
       </div>
 
-      <div className="text-center max-w-2xl mx-auto mt-16">
+      <motion.blockquote
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        className="max-w-3xl mx-auto mt-14 text-center"
+      >
+        <p className="font-display text-lg sm:text-xl italic text-ink-soft dark:text-cream/70 leading-relaxed">
+          "Together, we believe technology can reduce food waste, support communities, and create a more sustainable future through FoodBridge."
+        </p>
+      </motion.blockquote>
+
+      <div className="text-center max-w-2xl mx-auto mt-12">
         <h2 className="font-display text-3xl font-bold mb-4 text-ink dark:text-cream">Be part of the change</h2>
         <p className="text-ink-soft dark:text-cream/60 mb-8">Join FoodBridge today. Donate surplus food or become a volunteer. Every action counts.</p>
         <div className="flex flex-wrap justify-center gap-4">
