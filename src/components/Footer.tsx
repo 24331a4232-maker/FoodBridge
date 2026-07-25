@@ -5,30 +5,31 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 
-const features = [
+const services = [
   { name: 'Donate Food', path: '/donate-food' },
   { name: 'Available Donations', path: '/available-food' },
   { name: 'Food Quality Verification', path: '/food-quality' },
   { name: 'Donation Tracking', path: '/tracking' },
-  { name: 'Current Location Map', path: '/location' },
+  { name: 'Verify Certificate', path: '/verify-certificate' },
 ];
 
 const dashboards = [
   { name: 'Volunteer Dashboard', path: '/volunteer' },
   { name: 'Admin Dashboard', path: '/admin' },
-  { name: 'Profile & Settings', path: '/profile' },
 ];
 
-const certificates = [
-  { name: 'Volunteer Certificate', path: '/certificate' },
-  { name: 'Certificate Verification', path: '/verify-certificate' },
-];
-
-const resources = [
+const account = [
+  { name: 'My Profile', path: '/profile' },
+  { name: 'My Certificates', path: '/certificate' },
+  { name: 'Settings', path: '/profile' },
   { name: 'FAQ', path: '/help' },
-  { name: 'Real Challenges', path: '/challenges' },
+];
+
+const legal = [
   { name: 'Privacy Policy', path: '/privacy' },
   { name: 'Terms & Conditions', path: '/terms' },
+  { name: 'About', path: '/about' },
+  { name: 'Contact', path: '/contact' },
 ];
 
 const socials = [
@@ -39,10 +40,10 @@ const socials = [
 ];
 
 const linkGroups = [
-  { title: 'Features', links: features },
+  { title: 'Services', links: services },
   { title: 'Dashboards', links: dashboards },
-  { title: 'Certificates', links: certificates },
-  { title: 'Resources', links: resources },
+  { title: 'Account', links: account },
+  { title: 'More', links: legal },
 ];
 
 export function Footer() {
@@ -79,7 +80,7 @@ export function Footer() {
               <span className="font-display text-xl font-semibold text-cream">FoodBridge</span>
             </Link>
             <p className="text-sm text-cream/60 leading-relaxed mb-6 max-w-sm">
-              Redirecting surplus food from events &amp; hotels to those who need it most — reducing food waste while fighting hunger, one bridge at a time.
+              Every Meal Deserves a Purpose. We redirect surplus food from events &amp; hotels to those who need it most — reducing food waste while fighting hunger, one bridge at a time.
             </p>
             <div className="flex gap-2.5">
               {socials.map((s) => (
@@ -103,7 +104,7 @@ export function Footer() {
                 <h3 className="font-display font-semibold mb-4 text-sm text-cream">{group.title}</h3>
                 <ul className="space-y-2.5">
                   {group.links.map((l) => (
-                    <li key={l.path}>
+                    <li key={l.path + l.name}>
                       <Link to={l.path} className="text-sm text-cream/55 hover:text-primary-300 transition-colors">
                         {l.name}
                       </Link>
@@ -116,7 +117,7 @@ export function Footer() {
 
           {/* Contact + Newsletter */}
           <div className="col-span-2 md:col-span-3 lg:col-span-3">
-            <h3 className="font-display font-semibold mb-4 text-cream">Stay connected</h3>
+            <h3 className="font-display font-semibold mb-4 text-sm text-cream">Stay connected</h3>
             <div className="space-y-3 mb-6">
               <a href="mailto:hello@foodbridge.org" className="flex items-center gap-3 text-sm text-cream/60 hover:text-primary-300 transition-colors">
                 <Mail className="h-4 w-4 text-primary-400 shrink-0" /> hello@foodbridge.org

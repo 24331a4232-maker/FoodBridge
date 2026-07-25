@@ -5,21 +5,41 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Primary: warm terracotta — earthy, humanitarian, warm
+        // Primary: vibrant green — growth, sustainability, trust
         primary: {
-          50: '#FBF3EC',
-          100: '#F6E1D2',
-          200: '#EBC4A8',
-          300: '#DDA37B',
-          400: '#D08550',
-          500: '#C26A35',
-          600: '#A85327',
-          700: '#843E1F',
-          800: '#5F2D18',
-          900: '#3D1E10',
-          950: '#1F0F08',
+          50: '#F0FDF4',
+          100: '#DCFCE7',
+          200: '#BBF7D0',
+          300: '#86EFAC',
+          400: '#4ADE80',
+          500: '#22C55E',
+          600: '#16A34A',
+          700: '#15803D',
+          800: '#166534',
+          900: '#14532D',
+          950: '#052E16',
         },
-        // Secondary: deep forest green — growth, trust, nourishment
+        // Accent: warm orange — generosity, warmth, energy
+        accent: {
+          50: '#FFF7ED',
+          100: '#FFEDD5',
+          200: '#FED7AA',
+          300: '#FDBA74',
+          400: '#FB923C',
+          500: '#F97316',
+          600: '#EA580C',
+          700: '#C2410C',
+          800: '#9A3412',
+          900: '#7C2D12',
+          950: '#431407',
+        },
+        // Warm neutral surfaces — cream, oat, linen
+        cream: '#FFFDF8',
+        oat: '#F7F3EC',
+        linen: '#EAE3D6',
+        ink: '#1F2937',
+        'ink-soft': '#6B7280',
+        // Secondary kept for dark-mode surfaces (deep forest)
         secondary: {
           50: '#F0F6F2',
           100: '#DCEAE0',
@@ -33,42 +53,23 @@ export default {
           900: '#15291F',
           950: '#0A1610',
         },
-        // Accent: warm amber — warmth, grain, generosity
-        accent: {
-          50: '#FEF7E9',
-          100: '#FCEBC4',
-          200: '#F9D88A',
-          300: '#F5C253',
-          400: '#F0A82E',
-          500: '#E28A1B',
-          600: '#BE6E13',
-          700: '#985410',
-          800: '#733E11',
-          900: '#4D2A0D',
-          950: '#291606',
-        },
-        // Warm neutral surfaces — cream, oat, linen
-        cream: '#FAF6F0',
-        oat: '#F2EBE0',
-        linen: '#E8DFD2',
-        ink: '#2B231D',
-        'ink-soft': '#5C5048',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Fraunces', 'Georgia', 'serif'],
-        stat: ['Inter', 'system-ui', 'sans-serif'],
+        display: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+        stat: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         'xl-premium': '18px',
         '2xl-premium': '22px',
+        '3xl-premium': '28px',
       },
       boxShadow: {
-        'soft': '0 2px 8px -2px rgba(43, 35, 29, 0.06), 0 4px 16px -4px rgba(43, 35, 29, 0.04)',
-        'premium': '0 4px 24px -6px rgba(43, 35, 29, 0.08), 0 8px 32px -8px rgba(43, 35, 29, 0.06)',
-        'premium-lg': '0 8px 40px -8px rgba(43, 35, 29, 0.12), 0 16px 48px -12px rgba(43, 35, 29, 0.08)',
-        'glow-green': '0 8px 32px -8px rgba(67, 126, 92, 0.35)',
-        'glow-orange': '0 8px 32px -8px rgba(194, 106, 53, 0.35)',
+        'soft': '0 2px 8px -2px rgba(31, 41, 55, 0.06), 0 4px 16px -4px rgba(31, 41, 55, 0.04)',
+        'premium': '0 4px 24px -6px rgba(31, 41, 55, 0.08), 0 8px 32px -8px rgba(31, 41, 55, 0.06)',
+        'premium-lg': '0 8px 40px -8px rgba(31, 41, 55, 0.12), 0 16px 48px -12px rgba(31, 41, 55, 0.08)',
+        'glow-green': '0 8px 32px -8px rgba(22, 163, 74, 0.35)',
+        'glow-orange': '0 8px 32px -8px rgba(249, 115, 22, 0.35)',
         'inner-soft': 'inset 0 1px 2px rgba(0, 0, 0, 0.04)',
       },
       animation: {
@@ -108,7 +109,7 @@ export default {
         },
       },
       backgroundImage: {
-        'grid-pattern': "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23843E1F' fill-opacity='0.04'%3E%3Cpath d='M0 0h1v1H0zM20 20h1v1h-1zM10 30h1v1H-1zM30 10h1v1h-1z'/%3E%3C/g%3E%3C/svg%3E\")",
+        'grid-pattern': "url(\"data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2316A34A' fill-opacity='0.04'%3E%3Cpath d='M0 0h1v1H0zM20 20h1v1h-1zM10 30h1v1h-1zM30 10h1v1h-1z'/%3E%3C/g%3E%3C/svg%3E\")",
       },
     },
   },

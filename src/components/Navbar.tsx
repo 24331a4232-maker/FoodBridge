@@ -29,7 +29,7 @@ const servicesLinks: MenuLink[] = [
   { name: 'Available Donations', path: '/available-food', icon: Search, description: 'Browse and claim nearby food' },
   { name: 'Food Quality Verification', path: '/food-quality', icon: ShieldCheck, description: 'Check food safety standards' },
   { name: 'Donation Tracking', path: '/tracking', icon: Truck, description: 'Track deliveries in real time' },
-  { name: 'QR Certificate Verification', path: '/verify-certificate', icon: QrCode, description: 'Verify a certificate by QR or ID' },
+  { name: 'Verify Certificate', path: '/verify-certificate', icon: QrCode, description: 'Verify a certificate by QR or ID' },
 ];
 
 const dashboardLinks: MenuLink[] = [
