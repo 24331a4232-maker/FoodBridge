@@ -238,7 +238,7 @@ export function DonateFoodPage() {
         type: 'new_donation',
         title: 'New Food Donation Listed',
         description: `${form.food_name} from ${form.organization} is now available for pickup.`,
-        actionUrl: '/available-food',
+        actionUrl: '/services/available-food',
       });
     }
   };
@@ -262,7 +262,7 @@ export function DonateFoodPage() {
           <h2 className="font-display text-2xl font-bold mb-3">Thank You!</h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">Your donation has been listed. Nearby volunteers will be notified to pick it up soon.</p>
           <div className="flex flex-col gap-3">
-            <Link to="/available-food"><RippleButton variant="primary" fullWidth>View Available Food</RippleButton></Link>
+            <Link to="/services/available-food"><RippleButton variant="primary" fullWidth>View Available Food</RippleButton></Link>
             <button onClick={() => { setSuccess(false); setForm({ ...form, food_name: '', quantity: '', description: '' }); setMapPoints([]); setCoords(null); }} className="btn-ghost">
               Donate More
             </button>

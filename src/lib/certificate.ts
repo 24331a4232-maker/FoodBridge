@@ -48,7 +48,7 @@ export async function createCertificateRecord(params: {
   const { data: seqData } = await supabase.rpc('generate_certificate_number');
   const certificateNumber = (seqData as string) ?? `FB-${new Date().getFullYear()}-${Date.now().toString().slice(-4)}`;
   const uniqueId = generateUniqueId();
-  const verifyUrl = `${window.location.origin}/verify-certificate/${certificateNumber}`;
+  const verifyUrl = `${window.location.origin}/services/verify-certificate/${certificateNumber}`;
   const qrCodeUrl = await generateQRCode(verifyUrl);
   const issueDate = new Date().toISOString().split('T')[0];
   const completionDate = issueDate;

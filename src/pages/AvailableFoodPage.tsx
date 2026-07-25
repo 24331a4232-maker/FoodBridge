@@ -78,7 +78,7 @@ export function AvailableFoodPage() {
   const acceptPickup = async (donation: FoodDonation) => {
     if (!user) {
       toast('Please login as a volunteer to accept pickups', 'info');
-      navigate('/login', { state: { from: '/available-food' } });
+      navigate('/login', { state: { from: '/services/available-food' } });
       return;
     }
     if (profile?.role !== 'volunteer' && profile?.role !== 'admin') {
@@ -105,7 +105,7 @@ export function AvailableFoodPage() {
     setTimeout(() => {
       setSelected(null);
       setAcceptedId(null);
-      navigate('/volunteer');
+      navigate('/dashboard/volunteer');
     }, 1800);
   };
 

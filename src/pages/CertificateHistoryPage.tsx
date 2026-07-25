@@ -34,7 +34,7 @@ export function CertificateHistoryPage() {
 
   const downloadCert = async (cert: Certificate) => {
     setDownloading(cert.id);
-    const verifyUrl = `${window.location.origin}/verify-certificate/${cert.certificate_number}`;
+    const verifyUrl = `${window.location.origin}/services/verify-certificate/${cert.certificate_number}`;
     const qr = await generateQRCode(verifyUrl);
     const data: CertificateData = {
       certificateNumber: cert.certificate_number,
@@ -68,7 +68,7 @@ export function CertificateHistoryPage() {
             <h1 className="font-display text-3xl sm:text-4xl font-bold">My Certificates</h1>
             <p className="text-gray-500 mt-1">All your volunteer appreciation certificates in one place.</p>
           </div>
-          <Link to="/certificate">
+          <Link to="/services/certificates">
             <RippleButton variant="primary"><Plus className="h-4 w-4" /> Generate New</RippleButton>
           </Link>
         </motion.div>
@@ -109,8 +109,8 @@ export function CertificateHistoryPage() {
             <h2 className="font-display text-xl font-bold mb-2">No certificates yet</h2>
             <p className="text-gray-500 mb-6">Complete food deliveries to earn your first volunteer appreciation certificate.</p>
             <div className="flex flex-wrap justify-center gap-3">
-              <Link to="/volunteer"><RippleButton variant="primary">Go to Dashboard</RippleButton></Link>
-              <Link to="/certificate"><RippleButton variant="secondary">Generate Certificate</RippleButton></Link>
+              <Link to="/dashboard/volunteer"><RippleButton variant="primary">Go to Dashboard</RippleButton></Link>
+              <Link to="/services/certificates"><RippleButton variant="secondary">Generate Certificate</RippleButton></Link>
             </div>
           </motion.div>
         )}
@@ -177,7 +177,7 @@ export function CertificateHistoryPage() {
                     {downloading === cert.id ? <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Download className="h-4 w-4" />}
                     Download
                   </RippleButton>
-                  <Link to={`/verify-certificate/${cert.certificate_number}`}>
+                  <Link to={`/services/verify-certificate/${cert.certificate_number}`}>
                     <RippleButton variant="ghost"><Eye className="h-4 w-4" /></RippleButton>
                   </Link>
                 </div>
@@ -188,7 +188,7 @@ export function CertificateHistoryPage() {
 
         {/* Back */}
         <div className="text-center mt-8">
-          <Link to="/volunteer">
+          <Link to="/dashboard/volunteer">
             <RippleButton variant="ghost"><ArrowLeft className="h-4 w-4" /> Back to Dashboard</RippleButton>
           </Link>
         </div>

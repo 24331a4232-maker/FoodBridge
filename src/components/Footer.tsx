@@ -6,30 +6,30 @@ import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 
 const services = [
-  { name: 'Donate Food', path: '/donate-food' },
-  { name: 'Available Donations', path: '/available-food' },
-  { name: 'Food Quality Verification', path: '/food-quality' },
-  { name: 'Donation Tracking', path: '/tracking' },
-  { name: 'Verify Certificate', path: '/verify-certificate' },
+  { name: 'Donate Food', path: '/services/donate-food' },
+  { name: 'Available Donations', path: '/services/available-food' },
+  { name: 'Food Quality Verification', path: '/services/food-quality' },
+  { name: 'Donation Tracking', path: '/services/tracking' },
+  { name: 'Verify Certificate', path: '/services/verify-certificate' },
 ];
 
 const dashboards = [
-  { name: 'Volunteer Dashboard', path: '/volunteer' },
-  { name: 'Admin Dashboard', path: '/admin' },
+  { name: 'Volunteer Dashboard', path: '/dashboard/volunteer' },
+  { name: 'Admin Dashboard', path: '/dashboard/admin' },
 ];
 
 const account = [
   { name: 'My Profile', path: '/profile' },
-  { name: 'My Certificates', path: '/certificate' },
+  { name: 'My Certificates', path: '/services/certificates' },
   { name: 'Settings', path: '/profile' },
-  { name: 'FAQ', path: '/help' },
+  { name: 'FAQ', path: '/resources' },
 ];
 
 const legal = [
-  { name: 'Privacy Policy', path: '/privacy' },
-  { name: 'Terms & Conditions', path: '/terms' },
+  { name: 'Privacy Policy', path: '/resources/privacy' },
+  { name: 'Terms & Conditions', path: '/resources/terms' },
   { name: 'About', path: '/about' },
-  { name: 'Contact', path: '/contact' },
+  { name: 'Contact', path: '/resources/contact' },
 ];
 
 const socials = [

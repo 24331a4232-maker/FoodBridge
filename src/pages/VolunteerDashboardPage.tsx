@@ -115,7 +115,7 @@ export function VolunteerDashboardPage() {
         type: 'volunteer_assigned',
         title: 'Pickup Assigned to You',
         description: `You are now assigned to pick up ${donation.food_name} from ${donation.organization}.`,
-        actionUrl: '/volunteer-dashboard',
+        actionUrl: '/dashboard/volunteer-dashboard',
       });
       setAvailable((a) => a.filter((d) => d.id !== donation.id));
       const { data } = await supabase.from('pickups').select('*, donation:food_donations(*)').eq('volunteer_id', user.id).order('created_at', { ascending: false });
@@ -142,7 +142,7 @@ export function VolunteerDashboardPage() {
       type: 'delivery_completed',
       title: 'Delivery Completed',
       description: `You delivered ${pickup.donation?.food_name ?? 'a donation'} and earned ${pickup.points_earned ?? 25} points.`,
-      actionUrl: '/volunteer-dashboard',
+      actionUrl: '/dashboard/volunteer-dashboard',
     });
 
     // Auto-generate certificate
@@ -162,7 +162,7 @@ export function VolunteerDashboardPage() {
           type: 'certificate_generated',
           title: 'New Certificate Generated',
           description: `A certificate for ${newDeliveries} deliveries has been added to your collection.`,
-          actionUrl: '/certificate',
+          actionUrl: '/services/certificates',
         });
       }
     }
@@ -225,8 +225,8 @@ export function VolunteerDashboardPage() {
             <p className="text-gray-500 mt-1">Welcome back, {profile?.full_name?.split(' ')[0] ?? 'Volunteer'}!</p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Link to="/certificate"><RippleButton variant="primary"><Download className="h-4 w-4" /> Download Certificate</RippleButton></Link>
-            <Link to="/my-certificates"><RippleButton variant="secondary"><Award className="h-4 w-4" /> My Certificates</RippleButton></Link>
+            <Link to="/services/certificates"><RippleButton variant="primary"><Download className="h-4 w-4" /> Download Certificate</RippleButton></Link>
+            <Link to="/services/certificate-history"><RippleButton variant="secondary"><Award className="h-4 w-4" /> My Certificates</RippleButton></Link>
           </div>
         </motion.div>
 
@@ -267,7 +267,7 @@ export function VolunteerDashboardPage() {
                       </select>
                     </div>
                   )}
-                  <Link to="/available-food" className="text-sm text-primary-600 hover:underline flex items-center gap-1">View all <ArrowRight className="h-3 w-3" /></Link>
+                  <Link to="/services/available-food" className="text-sm text-primary-600 hover:underline flex items-center gap-1">View all <ArrowRight className="h-3 w-3" /></Link>
                 </div>
               </div>
               {loading ? (

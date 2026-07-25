@@ -111,7 +111,7 @@ export function DonationTrackingPage() {
                     {[1, 2, 3].map((i) => <div key={i} className="h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse" />)}
                   </div>
                 ) : pickups.length === 0 ? (
-                  <p className="text-center text-gray-400 py-8">No pickups yet. <Link to="/available-food" className="text-primary-500 underline">Browse donations</Link>.</p>
+                  <p className="text-center text-gray-400 py-8">No pickups yet. <Link to="/services/available-food" className="text-primary-500 underline">Browse donations</Link>.</p>
                 ) : (
                   <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
                     {pickups.map((p) => {

@@ -61,7 +61,7 @@ export function CertificatePage() {
       type: 'certificate_generated',
       title: 'Certificate Generated',
       description: `Your volunteer appreciation certificate (${certData.certificateNumber}) is ready to download.`,
-      actionUrl: '/certificate',
+      actionUrl: '/services/certificates',
     });
     setShowSuccess(true);
   };
@@ -280,7 +280,7 @@ export function CertificatePage() {
             <RippleButton onClick={saveToMyCertificates} variant="ghost">
               <Save className="h-4 w-4" /> {saved ? 'Saved!' : 'Save to My Certificates'}
             </RippleButton>
-            <Link to="/my-certificates">
+            <Link to="/services/certificate-history">
               <RippleButton variant="ghost">
                 <Award className="h-4 w-4" /> My Certificates
               </RippleButton>
@@ -318,7 +318,7 @@ export function CertificatePage() {
 
         {/* Back link */}
         <div className="text-center mt-6 print:hidden">
-          <Link to="/volunteer">
+          <Link to="/dashboard/volunteer">
             <RippleButton variant="ghost"><ArrowLeft className="h-4 w-4" /> Back to Dashboard</RippleButton>
           </Link>
         </div>
@@ -376,7 +376,7 @@ export function CertificatePage() {
               )}
               <div className="flex flex-col gap-3">
                 <RippleButton onClick={() => setShowSuccess(false)} variant="primary" fullWidth>View Certificate</RippleButton>
-                <Link to="/verify-certificate" onClick={() => setShowSuccess(false)}>
+                <Link to="/services/verify-certificate" onClick={() => setShowSuccess(false)}>
                   <RippleButton variant="ghost" fullWidth>Verify Certificate</RippleButton>
                 </Link>
               </div>

@@ -350,7 +350,7 @@ export function ProfilePage() {
                 {/* My Donations */}
                 <SectionCard icon={Package} title="My Donations" accent="accent">
                   {donations.length === 0 ? (
-                    <p className="text-center text-gray-400 py-8">No donations yet. <Link to="/donate-food" className="text-primary-500 underline">Donate food</Link> to get started.</p>
+                    <p className="text-center text-gray-400 py-8">No donations yet. <Link to="/services/donate-food" className="text-primary-500 underline">Donate food</Link> to get started.</p>
                   ) : (
                     <div className="overflow-x-auto -mx-2">
                       <table className="w-full text-sm">
@@ -397,9 +397,9 @@ export function ProfilePage() {
                             </div>
                           </div>
                           <div className="flex gap-2">
-                            <Link to="/certificate" className="flex-1"><RippleButton variant="ghost" fullWidth className="text-xs"><FileText className="h-3.5 w-3.5" /> View</RippleButton></Link>
-                            <Link to="/certificate" className="flex-1"><RippleButton variant="ghost" fullWidth className="text-xs"><Download className="h-3.5 w-3.5" /> PDF</RippleButton></Link>
-                            <Link to="/verify-certificate" className="flex-1"><RippleButton variant="ghost" fullWidth className="text-xs"><ExternalLink className="h-3.5 w-3.5" /> Verify</RippleButton></Link>
+                            <Link to="/services/certificates" className="flex-1"><RippleButton variant="ghost" fullWidth className="text-xs"><FileText className="h-3.5 w-3.5" /> View</RippleButton></Link>
+                            <Link to="/services/certificates" className="flex-1"><RippleButton variant="ghost" fullWidth className="text-xs"><Download className="h-3.5 w-3.5" /> PDF</RippleButton></Link>
+                            <Link to="/services/verify-certificate" className="flex-1"><RippleButton variant="ghost" fullWidth className="text-xs"><ExternalLink className="h-3.5 w-3.5" /> Verify</RippleButton></Link>
                           </div>
                         </div>
                       ))}

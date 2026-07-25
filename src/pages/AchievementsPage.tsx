@@ -425,7 +425,7 @@ export function AchievementsPage() {
           <h2 className="font-display text-2xl sm:text-3xl font-bold mb-4 relative z-10">Climb the Leaderboard</h2>
           <p className="text-white/90 max-w-lg mx-auto mb-8 relative z-10">Every delivery earns points, unlocks badges, and moves you up the ranks.</p>
           <div className="flex flex-wrap items-center justify-center gap-4 relative z-10">
-            <Link to="/volunteer"><RippleButton className="bg-white text-primary-700 hover:bg-gray-50">Go to Dashboard <ArrowRight className="h-4 w-4" /></RippleButton></Link>
+            <Link to="/dashboard/volunteer"><RippleButton className="bg-white text-primary-700 hover:bg-gray-50">Go to Dashboard <ArrowRight className="h-4 w-4" /></RippleButton></Link>
             <Link to="/profile"><RippleButton variant="ghost" className="text-white hover:bg-white/10">View Profile</RippleButton></Link>
           </div>
         </motion.div>

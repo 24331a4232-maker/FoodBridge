@@ -22,19 +22,19 @@ import { fadeInUp, staggerContainer, scaleIn } from '@/lib/animations';
 const quickLinks = [
   { name: 'Home', path: '/', icon: Home },
   { name: 'About', path: '/about', icon: Info },
-  { name: 'Donate Food', path: '/donate-food', icon: UtensilsCrossed },
-  { name: 'Available Donations', path: '/available-food', icon: ShoppingBasket },
-  { name: 'Volunteer Dashboard', path: '/volunteer', icon: LayoutDashboard },
-  { name: 'Contact', path: '/contact', icon: Phone },
+  { name: 'Donate Food', path: '/services/donate-food', icon: UtensilsCrossed },
+  { name: 'Available Donations', path: '/services/available-food', icon: ShoppingBasket },
+  { name: 'Volunteer Dashboard', path: '/dashboard/volunteer', icon: LayoutDashboard },
+  { name: 'Contact', path: '/resources/contact', icon: Phone },
 ];
 
 const searchablePages = [
   ...quickLinks,
-  { name: 'Food Quality', path: '/food-quality', icon: Leaf },
-  { name: 'Help Center', path: '/help', icon: Mail },
+  { name: 'Food Quality', path: '/services/food-quality', icon: Leaf },
+  { name: 'Help Center', path: '/resources/help', icon: Mail },
   { name: 'Achievements', path: '/achievements', icon: HeartHandshake },
-  { name: 'Certificate', path: '/certificate', icon: HeartHandshake },
-  { name: 'Verify Certificate', path: '/verify-certificate', icon: HeartHandshake },
+  { name: 'Certificate', path: '/services/certificates', icon: HeartHandshake },
+  { name: 'Verify Certificate', path: '/services/verify-certificate', icon: HeartHandshake },
 ];
 
 const floatingIcons = [
@@ -184,12 +184,12 @@ export function NotFoundPage() {
                 <Home className="h-4 w-4" /> Back to Home
               </RippleButton>
             </Link>
-            <Link to="/donate-food">
+            <Link to="/services/donate-food">
               <RippleButton variant="accent" className="text-sm px-5 py-3">
                 <UtensilsCrossed className="h-4 w-4" /> Donate Food
               </RippleButton>
             </Link>
-            <Link to="/contact">
+            <Link to="/resources/contact">
               <RippleButton variant="ghost" className="text-sm px-5 py-3">
                 <Phone className="h-4 w-4" /> Contact Us
               </RippleButton>

@@ -336,7 +336,7 @@ export function AboutPage() {
           <motion.p variants={fadeInUp} className="text-gray-600 dark:text-gray-400 mb-8">Join FoodBridge today. Donate surplus food or become a volunteer. Every action counts.</motion.p>
           <motion.div variants={fadeInUp} className="flex flex-wrap justify-center gap-4">
             <Link to="/register"><RippleButton variant="primary">Join Us <ArrowRight className="h-4 w-4" /></RippleButton></Link>
-            <Link to="/donate-food"><RippleButton variant="accent">Donate Food</RippleButton></Link>
+            <Link to="/services/donate-food"><RippleButton variant="accent">Donate Food</RippleButton></Link>
           </motion.div>
         </motion.div>
       </section>

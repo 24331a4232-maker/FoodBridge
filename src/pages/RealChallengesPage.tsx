@@ -221,7 +221,7 @@ export function RealChallengesPage() {
             <RippleButton onClick={() => scrollTo('statistics')} variant="primary">
               Explore the Data <ArrowRight className="h-4 w-4" />
             </RippleButton>
-            <Link to="/donate-food"><RippleButton variant="secondary">Take Action</RippleButton></Link>
+            <Link to="/services/donate-food"><RippleButton variant="secondary">Take Action</RippleButton></Link>
           </div>
         </motion.div>
       </section>
@@ -543,7 +543,7 @@ export function RealChallengesPage() {
               <h2 className="font-display text-2xl sm:text-3xl font-bold mb-3">Be part of the solution</h2>
               <p className="text-white/80 max-w-xl mx-auto mb-8">Every meal saved is a step toward zero hunger. Join FoodBridge as a donor, volunteer, or partner today.</p>
               <div className="flex flex-wrap items-center justify-center gap-3">
-                <Link to="/donate-food"><RippleButton className="bg-white text-primary-700 hover:bg-white/90 !shadow-none">Donate Food</RippleButton></Link>
+                <Link to="/services/donate-food"><RippleButton className="bg-white text-primary-700 hover:bg-white/90 !shadow-none">Donate Food</RippleButton></Link>
                 <Link to="/register"><RippleButton className="bg-white/15 text-white hover:bg-white/25 backdrop-blur-md border border-white/30 !shadow-none">Become a Volunteer</RippleButton></Link>
               </div>
             </motion.div>

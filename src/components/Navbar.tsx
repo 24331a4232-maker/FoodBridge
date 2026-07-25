@@ -21,20 +21,31 @@ interface MenuLink {
 const primaryLinks: MenuLink[] = [
   { name: 'Home', path: '/', icon: Home },
   { name: 'About', path: '/about', icon: Info },
-  { name: 'Contact', path: '/contact', icon: Phone },
+  { name: 'Global Impact', path: '/global-impact', icon: Globe2 },
+  { name: 'Community', path: '/community', icon: Users },
+  { name: 'Analytics', path: '/analytics', icon: BarChart3 },
 ];
 
 const servicesLinks: MenuLink[] = [
-  { name: 'Donate Food', path: '/donate-food', icon: Package, description: 'List surplus food for pickup' },
-  { name: 'Available Donations', path: '/available-food', icon: Search, description: 'Browse and claim nearby food' },
-  { name: 'Food Quality Verification', path: '/food-quality', icon: ShieldCheck, description: 'Check food safety standards' },
-  { name: 'Donation Tracking', path: '/tracking', icon: Truck, description: 'Track deliveries in real time' },
-  { name: 'Verify Certificate', path: '/verify-certificate', icon: QrCode, description: 'Verify a certificate by QR or ID' },
+  { name: 'Donate Food', path: '/services/donate-food', icon: Package, description: 'List surplus food for pickup' },
+  { name: 'Available Donations', path: '/services/available-food', icon: Search, description: 'Browse and claim nearby food' },
+  { name: 'Food Quality Verification', path: '/services/food-quality', icon: ShieldCheck, description: 'Check food safety standards' },
+  { name: 'Donation Tracking', path: '/services/tracking', icon: Truck, description: 'Track deliveries in real time' },
+  { name: 'QR Verification', path: '/services/verify-certificate', icon: QrCode, description: 'Verify a certificate by QR or ID' },
+  { name: 'Certificates', path: '/services/certificates', icon: Award, description: 'View and download certificates' },
 ];
 
 const dashboardLinks: MenuLink[] = [
-  { name: 'Volunteer Dashboard', path: '/volunteer', icon: LayoutDashboard, description: 'Manage your deliveries and impact' },
-  { name: 'Admin Dashboard', path: '/admin', icon: Building2, description: 'Oversee platform operations' },
+  { name: 'Volunteer Dashboard', path: '/dashboard/volunteer', icon: LayoutDashboard, description: 'Manage your deliveries and impact' },
+  { name: 'Admin Dashboard', path: '/dashboard/admin', icon: Building2, description: 'Oversee platform operations' },
+];
+
+const resourcesLinks: MenuLink[] = [
+  { name: 'FAQ', path: '/resources', icon: HelpCircle, description: 'Frequently asked questions' },
+  { name: 'Help Center', path: '/resources/help', icon: Search, description: 'Guides and tutorials' },
+  { name: 'Contact', path: '/resources/contact', icon: Phone, description: 'Get in touch with us' },
+  { name: 'Privacy Policy', path: '/resources/privacy', icon: Lock, description: 'How we handle your data' },
+  { name: 'Terms & Conditions', path: '/resources/terms', icon: FileText, description: 'Rules of the platform' },
 ];
 
 interface DrawerSection {
@@ -62,7 +73,9 @@ const drawerSections: DrawerSection[] = [
     icon: Award,
     accent: 'orange',
     links: [
-      { name: 'My Certificates', path: '/certificate', icon: Award },
+      { name: 'My Certificate', path: '/services/certificates', icon: Award },
+      { name: 'Certificate History', path: '/services/certificates-history', icon: FileText },
+      { name: 'Verify Certificate', path: '/services/verify-certificate', icon: QrCode },
     ],
   },
   {
@@ -71,9 +84,11 @@ const drawerSections: DrawerSection[] = [
     icon: FileText,
     accent: 'green',
     links: [
-      { name: 'FAQ', path: '/help', icon: HelpCircle },
-      { name: 'Privacy Policy', path: '/privacy', icon: Lock },
-      { name: 'Terms & Conditions', path: '/terms', icon: FileText },
+      { name: 'FAQ', path: '/resources', icon: HelpCircle },
+      { name: 'Help Center', path: '/resources/help', icon: Search },
+      { name: 'Contact', path: '/resources/contact', icon: Phone },
+      { name: 'Privacy Policy', path: '/resources/privacy', icon: Lock },
+      { name: 'Terms & Conditions', path: '/resources/terms', icon: FileText },
     ],
   },
 ];
@@ -83,7 +98,7 @@ export function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [openDropdown, setOpenDropdown] = useState<'services' | 'dashboard' | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<'services' | 'dashboard' | 'resources' | null>(null);
   const { theme, toggleTheme } = useTheme();
   const { user, profile, signOut } = useAuth();
   const location = useLocation();
@@ -158,7 +173,7 @@ export function Navbar() {
 
   const isPathInLinks = (path: string, links: MenuLink[]) => links.some((l) => l.path === path);
 
-  const renderDropdown = (id: 'services' | 'dashboard', label: string, icon: LucideIcon, links: MenuLink[]) => {
+  const renderDropdown = (id: 'services' | 'dashboard' | 'resources', label: string, icon: LucideIcon, links: MenuLink[]) => {
     const isOpen = openDropdown === id;
     const isActive = isPathInLinks(location.pathname, links);
     const Icon = icon;
@@ -277,6 +292,7 @@ export function Navbar() {
               })}
               {renderDropdown('services', 'Services', Package, servicesLinks)}
               {renderDropdown('dashboard', 'Dashboard', LayoutDashboard, dashboardLinks)}
+              {renderDropdown('resources', 'Resources', HelpCircle, resourcesLinks)}
             </div>
 
             {/* Right side — search, theme, bell, avatar, hamburger */}
@@ -411,19 +427,19 @@ export function Navbar() {
                     Quick Access
                   </p>
                   <div className="grid grid-cols-2 gap-2">
-                    <Link to="/donate-food" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-800/40 transition-colors">
+                    <Link to="/services/donate-food" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-800/40 transition-colors">
                       <Package className="h-4 w-4 text-primary-600 dark:text-primary-400" strokeWidth={1.75} />
                       <span className="text-sm font-medium text-ink dark:text-cream">Donate Food</span>
                     </Link>
-                    <Link to="/available-food" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-secondary-50 dark:bg-secondary-900/30 hover:bg-secondary-100 dark:hover:bg-secondary-800/40 transition-colors">
+                    <Link to="/services/available-food" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-secondary-50 dark:bg-secondary-900/30 hover:bg-secondary-100 dark:hover:bg-secondary-800/40 transition-colors">
                       <Search className="h-4 w-4 text-secondary-600 dark:text-secondary-400" strokeWidth={1.75} />
                       <span className="text-sm font-medium text-ink dark:text-cream">Available</span>
                     </Link>
-                    <Link to="/volunteer" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-800/40 transition-colors">
+                    <Link to="/dashboard/volunteer" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-800/40 transition-colors">
                       <LayoutDashboard className="h-4 w-4 text-accent-600 dark:text-accent-400" strokeWidth={1.75} />
                       <span className="text-sm font-medium text-ink dark:text-cream">Volunteer</span>
                     </Link>
-                    <Link to="/admin" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-800/40 transition-colors">
+                    <Link to="/dashboard/admin" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-800/40 transition-colors">
                       <Building2 className="h-4 w-4 text-primary-600 dark:text-primary-400" strokeWidth={1.75} />
                       <span className="text-sm font-medium text-ink dark:text-cream">Admin</span>
                     </Link>

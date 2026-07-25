@@ -11,12 +11,11 @@ import {
   ClipboardList,
   ArrowRight,
   ArrowDown,
-  Quote,
   Leaf,
   UtensilsCrossed,
   Globe2,
-  ChevronDown,
   Sparkles,
+  Target,
 } from 'lucide-react';
 import { AnimatedCounter, SectionHeading, fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
@@ -38,30 +37,16 @@ const impactStats = [
   { label: 'Volunteers', value: 1560, suffix: '+', icon: HeartHandshake },
 ];
 
-const testimonials = [
-  {
-    name: 'Rajesh Mehra',
-    role: 'Hotel Manager, Mumbai',
-    text: 'We used to throw away trays of food after every banquet. Now a volunteer is at our door before the last guest leaves. It changed how our whole team thinks about surplus.',
-  },
-  {
-    name: 'Ananya Krishnan',
-    role: 'Student Volunteer, Bangalore',
-    text: 'I signed up on a Sunday. By Tuesday I had delivered my first meal. The look on a child\'s face when you hand over warm food — that stays with you.',
-  },
-  {
-    name: 'Sister Maria Pinto',
-    role: 'Shelter Coordinator, Goa',
-    text: 'Before FoodBridge we never knew if we would have dinner. Now we plan around it. Reliability is the real gift — the food is secondary.',
-  },
+const featuredStories = [
+  { name: 'The Grand Hotel, Bangalore', text: 'We used to throw away 40+ meals after every banquet. FoodBridge now redirects all of it to a nearby shelter the same night.', meals: 12400, period: '8 months' },
+  { name: 'Sunrise Orphanage, Delhi', text: 'Our children get warm, fresh meals every evening from partner hotels. The quality verification gives us complete peace of mind.', meals: 8600, period: '6 months' },
+  { name: 'Rahul Verma, Volunteer', text: 'I have completed 45 deliveries. The certificate I earned helped me in my college application. FoodBridge gave me purpose.', meals: 45, period: '6 months' },
 ];
 
-const faqs = [
-  { q: 'How does FoodBridge ensure food safety?', a: 'Every donor and volunteer is verified. We enforce hygiene protocols, temperature checks, and a strict 4-hour delivery window for cooked food. All pickups are tracked end-to-end.' },
-  { q: 'Who can donate food?', a: 'Hotels, restaurants, event organizers, marriage halls, caterers, and corporate cafeterias. As long as the food is edible and safe, you can list it.' },
-  { q: 'How do I become a volunteer?', a: 'Register as a volunteer, complete your profile, and start accepting nearby pickups. You earn reward points and can download an official certificate.' },
-  { q: 'Is FoodBridge free to use?', a: 'Yes, FoodBridge is completely free for donors, volunteers, and recipient organizations. We are a non-profit initiative.' },
-  { q: 'What happens to food that is not picked up?', a: 'Listings expire automatically after the pickup window. Urgent donations are prioritized and pushed to more volunteers to minimize waste.' },
+const sdgPreview = [
+  { num: '2', title: 'Zero Hunger', color: 'from-gold-500 to-yellow-500' },
+  { num: '12', title: 'Responsible Consumption', color: 'from-yellow-500 to-gold-600' },
+  { num: '17', title: 'Partnerships', color: 'from-secondary-500 to-primary-500' },
 ];
 
 export function HomePage() {
@@ -69,7 +54,7 @@ export function HomePage() {
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
 
   return (
     <div>
@@ -116,7 +101,7 @@ export function HomePage() {
               transition={{ delay: 0.6 }}
               className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-10"
             >
-              <Link to="/donate-food">
+              <Link to="/services/donate-food">
                 <RippleButton variant="primary" className="text-base px-7 py-3.5">
                   Donate Food <ArrowRight className="h-4 w-4" />
                 </RippleButton>
@@ -300,78 +285,78 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Testimonials — premium cards */}
+      {/* Featured Success Stories */}
       <section className="section bg-mist dark:bg-secondary-900">
         <SectionHeading
-          badge="Voices"
-          title="The people who make it real"
-          subtitle="Hotel managers, volunteers, shelter coordinators. The bridge is built by them."
+          badge="Featured Stories"
+          title="Real deliveries, real impact"
+          subtitle="Stories of food that found a second home instead of a landfill."
         />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-          {testimonials.map((t, i) => (
+          {featuredStories.map((s, i) => (
             <motion.figure
-              key={t.name}
+              key={s.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
               transition={{ delay: i * 0.12 }}
               className="card-hover p-7 flex flex-col"
             >
-              <Quote className="h-8 w-8 text-primary-400 dark:text-primary-600 mb-5" strokeWidth={1.5} />
-              <blockquote className="font-display text-lg leading-relaxed text-ink dark:text-cream/90 flex-1">
-                {t.text}
-              </blockquote>
-              <figcaption className="flex items-center gap-3 mt-7 pt-6 border-t border-linen dark:border-secondary-800">
-                <div className="h-11 w-11 rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 flex items-center justify-center font-display font-semibold text-lg ring-1 ring-linen dark:ring-secondary-700">
-                  {t.name[0]}
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-11 w-11 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center font-display font-semibold text-lg">
+                  {s.name[0]}
                 </div>
                 <div>
-                  <p className="font-medium text-sm text-ink dark:text-cream">{t.name}</p>
-                  <p className="text-xs text-ink-soft dark:text-cream/50 mt-0.5">{t.role}</p>
+                  <p className="font-medium text-sm text-ink dark:text-cream">{s.name}</p>
+                  <p className="text-xs text-ink-soft dark:text-cream/50">{s.period}</p>
                 </div>
-              </figcaption>
+              </div>
+              <blockquote className="text-ink-soft dark:text-cream/70 leading-relaxed flex-1">
+                "{s.text}"
+              </blockquote>
+              <div className="flex items-center gap-3 mt-5 pt-4 border-t border-linen dark:border-secondary-800">
+                <span className="font-stat font-bold text-primary-600">{s.meals.toLocaleString()}</span>
+                <span className="text-xs text-ink-soft dark:text-cream/50">meals saved</span>
+              </div>
             </motion.figure>
           ))}
         </div>
+        <div className="text-center mt-10">
+          <Link to="/community" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
+            Explore more stories <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
       </section>
 
-      {/* FAQ — accordion */}
+      {/* SDG Preview */}
       <section className="section bg-cream dark:bg-secondary-950">
         <SectionHeading
-          badge="Questions"
-          title="Good to know"
-          subtitle="Everything you need to understand before you donate or volunteer."
+          badge="UN SDGs"
+          title="Aligned with global goals"
+          subtitle="FoodBridge directly contributes to the UN Sustainable Development Goals."
         />
-        <div className="mt-14 max-w-3xl mx-auto space-y-3">
-          {faqs.map((faq, i) => {
-            const isOpen = openFaq === i;
-            return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06 }}
-                className="card overflow-hidden"
-              >
-                <button
-                  onClick={() => setOpenFaq(isOpen ? null : i)}
-                  className="flex items-center justify-between w-full p-6 font-display text-lg font-medium text-ink dark:text-cream text-left"
-                >
-                  {faq.q}
-                  <ChevronDown className={`h-5 w-5 text-primary-500 shrink-0 ml-4 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
-                </button>
-                <motion.div
-                  initial={false}
-                  animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
-                  transition={{ duration: 0.3, ease: 'easeInOut' }}
-                  className="overflow-hidden"
-                >
-                  <div className="px-6 pb-6 text-base text-ink-soft dark:text-cream/60 leading-relaxed">{faq.a}</div>
-                </motion.div>
-              </motion.div>
-            );
-          })}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-14 max-w-4xl mx-auto">
+          {sdgPreview.map((sdg, i) => (
+            <motion.div
+              key={sdg.num}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ y: -6 }}
+              className="card p-6 text-center group"
+            >
+              <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br ${sdg.color} text-white flex items-center justify-center font-display text-xl font-bold mb-4 shadow-lg mx-auto`}>
+                {sdg.num}
+              </div>
+              <h3 className="font-display font-semibold text-lg text-ink dark:text-cream">{sdg.title}</h3>
+            </motion.div>
+          ))}
+        </div>
+        <div className="text-center mt-10">
+          <Link to="/global-impact" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
+            Explore our global impact <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
@@ -403,7 +388,7 @@ export function HomePage() {
                   Join as a volunteer <ArrowRight className="h-4 w-4" />
                 </RippleButton>
               </Link>
-              <Link to="/contact">
+              <Link to="/resources/contact">
                 <RippleButton variant="secondary" className="text-base px-7 py-3.5">
                   Talk to us
                 </RippleButton>

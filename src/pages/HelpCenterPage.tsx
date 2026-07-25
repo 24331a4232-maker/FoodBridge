@@ -284,7 +284,7 @@ export function HelpCenterPage() {
               </a>
             </div>
             <motion.div variants={fadeInUp} className="flex flex-wrap items-center justify-center gap-4">
-              <Link to="/contact">
+              <Link to="/resources/contact">
                 <RippleButton variant="primary" className="text-base px-7 py-3.5">
                   Contact Us <MessageSquare className="h-4 w-4" />
                 </RippleButton>
@@ -294,7 +294,7 @@ export function HelpCenterPage() {
                   Become a Volunteer <HeartHandshake className="h-4 w-4" />
                 </RippleButton>
               </Link>
-              <Link to="/donate-food">
+              <Link to="/services/donate-food">
                 <RippleButton variant="accent" className="text-base px-7 py-3.5">
                   Donate Food <ArrowRight className="h-4 w-4" />
                 </RippleButton>

@@ -80,7 +80,7 @@ const certificateInfo = {
   grade: 'A+',
   inspector: 'Priya Nair',
   signature: 'Priya Nair',
-  verifyUrl: `${window.location.origin}/verify-certificate/FQ-2026-0001`,
+  verifyUrl: `${window.location.origin}/services/verify-certificate/FQ-2026-0001`,
 };
 
 function Counter({ value, suffix = '', className = '' }: { value: number; suffix?: string; className?: string }) {
@@ -467,7 +467,7 @@ export function FoodQualityPage() {
           <div className="flex flex-wrap justify-center gap-3">
             <RippleButton onClick={() => setCertModal(true)} variant="primary"><Eye className="h-4 w-4" /> View Certificate</RippleButton>
             <RippleButton variant="secondary"><Download className="h-4 w-4" /> Download PDF</RippleButton>
-            <Link to={`/verify-certificate/${certificateInfo.id}`}><RippleButton variant="ghost"><ScanLine className="h-4 w-4" /> Verify QR</RippleButton></Link>
+            <Link to={`/services/verify-certificate/${certificateInfo.id}`}><RippleButton variant="ghost"><ScanLine className="h-4 w-4" /> Verify QR</RippleButton></Link>
           </div>
         </motion.div>
       </section>
@@ -508,7 +508,7 @@ export function FoodQualityPage() {
                 <RippleButton onClick={() => setCertScale(1)} variant="ghost" className="text-sm px-3 py-2"><Maximize className="h-4 w-4" /> Reset</RippleButton>
                 <RippleButton onClick={() => window.print()} variant="ghost" className="text-sm px-3 py-2"><Printer className="h-4 w-4" /> Print</RippleButton>
                 <RippleButton variant="ghost" className="text-sm px-3 py-2"><Download className="h-4 w-4" /> Download PDF</RippleButton>
-                <Link to={`/verify-certificate/${certificateInfo.id}`}><RippleButton variant="ghost" className="text-sm px-3 py-2"><ShieldCheck className="h-4 w-4" /> Verify Certificate</RippleButton></Link>
+                <Link to={`/services/verify-certificate/${certificateInfo.id}`}><RippleButton variant="ghost" className="text-sm px-3 py-2"><ShieldCheck className="h-4 w-4" /> Verify Certificate</RippleButton></Link>
               </div>
 
               <div className="grid lg:grid-cols-3 gap-6">
@@ -566,7 +566,7 @@ export function FoodQualityPage() {
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">Safe Food Saves Lives</h2>
             <p className="text-white/90 mt-3 max-w-xl mx-auto">Every verified meal brings hope to someone in need.</p>
             <div className="flex flex-wrap justify-center gap-3 mt-8">
-              <Link to="/donate-food"><RippleButton variant="secondary"><UtensilsCrossed className="h-4 w-4" /> Donate Food</RippleButton></Link>
+              <Link to="/services/donate-food"><RippleButton variant="secondary"><UtensilsCrossed className="h-4 w-4" /> Donate Food</RippleButton></Link>
               <Link to="/register"><RippleButton className="bg-white text-primary-700 hover:bg-white/90 shadow-lg"><Heart className="h-4 w-4" /> Join FoodBridge</RippleButton></Link>
             </div>
           </motion.div>
