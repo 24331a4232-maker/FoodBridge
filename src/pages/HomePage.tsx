@@ -98,7 +98,7 @@ export function HomePage() {
               transition={{ delay: 0.25, duration: 0.8 }}
               className="font-display text-[2.75rem] sm:text-6xl lg:text-7xl font-semibold tracking-[-0.03em] leading-[1.02] text-ink dark:text-cream text-balance"
             >
-              No plate<br />left empty.
+              Every Meal<br />Deserves a Purpose.
             </motion.h1>
 
             <motion.p
@@ -107,7 +107,7 @@ export function HomePage() {
               transition={{ delay: 0.45 }}
               className="text-lg sm:text-xl text-ink-soft dark:text-cream/70 mt-8 max-w-xl mx-auto lg:mx-0 leading-relaxed text-pretty"
             >
-              FoodBridge redirects surplus food from weddings, hotels and events to the people who need it most — within four hours, before it ever becomes waste.
+              Connecting surplus food with people who need it most — within four hours, before it ever becomes waste.
             </motion.p>
 
             <motion.div
@@ -176,60 +176,81 @@ export function HomePage() {
         </motion.div>
       </section>
 
-      {/* How FoodBridge Works — 6 timeline cards */}
+      {/* How FoodBridge Works — curved journey path */}
       <section className="section-wide bg-cream dark:bg-secondary-950">
         <SectionHeading
           badge="How FoodBridge Works"
           title="From a kitchen to a plate"
           subtitle="Six steps. Four hours. One meal that would have been waste, now feeding someone who was hungry."
         />
-        <div className="mt-20 relative">
-          {/* Vertical line */}
-          <div className="absolute left-6 lg:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-primary-300 via-primary-200 to-transparent dark:from-primary-700 dark:via-primary-800" />
-          <div className="space-y-12 lg:space-y-16">
+        <div className="mt-20 relative max-w-3xl mx-auto">
+          {/* Curved SVG connector */}
+          <svg
+            className="absolute left-7 top-8 bottom-8 w-4 -z-0 pointer-events-none"
+            preserveAspectRatio="none"
+            viewBox="0 0 16 100"
+          >
+            <path d="M 8 0 Q 0 20 8 40 Q 16 60 8 80 Q 0 90 8 100" fill="none" stroke="currentColor" strokeWidth="2" className="text-linen dark:text-secondary-800" strokeDasharray="4 4" />
+            <motion.path
+              d="M 8 0 Q 0 20 8 40 Q 16 60 8 80 Q 0 90 8 100"
+              fill="none"
+              stroke="url(#journeyGradient)"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              pathLength={1}
+              initial={{ pathLength: 0 }}
+              whileInView={{ pathLength: 1 }}
+              viewport={{ once: true, margin: '-80px' }}
+              transition={{ duration: 2, ease: 'easeInOut' }}
+            />
+            <defs>
+              <linearGradient id="journeyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#16A34A" />
+                <stop offset="60%" stopColor="#22C55E" />
+                <stop offset="100%" stopColor="#F97316" />
+              </linearGradient>
+            </defs>
+          </svg>
+
+          <div className="space-y-5">
             {steps.map((step, i) => {
               const Icon = step.icon;
-              const isLeft = i % 2 === 0;
               return (
                 <motion.div
                   key={step.title}
-                  initial={{ opacity: 0, y: 40 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.6 }}
-                  className={`relative flex items-center gap-6 ${isLeft ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  className="relative pl-20"
                 >
                   {/* Node */}
-                  <div className="absolute left-6 lg:left-1/2 -translate-x-1/2 z-10">
-                    <div className="h-12 w-12 rounded-full bg-primary-600 text-cream flex items-center justify-center shadow-glow-green ring-4 ring-cream dark:ring-secondary-950">
-                      <Icon className="h-5 w-5" strokeWidth={1.75} />
-                    </div>
+                  <div className="absolute left-0 top-4 z-10">
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      className="relative h-14 w-14 rounded-2xl-premium bg-gradient-to-br from-primary-500 to-primary-700 text-cream flex items-center justify-center shadow-glow-green ring-4 ring-cream dark:ring-secondary-950"
+                    >
+                      <Icon className="h-6 w-6" strokeWidth={1.75} />
+                    </motion.div>
                   </div>
 
                   {/* Card */}
-                  <div className={`flex-1 ml-20 lg:ml-0 ${isLeft ? 'lg:pr-20 lg:text-right' : 'lg:pl-20'}`}>
-                    <div className="card-hover p-6 lg:p-7">
-                      <div className={`flex items-center gap-3 mb-3 ${isLeft ? 'lg:flex-row-reverse' : ''}`}>
-                        <span className="font-display text-3xl font-semibold text-primary-300 dark:text-primary-800 leading-none">
-                          {String(i + 1).padStart(2, '0')}
-                        </span>
-                        <h3 className="font-display text-xl font-semibold text-ink dark:text-cream tracking-[-0.02em]">
-                          {step.title}
-                        </h3>
-                      </div>
-                      <p className="text-base text-ink-soft dark:text-cream/60 leading-relaxed">
-                        {step.desc}
-                      </p>
+                  <motion.div
+                    whileHover={{ y: -3 }}
+                    className="glass-card p-6"
+                  >
+                    <div className="flex items-center gap-3 mb-2">
+                      <span className="font-display text-2xl font-semibold text-primary-300 dark:text-primary-800 leading-none">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <h3 className="font-display text-lg font-semibold text-ink dark:text-cream tracking-[-0.02em]">
+                        {step.title}
+                      </h3>
                     </div>
-                  </div>
-
-                  {/* Illustration on opposite side */}
-                  <div className={`hidden lg:block w-40 h-40 shrink-0 ${isLeft ? 'lg:pl-20' : 'lg:pr-20'}`}>
-                    <div className="relative w-full h-full">
-                      <div className="absolute inset-0 rounded-full bg-primary-100 dark:bg-primary-900/30 blur-2xl scale-125" />
-                      <Illustration variant={step.illustration} className="relative w-full h-full drop-shadow-soft" />
-                    </div>
-                  </div>
+                    <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed">
+                      {step.desc}
+                    </p>
+                  </motion.div>
                 </motion.div>
               );
             })}
@@ -238,7 +259,7 @@ export function HomePage() {
       </section>
 
       {/* Impact — animated statistics */}
-      <section className="relative overflow-hidden bg-secondary-700 dark:bg-secondary-800 py-28 px-6 text-cream">
+      <section className="relative overflow-hidden bg-secondary-800 dark:bg-secondary-900 py-28 px-6 text-cream">
         <div className="absolute inset-0 bg-grid opacity-30 pointer-events-none" />
         <div className="relative max-w-5xl mx-auto">
           <motion.div
@@ -280,7 +301,7 @@ export function HomePage() {
       </section>
 
       {/* Testimonials — premium cards */}
-      <section className="section bg-oat dark:bg-secondary-900">
+      <section className="section bg-mist dark:bg-secondary-900">
         <SectionHeading
           badge="Voices"
           title="The people who make it real"
@@ -355,7 +376,7 @@ export function HomePage() {
       </section>
 
       {/* Contact CTA */}
-      <section className="section bg-oat dark:bg-secondary-900">
+      <section className="section bg-mist dark:bg-secondary-900">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 24 }}

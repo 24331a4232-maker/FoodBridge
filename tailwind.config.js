@@ -7,7 +7,7 @@ export default {
       colors: {
         // Primary: vibrant green — growth, sustainability, trust
         primary: {
-          50: '#F0FDF4',
+          50: '#ECFDF5',
           100: '#DCFCE7',
           200: '#BBF7D0',
           300: '#86EFAC',
@@ -33,9 +33,24 @@ export default {
           900: '#7C2D12',
           950: '#431407',
         },
-        // Warm neutral surfaces — cream, oat, linen
-        cream: '#FFFDF8',
+        // Golden accent — recognition, certificates, warmth
+        gold: {
+          50: '#FFFBEB',
+          100: '#FEF3C7',
+          200: '#FDE68A',
+          300: '#FCD34D',
+          400: '#FBBF24',
+          500: '#F59E0B',
+          600: '#D97706',
+          700: '#B45309',
+          800: '#92400E',
+          900: '#78350F',
+          950: '#451A03',
+        },
+        // Warm neutral surfaces — cream, oat, linen, mist
+        cream: '#FFFCF7',
         oat: '#F7F3EC',
+        mist: '#F8FAFC',
         linen: '#EAE3D6',
         ink: '#1F2937',
         'ink-soft': '#6B7280',

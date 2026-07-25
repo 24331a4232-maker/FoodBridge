@@ -133,12 +133,12 @@ export function CertificatePage() {
               className="relative bg-white shadow-2xl mx-auto print:shadow-none"
               style={{ aspectRatio: '1.414 / 1', width: '100%', maxWidth: '1000px' }}
             >
-              {/* Outer green border */}
-              <div className="absolute inset-2 border-[6px] border-green-600 rounded-2xl" />
-              {/* Inner orange border */}
-              <div className="absolute inset-4 border-2 border-orange-500 rounded-xl" />
+              {/* Outer forest-green border */}
+              <div className="absolute inset-2 border-[6px] border-primary-700 rounded-2xl" />
+              {/* Inner golden border */}
+              <div className="absolute inset-4 border-2 border-gold-400 rounded-xl" />
               {/* Thin decorative line */}
-              <div className="absolute inset-5 border border-green-400/50 rounded-lg" />
+              <div className="absolute inset-5 border border-primary-300/50 rounded-lg" />
 
               {/* Corner ornaments */}
               {[
@@ -148,8 +148,8 @@ export function CertificatePage() {
                 'bottom-7 right-7 rotate-180',
               ].map((pos, i) => (
                 <div key={i} className={`absolute ${pos} h-10 w-10`}>
-                  <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-green-500 to-orange-500 rounded-full" />
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-orange-500 rounded-full" />
+                  <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-primary-500 to-gold-400 rounded-full" />
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-gold-400 rounded-full" />
                 </div>
               ))}
 
@@ -175,20 +175,20 @@ export function CertificatePage() {
                   transition={{ delay: 0.3, type: 'spring' }}
                   className="h-16 w-16 object-contain mb-2 relative z-10"
                 />
-                <p className="text-[10px] font-semibold text-green-600 uppercase tracking-[0.2em] mb-1">FoodBridge</p>
+                <p className="text-[10px] font-semibold text-primary-700 uppercase tracking-[0.2em] mb-1">FoodBridge</p>
 
                 {/* Title */}
                 <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
                   Volunteer Appreciation Certificate
                 </h2>
-                <div className="h-1 w-24 bg-gradient-to-r from-green-500 to-orange-500 rounded-full my-3" />
+                <div className="h-1 w-24 bg-gradient-to-r from-primary-500 to-gold-400 rounded-full my-3" />
 
                 {/* Presented to */}
                 <p className="text-sm text-gray-500 mb-2">This certificate is proudly presented to</p>
-                <p className="font-display text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-orange-500 bg-clip-text text-transparent mb-1">
+                <p className="font-display text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary-700 to-accent-500 bg-clip-text text-transparent mb-1">
                   {certData.volunteerName}
                 </p>
-                <div className="h-px w-32 bg-gradient-to-r from-green-400 to-orange-400 my-2" />
+                <div className="h-px w-32 bg-gradient-to-r from-primary-400 to-gold-400 my-2" />
 
                 {/* Body text */}
                 <p className="text-xs sm:text-sm text-gray-600 max-w-2xl leading-relaxed mb-1">
@@ -203,15 +203,15 @@ export function CertificatePage() {
                 {/* Stats */}
                 <div className="flex gap-6 mt-4 text-xs">
                   <div className="text-center">
-                    <p className="font-stat text-lg font-bold text-green-600">{certData.deliveriesCount}</p>
+                    <p className="font-stat text-lg font-bold text-primary-700">{certData.deliveriesCount}</p>
                     <p className="text-[10px] text-gray-400 uppercase tracking-wide">Deliveries</p>
                   </div>
                   <div className="text-center">
-                    <p className="font-stat text-lg font-bold text-orange-500">{Math.round(certData.hoursServed)}</p>
+                    <p className="font-stat text-lg font-bold text-accent-500">{Math.round(certData.hoursServed)}</p>
                     <p className="text-[10px] text-gray-400 uppercase tracking-wide">Hours</p>
                   </div>
                   <div className="text-center">
-                    <p className="font-stat text-lg font-bold text-green-600">{certData.totalMeals}</p>
+                    <p className="font-stat text-lg font-bold text-primary-700">{certData.totalMeals}</p>
                     <p className="text-[10px] text-gray-400 uppercase tracking-wide">Meals Saved</p>
                   </div>
                 </div>
@@ -225,16 +225,22 @@ export function CertificatePage() {
                     <p className="text-[10px] text-gray-500">Founder, FoodBridge</p>
                   </div>
 
-                  {/* Seal */}
+                  {/* Golden seal */}
                   <div className="flex flex-col items-center">
-                    <div className="h-14 w-14 rounded-full border-2 border-orange-500 flex items-center justify-center text-orange-600 font-bold text-[8px] relative">
-                      <div className="absolute inset-1 rounded-full border border-orange-400" />
-                      <div className="text-center leading-tight">
+                    <motion.div
+                      initial={{ scale: 0, rotate: -30 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ delay: 0.6, type: 'spring', stiffness: 200, damping: 15 }}
+                      className="h-16 w-16 rounded-full border-2 border-gold-500 flex items-center justify-center text-gold-700 font-bold text-[8px] relative bg-gold-50 shadow-lg shadow-gold-500/30"
+                    >
+                      <div className="absolute inset-1 rounded-full border border-gold-400" />
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-gold-200/40 to-transparent" />
+                      <div className="text-center leading-tight relative">
                         <div>OFFICIAL</div>
                         <div>SEAL</div>
                         <div className="text-[6px] mt-0.5">FOODBRIDGE</div>
                       </div>
-                    </div>
+                    </motion.div>
                   </div>
 
                   {/* QR Code */}
