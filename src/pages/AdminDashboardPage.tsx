@@ -5,10 +5,11 @@ import {
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
-import type { Profile, FoodDonation, ContactMessage } from '@/types';
+import type { Profile, FoodDonation, Pickup, ContactMessage } from '@/types';
 import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
 import { FoodQualityBadge } from '@/components/FoodQualityBadge';
 import { DonationImage } from '@/components/Illustration';
+import { DonationStatusTracker } from '@/components/DonationStatusTracker';
 
 type Tab = 'overview' | 'users' | 'donations' | 'reports' | 'messages';
 
@@ -21,6 +22,8 @@ export function AdminDashboardPage() {
   const [donations, setDonations] = useState<FoodDonation[]>([]);
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [search, setSearch] = useState('');
+  const [detailDonation, setDetailDonation] = useState<FoodDonation | null>(null);
+  const [detailPickup, setDetailPickup] = useState<Pickup | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -50,6 +53,13 @@ export function AdminDashboardPage() {
 
   const filteredUsers = useMemo(() => users.filter((u) => !search || u.full_name.toLowerCase().includes(search.toLowerCase()) || u.email.toLowerCase().includes(search.toLowerCase())), [users, search]);
   const filteredDonations = useMemo(() => donations.filter((d) => !search || d.food_name.toLowerCase().includes(search.toLowerCase()) || d.organization.toLowerCase().includes(search.toLowerCase())), [donations, search]);
+
+  const openDonationDetail = async (d: FoodDonation) => {
+    setDetailDonation(d);
+    setDetailPickup(null);
+    const { data } = await supabase.from('pickups').select('*, donation:food_donations(*)').eq('donation_id', d.id).maybeSingle();
+    setDetailPickup((data as Pickup) ?? null);
+  };
 
   const markMessageRead = async (id: string) => {
     await supabase.from('contact_messages').update({ status: 'read' }).eq('id', id);
@@ -243,7 +253,7 @@ export function AdminDashboardPage() {
                   </thead>
                   <tbody>
                     {filteredDonations.map((d) => (
-                      <tr key={d.id} className="border-b border-gray-100 dark:border-gray-800">
+                      <tr key={d.id} onClick={() => openDonationDetail(d)} className="border-b border-gray-100 dark:border-gray-800 cursor-pointer hover:bg-primary-50/40 dark:hover:bg-primary-900/20 transition-colors">
                         <td className="py-3 font-medium">{d.food_name}</td>
                         <td className="py-3 text-gray-500">{d.organization}</td>
                         <td className="py-3">{d.quantity} {d.quantity_unit}</td>
@@ -311,6 +321,41 @@ export function AdminDashboardPage() {
           )}
         </motion.div>
       </section>
+
+      {/* Donation detail modal with timeline */}
+      <AnimatePresence>
+        {detailDonation && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setDetailDonation(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 backdrop-blur-sm p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.92, y: 24, opacity: 0 }}
+              animate={{ scale: 1, y: 0, opacity: 1 }}
+              exit={{ scale: 0.92, y: 24, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 280, damping: 26 }}
+              onClick={(e) => e.stopPropagation()}
+              className="glass-card p-6 sm:p-8 max-w-lg w-full max-h-[85vh] overflow-y-auto"
+            >
+              <div className="flex items-start justify-between mb-5">
+                <div>
+                  <h3 className="font-display text-xl font-bold">{detailDonation.food_name}</h3>
+                  <p className="text-sm text-ink-soft dark:text-cream/50">{detailDonation.organization} - {detailDonation.quantity} {detailDonation.quantity_unit}</p>
+                </div>
+                <button onClick={() => setDetailDonation(null)} className="p-2 rounded-full hover:bg-oat dark:hover:bg-secondary-800 transition-colors" aria-label="Close">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="pt-4 border-t border-linen dark:border-secondary-800">
+                <DonationStatusTracker donation={detailDonation} pickup={detailPickup} />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

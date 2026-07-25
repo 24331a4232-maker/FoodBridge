@@ -16,6 +16,7 @@ import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
 import { createCertificateRecord } from '@/lib/certificate';
 import { FoodQualityBadge } from '@/components/FoodQualityBadge';
 import { DonationImage } from '@/components/Illustration';
+import { DonationStatusTracker } from '@/components/DonationStatusTracker';
 
 interface LeaderboardEntry {
   name: string;
@@ -318,17 +319,20 @@ export function VolunteerDashboardPage() {
               {activeTasks.length === 0 ? (
                 <p className="text-center text-gray-400 py-8">No active tasks. Accept a pickup to get started!</p>
               ) : (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {activeTasks.map((p) => (
-                    <div key={p.id} className="flex items-center gap-4 p-3 rounded-2xl bg-accent-50 dark:bg-accent-900/20 border border-accent-200 dark:border-accent-800">
-                      <Package className="h-8 w-8 text-accent-500 shrink-0" />
-                      <div className="flex-1">
-                        <p className="font-semibold text-sm">{p.donation?.food_name ?? 'Pickup'}</p>
-                        <p className="text-xs text-gray-500">{p.donation?.address ?? ''}</p>
+                    <div key={p.id} className="rounded-2xl bg-accent-50/50 dark:bg-accent-900/10 border border-accent-200/60 dark:border-accent-800/40 p-4">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Package className="h-7 w-7 text-accent-500 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm">{p.donation?.food_name ?? 'Pickup'}</p>
+                          <p className="text-xs text-gray-500 truncate">{p.donation?.organization} - {p.donation?.address ?? ''}</p>
+                        </div>
+                        <RippleButton onClick={() => markDelivered(p)} variant="primary" className="text-xs px-4 py-2 shrink-0">
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Delivered
+                        </RippleButton>
                       </div>
-                      <RippleButton onClick={() => markDelivered(p)} variant="primary" className="text-xs px-4 py-2 shrink-0">
-                        <CheckCircle2 className="h-3.5 w-3.5" /> Delivered
-                      </RippleButton>
+                      <DonationStatusTracker donation={p.donation!} pickup={p} compact />
                     </div>
                   ))}
                 </div>

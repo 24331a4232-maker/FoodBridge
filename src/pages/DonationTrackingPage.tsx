@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Package, Clock, MapPin, CheckCircle2, Truck, Loader2, ArrowRight } from 'lucide-react';
+import { Package, Clock, MapPin, CheckCircle2, Truck, Loader2, ArrowRight, Award } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import type { FoodDonation, Pickup } from '@/types';
+import type { FoodDonation, Pickup, Certificate } from '@/types';
 import { fadeInUp, staggerContainer, SectionHeading } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { LeafletMap, haversineKm, type MapPoint } from '@/components/LeafletMap';
 import { useGeolocation } from '@/lib/geo';
+import { DonationStatusTracker } from '@/components/DonationStatusTracker';
 
 const statusConfig: Record<string, { label: string; color: string; icon: typeof Package }> = {
   available: { label: 'Available', color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300', icon: Package },
@@ -142,7 +143,9 @@ export function DonationTrackingPage() {
             {/* Selected detail */}
             {selected && (
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card p-6 mt-6">
-                <h3 className="font-display font-bold mb-3">Pickup Details</h3>
+                <h3 className="font-display font-bold mb-3 flex items-center gap-2">
+                  <Truck className="h-5 w-5 text-primary-500" /> Pickup Details
+                </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
                   <div><p className="text-xs text-gray-400">Food</p><p className="font-medium">{selected.donation?.food_name}</p></div>
                   <div><p className="text-xs text-gray-400">Donor</p><p className="font-medium">{selected.donation?.organization}</p></div>
@@ -152,6 +155,14 @@ export function DonationTrackingPage() {
                 {selected.donation?.address && (
                   <p className="text-sm text-gray-500 mt-3 flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {selected.donation.address}, {selected.donation.city}</p>
                 )}
+
+                {/* Donation status timeline */}
+                <div className="mt-6 pt-6 border-t border-linen dark:border-secondary-800">
+                  <h4 className="font-display font-semibold mb-4 flex items-center gap-2">
+                    <Award className="h-4 w-4 text-accent-500" /> Donation Journey
+                  </h4>
+                  <DonationStatusTracker donation={selected.donation!} pickup={selected} />
+                </div>
               </motion.div>
             )}
           </>
