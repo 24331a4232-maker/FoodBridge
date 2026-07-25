@@ -8,8 +8,8 @@ import { useToast } from '@/context/ToastContext';
 import type { Profile, FoodDonation, Pickup, ContactMessage } from '@/types';
 import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
 import { FoodQualityBadge } from '@/components/FoodQualityBadge';
-import { DonationImage } from '@/components/Illustration';
 import { DonationStatusTracker } from '@/components/DonationStatusTracker';
+import { MissionControl } from '@/components/MissionControl';
 
 type Tab = 'overview' | 'users' | 'donations' | 'reports' | 'messages';
 
@@ -142,67 +142,7 @@ export function AdminDashboardPage() {
         {/* Content */}
         <motion.div key={tab} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="card p-6">
           {tab === 'overview' && (
-            <div className="space-y-6">
-              <h2 className="font-display text-xl font-bold">Platform Analytics</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Bar chart */}
-                <div className="p-5 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                  <h3 className="text-sm font-semibold mb-4">Donations by Status</h3>
-                  <div className="space-y-3">
-                    {[
-                      { label: 'Available', value: stats.available, color: 'bg-primary-500' },
-                      { label: 'Delivered', value: stats.delivered, color: 'bg-primary-500' },
-                      { label: 'Claimed', value: donations.filter((d) => d.status === 'claimed').length, color: 'bg-secondary-500' },
-                      { label: 'Expired', value: donations.filter((d) => d.status === 'expired').length, color: 'bg-red-500' },
-                    ].map((b) => (
-                      <div key={b.label}>
-                        <div className="flex justify-between text-xs mb-1"><span>{b.label}</span><span className="font-semibold">{b.value}</span></div>
-                        <div className="h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                          <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, (b.value / Math.max(1, stats.donations)) * 100)}%` }} transition={{ duration: 1 }} className={`h-full ${b.color} rounded-full`} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                {/* Pie / role breakdown */}
-                <div className="p-5 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                  <h3 className="text-sm font-semibold mb-4">Users by Role</h3>
-                  <div className="space-y-3">
-                    {[
-                      { label: 'Donors', value: stats.donors, color: 'bg-secondary-500' },
-                      { label: 'Volunteers', value: stats.volunteers, color: 'bg-primary-500' },
-                      { label: 'Admins', value: users.filter((u) => u.role === 'admin').length, color: 'bg-accent-500' },
-                      { label: 'NGOs', value: users.filter((u) => u.role === 'ngo').length, color: 'bg-purple-500' },
-                    ].map((b) => (
-                      <div key={b.label}>
-                        <div className="flex justify-between text-xs mb-1"><span>{b.label}</span><span className="font-semibold">{b.value}</span></div>
-                        <div className="h-2.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-                          <motion.div initial={{ width: 0 }} animate={{ width: `${Math.min(100, (b.value / Math.max(1, stats.users)) * 100)}%` }} transition={{ duration: 1 }} className={`h-full ${b.color} rounded-full`} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              {/* Recent activity */}
-              <div>
-                <h3 className="text-sm font-semibold mb-3">Recent Donations</h3>
-                <div className="space-y-2">
-                  {donations.slice(0, 5).map((d) => (
-                    <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
-                      <DonationImage src={d.image_url} alt="" variant="donation" className="h-10 w-10 rounded-lg object-cover shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{d.food_name}</p>
-                        <p className="text-xs text-gray-400">{d.organization}</p>
-                      </div>
-                      {d.freshness_status && <FoodQualityBadge freshness={d.freshness_status} score={d.quality_score} size="sm" showScore />}
-                      <span className={`badge text-[10px] ${d.status === 'available' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : d.status === 'delivered' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>{d.status}</span>
-                    </div>
-                  ))}
-                  {donations.length === 0 && <p className="text-center text-gray-400 py-4">No donations yet</p>}
-                </div>
-              </div>
-            </div>
+            <MissionControl profiles={users} donations={donations} stats={stats} />
           )}
 
           {tab === 'users' && (
