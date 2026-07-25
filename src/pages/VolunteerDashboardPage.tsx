@@ -13,6 +13,7 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { LeafletMap, haversineKm, estimateTravelTimeMin, type MapPoint } from '@/components/LeafletMap';
 import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
 import { createCertificateRecord } from '@/lib/certificate';
+import { FoodQualityBadge } from '@/components/FoodQualityBadge';
 
 interface LeaderboardEntry {
   name: string;
@@ -260,6 +261,7 @@ export function VolunteerDashboardPage() {
                           <div className="flex flex-wrap gap-2 mt-1">
                             <span className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-[10px]">{d.quantity} {d.quantity_unit}</span>
                             {d.is_urgent && <span className="badge bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-[10px]"><Flame className="h-2.5 w-2.5" /> Urgent</span>}
+                            {d.freshness_status && <FoodQualityBadge freshness={d.freshness_status} score={d.quality_score} size="sm" showScore />}
                             {dist != null && <span className="badge bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-[10px]"><MapPin className="h-2.5 w-2.5" /> {dist.toFixed(1)} km</span>}
                           </div>
                         </div>

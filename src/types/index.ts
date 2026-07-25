@@ -24,6 +24,11 @@ export interface Profile {
   updated_at: string;
 }
 
+export type StorageMethod = 'room_temperature' | 'refrigerated' | 'frozen';
+export type FoodCondition = 'fresh' | 'good' | 'average';
+export type FreshnessStatus = 'fresh' | 'consume_soon' | 'expired';
+export type PriorityLevel = 'low' | 'medium' | 'high';
+
 export interface FoodDonation {
   id: string;
   donor_id: string | null;
@@ -36,6 +41,15 @@ export interface FoodDonation {
   quantity_unit: string;
   pickup_time: string;
   expiry_time: string;
+  preparation_time: string | null;
+  storage_method: StorageMethod | null;
+  food_temperature: number | null;
+  food_condition: FoodCondition | null;
+  quality_score: number | null;
+  freshness_status: FreshnessStatus | null;
+  estimated_meals: number | null;
+  recommended_recipient: string | null;
+  priority_level: PriorityLevel | null;
   address: string;
   city: string;
   latitude: number | null;

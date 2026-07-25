@@ -1,15 +1,19 @@
-import { useState, type FormEvent } from 'react';
-import { motion } from 'framer-motion';
-import { Upload, MapPin, UtensilsCrossed, Hotel, Calendar, Package, CheckCircle2, Sparkles, Image as ImageIcon, Loader2, Crosshair, Hand, Locate } from 'lucide-react';
+import { useState, useMemo, type FormEvent } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Upload, MapPin, UtensilsCrossed, Hotel, Calendar, Package, CheckCircle2, Sparkles, Image as ImageIcon, Loader2, Crosshair, Hand, Locate,
+  ShieldCheck, AlertTriangle, XCircle, Thermometer, Snowflake, Clock, ChefHat, Heart, Baby, Home, Zap, Flame, Info,
+} from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
-import type { OrganizationType, FoodCategory } from '@/types';
+import type { OrganizationType, FoodCategory, StorageMethod, FoodCondition } from '@/types';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Link } from 'react-router-dom';
 import { LeafletMap, type MapPoint } from '@/components/LeafletMap';
 import { geocodeAddress, reverseGeocode } from '@/lib/geo';
+import { calculateFoodQuality, getScoreGradient, type QualityResult } from '@/lib/foodQuality';
 
 const orgTypes: { value: OrganizationType; label: string }[] = [
   { value: 'hotel', label: 'Hotel' },
@@ -27,6 +31,22 @@ const foodCategories: { value: FoodCategory; label: string }[] = [
   { value: 'bakery', label: 'Bakery' },
   { value: 'other', label: 'Other' },
 ];
+
+const storageMethods: { value: StorageMethod; label: string; icon: typeof Snowflake }[] = [
+  { value: 'room_temperature', label: 'Room Temperature', icon: Thermometer },
+  { value: 'refrigerated', label: 'Refrigerated', icon: Snowflake },
+  { value: 'frozen', label: 'Frozen', icon: Snowflake },
+];
+
+const foodConditions: { value: FoodCondition; label: string }[] = [
+  { value: 'fresh', label: 'Fresh' },
+  { value: 'good', label: 'Good' },
+  { value: 'average', label: 'Average' },
+];
+
+const recipientIcons: Record<string, typeof ChefHat> = {
+  ChefHat, Heart, Baby, Home,
+};
 
 export function DonateFoodPage() {
   const { user, profile } = useAuth();
@@ -50,6 +70,10 @@ export function DonateFoodPage() {
     quantity_unit: 'servings',
     pickup_time: '',
     expiry_time: '',
+    preparation_time: '',
+    storage_method: 'room_temperature' as StorageMethod,
+    food_temperature: '',
+    food_condition: 'good' as FoodCondition,
     address: '',
     city: '',
     description: '',
@@ -57,6 +81,20 @@ export function DonateFoodPage() {
     is_urgent: false,
     image_url: '',
   });
+
+  const quality: QualityResult | null = useMemo(() => {
+    if (!form.preparation_time || !form.expiry_time) return null;
+    return calculateFoodQuality({
+      category: form.category,
+      preparationTime: form.preparation_time,
+      expiryTime: form.expiry_time,
+      storageMethod: form.storage_method,
+      foodTemperature: form.food_temperature ? parseFloat(form.food_temperature) : null,
+      foodCondition: form.food_condition,
+      quantity: parseFloat(form.quantity) || 0,
+      quantityUnit: form.quantity_unit,
+    });
+  }, [form.preparation_time, form.expiry_time, form.storage_method, form.food_temperature, form.food_condition, form.quantity, form.quantity_unit, form.category]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -88,7 +126,6 @@ export function DonateFoodPage() {
         setCoords({ lat: latitude, lng: longitude });
         setMapPoints([{ lat: latitude, lng: longitude, type: 'donor', popup: '<strong>Donor Location</strong><br/>Your current location' }]);
         setLocating(false);
-        // Reverse geocode to fill address
         setGeocoding(true);
         const addr = await reverseGeocode(latitude, longitude);
         setGeocoding(false);
@@ -138,6 +175,10 @@ export function DonateFoodPage() {
       toast('Please fill all required fields', 'error');
       return;
     }
+    if (quality?.isExpired) {
+      toast('This food is expired and cannot be donated. Please check the preparation and expiry times.', 'error');
+      return;
+    }
     setSubmitting(true);
     let lat = coords?.lat;
     let lng = coords?.lng;
@@ -166,13 +207,22 @@ export function DonateFoodPage() {
       quantity_unit: form.quantity_unit,
       pickup_time: new Date(form.pickup_time).toISOString(),
       expiry_time: new Date(form.expiry_time).toISOString(),
+      preparation_time: form.preparation_time ? new Date(form.preparation_time).toISOString() : null,
+      storage_method: form.storage_method,
+      food_temperature: form.food_temperature ? parseFloat(form.food_temperature) : null,
+      food_condition: form.food_condition,
+      quality_score: quality?.score ?? 0,
+      freshness_status: quality?.freshness ?? 'fresh',
+      estimated_meals: quality?.estimatedMeals ?? 0,
+      recommended_recipient: quality?.recommendedRecipient ?? '',
+      priority_level: quality?.priority ?? 'medium',
       address: form.address,
       city: form.city,
       latitude: lat,
       longitude: lng,
       description: form.description,
       contact_phone: form.contact_phone,
-      is_urgent: form.is_urgent,
+      is_urgent: form.is_urgent || quality?.isCloseToExpiry || false,
       image_url: form.image_url || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
     });
     setSubmitting(false);
@@ -272,7 +322,7 @@ export function DonateFoodPage() {
               <input name="food_name" value={form.food_name} onChange={handleChange} className="input-field" placeholder="Biryani & Curry" required />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Category *</label>
+              <label className="block text-sm font-medium mb-1.5">Food Type / Category *</label>
               <select name="category" value={form.category} onChange={handleChange} className="input-field">
                 {foodCategories.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
               </select>
@@ -302,16 +352,190 @@ export function DonateFoodPage() {
             </div>
           </motion.div>
 
-          {/* Times */}
-          <motion.div variants={fadeInUp} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><Calendar className="h-4 w-4 text-primary-500" /> Pickup Time *</label>
+          {/* Food Quality Check Section */}
+          <motion.div variants={fadeInUp} className="rounded-2xl border-2 border-primary-200 dark:border-primary-800 p-5 bg-primary-50/30 dark:bg-primary-900/10">
+            <h3 className="font-display text-lg font-bold mb-1 flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-primary-500" /> Food Quality Check
+            </h3>
+            <p className="text-xs text-gray-500 mb-4">Enter food details to automatically assess quality and freshness. All calculations update in real-time.</p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><Calendar className="h-4 w-4 text-primary-500" /> Preparation Date & Time *</label>
+                <input type="datetime-local" name="preparation_time" value={form.preparation_time} onChange={handleChange} className="input-field" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><Calendar className="h-4 w-4 text-accent-500" /> Expiry Date & Time *</label>
+                <input type="datetime-local" name="expiry_time" value={form.expiry_time} onChange={handleChange} className="input-field" required />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium mb-1.5">Storage Method *</label>
+                <select name="storage_method" value={form.storage_method} onChange={handleChange} className="input-field">
+                  {storageMethods.map((s) => <option key={s.value} value={s.value}>{s.label}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><Thermometer className="h-4 w-4 text-accent-500" /> Food Temp (°C, optional)</label>
+                <input type="number" name="food_temperature" value={form.food_temperature} onChange={handleChange} className="input-field" placeholder="e.g. 4" step="0.1" />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1.5">Food Condition *</label>
+                <select name="food_condition" value={form.food_condition} onChange={handleChange} className="input-field">
+                  {foodConditions.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+                </select>
+              </div>
+            </div>
+
+            {/* Pickup time */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><Clock className="h-4 w-4 text-primary-500" /> Pickup Time *</label>
               <input type="datetime-local" name="pickup_time" value={form.pickup_time} onChange={handleChange} className="input-field" required />
             </div>
-            <div>
-              <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><Calendar className="h-4 w-4 text-accent-500" /> Expiry Time *</label>
-              <input type="datetime-local" name="expiry_time" value={form.expiry_time} onChange={handleChange} className="input-field" required />
-            </div>
+
+            {/* Quality Assessment Result */}
+            <AnimatePresence>
+              {quality && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-4"
+                >
+                  {/* Freshness Badge + Score */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="p-4 rounded-2xl bg-white dark:bg-gray-800/70 border border-gray-100 dark:border-gray-700">
+                      <p className="text-xs text-gray-400 mb-2">Freshness Status</p>
+                      <div className="flex items-center gap-2">
+                        {quality.isExpired ? (
+                          <span className="badge bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">
+                            <XCircle className="h-4 w-4" /> Expired
+                          </span>
+                        ) : quality.isCloseToExpiry ? (
+                          <span className="badge bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
+                            <AlertTriangle className="h-4 w-4" /> Consume Soon
+                          </span>
+                        ) : (
+                          <span className="badge bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+                            <ShieldCheck className="h-4 w-4" /> Fresh
+                          </span>
+                        )}
+                        <span className="text-xs text-gray-500">{quality.freshnessDescription}</span>
+                      </div>
+                    </div>
+                    <div className="p-4 rounded-2xl bg-white dark:bg-gray-800/70 border border-gray-100 dark:border-gray-700">
+                      <p className="text-xs text-gray-400 mb-2">Quality Score</p>
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1">
+                          <div className="flex items-baseline gap-1">
+                            <span className={`font-display text-3xl font-bold ${quality.score >= 80 ? 'text-green-600' : quality.score >= 60 ? 'text-amber-600' : quality.score >= 40 ? 'text-orange-600' : 'text-red-600'}`}>
+                              {quality.score}%
+                            </span>
+                            <span className="text-xs text-gray-400">
+                              {quality.score >= 80 ? 'Excellent' : quality.score >= 60 ? 'Good' : quality.score >= 40 ? 'Fair' : 'Poor'}
+                            </span>
+                          </div>
+                          <div className="mt-1.5 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              animate={{ width: `${quality.score}%` }}
+                              className={`h-full bg-gradient-to-r ${getScoreGradient(quality.score)} rounded-full`}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* High Priority Banner */}
+                  {quality.isCloseToExpiry && !quality.isExpired && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="p-4 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white flex items-center gap-3"
+                    >
+                      <Flame className="h-6 w-6 shrink-0" />
+                      <div>
+                        <p className="font-bold">High Priority Donation</p>
+                        <p className="text-sm opacity-90">This food is close to expiry. Donate quickly to ensure it reaches someone in need.</p>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Expired Warning */}
+                  {quality.isExpired && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="p-4 rounded-2xl bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 flex items-center gap-3"
+                    >
+                      <XCircle className="h-6 w-6 text-red-500 shrink-0" />
+                      <div>
+                        <p className="font-bold text-red-700 dark:text-red-300">Expired — Not Eligible for Donation</p>
+                        <p className="text-sm text-red-600 dark:text-red-400">This food has passed its expiry time and cannot be donated. Please adjust the expiry time or dispose of the food safely.</p>
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Safety Tips */}
+                  <div className="p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
+                    <p className="text-sm font-semibold mb-2 flex items-center gap-1.5"><Info className="h-4 w-4 text-blue-500" /> Food Safety Tips</p>
+                    <ul className="space-y-1.5">
+                      {quality.safetyTips.map((tip, i) => (
+                        <li key={i} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-2">
+                          <ShieldCheck className="h-3.5 w-3.5 text-blue-500 shrink-0 mt-0.5" />
+                          {tip}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* AI-Inspired Food Recommendations */}
+                  <div className="p-4 rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20 border border-primary-100 dark:border-primary-800">
+                    <p className="text-sm font-semibold mb-3 flex items-center gap-1.5">
+                      <Sparkles className="h-4 w-4 text-primary-500" /> AI-Inspired Food Recommendations
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      {/* Estimated Meals */}
+                      <div className="p-3 rounded-xl bg-white dark:bg-gray-800/70 flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center shrink-0">
+                          <Package className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wide">Est. Meals</p>
+                          <p className="font-display text-lg font-bold">{quality.estimatedMeals}</p>
+                        </div>
+                      </div>
+                      {/* Recommended Recipient */}
+                      <div className="p-3 rounded-xl bg-white dark:bg-gray-800/70 flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-accent-500 to-orange-500 text-white flex items-center justify-center shrink-0">
+                          {(() => {
+                            const Icon = recipientIcons[quality.recipientIcon] ?? Home;
+                            return <Icon className="h-5 w-5" />;
+                          })()}
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wide">Recipient</p>
+                          <p className="font-semibold text-sm">{quality.recommendedRecipient}</p>
+                        </div>
+                      </div>
+                      {/* Priority Level */}
+                      <div className="p-3 rounded-xl bg-white dark:bg-gray-800/70 flex items-center gap-3">
+                        <div className={`h-10 w-10 rounded-xl text-white flex items-center justify-center shrink-0 ${quality.priority === 'high' ? 'bg-gradient-to-br from-red-500 to-rose-500' : quality.priority === 'medium' ? 'bg-gradient-to-br from-amber-500 to-yellow-500' : 'bg-gradient-to-br from-green-500 to-emerald-500'}`}>
+                          <Zap className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wide">Priority</p>
+                          <p className="font-semibold text-sm capitalize">{quality.priority}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
 
           {/* Location section */}
@@ -392,9 +616,12 @@ export function DonateFoodPage() {
           </motion.div>
 
           <motion.div variants={fadeInUp}>
-            <RippleButton type="submit" variant="primary" fullWidth disabled={submitting || geocoding || !user}>
-              {submitting || geocoding ? <><Loader2 className="h-4 w-4 animate-spin" /> {geocoding ? 'Locating address...' : 'Submitting...'}</> : 'Submit Donation'}
+            <RippleButton type="submit" variant="primary" fullWidth disabled={submitting || geocoding || !user || quality?.isExpired}>
+              {submitting || geocoding ? <><Loader2 className="h-4 w-4 animate-spin" /> {geocoding ? 'Locating address...' : 'Submitting...'}</> : quality?.isExpired ? 'Expired — Cannot Donate' : 'Submit Donation'}
             </RippleButton>
+            {quality?.isExpired && (
+              <p className="text-xs text-red-500 text-center mt-2">This food is expired and cannot be submitted for donation.</p>
+            )}
           </motion.div>
         </motion.form>
       </section>

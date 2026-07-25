@@ -10,6 +10,8 @@ import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { LeafletMap, haversineKm, estimateTravelTimeMin, type MapPoint } from '@/components/LeafletMap';
 import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
+import { FoodQualityBadge } from '@/components/FoodQualityBadge';
+import type { FreshnessStatus } from '@/types';
 
 const categories: { value: FoodCategory | 'all'; label: string }[] = [
   { value: 'all', label: 'All' },
@@ -54,6 +56,7 @@ export function AvailableFoodPage() {
   const [route, setRoute] = useState<RouteInfo | null>(null);
   const [routeLoading, setRouteLoading] = useState(false);
   const [radius, setRadius] = useState(10);
+  const [freshnessFilter, setFreshnessFilter] = useState<FreshnessStatus | 'all'>('all');
   const [selectedMapPoint, setSelectedMapPoint] = useState<MapPoint | null>(null);
   const { position, loading: geoLoading, error: geoError, request: requestGeo } = useGeolocation();
   const { toast } = useToast();
@@ -131,19 +134,20 @@ export function AvailableFoodPage() {
         d.city.toLowerCase().includes(search.toLowerCase());
       const matchCat = category === 'all' || d.category === category;
       const matchNearby = !position || (d.latitude != null && d.longitude != null && haversineKm([position.lat, position.lng], [d.latitude!, d.longitude!]) <= radius);
-      return matchSearch && matchCat && matchNearby;
+      const matchFresh = freshnessFilter === 'all' || d.freshness_status === freshnessFilter;
+      return matchSearch && matchCat && matchNearby && matchFresh;
     }).sort((a, b) => {
       if (!position) return 0;
       const da = a.latitude != null && a.longitude != null ? haversineKm([position.lat, position.lng], [a.latitude!, a.longitude!]) : Infinity;
       const db = b.latitude != null && b.longitude != null ? haversineKm([position.lat, position.lng], [b.latitude!, b.longitude!]) : Infinity;
       return da - db;
     });
-  }, [donations, search, category, position, radius]);
+  }, [donations, search, category, position, radius, freshnessFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const current = useMemo(() => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filtered, page]);
 
-  useEffect(() => { setPage(1); }, [search, category]);
+  useEffect(() => { setPage(1); }, [search, category, freshnessFilter]);
 
   const formatTime = (iso: string) => {
     const date = new Date(iso);
@@ -192,6 +196,30 @@ export function AvailableFoodPage() {
               </button>
             ))}
           </div>
+        </div>
+
+        {/* Freshness Filter */}
+        <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar pb-1">
+          <span className="text-xs text-gray-400 shrink-0 font-medium">Quality:</span>
+          {([
+            { value: 'all', label: 'All', dot: 'bg-gray-400' },
+            { value: 'fresh', label: 'Fresh', dot: 'bg-green-500' },
+            { value: 'consume_soon', label: 'Consume Soon', dot: 'bg-amber-500' },
+            { value: 'expired', label: 'Expired', dot: 'bg-red-500' },
+          ] as { value: FreshnessStatus | 'all'; label: string; dot: string }[]).map((f) => (
+            <button
+              key={f.value}
+              onClick={() => setFreshnessFilter(f.value)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                freshnessFilter === f.value
+                  ? 'bg-primary-600 text-white shadow-md'
+                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30'
+              }`}
+            >
+              <span className={`h-2 w-2 rounded-full ${f.dot}`} />
+              {f.label}
+            </button>
+          ))}
         </div>
 
         {/* Geolocation bar */}
@@ -277,6 +305,11 @@ export function AvailableFoodPage() {
                   <span className="absolute top-3 right-3 badge bg-white/90 dark:bg-gray-900/90 text-gray-700 dark:text-gray-200 backdrop-blur-md capitalize">
                     {d.category}
                   </span>
+                  {d.freshness_status && (
+                    <div className="absolute bottom-3 left-3">
+                      <FoodQualityBadge freshness={d.freshness_status} score={d.quality_score} size="sm" showScore />
+                    </div>
+                  )}
                 </div>
                 <div className="p-5">
                   <h3 className="font-display font-semibold text-lg mb-1">{d.food_name}</h3>
@@ -290,6 +323,7 @@ export function AvailableFoodPage() {
                     <span className="badge bg-accent-50 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">
                       <Clock className="h-3 w-3" /> {formatTime(d.expiry_time)}
                     </span>
+                    {d.freshness_status && <FoodQualityBadge freshness={d.freshness_status} size="sm" />}
                     {position && d.latitude != null && d.longitude != null && (() => {
                       const dist = haversineKm([position.lat, position.lng], [d.latitude!, d.longitude!]);
                       const ttm = estimateTravelTimeMin(dist);
@@ -384,6 +418,18 @@ export function AvailableFoodPage() {
                   <div className="card p-3 col-span-2"><p className="text-gray-400 text-xs">Address</p><p className="font-semibold">{selected.address}, {selected.city}</p></div>
                   {selected.contact_phone && <div className="card p-3 col-span-2"><p className="text-gray-400 text-xs">Contact</p><p className="font-semibold">{selected.contact_phone}</p></div>}
                 </div>
+                {selected.freshness_status && (
+                  <div className="mt-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
+                    <p className="text-xs text-gray-400 mb-2">Food Quality Assessment</p>
+                    <FoodQualityBadge freshness={selected.freshness_status} score={selected.quality_score} priority={selected.priority_level} size="md" showScore showPriority />
+                    {selected.estimated_meals != null && selected.estimated_meals > 0 && (
+                      <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                        <div className="p-2 rounded-xl bg-white dark:bg-gray-800/70"><p className="text-gray-400">Est. Meals</p><p className="font-semibold">{selected.estimated_meals}</p></div>
+                        <div className="p-2 rounded-xl bg-white dark:bg-gray-800/70"><p className="text-gray-400">Recipient</p><p className="font-semibold">{selected.recommended_recipient || '-'}</p></div>
+                      </div>
+                    )}
+                  </div>
+                )}
                 {acceptedId === selected.id ? (
                   <div className="mt-6 flex items-center justify-center gap-2 py-3 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium">
                     <CheckCircle2 className="h-5 w-5" /> Accepted! Redirecting...

@@ -7,6 +7,7 @@ import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 import type { Profile, FoodDonation, ContactMessage } from '@/types';
 import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
+import { FoodQualityBadge } from '@/components/FoodQualityBadge';
 
 type Tab = 'overview' | 'users' | 'donations' | 'reports' | 'messages';
 
@@ -180,6 +181,7 @@ export function AdminDashboardPage() {
                         <p className="text-sm font-medium truncate">{d.food_name}</p>
                         <p className="text-xs text-gray-400">{d.organization}</p>
                       </div>
+                      {d.freshness_status && <FoodQualityBadge freshness={d.freshness_status} score={d.quality_score} size="sm" showScore />}
                       <span className={`badge text-[10px] ${d.status === 'available' ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : d.status === 'delivered' ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>{d.status}</span>
                     </div>
                   ))}
@@ -230,6 +232,7 @@ export function AdminDashboardPage() {
                       <th className="pb-3 font-medium">Food</th>
                       <th className="pb-3 font-medium">Organization</th>
                       <th className="pb-3 font-medium">Qty</th>
+                      <th className="pb-3 font-medium">Quality</th>
                       <th className="pb-3 font-medium">City</th>
                       <th className="pb-3 font-medium">Status</th>
                     </tr>
@@ -240,11 +243,12 @@ export function AdminDashboardPage() {
                         <td className="py-3 font-medium">{d.food_name}</td>
                         <td className="py-3 text-gray-500">{d.organization}</td>
                         <td className="py-3">{d.quantity} {d.quantity_unit}</td>
+                        <td className="py-3">{d.freshness_status ? <FoodQualityBadge freshness={d.freshness_status} score={d.quality_score} size="sm" showScore /> : <span className="text-xs text-gray-400">-</span>}</td>
                         <td className="py-3 text-gray-500">{d.city || '-'}</td>
                         <td className="py-3"><span className="badge bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 capitalize">{d.status}</span></td>
                       </tr>
                     ))}
-                    {filteredDonations.length === 0 && <tr><td colSpan={5} className="py-8 text-center text-gray-400">No donations found</td></tr>}
+                    {filteredDonations.length === 0 && <tr><td colSpan={6} className="py-8 text-center text-gray-400">No donations found</td></tr>}
                   </tbody>
                 </table>
               </div>
