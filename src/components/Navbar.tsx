@@ -4,7 +4,7 @@ import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-
 import {
   Menu, X, Moon, Sun, LogOut, ChevronDown, LayoutDashboard, User as UserIcon,
   Award, Package, Search, ShieldCheck, MapPin, Truck,
-  Building2, FileText, Lock, HelpCircle, Home, Info, Phone, Search as SearchIcon,
+  Building2, FileText, Lock, HelpCircle, Home, Info, Phone, Search as SearchIcon, Globe2,
   type LucideIcon,
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
