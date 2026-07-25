@@ -1,242 +1,309 @@
 import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Download, Printer, Award, ShieldCheck, Calendar, Hash, QrCode, PartyPopper, X, Sparkles } from 'lucide-react';
-import jsPDF from 'jspdf';
-import QRCode from 'qrcode';
+import { Download, Printer, Award, ShieldCheck, Calendar, Hash, QrCode, PartyPopper, X, Sparkles, Save, Loader2, ArrowLeft } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { supabase } from '@/lib/supabase';
 import { RippleButton } from '@/components/ui/RippleButton';
+import { createCertificateRecord, generateCertificatePDF, generateQRCode, type CertificateData } from '@/lib/certificate';
 
 export function CertificatePage() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
+  const [certData, setCertData] = useState<CertificateData | null>(null);
   const [qrUrl, setQrUrl] = useState('');
-  const [certNumber, setCertNumber] = useState('');
-  const [uniqueId, setUniqueId] = useState('');
   const [showSuccess, setShowSuccess] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [saved, setSaved] = useState(false);
   const certificateRef = useRef<HTMLDivElement>(null);
 
-  const issueDate = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-  const completionDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  const issueDateFormatted = certData
+    ? new Date(certData.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+    : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
   useEffect(() => {
-    const num = `FB-${Date.now().toString(36).toUpperCase()}`;
-    const uid = `UID-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
-    setCertNumber(num);
-    setUniqueId(uid);
-
-    const verifyUrl = `${window.location.origin}/verify-certificate?cert=${num}`;
-    QRCode.toDataURL(verifyUrl, { width: 150, margin: 1, color: { dark: '#16a34a', light: '#ffffff' } })
-      .then(setQrUrl)
-      .catch(() => {});
-
-    if (user && profile) {
-      supabase.from('certificates').insert({
-        volunteer_id: user.id,
-        certificate_number: num,
-        completion_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        deliveries_count: profile.total_deliveries,
-        hours_served: profile.total_hours,
-      }).then();
-    }
+    const generate = async () => {
+      if (!user || !profile) return;
+      setGenerating(true);
+      const data = await createCertificateRecord({
+        volunteerId: user.id,
+        volunteerName: profile.full_name,
+        organizationName: profile.organization || 'FoodBridge',
+        deliveriesCount: profile.total_deliveries ?? 0,
+        hoursServed: profile.total_hours ?? 0,
+        totalMeals: profile.total_deliveries ?? 0,
+      });
+      setGenerating(false);
+      if (data) {
+        setCertData(data);
+        setSaved(true);
+        const qr = await generateQRCode(data.verifyUrl);
+        setQrUrl(qr);
+      } else {
+        toast('Could not generate certificate. Please try again.', 'error');
+      }
+    };
+    generate();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, profile]);
 
-  const downloadPDF = () => {
-    if (!certificateRef.current) return;
-    const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-    const w = pdf.internal.pageSize.getWidth();
-    const h = pdf.internal.pageSize.getHeight();
-
-    // Background
-    pdf.setFillColor(255, 255, 255);
-    pdf.rect(0, 0, w, h, 'F');
-
-    // Outer border
-    pdf.setDrawColor(22, 163, 74);
-    pdf.setLineWidth(2);
-    pdf.rect(8, 8, w - 16, h - 16);
-    pdf.setLineWidth(0.5);
-    pdf.rect(12, 12, w - 24, h - 24);
-
-    // Logo placeholder circle
-    pdf.setFillColor(22, 163, 74);
-    pdf.circle(w / 2, 35, 10, 'F');
-    pdf.setTextColor(255, 255, 255);
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('FB', w / 2, 38, { align: 'center' });
-
-    // Title
-    pdf.setTextColor(22, 163, 74);
-    pdf.setFontSize(28);
-    pdf.text('Certificate of Achievement', w / 2, 58, { align: 'center' });
-
-    pdf.setTextColor(120, 120, 120);
-    pdf.setFontSize(11);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text('The Last Plate Initiative', w / 2, 66, { align: 'center' });
-
-    // Volunteer name
-    pdf.setTextColor(20, 20, 20);
-    pdf.setFontSize(24);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text(profile?.full_name ?? 'Volunteer', w / 2, 90, { align: 'center' });
-
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(11);
-    pdf.setTextColor(100, 100, 100);
-    pdf.text('has successfully completed volunteer service with FoodBridge', w / 2, 100, { align: 'center' });
-    pdf.text(`delivering ${profile?.total_deliveries ?? 0} meals and serving ${Math.round(profile?.total_hours ?? 0)} volunteer hours`, w / 2, 108, { align: 'center' });
-
-    // Certificate number & UID
-    pdf.setFontSize(9);
-    pdf.text(`Certificate No: ${certNumber}`, w / 2 - 50, 130);
-    pdf.text(`Unique ID: ${uniqueId}`, w / 2 + 50, 130, { align: 'right' });
-
-    // Dates
-    pdf.text(`Issue Date: ${issueDate}`, 25, 150);
-    pdf.text(`Completion Date: ${completionDate}`, w - 25, 150, { align: 'right' });
-
-    // Signature
-    pdf.setFont('helvetica', 'italic');
-    pdf.setFontSize(16);
-    pdf.text('Arjun Sharma', 40, 165);
-    pdf.setDrawColor(150, 150, 150);
-    pdf.line(30, 168, 80, 168);
-    pdf.setFontSize(8);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text('Founder, FoodBridge', 40, 173, { align: 'center' });
-
-    // Stamp circle
-    pdf.setDrawColor(249, 115, 22);
-    pdf.setLineWidth(1.5);
-    pdf.circle(w - 50, 165, 12);
-    pdf.setFontSize(7);
-    pdf.setTextColor(249, 115, 22);
-    pdf.text('OFFICIAL', w - 50, 163, { align: 'center' });
-    pdf.text('SEAL', w - 50, 168, { align: 'center' });
-
-    // QR code
-    if (qrUrl) {
-      pdf.addImage(qrUrl, 'PNG', w - 35, 130, 20, 20);
-    }
-
-    pdf.save(`FoodBridge-Certificate-${profile?.full_name ?? 'volunteer'}.pdf`);
-    toast('Certificate downloaded!', 'success');
+  const downloadPDF = async () => {
+    if (!certData) return;
+    const qr = await generateQRCode(certData.verifyUrl);
+    await generateCertificatePDF(certData, qr);
+    toast('Certificate PDF downloaded!', 'success');
     setShowSuccess(true);
+  };
+
+  const printCertificate = () => {
+    window.print();
+  };
+
+  const saveToMyCertificates = async () => {
+    if (!certData || !user) return;
+    // Already saved during generation, but allow re-confirmation
+    const { data: existing } = await supabase
+      .from('certificates')
+      .select('id')
+      .eq('certificate_number', certData.certificateNumber)
+      .maybeSingle();
+    if (existing) {
+      toast('Certificate saved to My Certificates!', 'success');
+      setSaved(true);
+    } else {
+      const data = await createCertificateRecord({
+        volunteerId: user.id,
+        volunteerName: profile?.full_name ?? 'Volunteer',
+        organizationName: profile?.organization || 'FoodBridge',
+        deliveriesCount: profile?.total_deliveries ?? 0,
+        hoursServed: profile?.total_hours ?? 0,
+        totalMeals: profile?.total_deliveries ?? 0,
+      });
+      if (data) {
+        setCertData(data);
+        setSaved(true);
+        toast('Certificate saved to My Certificates!', 'success');
+      } else {
+        toast('Could not save certificate.', 'error');
+      }
+    }
   };
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
-      <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+      <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+        {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
           <span className="badge bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 mb-4">
-            <Award className="h-3.5 w-3.5" /> Volunteer Certificate
+            <Award className="h-3.5 w-3.5" /> Volunteer Appreciation
           </span>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold">Your Certificate of Achievement</h1>
+          <h1 className="font-display text-3xl sm:text-4xl font-bold">Your Certificate of Appreciation</h1>
           <p className="text-gray-500 mt-2">Download, print, and share your contribution to The Last Plate Initiative.</p>
         </motion.div>
 
-        {/* Certificate preview */}
-        <motion.div
-          ref={certificateRef}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="relative bg-white rounded-3xl shadow-2xl overflow-hidden mx-auto"
-          style={{ aspectRatio: '1.414 / 1', maxWidth: '900px' }}
-        >
-          {/* Border */}
-          <div className="absolute inset-3 border-4 border-primary-600 rounded-2xl" />
-          <div className="absolute inset-5 border border-primary-400 rounded-xl" />
+        {generating && (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="h-12 w-12 animate-spin text-primary-500 mb-4" />
+            <p className="text-gray-500">Generating your premium certificate...</p>
+          </div>
+        )}
 
-          {/* Decorative corners */}
-          {['top-6 left-6', 'top-6 right-6', 'bottom-6 left-6', 'bottom-6 right-6'].map((pos, i) => (
-            <div key={i} className={`absolute ${pos} h-12 w-12`}>
-              <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-primary-500 to-accent-500 rounded-full" />
-              <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full" />
-            </div>
-          ))}
+        {/* Certificate preview — A4 landscape */}
+        {certData && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="flex justify-center"
+          >
+            <div
+              ref={certificateRef}
+              className="relative bg-white shadow-2xl mx-auto print:shadow-none"
+              style={{ aspectRatio: '1.414 / 1', width: '100%', maxWidth: '1000px' }}
+            >
+              {/* Outer green border */}
+              <div className="absolute inset-2 border-[6px] border-green-600 rounded-2xl" />
+              {/* Inner orange border */}
+              <div className="absolute inset-4 border-2 border-orange-500 rounded-xl" />
+              {/* Thin decorative line */}
+              <div className="absolute inset-5 border border-green-400/50 rounded-lg" />
 
-          {/* Content */}
-          <div className="relative h-full flex flex-col items-center justify-center text-center px-8 sm:px-16 py-10">
-            {/* Logo */}
-            <motion.img
-              src="/logo.png"
-              alt="FoodBridge"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.3, type: 'spring' }}
-              className="h-16 w-16 object-contain mb-3"
-            />
-            <p className="text-xs font-semibold text-primary-600 uppercase tracking-widest mb-1">The Last Plate Initiative</p>
-            <h2 className="font-display text-2xl sm:text-4xl font-bold text-gray-900 mb-1">Certificate of Achievement</h2>
-            <div className="h-0.5 w-20 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full my-3" />
+              {/* Corner ornaments */}
+              {[
+                'top-7 left-7',
+                'top-7 right-7 rotate-90',
+                'bottom-7 left-7 -rotate-90',
+                'bottom-7 right-7 rotate-180',
+              ].map((pos, i) => (
+                <div key={i} className={`absolute ${pos} h-10 w-10`}>
+                  <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-green-500 to-orange-500 rounded-full" />
+                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-orange-500 rounded-full" />
+                </div>
+              ))}
 
-            <p className="text-sm text-gray-500 mb-1">This certificate is proudly presented to</p>
-            <p className="font-display text-2xl sm:text-3xl font-bold gradient-text mb-2">{profile?.full_name ?? 'Volunteer'}</p>
-
-            <p className="text-xs sm:text-sm text-gray-600 max-w-md leading-relaxed">
-              for their dedicated service as a volunteer with FoodBridge, delivering <span className="font-semibold text-primary-600">{profile?.total_deliveries ?? 0} meals</span> and serving <span className="font-semibold text-primary-600">{Math.round(profile?.total_hours ?? 0)} hours</span> to fight food waste and hunger.
-            </p>
-
-            {/* Bottom row */}
-            <div className="absolute bottom-8 left-8 right-8 flex items-end justify-between text-xs text-gray-500">
-              <div className="text-left">
-                <p className="font-display italic text-gray-800 text-sm">Arjun Sharma</p>
-                <div className="h-px w-24 bg-gray-300 my-1" />
-                <p>Founder, FoodBridge</p>
+              {/* Watermark */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <img src="/logo.png" alt="" className="opacity-[0.04] h-64 w-64 object-contain" />
               </div>
-              <div className="flex flex-col items-center gap-1">
-                {qrUrl && <img src={qrUrl} alt="QR" className="h-16 w-16 rounded-lg" />}
-                <p className="text-[10px] flex items-center gap-1"><QrCode className="h-2.5 w-2.5" /> Scan to verify</p>
-              </div>
-              <div className="text-right">
-                <div className="h-12 w-12 rounded-full border-2 border-accent-500 flex items-center justify-center text-accent-600 font-bold text-[10px] ml-auto mb-1">
-                  <div className="text-center leading-tight">
-                    <div>OFFICIAL</div>
-                    <div>SEAL</div>
+
+              {/* Content */}
+              <div className="relative h-full flex flex-col items-center justify-center text-center px-12 sm:px-20 py-10">
+                {/* Top row: cert number + unique id */}
+                <div className="absolute top-8 left-8 right-8 flex justify-between text-[10px] text-gray-400">
+                  <p className="flex items-center gap-1"><Hash className="h-2.5 w-2.5" /> {certData.certificateNumber}</p>
+                  <p className="flex items-center gap-1"><ShieldCheck className="h-2.5 w-2.5" /> {certData.uniqueId}</p>
+                </div>
+
+                {/* Logo */}
+                <motion.img
+                  src="/logo.png"
+                  alt="FoodBridge"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.3, type: 'spring' }}
+                  className="h-16 w-16 object-contain mb-2 relative z-10"
+                />
+                <p className="text-[10px] font-semibold text-green-600 uppercase tracking-[0.2em] mb-1">The Last Plate Initiative</p>
+
+                {/* Title */}
+                <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
+                  Volunteer Appreciation Certificate
+                </h2>
+                <div className="h-1 w-24 bg-gradient-to-r from-green-500 to-orange-500 rounded-full my-3" />
+
+                {/* Presented to */}
+                <p className="text-sm text-gray-500 mb-2">This certificate is proudly presented to</p>
+                <p className="font-display text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-orange-500 bg-clip-text text-transparent mb-1">
+                  {certData.volunteerName}
+                </p>
+                <div className="h-px w-32 bg-gradient-to-r from-green-400 to-orange-400 my-2" />
+
+                {/* Body text */}
+                <p className="text-xs sm:text-sm text-gray-600 max-w-2xl leading-relaxed mb-1">
+                  in recognition of outstanding dedication and valuable service in redistributing surplus food
+                  from hotels and events to people in need through the FoodBridge initiative.
+                </p>
+                <p className="text-xs sm:text-sm text-gray-600 max-w-xl leading-relaxed">
+                  Your contribution has helped reduce food waste and support communities.
+                </p>
+                <p className="text-xs sm:text-sm font-medium text-gray-700 mt-1">Thank you for making a meaningful difference.</p>
+
+                {/* Stats */}
+                <div className="flex gap-6 mt-4 text-xs">
+                  <div className="text-center">
+                    <p className="font-display text-lg font-bold text-green-600">{certData.deliveriesCount}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wide">Deliveries</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-display text-lg font-bold text-orange-500">{Math.round(certData.hoursServed)}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wide">Hours</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="font-display text-lg font-bold text-green-600">{certData.totalMeals}</p>
+                    <p className="text-[10px] text-gray-400 uppercase tracking-wide">Meals Saved</p>
                   </div>
                 </div>
-                <p className="text-[10px]">Issue Date: {issueDate}</p>
+
+                {/* Bottom row: signature, seal, QR */}
+                <div className="absolute bottom-8 left-12 right-12 flex items-end justify-between">
+                  {/* Signature */}
+                  <div className="text-left">
+                    <p className="font-display italic text-gray-800 text-sm" style={{ fontFamily: 'Georgia, serif' }}>Arjun Sharma</p>
+                    <div className="h-px w-24 bg-gray-300 my-1" />
+                    <p className="text-[10px] text-gray-500">Founder, FoodBridge</p>
+                  </div>
+
+                  {/* Seal */}
+                  <div className="flex flex-col items-center">
+                    <div className="h-14 w-14 rounded-full border-2 border-orange-500 flex items-center justify-center text-orange-600 font-bold text-[8px] relative">
+                      <div className="absolute inset-1 rounded-full border border-orange-400" />
+                      <div className="text-center leading-tight">
+                        <div>OFFICIAL</div>
+                        <div>SEAL</div>
+                        <div className="text-[6px] mt-0.5">FOODBRIDGE</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* QR Code */}
+                  <div className="flex flex-col items-center gap-1">
+                    {qrUrl ? (
+                      <img src={qrUrl} alt="QR Code" className="h-16 w-16 rounded-lg" />
+                    ) : (
+                      <div className="h-16 w-16 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <QrCode className="h-8 w-8 text-gray-300" />
+                      </div>
+                    )}
+                    <p className="text-[9px] text-gray-400 flex items-center gap-1">
+                      <QrCode className="h-2.5 w-2.5" /> Scan to verify
+                    </p>
+                  </div>
+                </div>
+
+                {/* Bottom dates */}
+                <div className="absolute bottom-3 left-12 right-12 flex justify-between text-[9px] text-gray-400">
+                  <p>Issue Date: {issueDateFormatted}</p>
+                  <p>Organization: {certData.organizationName}</p>
+                </div>
               </div>
             </div>
-
-            {/* Cert numbers top */}
-            <div className="absolute top-8 left-8 right-8 flex justify-between text-[10px] text-gray-400">
-              <p className="flex items-center gap-1"><Hash className="h-2.5 w-2.5" /> {certNumber}</p>
-              <p className="flex items-center gap-1"><ShieldCheck className="h-2.5 w-2.5" /> {uniqueId}</p>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
 
         {/* Actions */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap justify-center gap-4 mt-8">
-          <RippleButton onClick={downloadPDF} variant="primary"><Download className="h-4 w-4" /> Download PDF</RippleButton>
-          <RippleButton onClick={() => window.print()} variant="secondary"><Printer className="h-4 w-4" /> Print</RippleButton>
-        </motion.div>
+        {certData && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-wrap justify-center gap-3 mt-8 print:hidden">
+            <RippleButton onClick={downloadPDF} variant="primary">
+              <Download className="h-4 w-4" /> Download PDF
+            </RippleButton>
+            <RippleButton onClick={printCertificate} variant="secondary">
+              <Printer className="h-4 w-4" /> Print
+            </RippleButton>
+            <RippleButton onClick={saveToMyCertificates} variant="ghost">
+              <Save className="h-4 w-4" /> {saved ? 'Saved!' : 'Save to My Certificates'}
+            </RippleButton>
+            <Link to="/my-certificates">
+              <RippleButton variant="ghost">
+                <Award className="h-4 w-4" /> My Certificates
+              </RippleButton>
+            </Link>
+          </motion.div>
+        )}
 
-        {/* Info */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-card p-6 mt-8 max-w-2xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center text-sm">
-            <div>
-              <Calendar className="h-5 w-5 text-primary-500 mx-auto mb-1" />
-              <p className="text-gray-400 text-xs">Issue Date</p>
-              <p className="font-medium">{issueDate}</p>
+        {/* Info card */}
+        {certData && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-card p-6 mt-8 max-w-2xl mx-auto print:hidden">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-sm">
+              <div>
+                <Calendar className="h-5 w-5 text-green-500 mx-auto mb-1" />
+                <p className="text-gray-400 text-xs">Issue Date</p>
+                <p className="font-medium">{issueDateFormatted}</p>
+              </div>
+              <div>
+                <Hash className="h-5 w-5 text-orange-500 mx-auto mb-1" />
+                <p className="text-gray-400 text-xs">Certificate ID</p>
+                <p className="font-medium text-xs">{certData.certificateNumber}</p>
+              </div>
+              <div>
+                <Award className="h-5 w-5 text-green-500 mx-auto mb-1" />
+                <p className="text-gray-400 text-xs">Deliveries</p>
+                <p className="font-medium">{certData.deliveriesCount}</p>
+              </div>
+              <div>
+                <ShieldCheck className="h-5 w-5 text-orange-500 mx-auto mb-1" />
+                <p className="text-gray-400 text-xs">Unique ID</p>
+                <p className="font-medium text-xs">{certData.uniqueId}</p>
+              </div>
             </div>
-            <div>
-              <Calendar className="h-5 w-5 text-accent-500 mx-auto mb-1" />
-              <p className="text-gray-400 text-xs">Completion Date</p>
-              <p className="font-medium">{completionDate}</p>
-            </div>
-            <div>
-              <Award className="h-5 w-5 text-primary-500 mx-auto mb-1" />
-              <p className="text-gray-400 text-xs">Deliveries</p>
-              <p className="font-medium">{profile?.total_deliveries ?? 0}</p>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
+
+        {/* Back link */}
+        <div className="text-center mt-6 print:hidden">
+          <Link to="/volunteer">
+            <RippleButton variant="ghost"><ArrowLeft className="h-4 w-4" /> Back to Dashboard</RippleButton>
+          </Link>
+        </div>
       </section>
 
       {/* Success Popup */}
@@ -257,7 +324,6 @@ export function CertificatePage() {
               className="glass-card p-8 sm:p-10 text-center max-w-md relative overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Confetti dots */}
               {Array.from({ length: 12 }).map((_, i) => (
                 <motion.div
                   key={i}
@@ -277,17 +343,19 @@ export function CertificatePage() {
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-                className="h-20 w-20 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center mx-auto mb-5 shadow-xl shadow-primary-500/40"
+                className="h-20 w-20 rounded-full bg-gradient-to-br from-green-500 to-orange-500 flex items-center justify-center mx-auto mb-5 shadow-xl"
               >
                 <PartyPopper className="h-10 w-10 text-white" />
               </motion.div>
               <h2 className="font-display text-2xl font-bold mb-2">Certificate Generated!</h2>
               <p className="text-sm text-gray-500 mb-1">Your certificate has been downloaded successfully.</p>
-              <div className="flex items-center justify-center gap-2 text-xs text-gray-400 mb-6">
-                <Sparkles className="h-3 w-3 text-accent-500" />
-                Certificate No: {certNumber}
-                <Sparkles className="h-3 w-3 text-accent-500" />
-              </div>
+              {certData && (
+                <div className="flex items-center justify-center gap-2 text-xs text-gray-400 mb-6">
+                  <Sparkles className="h-3 w-3 text-orange-500" />
+                  Certificate No: {certData.certificateNumber}
+                  <Sparkles className="h-3 w-3 text-orange-500" />
+                </div>
+              )}
               <div className="flex flex-col gap-3">
                 <RippleButton onClick={() => setShowSuccess(false)} variant="primary" fullWidth>View Certificate</RippleButton>
                 <Link to="/verify-certificate" onClick={() => setShowSuccess(false)}>

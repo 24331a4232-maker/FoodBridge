@@ -1,0 +1,195 @@
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Award, Download, Eye, Calendar, Hash, Package, Clock, ShieldCheck, ArrowLeft, Plus, Sparkles } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
+import type { Certificate } from '@/types';
+import { RippleButton } from '@/components/ui/RippleButton';
+import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
+import { generateCertificatePDF, generateQRCode, type CertificateData } from '@/lib/certificate';
+
+export function CertificateHistoryPage() {
+  const { user, profile } = useAuth();
+  const { toast } = useToast();
+  const [certs, setCerts] = useState<Certificate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState<string | null>(null);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!user) return;
+      const { data } = await supabase
+        .from('certificates')
+        .select('*')
+        .eq('volunteer_id', user.id)
+        .order('created_at', { ascending: false });
+      setCerts((data as Certificate[]) ?? []);
+      setLoading(false);
+    };
+    load();
+  }, [user]);
+
+  const downloadCert = async (cert: Certificate) => {
+    setDownloading(cert.id);
+    const verifyUrl = `${window.location.origin}/verify-certificate/${cert.certificate_number}`;
+    const qr = await generateQRCode(verifyUrl);
+    const data: CertificateData = {
+      certificateNumber: cert.certificate_number,
+      uniqueId: cert.unique_id ?? 'UID-XXXX',
+      volunteerName: cert.volunteer_name ?? profile?.full_name ?? 'Volunteer',
+      organizationName: cert.organization_name ?? 'FoodBridge',
+      issueDate: cert.issue_date,
+      deliveriesCount: cert.deliveries_count,
+      hoursServed: cert.hours_served,
+      totalMeals: cert.total_meals,
+      qrCodeUrl: verifyUrl,
+      verifyUrl,
+    };
+    await generateCertificatePDF(data, qr);
+    toast('Certificate PDF downloaded!', 'success');
+    setDownloading(null);
+  };
+
+  const totalDeliveries = certs.reduce((sum, c) => sum + c.deliveries_count, 0);
+  const totalHours = certs.reduce((sum, c) => sum + c.hours_served, 0);
+  const totalMeals = certs.reduce((sum, c) => sum + c.total_meals, 0);
+
+  return (
+    <div className="pt-20 min-h-screen gradient-bg">
+      <section className="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <h1 className="font-display text-3xl sm:text-4xl font-bold">My Certificates</h1>
+            <p className="text-gray-500 mt-1">All your volunteer appreciation certificates in one place.</p>
+          </div>
+          <Link to="/certificate">
+            <RippleButton variant="primary"><Plus className="h-4 w-4" /> Generate New</RippleButton>
+          </Link>
+        </motion.div>
+
+        {/* Summary stats */}
+        {certs.length > 0 && (
+          <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {[
+              { label: 'Certificates', value: certs.length, icon: Award, color: 'from-green-500 to-green-600' },
+              { label: 'Total Deliveries', value: totalDeliveries, icon: Package, color: 'from-orange-500 to-red-500' },
+              { label: 'Hours Served', value: Math.round(totalHours), icon: Clock, color: 'from-blue-500 to-green-500' },
+              { label: 'Meals Saved', value: totalMeals, icon: Sparkles, color: 'from-yellow-500 to-orange-500' },
+            ].map((s) => (
+              <motion.div key={s.label} variants={fadeInUp} className="card p-5">
+                <div className={`h-11 w-11 rounded-xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center mb-3 shadow-lg`}>
+                  <s.icon className="h-5 w-5" />
+                </div>
+                <p className="font-display text-2xl font-bold"><AnimatedCounter value={s.value} /></p>
+                <p className="text-xs text-gray-500">{s.label}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+
+        {/* Loading */}
+        {loading && (
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => <div key={i} className="h-32 bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse" />)}
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!loading && certs.length === 0 && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-12 text-center">
+            <div className="h-20 w-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-5">
+              <Award className="h-10 w-10 text-gray-300" />
+            </div>
+            <h2 className="font-display text-xl font-bold mb-2">No certificates yet</h2>
+            <p className="text-gray-500 mb-6">Complete food deliveries to earn your first volunteer appreciation certificate.</p>
+            <div className="flex flex-wrap justify-center gap-3">
+              <Link to="/volunteer"><RippleButton variant="primary">Go to Dashboard</RippleButton></Link>
+              <Link to="/certificate"><RippleButton variant="secondary">Generate Certificate</RippleButton></Link>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Certificate cards */}
+        {!loading && certs.length > 0 && (
+          <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {certs.map((cert) => (
+              <motion.div
+                key={cert.id}
+                variants={fadeInUp}
+                whileHover={{ y: -4 }}
+                className="card p-6 relative overflow-hidden group"
+              >
+                {/* Accent bar */}
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-green-500 to-orange-500" />
+
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-green-500 to-orange-500 flex items-center justify-center text-white shadow-lg">
+                      <Award className="h-6 w-6" />
+                    </div>
+                    <div>
+                      <p className="font-display font-bold">{cert.volunteer_name ?? 'Volunteer'}</p>
+                      <p className="text-xs text-gray-400 flex items-center gap-1">
+                        <Hash className="h-3 w-3" /> {cert.certificate_number}
+                      </p>
+                    </div>
+                  </div>
+                  {cert.is_valid ? (
+                    <span className="badge bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+                      <ShieldCheck className="h-3 w-3" /> Valid
+                    </span>
+                  ) : (
+                    <span className="badge bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">Revoked</span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-3 gap-2 mb-4">
+                  <div className="text-center p-2 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                    <Package className="h-4 w-4 text-orange-500 mx-auto mb-1" />
+                    <p className="font-bold text-sm">{cert.deliveries_count}</p>
+                    <p className="text-[10px] text-gray-400">Deliveries</p>
+                  </div>
+                  <div className="text-center p-2 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                    <Clock className="h-4 w-4 text-green-500 mx-auto mb-1" />
+                    <p className="font-bold text-sm">{Math.round(cert.hours_served)}</p>
+                    <p className="text-[10px] text-gray-400">Hours</p>
+                  </div>
+                  <div className="text-center p-2 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                    <Sparkles className="h-4 w-4 text-yellow-500 mx-auto mb-1" />
+                    <p className="font-bold text-sm">{cert.total_meals}</p>
+                    <p className="text-[10px] text-gray-400">Meals</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs text-gray-400 mb-4">
+                  <Calendar className="h-3.5 w-3.5" />
+                  Issued on {new Date(cert.issue_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+                </div>
+
+                <div className="flex gap-2">
+                  <RippleButton onClick={() => downloadCert(cert)} variant="primary" fullWidth disabled={downloading === cert.id}>
+                    {downloading === cert.id ? <span className="h-4 w-4 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <Download className="h-4 w-4" />}
+                    Download
+                  </RippleButton>
+                  <Link to={`/verify-certificate/${cert.certificate_number}`}>
+                    <RippleButton variant="ghost"><Eye className="h-4 w-4" /></RippleButton>
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
+
+        {/* Back */}
+        <div className="text-center mt-8">
+          <Link to="/volunteer">
+            <RippleButton variant="ghost"><ArrowLeft className="h-4 w-4" /> Back to Dashboard</RippleButton>
+          </Link>
+        </div>
+      </section>
+    </div>
+  );
+}

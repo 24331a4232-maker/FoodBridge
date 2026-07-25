@@ -87,6 +87,11 @@ export interface Certificate {
   id: string;
   volunteer_id: string;
   certificate_number: string;
+  unique_id: string | null;
+  organization_name: string | null;
+  volunteer_name: string | null;
+  total_meals: number;
+  qr_code_url: string | null;
   issue_date: string;
   completion_date: string;
   deliveries_count: number;

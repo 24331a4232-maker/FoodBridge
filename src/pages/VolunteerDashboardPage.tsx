@@ -12,6 +12,7 @@ import { fadeInUp, staggerContainer, AnimatedCounter } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { LeafletMap, type MapPoint, haversineKm } from '@/components/LeafletMap';
 import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
+import { createCertificateRecord } from '@/lib/certificate';
 
 interface LeaderboardEntry {
   name: string;
@@ -112,13 +113,32 @@ export function VolunteerDashboardPage() {
     const { error } = await supabase.from('pickups').update({ status: 'delivered', delivered_at: new Date().toISOString() }).eq('id', pickup.id);
     if (error) { toast('Could not update status', 'error'); return; }
     await supabase.from('food_donations').update({ status: 'delivered' }).eq('id', pickup.donation_id);
+    const newDeliveries = (profile?.total_deliveries ?? 0) + 1;
+    const newHours = (profile?.total_hours ?? 0) + 0.5;
     if (profile) {
       await supabase.from('profiles').update({
-        total_deliveries: (profile.total_deliveries ?? 0) + 1,
+        total_deliveries: newDeliveries,
+        total_hours: newHours,
         reward_points: (profile.reward_points ?? 0) + (pickup.points_earned ?? 25),
       }).eq('id', profile.id);
     }
     toast('Delivery completed! Points earned.', 'success');
+
+    // Auto-generate certificate
+    if (user && profile) {
+      const cert = await createCertificateRecord({
+        volunteerId: user.id,
+        volunteerName: profile.full_name,
+        organizationName: profile.organization || 'FoodBridge',
+        deliveriesCount: newDeliveries,
+        hoursServed: newHours,
+        totalMeals: newDeliveries,
+      });
+      if (cert) {
+        toast('A new certificate has been generated for this delivery!', 'success');
+      }
+    }
+
     if (user) {
       const { data } = await supabase.from('pickups').select('*, donation:food_donations(*)').eq('volunteer_id', user.id).order('created_at', { ascending: false });
       setMyPickups((data as Pickup[]) ?? []);
@@ -173,7 +193,10 @@ export function VolunteerDashboardPage() {
             <h1 className="font-display text-3xl sm:text-4xl font-bold">Volunteer Dashboard</h1>
             <p className="text-gray-500 mt-1">Welcome back, {profile?.full_name?.split(' ')[0] ?? 'Volunteer'}!</p>
           </div>
-          <Link to="/certificate"><RippleButton variant="primary"><Download className="h-4 w-4" /> Download Certificate</RippleButton></Link>
+          <div className="flex flex-wrap gap-2">
+            <Link to="/certificate"><RippleButton variant="primary"><Download className="h-4 w-4" /> Download Certificate</RippleButton></Link>
+            <Link to="/my-certificates"><RippleButton variant="secondary"><Award className="h-4 w-4" /> My Certificates</RippleButton></Link>
+          </div>
         </motion.div>
 
         {/* Stats */}

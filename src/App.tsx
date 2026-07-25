@@ -21,6 +21,7 @@ import { RegisterPage } from '@/pages/RegisterPage';
 import { ProfilePage } from '@/pages/ProfilePage';
 import { ContactPage } from '@/pages/ContactPage';
 import { CertificatePage } from '@/pages/CertificatePage';
+import { CertificateHistoryPage } from '@/pages/CertificateHistoryPage';
 import { VerifyCertificatePage } from '@/pages/VerifyCertificatePage';
 import { PrivacyPage } from '@/pages/PrivacyPage';
 import { TermsPage } from '@/pages/TermsPage';
@@ -48,7 +49,9 @@ function AnimatedRoutes() {
         <Route path="/profile" element={<ProtectedRoute><PageTransition><ProfilePage /></PageTransition></ProtectedRoute>} />
         <Route path="/contact" element={<PageTransition><ContactPage /></PageTransition>} />
         <Route path="/certificate" element={<ProtectedRoute><PageTransition><CertificatePage /></PageTransition></ProtectedRoute>} />
+        <Route path="/my-certificates" element={<ProtectedRoute><PageTransition><CertificateHistoryPage /></PageTransition></ProtectedRoute>} />
         <Route path="/verify-certificate" element={<PageTransition><VerifyCertificatePage /></PageTransition>} />
+        <Route path="/verify-certificate/:certificateId" element={<PageTransition><VerifyCertificatePage /></PageTransition>} />
         <Route path="/privacy" element={<PageTransition><PrivacyPage /></PageTransition>} />
         <Route path="/terms" element={<PageTransition><TermsPage /></PageTransition>} />
         <Route path="*" element={<PageTransition><NotFoundPage /></PageTransition>} />

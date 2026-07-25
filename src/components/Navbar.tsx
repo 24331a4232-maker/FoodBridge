@@ -143,6 +143,10 @@ export function Navbar() {
                           <Award className="h-4 w-4 text-primary-600" />
                           <span className="text-sm">Certificate</span>
                         </Link>
+                        <Link to="/my-certificates" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">
+                          <Award className="h-4 w-4 text-primary-600" />
+                          <span className="text-sm">My Certificates</span>
+                        </Link>
                         {profile?.role === 'admin' && (
                           <Link to="/admin" className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors">
                             <LayoutDashboard className="h-4 w-4 text-accent-600" />
@@ -206,6 +210,7 @@ export function Navbar() {
                   <Link to="/profile" className="block px-4 py-3 rounded-2xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800">My Profile</Link>
                   <Link to="/volunteer" className="block px-4 py-3 rounded-2xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800">Dashboard</Link>
                   <Link to="/certificate" className="block px-4 py-3 rounded-2xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800">Certificate</Link>
+                  <Link to="/my-certificates" className="block px-4 py-3 rounded-2xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800">My Certificates</Link>
                   {profile?.role === 'admin' && (
                     <Link to="/admin" className="block px-4 py-3 rounded-2xl text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800">Admin Panel</Link>
                   )}
