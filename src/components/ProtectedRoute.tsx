@@ -1,6 +1,6 @@
+import { type ReactNode } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/AuthContext';
-import type { ReactNode } from 'react';
 import type { UserRole } from '@/types';
 
 export function ProtectedRoute({ children, roles }: { children: ReactNode; roles?: UserRole[] }) {
@@ -19,7 +19,8 @@ export function ProtectedRoute({ children, roles }: { children: ReactNode; roles
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
-  // If user exists but profile hasn't loaded yet, wait briefly
+  // User exists but profile hasn't loaded yet — show spinner while we wait.
+  // The AuthContext will set the profile shortly after signUp/signIn.
   if (user && !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center">

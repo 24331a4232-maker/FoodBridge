@@ -50,8 +50,9 @@ export function RegisterPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  if (!authLoading && user && profile) return <Navigate to={roleDashboardPath[profile.role]} replace />;
-  if (!authLoading && user && !profile) return <Navigate to="/" replace />;
+  // Only redirect if we're NOT in the middle of a registration.
+  // During signUp, the user may exist briefly before the profile is ready.
+  if (!authLoading && !loading && user && profile) return <Navigate to={roleDashboardPath[profile.role]} replace />;
 
   const setField = (key: string, value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -116,9 +117,9 @@ export function RegisterPage() {
       toast(result.error, 'error');
     } else {
       toast('Account created! Welcome to FoodBridge.', 'success');
-      // The AuthContext signUp already waited for the profile to be created.
-      // Navigate to the role-based dashboard.
-      navigate(roleDashboardPath[role], { replace: true });
+      // AuthContext.signUp waited for the profile to be created.
+      // Give the auth state a moment to settle, then navigate.
+      setTimeout(() => navigate(roleDashboardPath[role], { replace: true }), 100);
     }
   };
 

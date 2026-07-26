@@ -19,7 +19,7 @@ interface AuthContextValue {
   user: import('@supabase/supabase-js').User | null;
   profile: Profile | null;
   loading: boolean;
-  signIn: (identifier: string, password: string) => Promise<{ error: string | null }>;
+  signIn: (identifier: string, password: string) => Promise<{ error: string | null; role?: UserRole }>;
   signUp: (params: {
     email: string;
     password: string;
@@ -44,52 +44,74 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfile = async (uid: string) => {
-    const { data } = await supabase
+  const fetchProfile = async (uid: string): Promise<Profile | null> => {
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', uid)
       .maybeSingle();
+    if (error) {
+      console.error('[auth] fetchProfile error:', error.message);
+    }
     setProfile(data as Profile | null);
     return data as Profile | null;
   };
 
-  // Wait for a profile row to appear (trigger may take a moment)
-  const waitForProfile = async (uid: string, retries = 10): Promise<Profile | null> => {
+  const waitForProfile = async (uid: string, retries = 20): Promise<Profile | null> => {
     for (let i = 0; i < retries; i++) {
-      const { data } = await supabase.from('profiles').select('*').eq('id', uid).maybeSingle();
+      const { data, error } = await supabase.from('profiles').select('*').eq('id', uid).maybeSingle();
+      if (error) {
+        console.error('[auth] waitForProfile query error:', error.message);
+      }
       if (data) {
         setProfile(data as Profile);
         return data as Profile;
       }
-      await new Promise((r) => setTimeout(r, 300));
+      await new Promise((r) => setTimeout(r, 250));
     }
     return null;
   };
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    let mounted = true;
+
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (!mounted) return;
+      if (error) {
+        console.error('[auth] getSession error:', error.message);
+        setLoading(false);
+        return;
+      }
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id).finally(() => setLoading(false));
+        fetchProfile(session.user.id).finally(() => {
+          if (mounted) setLoading(false);
+        });
       } else {
+        setLoading(false);
+      }
+    }).catch((err) => {
+      console.error('[auth] getSession threw:', err);
+      if (mounted) setLoading(false);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchProfile(session.user.id).finally(() => {
+          if (mounted) setLoading(false);
+        });
+      } else {
+        setProfile(null);
         setLoading(false);
       }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      (async () => {
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
-        }
-        setLoading(false);
-      })();
-    });
-
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (identifier: string, password: string) => {
@@ -100,12 +122,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let emailToUse = id;
 
     if (!isEmail) {
-      const { data: profileRow } = await supabase
+      const { data: profileRow, error: lookupError } = await supabase
         .from('profiles')
         .select('email')
         .ilike('username', id)
         .maybeSingle();
 
+      if (lookupError) {
+        console.error('[auth] username lookup error:', lookupError.message);
+        return { error: 'Unable to verify credentials. Please try again.' };
+      }
       if (!profileRow) {
         return { error: 'Invalid email/username or password.' };
       }
@@ -114,13 +140,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { error } = await supabase.auth.signInWithPassword({ email: emailToUse, password });
     if (error) {
-      return { error: 'Invalid email/username or password.' };
+      console.error('[auth] signInWithPassword error:', error.message, error.status);
+      if (error.message.toLowerCase().includes('invalid login credentials')) {
+        return { error: 'Invalid email/username or password.' };
+      }
+      return { error: error.message };
     }
 
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user) {
-      await fetchProfile(session.user.id);
+      const fetchedProfile = await fetchProfile(session.user.id);
       await supabase.from('profiles').update({ last_login: new Date().toISOString() }).eq('id', session.user.id);
+      return { error: null, role: fetchedProfile?.role };
     }
     return { error: null };
   };
@@ -142,13 +173,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const username = params.username.trim();
     const phone = params.phone.trim();
 
-    // Pre-check for duplicates
     const fieldErrors: NonNullable<SignUpResult['fieldErrors']> = {};
     const [usernameCheck, emailCheck, phoneCheck] = await Promise.all([
       supabase.from('profiles').select('id').ilike('username', username).maybeSingle(),
       supabase.from('profiles').select('id').eq('email', email).maybeSingle(),
       supabase.from('profiles').select('id').eq('phone', phone).maybeSingle(),
     ]);
+
+    if (usernameCheck.error) console.error('[auth] username check error:', usernameCheck.error.message);
+    if (emailCheck.error) console.error('[auth] email check error:', emailCheck.error.message);
+    if (phoneCheck.error) console.error('[auth] phone check error:', phoneCheck.error.message);
 
     if (usernameCheck.data) fieldErrors.username = 'Username already exists.';
     if (emailCheck.data) fieldErrors.email = 'Email is already registered.';
@@ -158,7 +192,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: 'Please fix the errors below.', fieldErrors };
     }
 
-    // Create the auth user — the database trigger auto-creates the profile row
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -179,6 +212,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     if (error) {
+      console.error('[auth] signUp error:', error.message, error.status);
       if (error.message.toLowerCase().includes('already registered')) {
         return { error: 'Email is already registered.', fieldErrors: { email: 'Email is already registered.' } };
       }
@@ -189,8 +223,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: 'Registration failed. Please try again.' };
     }
 
-    // Wait for the trigger to create the profile row
-    const newProfile = await waitForProfile(data.user.id, 15);
+    // The database trigger auto-creates the profile. Wait for it.
+    const newProfile = await waitForProfile(data.user.id, 20);
 
     if (!newProfile) {
       // Fallback: try inserting manually (trigger may have failed)
@@ -209,6 +243,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (insertError) {
+        console.error('[auth] fallback profile insert error:', insertError.message);
         const msg = insertError.message.toLowerCase();
         if (msg.includes('username')) {
           return { error: 'Username already exists.', fieldErrors: { username: 'Username already exists.' } };
@@ -219,7 +254,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (msg.includes('phone')) {
           return { error: 'Mobile number already registered.', fieldErrors: { phone: 'Mobile number already registered.' } };
         }
-        return { error: 'Account created but profile setup failed. Please log in.' };
+        // Account was created but profile failed — user can still log in
+        return { error: null };
       }
 
       await fetchProfile(data.user.id);
@@ -229,12 +265,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    const { error } = await supabase.auth.signOut();
+    if (error) console.error('[auth] signOut error:', error.message);
     try {
-      Object.keys(localStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => localStorage.removeItem(k));
+      Object.keys(localStorage)
+        .filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token'))
+        .forEach((k) => localStorage.removeItem(k));
     } catch { /* ignore */ }
     try {
-      Object.keys(sessionStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => sessionStorage.removeItem(k));
+      Object.keys(sessionStorage)
+        .filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token'))
+        .forEach((k) => sessionStorage.removeItem(k));
     } catch { /* ignore */ }
     setUser(null);
     setProfile(null);

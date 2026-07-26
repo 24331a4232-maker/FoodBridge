@@ -22,8 +22,8 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ identifier?: string; password?: string }>({});
 
-  if (!authLoading && user && profile) return <Navigate to={roleDashboardPath[profile.role]} replace />;
-  if (!authLoading && user && !profile) return <Navigate to="/" replace />;
+  // Only redirect if we're NOT in the middle of a login attempt.
+  if (!authLoading && !loading && user && profile) return <Navigate to={roleDashboardPath[profile.role]} replace />;
 
   const validate = () => {
     const e: typeof errors = {};
@@ -37,21 +37,15 @@ export function LoginPage() {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    const { error } = await signIn(identifier, password);
-    setLoading(false);
+    const { error, role } = await signIn(identifier, password);
     if (error) {
+      setLoading(false);
       toast(error, 'error');
     } else {
       toast('Welcome back to FoodBridge!', 'success');
-      // AuthContext onAuthStateChange will set the profile; redirect based on role
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        const { data: p } = await supabase.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
-        const role = (p as { role?: import('@/types').UserRole } | null)?.role;
-        navigate(role ? roleDashboardPath[role] : from, { replace: true });
-      } else {
-        navigate(from, { replace: true });
-      }
+      // signIn returns the role from the fetched profile — navigate immediately.
+      const dest = role ? roleDashboardPath[role] : from;
+      navigate(dest, { replace: true });
     }
   };
 
