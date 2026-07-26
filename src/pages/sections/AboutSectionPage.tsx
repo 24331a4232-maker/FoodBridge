@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  Target, Eye, Calendar, Lightbulb, UtensilsCrossed, Globe2,
+  Target, Eye, Calendar, Lightbulb, UtensilsCrossed,
   TrendingDown, Award, ArrowRight, Info,
 } from 'lucide-react';
 import { SectionHeading, fadeInUp, staggerContainer } from '@/lib/animations';
@@ -15,13 +15,6 @@ const timeline = [
   { year: '2024', title: 'Going Digital', desc: 'Launched the FoodBridge web platform with real-time matching and volunteer tracking.', icon: Globe2 },
   { year: '2024', title: 'Scaling Up', desc: 'Expanded to 28 cities, 340+ partner hotels, and 1,500+ active volunteers.', icon: TrendingDown },
   { year: '2025', title: 'FoodBridge', desc: 'Officially launched FoodBridge with certification programs for volunteers.', icon: Award },
-];
-
-const team = [
-  { name: 'Pranathi', role: 'Project Coordinator & Documentation', bio: 'Managed project planning, coordinated team activities, prepared documentation, and ensured smooth execution throughout the project.' },
-  { name: 'Yashoda', role: 'Full Stack Developer (Frontend & Backend)', bio: 'Designed and developed the complete application, including the frontend user interface, backend functionality, routing, database integration, API implementation, authentication, and overall system architecture while ensuring a seamless user experience.' },
-  { name: 'Rajesh', role: 'Backend Support & Database Management', bio: 'Assisted with backend development, database design, data management, API support, testing, and system optimization to ensure reliable application performance.' },
-  { name: 'Rahul', role: 'Frontend Support & Quality Assurance', bio: 'Contributed to frontend implementation, UI improvements, application testing, debugging, responsiveness, and quality assurance to deliver a smooth and user-friendly experience.' },
 ];
 
 const founderQuote =
@@ -99,39 +92,6 @@ function OurStoryTab() {
           See our full impact <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
-    </div>
-  );
-}
-
-function TeamTab() {
-  return (
-    <div>
-      <SectionHeading badge="Meet Our Team" title="The passionate students behind FoodBridge" subtitle="Working together to reduce food waste and build a sustainable future through technology." />
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-14 max-w-4xl mx-auto">
-        {team.map((member, i) => (
-          <motion.div
-            key={member.name}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            whileHover={{ y: -8 }}
-            className="card p-7 group"
-          >
-            <div className="flex items-start gap-5">
-              <div className="relative w-20 h-20 shrink-0">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 blur-md opacity-50 group-hover:opacity-80 transition-opacity" />
-                <div className="relative rounded-full w-20 h-20 flex items-center justify-center bg-gradient-to-br from-primary-100 to-gold-100 dark:from-primary-900/40 dark:to-gold-900/30 text-primary-700 dark:text-primary-300 font-display text-2xl font-semibold ring-2 ring-linen/60 dark:ring-secondary-800/60">{member.name[0]}</div>
-              </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="font-display font-semibold text-lg text-ink dark:text-cream">{member.name}</h3>
-                <p className="text-sm text-primary-600 dark:text-primary-400 font-medium mb-3">{member.role}</p>
-                <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed">{member.bio}</p>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
 
       <motion.blockquote
         initial={{ opacity: 0, y: 20 }}
@@ -171,7 +131,6 @@ export function AboutSectionPage() {
           tabs={[
             { id: 'mission', label: 'Mission & Vision', icon: Target, content: <MissionVisionTab /> },
             { id: 'story', label: 'Our Story', icon: Lightbulb, content: <OurStoryTab /> },
-            { id: 'team', label: 'Team', icon: Globe2, content: <TeamTab /> },
           ]}
         />
       </section>
