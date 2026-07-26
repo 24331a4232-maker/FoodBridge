@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   Package, ShieldCheck, Truck, Award,
-  ArrowRight, Leaf, Sparkles, Globe2, Users, Heart, Recycle,
+  ArrowRight, Leaf, Globe2, Users, Heart, Recycle,
   type LucideIcon,
 } from 'lucide-react';
 import { SectionHeading } from '@/lib/animations';
@@ -31,12 +31,6 @@ const services = [
   { title: 'Certificates', desc: 'Earn and download certificates.', icon: Award, color: 'from-accent-400 to-gold-500', path: '/services/certificates' },
   { title: 'QR Verification', desc: 'Verify any certificate instantly.', icon: ShieldCheck, color: 'from-primary-600 to-secondary-600', path: '/services/verify-certificate' },
   { title: 'Volunteer Dashboard', desc: 'Manage deliveries and impact.', icon: Package, color: 'from-accent-500 to-accent-700', path: '/dashboard/volunteer' },
-];
-
-const reviews = [
-  { name: 'The Grand Hotel, Bangalore', text: 'We used to throw away 40+ meals after every banquet. FoodBridge now redirects all of it to a nearby shelter the same night.', meals: 12400, period: '8 months' },
-  { name: 'Sunrise Orphanage, Delhi', text: 'Our children get warm, fresh meals every evening from partner hotels. The quality verification gives us complete peace of mind.', meals: 8600, period: '6 months' },
-  { name: 'Rahul Verma, Volunteer', text: 'I have completed 45 deliveries. The certificate I earned helped me in my college application. FoodBridge gave me purpose.', meals: 45, period: '6 months' },
 ];
 
 const globalImpact = [
@@ -248,80 +242,7 @@ export function HomePage() {
       </section>
 
       {/* Reviews Preview */}
-      <section className="section bg-cream dark:bg-secondary-950">
-        <SectionHeading
-          badge="Reviews"
-          title="Real deliveries, real impact"
-          subtitle="Stories of food that found a second home instead of a landfill."
-        />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-5xl mx-auto">
-          {reviews.map((s, i) => (
-            <motion.figure
-              key={s.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ delay: i * 0.1 }}
-              className="card p-6 flex flex-col"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center font-display font-semibold">
-                  {s.name[0]}
-                </div>
-                <div>
-                  <p className="font-medium text-sm text-ink dark:text-cream">{s.name}</p>
-                  <p className="text-xs text-ink-soft dark:text-cream/50">{s.period}</p>
-                </div>
-              </div>
-              <blockquote className="text-sm text-ink-soft dark:text-cream/70 leading-relaxed flex-1">
-                "{s.text}"
-              </blockquote>
-              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-linen dark:border-secondary-800">
-                <span className="font-stat font-bold text-primary-600">{s.meals.toLocaleString()}</span>
-                <span className="text-xs text-ink-soft dark:text-cream/50">meals saved</span>
-              </div>
-            </motion.figure>
-          ))}
-        </div>
-      </section>
-
       {/* Call to Action */}
-      <section className="section bg-cream dark:bg-secondary-950">
-        <div className="max-w-3xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="flex justify-center mb-6">
-              <div className="relative w-20 h-20">
-                <div className="absolute inset-0 rounded-full bg-accent-100/60 dark:bg-accent-900/30 blur-xl" />
-                <Illustration variant="bridge" className="relative w-full h-full" />
-              </div>
-            </div>
-            <span className="eyebrow justify-center"><Sparkles className="h-3.5 w-3.5" /> Join the movement</span>
-            <h2 className="font-display text-3xl sm:text-5xl font-semibold tracking-[-0.02em] text-ink dark:text-cream text-balance leading-[1.1] mt-4">
-              Tonight, somewhere near you, a kitchen will have too much.
-            </h2>
-            <p className="text-lg text-ink-soft dark:text-cream/60 mt-6 max-w-xl mx-auto text-pretty">
-              Be the one who carries it across. It takes less time than you think.
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-10">
-              <Link to="/register">
-                <RippleButton variant="primary" className="text-base px-7 py-3.5">
-                  Join as a volunteer <ArrowRight className="h-4 w-4" />
-                </RippleButton>
-              </Link>
-              <Link to="/resources/contact">
-                <RippleButton variant="secondary" className="text-base px-7 py-3.5">
-                  Talk to us
-                </RippleButton>
-              </Link>
-            </div>
-          </motion.div>
-        </div>
-      </section>
     </div>
   );
 }
