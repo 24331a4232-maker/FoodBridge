@@ -1,3 +1,15 @@
+export interface LoginActivity {
+  id: string;
+  user_id: string;
+  email: string;
+  full_name: string;
+  role: UserRole;
+  ip_address: string | null;
+  user_agent: string | null;
+  login_at: string;
+  created_at: string;
+}
+
 export type UserRole = 'donor' | 'volunteer' | 'admin' | 'ngo' | 'restaurant';
 export type OrganizationType = 'hotel' | 'restaurant' | 'event' | 'caterer' | 'other';
 export type FoodCategory = 'cooked' | 'raw' | 'packaged' | 'beverages' | 'bakery' | 'other';

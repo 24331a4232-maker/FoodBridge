@@ -22,7 +22,7 @@ import {
   type OpsStat, type OpsActivity, type ActivityKind, type TimeFilter,
   fetchLiveStats, fetchLiveActivities, fetchLiveAnalytics, subscribeToStats,
 } from '@/lib/opsData';
-import type { Profile, FoodDonation, Pickup, Certificate, QrVerification, FoodQualityInspection, UserRole, DonationHandover } from '@/types';
+import type { Profile, FoodDonation, Pickup, Certificate, QrVerification, FoodQualityInspection, UserRole, DonationHandover, LoginActivity } from '@/types';
 
 /* ---------- Dashboard Overview ---------- */
 const statIcons: Record<string, { icon: typeof Users; bg: string }> = {
@@ -910,6 +910,133 @@ export function AdminNotificationsSection() {
                 <p className="text-sm font-medium">{n.title}</p>
                 <p className="text-xs text-gray-500 mt-0.5">{n.description}</p>
                 <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleString()}</p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ---------- Login Activity ---------- */
+export function AdminLoginActivitySection() {
+  const [logs, setLogs] = useState<LoginActivity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [roleFilter, setRoleFilter] = useState<UserRole | 'all'>('all');
+
+  const load = useCallback(async () => {
+    const { data } = await supabase
+      .from('login_activity')
+      .select('*')
+      .order('login_at', { ascending: false })
+      .limit(200);
+    setLogs((data as LoginActivity[]) ?? []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => {
+    load();
+    const ch = supabase
+      .channel('admin-login-activity')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'login_activity' }, load)
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [load]);
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return logs.filter((l) => {
+      if (roleFilter !== 'all' && l.role !== roleFilter) return false;
+      if (!q) return true;
+      return l.email.toLowerCase().includes(q) || l.full_name.toLowerCase().includes(q);
+    });
+  }, [logs, search, roleFilter]);
+
+  const roleFilters: { value: UserRole | 'all'; label: string }[] = [
+    { value: 'all', label: 'All' },
+    { value: 'admin', label: 'Admins' },
+    { value: 'restaurant', label: 'Restaurants' },
+    { value: 'donor', label: 'Donors' },
+    { value: 'volunteer', label: 'Volunteers' },
+    { value: 'ngo', label: 'NGOs' },
+  ];
+
+  const roleBadge: Record<string, string> = {
+    admin: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-300',
+    restaurant: 'bg-pink-100 text-pink-700 dark:bg-pink-900/30 dark:text-pink-300',
+    donor: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+    volunteer: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+    ngo: 'bg-teal-100 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300',
+  };
+
+  const uniqueUsers = new Set(logs.map((l) => l.email)).size;
+  const last24h = logs.filter((l) => Date.now() - new Date(l.login_at).getTime() < 24 * 60 * 60 * 1000).length;
+
+  return (
+    <div>
+      <DashboardSectionHeader
+        title="Login Activity"
+        description="Monitor user sign-in history — who logged in, when, and from where. Passwords are never stored or shown."
+      />
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+        <StatCard icon={Activity} label="Total Logins" value={logs.length} color="bg-primary-500" />
+        <StatCard icon={Users} label="Unique Users" value={uniqueUsers} color="bg-blue-500" />
+        <StatCard icon={Clock} label="Last 24 Hours" value={last24h} color="bg-green-500" />
+      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3 mb-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by email or name..."
+            className="input-field pl-12"
+          />
+        </div>
+        <select
+          value={roleFilter}
+          onChange={(e) => setRoleFilter(e.target.value as UserRole | 'all')}
+          className="input-field sm:w-48"
+        >
+          {roleFilters.map((f) => (
+            <option key={f.value} value={f.value}>{f.label}</option>
+          ))}
+        </select>
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+      ) : filtered.length === 0 ? (
+        <div className="glass-card p-10 text-center">
+          <Clock className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-500">No login activity recorded yet.</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {filtered.slice(0, 50).map((l, i) => (
+            <motion.div
+              key={l.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.02 }}
+              className="glass-card p-4 flex items-center gap-4"
+            >
+              <div className="h-10 w-10 rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center text-sm font-bold shrink-0">
+                {l.full_name?.[0]?.toUpperCase() ?? l.email[0]?.toUpperCase() ?? '?'}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium truncate">{l.full_name || l.email}</p>
+                <p className="text-xs text-gray-500 truncate">{l.email}</p>
+              </div>
+              <span className={`hidden sm:inline-flex text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0 ${roleBadge[l.role] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'}`}>
+                {l.role || 'user'}
+              </span>
+              <div className="text-right shrink-0">
+                <p className="text-xs font-medium">{new Date(l.login_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
+                <p className="text-xs text-gray-400">{new Date(l.login_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
               </div>
             </motion.div>
           ))}

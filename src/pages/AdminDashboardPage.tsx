@@ -1,6 +1,6 @@
 import {
   Radio, Users, Package, Truck, Store, Building2, ShieldCheck, QrCode,
-  Award, BarChart3, FileText, Bell, Settings, MapPin,
+  Award, BarChart3, FileText, Bell, Settings, MapPin, LogIn,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import {
@@ -18,6 +18,7 @@ import {
   AdminReportsSection,
   AdminNotificationsSection,
   AdminSettingsSection,
+  AdminLoginActivitySection,
 } from '@/components/dashboard/sections/AdminSections';
 
 export function AdminDashboardPage() {
@@ -36,6 +37,7 @@ export function AdminDashboardPage() {
     { key: 'reports', label: 'Reports', icon: FileText, content: <AdminReportsSection /> },
     { key: 'notifications', label: 'Notifications', icon: Bell, content: <AdminNotificationsSection /> },
     { key: 'settings', label: 'Settings', icon: Settings, content: <AdminSettingsSection /> },
+    { key: 'login-activity', label: 'Login Activity', icon: LogIn, content: <AdminLoginActivitySection /> },
   ];
 
   return (

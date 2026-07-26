@@ -165,6 +165,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } catch (e) {
           console.error('[auth] last_login update error:', e);
         }
+        try {
+          await supabase.from('login_activity').insert({
+            user_id: session.user.id,
+            email: session.user.email ?? emailToUse,
+            full_name: fetchedProfile?.full_name ?? '',
+            role: fetchedProfile?.role ?? '',
+          });
+        } catch (e) {
+          console.error('[auth] login_activity insert error:', e);
+        }
         return { error: null, role: fetchedProfile?.role };
       }
       return { error: null };
