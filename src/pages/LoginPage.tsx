@@ -10,7 +10,7 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { PageNav } from '@/components/PageNav';
 
 export function LoginPage() {
-  const { signIn, user, loading: authLoading } = useAuth();
+  const { signIn, user, profile, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -118,7 +118,7 @@ export function LoginPage() {
               <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="h-4 w-4 rounded text-primary-600 focus:ring-primary-500" />
               <span className="text-gray-600 dark:text-gray-400">Remember me</span>
             </label>
-            <button type="button" onClick={() => toast('Password reset is not available in this demo. Contact support@foodbridge.org.', 'info')} className="text-primary-600 hover:underline">
+            <button type="button" onClick={() => toast('Please use the password reset link sent to your email, or contact support@foodbridge.org.', 'info')} className="text-primary-600 hover:underline">
               Forgot password?
             </button>
           </motion.div>

@@ -4,8 +4,6 @@ import { supabase } from './supabase';
 
 const ORG_NAME = 'FoodBridge';
 const PROJECT_NAME = 'FoodBridge';
-const SIGNATORY = 'Arjun Sharma';
-const SIGNATORY_TITLE = 'Founder, FoodBridge';
 
 export interface CertificateData {
   certificateNumber: string;
@@ -53,7 +51,7 @@ export async function createCertificateRecord(params: {
   const issueDate = new Date().toISOString().split('T')[0];
   const completionDate = issueDate;
 
-  const { error } = await supabase.from('certificates').insert({
+  const { data: certData, error } = await supabase.from('certificates').insert({
     volunteer_id: params.volunteerId,
     certificate_number: certificateNumber,
     unique_id: uniqueId,
@@ -66,9 +64,17 @@ export async function createCertificateRecord(params: {
     total_meals: params.totalMeals ?? params.deliveriesCount,
     qr_code_url: verifyUrl,
     is_valid: true,
-  });
+  }).select('id').single();
 
-  if (error) return null;
+  if (error || !certData) return null;
+
+  // Create a QR verification record (one per certificate, unique)
+  await supabase.from('qr_verifications').insert({
+    certificate_id: certData.id,
+    qr_code: certificateNumber,
+    verify_url: verifyUrl,
+    is_verified: false,
+  });
 
   return {
     certificateNumber,
@@ -197,14 +203,14 @@ export async function generateCertificatePDF(data: CertificateData, qrDataUrl: s
   pdf.setTextColor(40, 40, 40);
   pdf.setFont('helvetica', 'italic');
   pdf.setFontSize(14);
-  pdf.text(SIGNATORY, 45, bottomY);
+  pdf.text('FoodBridge Team', 45, bottomY);
   pdf.setDrawColor(150, 150, 150);
   pdf.setLineWidth(0.4);
   pdf.line(28, bottomY + 2, 75, bottomY + 2);
   pdf.setFontSize(8);
   pdf.setFont('helvetica', 'normal');
   pdf.setTextColor(100, 100, 100);
-  pdf.text(SIGNATORY_TITLE, 45, bottomY + 6, { align: 'center' });
+  pdf.text('Authorized Signatory', 45, bottomY + 6, { align: 'center' });
 
   // Official seal (circle with text)
   const sealX = w / 2;

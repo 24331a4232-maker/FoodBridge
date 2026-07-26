@@ -220,9 +220,9 @@ export function CertificatePage() {
                 <div className="absolute bottom-8 left-12 right-12 flex items-end justify-between">
                   {/* Signature */}
                   <div className="text-left">
-                    <p className="font-display italic text-gray-800 text-sm" style={{ fontFamily: 'Georgia, serif' }}>Arjun Sharma</p>
+                    <p className="font-display italic text-gray-800 text-sm" style={{ fontFamily: 'Georgia, serif' }}>FoodBridge Team</p>
                     <div className="h-px w-24 bg-gray-300 my-1" />
-                    <p className="text-[10px] text-gray-500">Founder, FoodBridge</p>
+                    <p className="text-[10px] text-gray-500">Authorized Signatory</p>
                   </div>
 
                   {/* Golden seal */}

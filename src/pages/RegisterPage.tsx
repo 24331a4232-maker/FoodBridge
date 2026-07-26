@@ -3,7 +3,7 @@ import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Mail, Lock, User, Building2, Eye, EyeOff, UserPlus, ArrowRight,
-  Hotel, HeartHandshake, ShieldCheck, Phone, AtSign, Check, X, Truck,
+  Hotel, HeartHandshake, ShieldCheck, Phone, AtSign, Check, X, Truck, MapPin,
 } from 'lucide-react';
 import { useAuth, roleDashboardPath } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
@@ -29,7 +29,7 @@ const passwordRules = [
 ];
 
 export function RegisterPage() {
-  const { signUp, user, loading: authLoading } = useAuth();
+  const { signUp, user, profile, loading: authLoading } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [role, setRole] = useState<UserRole>('volunteer');
@@ -40,6 +40,10 @@ export function RegisterPage() {
     phone: '',
     password: '',
     organization: '',
+    address: '',
+    city: '',
+    state: '',
+    pincode: '',
   });
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -98,6 +102,10 @@ export function RegisterPage() {
       phone: form.phone,
       role,
       organization: form.organization,
+      address: form.address,
+      city: form.city,
+      state: form.state,
+      pincode: form.pincode,
     });
     setLoading(false);
 
@@ -227,6 +235,51 @@ export function RegisterPage() {
               {errors.organization && <p className="text-xs text-red-500 mt-1">{errors.organization}</p>}
             </motion.div>
           )}
+
+          <motion.div variants={fadeInUp}>
+            <label className="input-label">Address</label>
+            <div className="relative">
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                value={form.address}
+                onChange={(e) => setField('address', e.target.value)}
+                className="input-field pl-12"
+                placeholder="123 Main Street"
+              />
+            </div>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <motion.div variants={fadeInUp}>
+              <label className="input-label">City</label>
+              <input
+                value={form.city}
+                onChange={(e) => setField('city', e.target.value)}
+                className="input-field"
+                placeholder="Hyderabad"
+              />
+            </motion.div>
+            <motion.div variants={fadeInUp}>
+              <label className="input-label">State</label>
+              <input
+                value={form.state}
+                onChange={(e) => setField('state', e.target.value)}
+                className="input-field"
+                placeholder="Telangana"
+              />
+            </motion.div>
+            <motion.div variants={fadeInUp}>
+              <label className="input-label">Pincode</label>
+              <input
+                value={form.pincode}
+                onChange={(e) => setField('pincode', e.target.value.replace(/\D/g, ''))}
+                className="input-field"
+                placeholder="500001"
+                inputMode="numeric"
+                maxLength={6}
+              />
+            </motion.div>
+          </div>
 
           <motion.div variants={fadeInUp}>
             <label className="input-label">Email</label>

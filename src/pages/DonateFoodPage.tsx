@@ -199,7 +199,7 @@ export function DonateFoodPage() {
       lng = geo.lng;
       setMapPoints([{ lat, lng, type: 'donor', popup: `<strong>${form.organization}</strong><br/>${form.food_name}` }]);
     }
-    const { error } = await supabase.from('food_donations').insert({
+    const { data: inserted, error } = await supabase.from('food_donations').insert({
       donor_id: user.id,
       donor_name: form.donor_name || profile?.full_name || '',
       organization: form.organization,
@@ -227,11 +227,20 @@ export function DonateFoodPage() {
       contact_phone: form.contact_phone,
       is_urgent: form.is_urgent || quality?.isCloseToExpiry || false,
       image_url: form.image_url || null,
-    });
+    }).select('id').single();
     setSubmitting(false);
     if (error) {
       toast('Could not submit donation. Please try again.', 'error');
     } else {
+      if (inserted?.id) {
+        await supabase.from('donation_events').insert({
+          donation_id: inserted.id,
+          event_type: 'submitted',
+          actor_name: profile?.full_name ?? 'Donor',
+          actor_role: profile?.role ?? 'donor',
+          notes: `${form.food_name} from ${form.organization}`,
+        });
+      }
       setSuccess(true);
       pushToast('Donation Submitted Successfully', 'success');
       pushNotification({

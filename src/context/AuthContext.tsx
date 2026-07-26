@@ -28,6 +28,10 @@ interface AuthContextValue {
     phone: string;
     role: UserRole;
     organization?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
   }) => Promise<SignUpResult>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -83,6 +87,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (isEmail) {
       const { error } = await supabase.auth.signInWithPassword({ email: id, password });
       if (error) return { error: 'Invalid username/email or password.' };
+      // Update last_login timestamp
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        await supabase.from('profiles').update({ last_login: new Date().toISOString() }).eq('id', session.user.id);
+      }
       return { error: null };
     }
 
@@ -102,6 +111,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       password,
     });
     if (error) return { error: 'Invalid username/email or password.' };
+    // Update last_login timestamp
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session?.user) {
+      await supabase.from('profiles').update({ last_login: new Date().toISOString() }).eq('id', session.user.id);
+    }
     return { error: null };
   };
 
@@ -113,6 +127,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     phone: string;
     role: UserRole;
     organization?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
   }): Promise<SignUpResult> => {
     const email = params.email.trim().toLowerCase();
     const username = params.username.trim();
@@ -146,6 +164,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           phone,
           role: params.role,
           organization: params.organization?.trim() ?? '',
+          address: params.address?.trim() ?? '',
+          city: params.city?.trim() ?? '',
+          state: params.state?.trim() ?? '',
+          pincode: params.pincode?.trim() ?? '',
         },
       },
     });
@@ -166,6 +188,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         phone,
         role: params.role,
         organization: params.organization?.trim() ?? '',
+        address: params.address?.trim() ?? '',
+        city: params.city?.trim() ?? '',
+        state: params.state?.trim() ?? '',
+        pincode: params.pincode?.trim() ?? '',
       });
 
       if (insertError) {

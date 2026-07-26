@@ -5,7 +5,16 @@ import {
 } from 'lucide-react';
 import { Sparkline } from './Sparkline';
 import { AnimatedCounter } from '@/lib/animations';
-import type { OverviewStat } from '@/lib/adminData';
+
+export interface StatData {
+  key: string;
+  label: string;
+  icon: string;
+  value: number;
+  delta: number;
+  trend: number[];
+  suffix?: string;
+}
 
 const iconMap: Record<string, typeof Users> = {
   users: Users,
@@ -37,11 +46,11 @@ const colorMap: Record<string, { bg: string; text: string; spark: string }> = {
   star: { bg: 'from-yellow-500 to-amber-500', text: 'text-yellow-600', spark: '#EAB308' },
 };
 
-export function StatCard({ stat, index }: { stat: OverviewStat; index: number }) {
+export function StatCard({ stat, index }: { stat: StatData; index: number }) {
   const Icon = iconMap[stat.icon] ?? Users;
   const colors = colorMap[stat.icon] ?? colorMap.users;
-  const TrendIcon = stat.status === 'up' ? TrendingUp : stat.status === 'down' ? TrendingDown : Minus;
-  const trendColor = stat.status === 'up' ? 'text-green-600' : stat.status === 'down' ? 'text-red-500' : 'text-gray-400';
+  const TrendIcon = stat.delta > 0 ? TrendingUp : stat.delta < 0 ? TrendingDown : Minus;
+  const trendColor = stat.delta > 0 ? 'text-green-600' : stat.delta < 0 ? 'text-red-500' : 'text-gray-400';
 
   return (
     <motion.div
@@ -55,7 +64,7 @@ export function StatCard({ stat, index }: { stat: OverviewStat; index: number })
           <Icon className="h-5 w-5" />
         </div>
         <div className="flex items-center gap-1">
-          <Sparkline data={stat.sparkline} color={colors.spark} width={60} height={24} className="hidden sm:block" />
+          <Sparkline data={stat.trend} color={colors.spark} width={60} height={24} className="hidden sm:block" />
         </div>
       </div>
       <p className="font-display text-xl sm:text-2xl font-bold tabular-nums">
@@ -65,10 +74,8 @@ export function StatCard({ stat, index }: { stat: OverviewStat; index: number })
       <div className="flex items-center gap-3 mt-2.5 text-[10px]">
         <span className={`flex items-center gap-0.5 font-semibold ${trendColor}`}>
           <TrendIcon className="h-3 w-3" />
-          {stat.todayIncrease > 0 ? `+${stat.todayIncrease}` : '0'} today
+          {stat.delta > 0 ? `+${stat.delta}` : stat.delta < 0 ? `${stat.delta}` : '0'} recent
         </span>
-        <span className="text-gray-400">W: {stat.weeklyTrend > 0 ? '+' : ''}{stat.weeklyTrend}%</span>
-        <span className="text-gray-400">M: {stat.monthlyTrend > 0 ? '+' : ''}{stat.monthlyTrend}%</span>
       </div>
     </motion.div>
   );

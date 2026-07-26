@@ -48,6 +48,13 @@ export interface Profile {
   preferences: Preferences | null;
   created_at: string;
   updated_at: string;
+  last_login: string | null;
+  availability: 'available' | 'on_delivery' | 'offline';
+  current_location_lat: number | null;
+  current_location_lng: number | null;
+  rating: number;
+  assigned_deliveries: number;
+  completed_deliveries_count: number;
 }
 
 export type StorageMethod = 'room_temperature' | 'refrigerated' | 'frozen';
@@ -87,6 +94,12 @@ export interface FoodDonation {
   contact_phone: string;
   created_at: string;
   updated_at: string;
+  assigned_volunteer_id: string | null;
+  delivery_time: string | null;
+  quality_result: 'approved' | 'rejected' | 'pending' | null;
+  certificate_id: string | null;
+  qr_verified: boolean;
+  donation_code: string | null;
 }
 
 export interface Pickup {
@@ -161,4 +174,29 @@ export interface Certificate {
   is_valid: boolean;
   created_at: string;
   volunteer?: Profile;
+}
+
+export interface FoodQualityInspection {
+  id: string;
+  donation_id: string;
+  inspector_id: string | null;
+  inspector_name: string;
+  freshness: 'fresh' | 'good' | 'average' | 'stale';
+  packaging: 'excellent' | 'good' | 'fair' | 'poor';
+  temperature: string;
+  expiry_check: 'pass' | 'fail';
+  approval_status: 'approved' | 'pending' | 'rejected';
+  notes: string;
+  created_at: string;
+}
+
+export interface QrVerification {
+  id: string;
+  certificate_id: string;
+  qr_code: string;
+  verify_url: string;
+  is_verified: boolean;
+  verified_at: string | null;
+  verified_by: string | null;
+  created_at: string;
 }

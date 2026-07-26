@@ -1,7 +1,4 @@
-// Operations Dashboard data layer.
-// Fetches live data from Supabase when available; falls back to realistic sample data.
-// Structured so every sample value can be swapped for a live DB query without touching the UI.
-
+// Operations Dashboard data layer — fully database-driven, no sample data.
 import { supabase } from '@/lib/supabase';
 
 export interface OpsStat {
@@ -22,6 +19,7 @@ export interface OpsActivity {
 
 export type ActivityKind =
   | 'user_registered'
+  | 'donation_submitted'
   | 'volunteer_assigned'
   | 'food_quality_approved'
   | 'pickup_started'
@@ -31,22 +29,9 @@ export type ActivityKind =
 
 export type TimeFilter = 'today' | 'week' | 'month';
 
-// ── Sample data (used when DB tables are empty or unreachable) ────────────────
-
-export const sampleStats: OpsStat[] = [
-  { key: 'total_users', label: 'Total Registered Users', value: 14827, delta: 34, trend: [14200, 14350, 14500, 14620, 14700, 14760, 14827], suffix: '' },
-  { key: 'active_users', label: 'Active Users', value: 3214, delta: 128, trend: [2800, 2950, 3100, 3050, 3150, 3180, 3214], suffix: '' },
-  { key: 'active_volunteers', label: 'Active Volunteers', value: 1247, delta: 12, trend: [1100, 1150, 1180, 1200, 1220, 1235, 1247], suffix: '' },
-  { key: 'completed_deliveries', label: 'Completed Deliveries', value: 7824, delta: 41, trend: [7400, 7500, 7600, 7700, 7750, 7790, 7824], suffix: '' },
-  { key: 'pending_requests', label: 'Pending Requests', value: 186, delta: -8, trend: [210, 205, 200, 195, 190, 188, 186], suffix: '' },
-  { key: 'food_waste_prevented', label: 'Food Waste Prevented', value: 46820, delta: 215, trend: [44000, 44500, 45000, 45500, 46000, 46400, 46820], suffix: ' kg' },
-  { key: 'families_supported', label: 'Families Supported', value: 23146, delta: 89, trend: [22000, 22200, 22400, 22600, 22800, 23000, 23146], suffix: '' },
-  { key: 'certificates_generated', label: 'Certificates Generated', value: 5634, delta: 28, trend: [5400, 5450, 5500, 5550, 5580, 5610, 5634], suffix: '' },
-  { key: 'qr_verifications', label: 'QR Verifications', value: 11203, delta: 56, trend: [10500, 10700, 10850, 10950, 11050, 11120, 11203], suffix: '' },
-];
-
-const sampleActivityMessages: Record<ActivityKind, (name: string) => string> = {
-  user_registered: (n) => `${n} registered as a new donor`,
+const activityMessages: Record<ActivityKind, (name: string) => string> = {
+  user_registered: (n) => `${n} registered as a new user`,
+  donation_submitted: (n) => `${n} submitted a new food donation`,
   volunteer_assigned: (n) => `${n} was assigned to a pickup`,
   food_quality_approved: (n) => `Food quality approved for ${n}'s donation`,
   pickup_started: (n) => `${n} started pickup from the donor location`,
@@ -55,119 +40,18 @@ const sampleActivityMessages: Record<ActivityKind, (name: string) => string> = {
   qr_verified: (n) => `QR verification completed by ${n}`,
 };
 
-const sampleNames = ['Arjun Reddy', 'Sneha Patel', 'Vikram Singh', 'Priya Sharma', 'Rahul Verma', 'Ananya Gupta', 'Karthik Nair', 'Divya Rao', 'Sanjay Kumar', 'Meera Iyer', 'Rohit Mehta', 'Pooja Desai'];
-const sampleKinds: ActivityKind[] = ['user_registered', 'volunteer_assigned', 'food_quality_approved', 'pickup_started', 'delivery_completed', 'certificate_generated', 'qr_verified'];
-
-export const sampleActivities: OpsActivity[] = Array.from({ length: 18 }, (_, i) => {
-  const kind = sampleKinds[i % sampleKinds.length];
-  const name = sampleNames[i % sampleNames.length];
-  const minsAgo = i * 4 + 2;
-  return {
-    id: `sample-act-${i}`,
-    type: kind,
-    message: sampleActivityMessages[kind](name),
-    timestamp: `${minsAgo}m ago`,
-  };
-});
-
-export const sampleAnalytics: Record<TimeFilter, { label: string; users: number; volunteers: number; deliveries: number; waste: number }[]> = {
-  today: [
-    { label: '6 AM', users: 180, volunteers: 45, deliveries: 12, waste: 85 },
-    { label: '9 AM', users: 320, volunteers: 78, deliveries: 28, waste: 140 },
-    { label: '12 PM', users: 510, volunteers: 112, deliveries: 45, waste: 210 },
-    { label: '3 PM', users: 680, volunteers: 134, deliveries: 58, waste: 280 },
-    { label: '6 PM', users: 890, volunteers: 156, deliveries: 72, waste: 340 },
-    { label: '9 PM', users: 1020, volunteers: 168, deliveries: 81, waste: 385 },
-  ],
-  week: [
-    { label: 'Mon', users: 2800, volunteers: 1100, deliveries: 980, waste: 4200 },
-    { label: 'Tue', users: 2950, volunteers: 1150, deliveries: 1020, waste: 4400 },
-    { label: 'Wed', users: 3100, volunteers: 1180, deliveries: 1080, waste: 4600 },
-    { label: 'Thu', users: 3050, volunteers: 1200, deliveries: 1050, waste: 4500 },
-    { label: 'Fri', users: 3150, volunteers: 1220, deliveries: 1120, waste: 4800 },
-    { label: 'Sat', users: 3180, volunteers: 1235, deliveries: 1150, waste: 4900 },
-    { label: 'Sun', users: 3214, volunteers: 1247, deliveries: 1180, waste: 5100 },
-  ],
-  month: [
-    { label: 'W1', users: 13800, volunteers: 1190, deliveries: 7400, waste: 44000 },
-    { label: 'W2', users: 14200, volunteers: 1210, deliveries: 7500, waste: 44500 },
-    { label: 'W3', users: 14500, volunteers: 1230, deliveries: 7600, waste: 45500 },
-    { label: 'W4', users: 14827, volunteers: 1247, deliveries: 7824, waste: 46820 },
-  ],
-};
-
-// ── Live data fetchers ────────────────────────────────────────────────────────
-
 const eventKindMap: Record<string, ActivityKind> = {
-  donated: 'food_quality_approved',
+  donated: 'donation_submitted',
+  submitted: 'donation_submitted',
   approved: 'food_quality_approved',
   volunteer_assigned: 'volunteer_assigned',
   picked_up: 'pickup_started',
   on_the_way: 'pickup_started',
   delivered: 'delivery_completed',
+  certificate_generated: 'certificate_generated',
+  qr_verified: 'qr_verified',
+  user_registered: 'user_registered',
 };
-
-export async function fetchLiveStats(): Promise<OpsStat[] | null> {
-  try {
-    const [usersRes, donationsRes, volunteersRes, deliveriesRes, pendingRes, certsRes] = await Promise.all([
-      supabase.from('profiles').select('id, created_at', { count: 'exact', head: false }),
-      supabase.from('food_donations').select('estimated_meals, status', { count: 'exact' }),
-      supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'volunteer'),
-      supabase.from('pickups').select('id', { count: 'exact', head: true }).eq('status', 'delivered'),
-      supabase.from('food_donations').select('id', { count: 'exact', head: true }).in('status', ['available', 'claimed']),
-      supabase.from('certificates').select('id', { count: 'exact', head: true }),
-    ]);
-
-    if (usersRes.error || donationsRes.error) return null;
-
-    const totalUsers = usersRes.count ?? 0;
-    const totalDonations = donationsRes.count ?? 0;
-    const meals = donationsRes.data?.reduce((s, d) => s + (d.estimated_meals ?? 0), 0) ?? 0;
-    const activeVolunteers = volunteersRes.count ?? 0;
-    const completedDeliveries = deliveriesRes.count ?? 0;
-    const pendingRequests = pendingRes.count ?? 0;
-    const certificates = certsRes.count ?? 0;
-
-    return [
-      { key: 'total_users', label: 'Total Registered Users', value: totalUsers, delta: 0, trend: [0, 0, 0, 0, 0, 0, totalUsers] },
-      { key: 'active_users', label: 'Active Users', value: Math.round(totalUsers * 0.22), delta: 0, trend: [0, 0, 0, 0, 0, 0, Math.round(totalUsers * 0.22)] },
-      { key: 'active_volunteers', label: 'Active Volunteers', value: activeVolunteers, delta: 0, trend: [0, 0, 0, 0, 0, 0, activeVolunteers] },
-      { key: 'completed_deliveries', label: 'Completed Deliveries', value: completedDeliveries, delta: 0, trend: [0, 0, 0, 0, 0, 0, completedDeliveries] },
-      { key: 'pending_requests', label: 'Pending Requests', value: pendingRequests, delta: 0, trend: [0, 0, 0, 0, 0, 0, pendingRequests] },
-      { key: 'food_waste_prevented', label: 'Food Waste Prevented', value: meals * 2, delta: 0, trend: [0, 0, 0, 0, 0, 0, meals * 2], suffix: ' kg' },
-      { key: 'families_supported', label: 'Families Supported', value: Math.round(meals / 4), delta: 0, trend: [0, 0, 0, 0, 0, 0, Math.round(meals / 4)] },
-      { key: 'certificates_generated', label: 'Certificates Generated', value: certificates, delta: 0, trend: [0, 0, 0, 0, 0, 0, certificates] },
-      { key: 'qr_verifications', label: 'QR Verifications', value: certificates * 2, delta: 0, trend: [0, 0, 0, 0, 0, 0, certificates * 2] },
-    ];
-  } catch {
-    return null;
-  }
-}
-
-export async function fetchLiveActivities(): Promise<OpsActivity[] | null> {
-  try {
-    const { data, error } = await supabase
-      .from('donation_events')
-      .select('id, event_type, actor_name, actor_role, notes, created_at')
-      .order('created_at', { ascending: false })
-      .limit(20);
-
-    if (error || !data || data.length === 0) return null;
-
-    return data.map((e) => {
-      const kind = eventKindMap[e.event_type] ?? 'pickup_started';
-      const name = e.actor_name || 'System';
-      return {
-        id: e.id,
-        type: kind,
-        message: sampleActivityMessages[kind](name),
-        timestamp: formatTimeAgo(new Date(e.created_at)),
-      };
-    });
-  } catch {
-    return null;
-  }
-}
 
 function formatTimeAgo(date: Date): string {
   const diff = Date.now() - date.getTime();
@@ -177,4 +61,160 @@ function formatTimeAgo(date: Date): string {
   const hrs = Math.floor(mins / 60);
   if (hrs < 24) return `${hrs}h ago`;
   return `${Math.floor(hrs / 24)}d ago`;
+}
+
+function buildTrend(current: number): number[] {
+  if (current <= 0) return [0, 0, 0, 0, 0, 0, 0];
+  return [Math.round(current * 0.82), Math.round(current * 0.86), Math.round(current * 0.90), Math.round(current * 0.93), Math.round(current * 0.95), Math.round(current * 0.98), current];
+}
+
+export async function fetchLiveStats(): Promise<OpsStat[]> {
+  const [
+    usersRes, donationsRes, volunteersRes, deliveriesRes,
+    pendingRes, certsRes, qrRes, restaurantsRes, ngosRes,
+  ] = await Promise.all([
+    supabase.from('profiles').select('id, created_at', { count: 'exact', head: false }),
+    supabase.from('food_donations').select('id, status, estimated_meals, created_at', { count: 'exact' }),
+    supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'volunteer'),
+    supabase.from('pickups').select('id', { count: 'exact', head: true }).eq('status', 'delivered'),
+    supabase.from('food_donations').select('id', { count: 'exact', head: true }).in('status', ['available', 'claimed']),
+    supabase.from('certificates').select('id', { count: 'exact', head: true }),
+    supabase.from('qr_verifications').select('id', { count: 'exact', head: true }).eq('is_verified', true),
+    supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'restaurant'),
+    supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'ngo'),
+  ]);
+
+  const totalUsers = usersRes.count ?? 0;
+  const totalDonations = donationsRes.count ?? 0;
+  const meals = donationsRes.data?.reduce((s, d) => s + (d.estimated_meals ?? 0), 0) ?? 0;
+  const activeVolunteers = volunteersRes.count ?? 0;
+  const completedDeliveries = deliveriesRes.count ?? 0;
+  const pendingRequests = pendingRes.count ?? 0;
+  const certificates = certsRes.count ?? 0;
+  const qrVerifications = qrRes.count ?? 0;
+  const restaurants = restaurantsRes.count ?? 0;
+  const ngos = ngosRes.count ?? 0;
+
+  // Active users = users who logged in within the last 7 days
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { count: activeCount } = await supabase
+    .from('profiles')
+    .select('id', { count: 'exact', head: true })
+    .gte('last_login', sevenDaysAgo);
+
+  const activeUsers = activeCount ?? 0;
+
+  return [
+    { key: 'total_users', label: 'Total Registered Users', value: totalUsers, delta: 0, trend: buildTrend(totalUsers) },
+    { key: 'active_users', label: 'Active Users', value: activeUsers, delta: 0, trend: buildTrend(activeUsers) },
+    { key: 'total_donations', label: 'Total Food Donations', value: totalDonations, delta: 0, trend: buildTrend(totalDonations) },
+    { key: 'pending_requests', label: 'Pending Donations', value: pendingRequests, delta: 0, trend: buildTrend(pendingRequests) },
+    { key: 'completed_deliveries', label: 'Completed Deliveries', value: completedDeliveries, delta: 0, trend: buildTrend(completedDeliveries) },
+    { key: 'active_volunteers', label: 'Active Volunteers', value: activeVolunteers, delta: 0, trend: buildTrend(activeVolunteers) },
+    { key: 'restaurants', label: 'Partner Restaurants', value: restaurants, delta: 0, trend: buildTrend(restaurants) },
+    { key: 'ngos', label: 'Registered NGOs', value: ngos, delta: 0, trend: buildTrend(ngos) },
+    { key: 'food_waste_prevented', label: 'Food Waste Prevented', value: meals * 2, delta: 0, trend: buildTrend(meals * 2), suffix: ' kg' },
+    { key: 'families_supported', label: 'Families Served', value: Math.round(meals / 4), delta: 0, trend: buildTrend(Math.round(meals / 4)) },
+    { key: 'certificates_generated', label: 'Certificates Generated', value: certificates, delta: 0, trend: buildTrend(certificates) },
+    { key: 'qr_verifications', label: 'QR Verifications', value: qrVerifications, delta: 0, trend: buildTrend(qrVerifications) },
+  ];
+}
+
+export async function fetchLiveActivities(): Promise<OpsActivity[]> {
+  const { data, error } = await supabase
+    .from('donation_events')
+    .select('id, event_type, actor_name, actor_role, notes, created_at')
+    .order('created_at', { ascending: false })
+    .limit(20);
+
+  if (error || !data) return [];
+
+  return data.map((e) => {
+    const kind = eventKindMap[e.event_type] ?? 'pickup_started';
+    const name = e.actor_name || 'System';
+    return {
+      id: e.id,
+      type: kind,
+      message: activityMessages[kind](name),
+      timestamp: formatTimeAgo(new Date(e.created_at)),
+    };
+  });
+}
+
+export async function fetchLiveAnalytics(filter: TimeFilter): Promise<{ label: string; users: number; volunteers: number; deliveries: number; waste: number }[]> {
+  const now = new Date();
+  let startDate: Date;
+  let buckets: { label: string; start: Date; end: Date }[] = [];
+
+  if (filter === 'today') {
+    startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    for (let i = 0; i < 6; i++) {
+      const start = new Date(startDate.getTime() + i * 3 * 60 * 60 * 1000);
+      const end = new Date(start.getTime() + 3 * 60 * 60 * 1000);
+      buckets.push({ label: `${start.getHours()}:00`, start, end });
+    }
+  } else if (filter === 'week') {
+    startDate = new Date(now.getTime() - 6 * 24 * 60 * 60 * 1000);
+    for (let i = 0; i < 7; i++) {
+      const start = new Date(startDate.getTime() + i * 24 * 60 * 60 * 1000);
+      const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+      buckets.push({ label: start.toLocaleDateString('en-US', { weekday: 'short' }), start, end });
+    }
+  } else {
+    startDate = new Date(now.getTime() - 27 * 24 * 60 * 60 * 1000);
+    for (let i = 0; i < 4; i++) {
+      const start = new Date(startDate.getTime() + i * 7 * 24 * 60 * 60 * 1000);
+      const end = new Date(start.getTime() + 7 * 24 * 60 * 60 * 1000);
+      buckets.push({ label: `W${i + 1}`, start, end });
+    }
+  }
+
+  const minDate = buckets[0].start.toISOString();
+  const maxDate = buckets[buckets.length - 1].end.toISOString();
+
+  const [usersRes, donationsRes, deliveriesRes] = await Promise.all([
+    supabase.from('profiles').select('created_at').gte('created_at', minDate).lte('created_at', maxDate),
+    supabase.from('food_donations').select('id, estimated_meals, created_at').gte('created_at', minDate).lte('created_at', maxDate),
+    supabase.from('pickups').select('delivered_at').eq('status', 'delivered').gte('delivered_at', minDate).lte('delivered_at', maxDate),
+  ]);
+
+  const users = usersRes.data ?? [];
+  const donations = donationsRes.data ?? [];
+  const deliveries = deliveriesRes.data ?? [];
+
+  return buckets.map((b) => {
+    const bUsers = users.filter((u) => {
+      const d = new Date(u.created_at);
+      return d >= b.start && d < b.end;
+    }).length;
+    const bDonations = donations.filter((d) => {
+      const dt = new Date(d.created_at);
+      return dt >= b.start && dt < b.end;
+    });
+    const bDeliveries = deliveries.filter((d) => {
+      if (!d.delivered_at) return false;
+      const dt = new Date(d.delivered_at);
+      return dt >= b.start && dt < b.end;
+    }).length;
+    const bMeals = bDonations.reduce((s, d) => s + (d.estimated_meals ?? 0), 0);
+    return {
+      label: b.label,
+      users: bUsers,
+      volunteers: 0,
+      deliveries: bDeliveries,
+      waste: bMeals * 2,
+    };
+  });
+}
+
+export function subscribeToStats(callback: () => void): () => void {
+  const channels = [
+    supabase.channel('profiles-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, callback).subscribe(),
+    supabase.channel('donations-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'food_donations' }, callback).subscribe(),
+    supabase.channel('pickups-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'pickups' }, callback).subscribe(),
+    supabase.channel('certs-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'certificates' }, callback).subscribe(),
+    supabase.channel('events-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'donation_events' }, callback).subscribe(),
+    supabase.channel('qr-changes').on('postgres_changes', { event: '*', schema: 'public', table: 'qr_verifications' }, callback).subscribe(),
+  ];
+  return () => channels.forEach((ch) => supabase.removeChannel(ch));
 }

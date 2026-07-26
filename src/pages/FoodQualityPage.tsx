@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useInView, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/lib/supabase';
 import {
   ShieldCheck, Sparkles, UtensilsCrossed, CheckCircle2, ChefHat, Heart,
   Package, Thermometer, Eye, ClipboardCheck, Truck,
@@ -56,32 +57,38 @@ const approvalStatuses = [
   { label: 'Pending Inspection', icon: Clock, color: 'from-secondary-500 to-secondary-400', bg: 'bg-secondary-50 dark:bg-secondary-900/20', text: 'text-secondary-700 dark:text-secondary-300', desc: 'Awaiting volunteer inspection before approval.' },
 ];
 
-const stats = [
-  { value: 25000, suffix: '+', label: 'Meals Verified', icon: Utensils, color: 'text-primary-600', trend: '+12%' },
-  { value: 98, suffix: '%', label: 'Quality Score', icon: Sparkles, color: 'text-accent-500', trend: '+3%' },
-  { value: 120, suffix: '+', label: 'Partner Hotels', icon: Building2, color: 'text-primary-600', trend: '+8%' },
-  { value: 350, suffix: '+', label: 'Quality Volunteers', icon: Users, color: 'text-accent-500', trend: '+15%' },
-];
+interface LiveStats {
+  mealsVerified: number;
+  qualityScore: number;
+  partnerHotels: number;
+  qualityVolunteers: number;
+}
 
-const scoreCategories = [
-  { label: 'Freshness', percent: 98 },
-  { label: 'Packaging', percent: 95 },
-  { label: 'Temperature', percent: 85 },
-  { label: 'Hygiene', percent: 100 },
-];
+interface ScoreCategory {
+  label: string;
+  percent: number;
+}
 
-const certificateInfo = {
-  id: 'FQ-2026-0001',
-  uniqueId: 'UID-FQ8X2K4P',
-  issuedTo: 'The Grand Hotel & Convention Centre',
-  inspectionDate: 'March 15, 2026',
-  expiryDate: 'March 22, 2026',
-  foodCategory: 'Cooked Meals — Vegetarian & Non-Veg',
-  grade: 'A+',
-  inspector: 'Priya Nair',
-  signature: 'Priya Nair',
-  verifyUrl: `${window.location.origin}/services/verify-certificate/FQ-2026-0001`,
-};
+interface CertificateInfo {
+  id: string;
+  uniqueId: string;
+  issuedTo: string;
+  inspectionDate: string;
+  expiryDate: string;
+  foodCategory: string;
+  grade: string;
+  inspector: string;
+  signature: string;
+  verifyUrl: string;
+}
+
+const defaultStats: LiveStats = { mealsVerified: 0, qualityScore: 0, partnerHotels: 0, qualityVolunteers: 0 };
+const defaultScoreCategories: ScoreCategory[] = [
+  { label: 'Freshness', percent: 0 },
+  { label: 'Packaging', percent: 0 },
+  { label: 'Temperature', percent: 0 },
+  { label: 'Hygiene', percent: 0 },
+];
 
 function Counter({ value, suffix = '', className = '' }: { value: number; suffix?: string; className?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -228,8 +235,62 @@ export function FoodQualityPage() {
   const [checked, setChecked] = useState<Record<number, boolean>>({ 0: true, 1: true, 2: true, 3: true, 4: true, 5: true, 6: true });
   const [certModal, setCertModal] = useState(false);
   const [certScale, setCertScale] = useState(1);
+  const [stats, setStats] = useState<LiveStats>(defaultStats);
+  const [scoreCategories, setScoreCategories] = useState<ScoreCategory[]>(defaultScoreCategories);
+  const [certificateInfo, setCertificateInfo] = useState<CertificateInfo | null>(null);
 
   const toggle = (i: number) => setChecked((c) => ({ ...c, [i]: !c[i] }));
+
+  useEffect(() => {
+    (async () => {
+      const [mealsRes, hotelsRes, volsRes, inspectionsRes, certRes] = await Promise.all([
+        supabase.from('food_donations').select('estimated_meals', { count: 'exact' }).not('quality_result', 'is', null),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'restaurant'),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('role', 'volunteer'),
+        supabase.from('food_quality_inspections').select('freshness, packaging, expiry_check, approval_status'),
+        supabase.from('certificates').select('id, certificate_number, unique_id, organization_name, volunteer_name, issue_date, completion_date, total_meals').eq('is_valid', true).order('created_at', { ascending: false }).limit(1).maybeSingle(),
+      ]);
+
+      const meals = mealsRes.data?.reduce((s, d) => s + (d.estimated_meals ?? 0), 0) ?? 0;
+      const hotels = hotelsRes.count ?? 0;
+      const vols = volsRes.count ?? 0;
+      const inspections = inspectionsRes.data ?? [];
+
+      const approved = inspections.filter((i) => i.approval_status === 'approved');
+      const score = inspections.length > 0 ? Math.round((approved.length / inspections.length) * 100) : 0;
+
+      setStats({ mealsVerified: meals, qualityScore: score, partnerHotels: hotels, qualityVolunteers: vols });
+
+      if (inspections.length > 0) {
+        const freshScore = Math.round((inspections.filter((i) => i.freshness === 'fresh').length / inspections.length) * 100);
+        const pkgScore = Math.round((inspections.filter((i) => i.packaging === 'excellent' || i.packaging === 'good').length / inspections.length) * 100);
+        const expScore = Math.round((inspections.filter((i) => i.expiry_check === 'pass').length / inspections.length) * 100);
+        const hygScore = Math.round((approved.length / inspections.length) * 100);
+        setScoreCategories([
+          { label: 'Freshness', percent: freshScore },
+          { label: 'Packaging', percent: pkgScore },
+          { label: 'Temperature', percent: Math.round((expScore + freshScore) / 2) },
+          { label: 'Hygiene', percent: hygScore },
+        ]);
+      }
+
+      if (certRes.data) {
+        const c = certRes.data;
+        setCertificateInfo({
+          id: c.certificate_number,
+          uniqueId: c.unique_id ?? 'N/A',
+          issuedTo: c.organization_name ?? c.volunteer_name ?? 'FoodBridge Partner',
+          inspectionDate: c.issue_date ? new Date(c.issue_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A',
+          expiryDate: c.completion_date ? new Date(c.completion_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A',
+          foodCategory: 'Cooked Meals',
+          grade: score >= 90 ? 'A+' : score >= 75 ? 'A' : score >= 60 ? 'B' : 'C',
+          inspector: c.volunteer_name ?? 'FoodBridge Inspector',
+          signature: c.volunteer_name ?? 'FoodBridge Team',
+          verifyUrl: `${window.location.origin}/services/verify-certificate/${c.certificate_number}`,
+        });
+      }
+    })();
+  }, []);
 
   return (
     <div className="pt-20 min-h-screen" style={{ backgroundColor: IVORY }}>
@@ -312,7 +373,7 @@ export function FoodQualityPage() {
             <p className="section-subtitle">A composite score from our six-step inspection process.</p>
           </motion.div>
           <div className="grid lg:grid-cols-2 gap-10 items-center">
-            <motion.div variants={scaleIn} className="flex justify-center"><ScoreCircle score={98} /></motion.div>
+            <motion.div variants={scaleIn} className="flex justify-center"><ScoreCircle score={stats.qualityScore} /></motion.div>
             <motion.div variants={slideInRight} className="space-y-4">
               {scoreCategories.map((c) => (
                 <div key={c.label} className="p-4 rounded-2xl bg-white/60 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
@@ -469,16 +530,18 @@ export function FoodQualityPage() {
             <h2 className="section-title">Live Quality Statistics</h2>
           </motion.div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-            {stats.map((s) => (
+            {[
+              { value: stats.mealsVerified, suffix: '+', label: 'Meals Verified', icon: Utensils, color: 'text-primary-600' },
+              { value: stats.qualityScore, suffix: '%', label: 'Quality Score', icon: Sparkles, color: 'text-accent-500' },
+              { value: stats.partnerHotels, suffix: '+', label: 'Partner Hotels', icon: Building2, color: 'text-primary-600' },
+              { value: stats.qualityVolunteers, suffix: '+', label: 'Quality Volunteers', icon: Users, color: 'text-accent-500' },
+            ].map((s) => (
               <motion.div key={s.label} variants={scaleIn} whileHover={{ y: -6 }} className="glass-card p-6 text-center">
                 <div className={`h-14 w-14 rounded-2xl bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center mx-auto mb-3 ${s.color}`}>
                   <s.icon className="h-7 w-7" />
                 </div>
                 <p className={`font-display text-3xl sm:text-4xl font-bold ${s.color}`}><Counter value={s.value} suffix={s.suffix} /></p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{s.label}</p>
-                <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-semibold">
-                  <TrendingUp className="h-3 w-3" /> {s.trend}
-                </div>
               </motion.div>
             ))}
           </div>
@@ -493,7 +556,7 @@ export function FoodQualityPage() {
           <p className="section-subtitle">Each verified donation is backed by a FoodBridge quality certificate.</p>
         </motion.div>
 
-        {/* Premium glass card with hover effects */}
+        {certificateInfo ? (
         <motion.div
           variants={scaleIn}
           initial="hidden"
@@ -502,34 +565,35 @@ export function FoodQualityPage() {
           whileHover={{ y: -6 }}
           className="glass-card p-6 sm:p-8 relative group transition-all duration-500 hover:shadow-2xl hover:shadow-primary-500/10"
         >
-          {/* Glowing border on hover */}
           <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-r from-primary-500/20 via-gold-500/20 to-accent-500/20 blur-md -z-10" />
-
-          {/* Certificate preview */}
           <div className="overflow-x-auto pb-4">
             <CertificateDocument scale={0.85} />
           </div>
-
-          {/* Certificate details */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-sm mt-6 mb-6">
             <div><Calendar className="h-5 w-5 text-primary-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Inspection Date</p><p className="font-medium text-xs">{certificateInfo.inspectionDate}</p></div>
             <div><Hash className="h-5 w-5 text-accent-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Certificate ID</p><p className="font-medium text-xs">{certificateInfo.id}</p></div>
             <div><ShieldCheck className="h-5 w-5 text-primary-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Unique ID</p><p className="font-medium text-xs">{certificateInfo.uniqueId}</p></div>
             <div><Award className="h-5 w-5 text-accent-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Quality Grade</p><p className="font-medium text-xs text-primary-600">{certificateInfo.grade}</p></div>
           </div>
-
-          {/* Action buttons */}
           <div className="flex flex-wrap justify-center gap-3">
             <RippleButton onClick={() => setCertModal(true)} variant="primary"><Eye className="h-4 w-4" /> View Certificate</RippleButton>
             <RippleButton variant="secondary"><Download className="h-4 w-4" /> Download PDF</RippleButton>
             <Link to={`/services/verify-certificate/${certificateInfo.id}`}><RippleButton variant="ghost"><ScanLine className="h-4 w-4" /> Verify QR</RippleButton></Link>
           </div>
         </motion.div>
+        ) : (
+        <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="glass-card p-12 text-center">
+          <Award className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+          <h3 className="font-display text-xl font-bold mb-2">No Certificates Yet</h3>
+          <p className="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto">Certificates are generated automatically after a successful delivery. Complete a delivery to see your first quality certificate here.</p>
+          <Link to="/register" className="inline-block mt-6"><RippleButton variant="primary">Get Started</RippleButton></Link>
+        </motion.div>
+        )}
       </section>
 
       {/* CERTIFICATE MODAL */}
       <AnimatePresence>
-        {certModal && (
+        {certModal && certificateInfo && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -545,7 +609,6 @@ export function FoodQualityPage() {
               onClick={(e) => e.stopPropagation()}
               className="glass-card p-6 w-full max-w-7xl my-8"
             >
-              {/* Modal header */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <Award className="h-6 w-6 text-primary-600" />
@@ -555,8 +618,6 @@ export function FoodQualityPage() {
                   <X className="h-6 w-6" />
                 </button>
               </div>
-
-              {/* Modal toolbar */}
               <div className="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
                 <RippleButton onClick={() => setCertScale((s) => Math.min(2, s + 0.15))} variant="ghost" className="text-sm px-3 py-2"><ZoomIn className="h-4 w-4" /> Zoom In</RippleButton>
                 <RippleButton onClick={() => setCertScale((s) => Math.max(0.5, s - 0.15))} variant="ghost" className="text-sm px-3 py-2"><ZoomOut className="h-4 w-4" /> Zoom Out</RippleButton>
@@ -565,14 +626,10 @@ export function FoodQualityPage() {
                 <RippleButton variant="ghost" className="text-sm px-3 py-2"><Download className="h-4 w-4" /> Download PDF</RippleButton>
                 <Link to={`/services/verify-certificate/${certificateInfo.id}`}><RippleButton variant="ghost" className="text-sm px-3 py-2"><ShieldCheck className="h-4 w-4" /> Verify Certificate</RippleButton></Link>
               </div>
-
               <div className="grid lg:grid-cols-3 gap-6">
-                {/* Certificate display */}
                 <div className="lg:col-span-2 overflow-auto max-h-[70vh] rounded-2xl bg-gray-50 dark:bg-gray-900/50 p-4 flex justify-center">
                   <CertificateDocument scale={certScale} />
                 </div>
-
-                {/* Certificate details sidebar */}
                 <div className="space-y-4">
                   <div className="glass-card p-5">
                     <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Hash className="h-4 w-4 text-primary-500" /> Certificate ID</h4>

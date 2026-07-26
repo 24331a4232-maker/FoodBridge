@@ -17,6 +17,7 @@ import { createCertificateRecord } from '@/lib/certificate';
 import { FoodQualityBadge } from '@/components/FoodQualityBadge';
 import { DonationImage } from '@/components/Illustration';
 import { DonationStatusTracker } from '@/components/DonationStatusTracker';
+import { donorAchievements, volunteerAchievements, getEarnedAchievements } from '@/lib/achievements';
 
 interface LeaderboardEntry {
   name: string;
@@ -25,15 +26,6 @@ interface LeaderboardEntry {
   avatar: string;
   isMe?: boolean;
 }
-
-const achievements = [
-  { icon: Flame, title: 'First Delivery', desc: 'Complete your first pickup', color: 'from-accent-500 to-red-500' },
-  { icon: Medal, title: '10 Deliveries', desc: 'Reach 10 successful deliveries', color: 'from-primary-500 to-primary-600' },
-  { icon: Star, title: '50 Deliveries', desc: 'Reach 50 successful deliveries', color: 'from-yellow-500 to-gold-500' },
-  { icon: Trophy, title: 'Top Volunteer', desc: 'Reach top 3 on leaderboard', color: 'from-accent-500 to-accent-600' },
-];
-
-const badges = ['First Step', 'Hunger Hero', 'Green Guardian', 'Community Star', 'Fast Mover'];
 
 import { PageNav } from '@/components/PageNav';
 export function VolunteerDashboardPage() {
@@ -66,18 +58,7 @@ export function VolunteerDashboardPage() {
         avatar: p.full_name[0]?.toUpperCase() ?? 'U',
         isMe: p.full_name === profile?.full_name,
       }));
-    if (entries.length < 5) {
-      const fallback = [
-        { name: 'Ananya K.', points: 2840, deliveries: 96, avatar: 'A' },
-        { name: 'Rahul V.', points: 2310, deliveries: 78, avatar: 'R' },
-        { name: 'Fatima K.', points: 1980, deliveries: 65, avatar: 'F' },
-        { name: 'Vikram S.', points: 1640, deliveries: 52, avatar: 'V' },
-        { name: 'Sneha P.', points: 1320, deliveries: 41, avatar: 'S' },
-      ];
-      setLeaderboard(fallback.slice(0, 5 - entries.length).concat(entries).slice(0, 5));
-    } else {
-      setLeaderboard(entries.slice(0, 5));
-    }
+    setLeaderboard(entries.slice(0, 5));
   };
 
   useEffect(() => {
@@ -109,7 +90,14 @@ export function VolunteerDashboardPage() {
     if (error) {
       toast('Could not accept this pickup', 'error');
     } else {
-      await supabase.from('food_donations').update({ status: 'claimed' }).eq('id', donation.id);
+      await supabase.from('food_donations').update({ status: 'claimed', assigned_volunteer_id: user.id }).eq('id', donation.id);
+      await supabase.from('donation_events').insert({
+        donation_id: donation.id,
+        event_type: 'volunteer_assigned',
+        actor_name: profile?.full_name ?? 'Volunteer',
+        actor_role: 'volunteer',
+        notes: `Assigned to ${donation.food_name}`,
+      });
       pushToast('Volunteer Assigned Successfully', 'success');
       pushNotification({
         type: 'volunteer_assigned',
@@ -126,7 +114,14 @@ export function VolunteerDashboardPage() {
   const markDelivered = async (pickup: Pickup) => {
     const { error } = await supabase.from('pickups').update({ status: 'delivered', delivered_at: new Date().toISOString() }).eq('id', pickup.id);
     if (error) { toast('Could not update status', 'error'); return; }
-    await supabase.from('food_donations').update({ status: 'delivered' }).eq('id', pickup.donation_id);
+    await supabase.from('food_donations').update({ status: 'delivered', delivery_time: new Date().toISOString() }).eq('id', pickup.donation_id);
+    await supabase.from('donation_events').insert({
+      donation_id: pickup.donation_id,
+      event_type: 'delivered',
+      actor_name: profile?.full_name ?? 'Volunteer',
+      actor_role: 'volunteer',
+      notes: `Delivered ${pickup.donation?.food_name ?? 'donation'}`,
+    });
     const newDeliveries = (profile?.total_deliveries ?? 0) + 1;
     const newHours = (profile?.total_hours ?? 0) + 0.5;
     if (profile) {
@@ -158,6 +153,13 @@ export function VolunteerDashboardPage() {
       if (cert) {
         toast('A new certificate has been generated for this delivery!', 'success');
         pushToast('Certificate Generated Successfully', 'success');
+        await supabase.from('donation_events').insert({
+          donation_id: pickup.donation_id,
+          event_type: 'certificate_generated',
+          actor_name: profile?.full_name ?? 'Volunteer',
+          actor_role: 'volunteer',
+          notes: `Certificate ${cert.certificate_number} generated`,
+        });
         pushNotification({
           type: 'certificate_generated',
           title: 'New Certificate Generated',
@@ -393,15 +395,21 @@ export function VolunteerDashboardPage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card p-6">
               <h3 className="font-display font-semibold mb-4 flex items-center gap-2"><Award className="h-5 w-5 text-accent-500" /> Achievements</h3>
               <div className="grid grid-cols-2 gap-3">
-                {achievements.map((a) => (
-                  <div key={a.title} className="text-center p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                    <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${a.color} text-white flex items-center justify-center mx-auto mb-2`}>
-                      <a.icon className="h-5 w-5" />
+                {volunteerAchievements.slice(0, 4).map((a) => {
+                  const earnedAchievements = getEarnedAchievements('volunteer', { deliveries: deliveries, meals: 0, donations: 0 });
+                  const earned = earnedAchievements.some((e) => e.id === a.id);
+                  const cardCls = earned ? "text-center p-3 rounded-2xl bg-primary-50 dark:bg-primary-900/20" : "text-center p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/50 opacity-60";
+                  const iconCls = earned ? "h-10 w-10 rounded-xl bg-gradient-to-br from-accent-500 to-primary-500 text-white flex items-center justify-center mx-auto mb-2" : "h-10 w-10 rounded-xl bg-gray-200 dark:bg-gray-700 text-white flex items-center justify-center mx-auto mb-2";
+                  return (
+                    <div key={a.id} className={cardCls}>
+                      <div className={iconCls}>
+                        <Award className="h-5 w-5" />
+                      </div>
+                      <p className="text-xs font-semibold">{a.title}</p>
+                      <p className="text-[10px] text-gray-400">{a.description}</p>
                     </div>
-                    <p className="text-xs font-semibold">{a.title}</p>
-                    <p className="text-[10px] text-gray-400">{a.desc}</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </motion.div>
 
@@ -409,11 +417,9 @@ export function VolunteerDashboardPage() {
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card p-6">
               <h3 className="font-display font-semibold mb-4 flex items-center gap-2"><Medal className="h-5 w-5 text-primary-500" /> Badges</h3>
               <div className="flex flex-wrap gap-2">
-                {badges.map((b, i) => (
-                  <span key={b} className={`badge ${i < Math.min(deliveries, badges.length) ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`}>
-                    {b}
-                  </span>
-                ))}
+                {profile?.badges?.length ? profile.badges.map((b) => (
+                  <span key={b} className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">{b}</span>
+                )) : <span className="text-sm text-gray-400">No badges earned yet. Complete deliveries to earn badges!</span>}
               </div>
             </motion.div>
 

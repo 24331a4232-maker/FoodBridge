@@ -1,19 +1,82 @@
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Building2, Package, Clock, CheckCircle2, TrendingUp, MapPin, Award } from 'lucide-react';
+import { Building2, Package, Clock, CheckCircle2, TrendingUp, MapPin, Award, Loader2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { PageNav } from '@/components/PageNav';
 import { AnimatedCounter } from '@/lib/animations';
+import type { FoodDonation } from '@/types';
+
+interface DashboardStats {
+  totalReceived: number;
+  pendingDeliveries: number;
+  familiesServed: number;
+  mealsDistributed: number;
+}
+
+interface IncomingDelivery {
+  id: string;
+  food_name: string;
+  status: string;
+}
 
 export function NgoDashboardPage() {
   const { profile } = useAuth();
+  const [stats, setStats] = useState<DashboardStats>({ totalReceived: 0, pendingDeliveries: 0, familiesServed: 0, mealsDistributed: 0 });
+  const [incoming, setIncoming] = useState<IncomingDelivery[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const stats = [
-    { label: 'Total Received', value: 156, icon: Package, color: 'from-teal-500 to-green-500' },
-    { label: 'Pending Deliveries', value: 4, icon: Clock, color: 'from-amber-500 to-orange-500' },
-    { label: 'Families Served', value: 312, icon: CheckCircle2, color: 'from-green-500 to-emerald-500' },
-    { label: 'Meals Distributed', value: 4180, icon: TrendingUp, color: 'from-blue-500 to-cyan-500' },
+  const load = useCallback(async () => {
+    // NGOs receive deliveries — query pickups where recipient_org matches the NGO's organization or name
+    const orgName = profile?.organization || profile?.full_name || '';
+    if (!orgName) { setLoading(false); return; }
+
+    const { data, error } = await supabase
+      .from('pickups')
+      .select('id, status, recipient_org, donation:food_donations(food_name, estimated_meals)')
+      .or(`recipient_org.eq.${orgName},recipient_org.eq.${profile?.full_name}`)
+      .order('created_at', { ascending: false });
+
+    if (error || !data) { setLoading(false); return; }
+
+    const pickups = data as Array<{ id: string; status: string; recipient_org: string; donation: { food_name: string; estimated_meals: number } | null }>;
+    const pending = pickups.filter((p) => p.status === 'accepted' || p.status === 'in_progress').length;
+    const completed = pickups.filter((p) => p.status === 'delivered').length;
+    const meals = pickups.reduce((s, p) => s + (p.donation?.estimated_meals ?? 0), 0);
+
+    setStats({
+      totalReceived: completed,
+      pendingDeliveries: pending,
+      familiesServed: Math.round(meals / 4),
+      mealsDistributed: meals,
+    });
+    setIncoming(pickups.slice(0, 5).map((p) => ({ id: p.id, food_name: p.donation?.food_name ?? 'Unknown', status: p.status })));
+    setLoading(false);
+  }, [profile?.organization, profile?.full_name]);
+
+  useEffect(() => {
+    load();
+    const ch = supabase.channel('ngo-dash').on('postgres_changes', { event: '*', schema: 'public', table: 'pickups' }, load).subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [load]);
+
+  const statsArr = [
+    { label: 'Total Received', value: stats.totalReceived, icon: Package, color: 'from-teal-500 to-green-500' },
+    { label: 'Pending Deliveries', value: stats.pendingDeliveries, icon: Clock, color: 'from-amber-500 to-orange-500' },
+    { label: 'Families Served', value: stats.familiesServed, icon: CheckCircle2, color: 'from-green-500 to-emerald-500' },
+    { label: 'Meals Distributed', value: stats.mealsDistributed, icon: TrendingUp, color: 'from-blue-500 to-cyan-500' },
   ];
+
+  const statusBadge = (status: string) => {
+    const map: Record<string, string> = {
+      accepted: 'bg-blue-100 text-blue-700',
+      in_progress: 'bg-amber-100 text-amber-700',
+      delivered: 'bg-green-100 text-green-700',
+    };
+    const label: Record<string, string> = { accepted: 'In Transit', in_progress: 'On the Way', delivered: 'Received' };
+    return { cls: map[status] ?? 'bg-gray-100 text-gray-700', text: label[status] ?? status };
+  };
 
   return (
     <div className="pt-20 min-h-screen gradient-bg">
@@ -25,12 +88,12 @@ export function NgoDashboardPage() {
         </motion.div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {stats.map((s, i) => (
+          {statsArr.map((s, i) => (
             <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass-card p-5">
               <div className={`h-11 w-11 rounded-xl bg-gradient-to-br ${s.color} text-white flex items-center justify-center shadow-lg mb-3`}>
                 <s.icon className="h-5 w-5" />
               </div>
-              <p className="font-display text-2xl font-bold"><AnimatedCounter value={s.value} /></p>
+              <p className="font-display text-2xl font-bold">{loading ? <Loader2 className="h-5 w-5 animate-spin text-gray-400" /> : <AnimatedCounter value={s.value} />}</p>
               <p className="text-xs text-gray-500 mt-0.5">{s.label}</p>
             </motion.div>
           ))}
@@ -58,14 +121,21 @@ export function NgoDashboardPage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-6">
             <h2 className="font-display text-lg font-bold mb-4">Incoming Deliveries</h2>
             <div className="space-y-2">
-              {['Veg Biryani (50 portions)', 'Roti Bundle (200 pcs)', 'Fresh Fruits (15 kg)'].map((item, i) => (
-                <div key={i} className="flex items-center justify-between p-3 rounded-xl glass">
-                  <span className="text-sm font-medium">{item}</span>
-                  <span className={`text-[10px] px-2 py-1 rounded-full font-medium ${i === 0 ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
-                    {i === 0 ? 'In Transit' : 'Received'}
-                  </span>
-                </div>
-              ))}
+              {loading ? (
+                <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
+              ) : incoming.length === 0 ? (
+                <p className="text-center text-gray-400 text-sm py-6">No incoming deliveries yet. Browse available food to get started!</p>
+              ) : (
+                incoming.map((item) => {
+                  const badge = statusBadge(item.status);
+                  return (
+                    <div key={item.id} className="flex items-center justify-between p-3 rounded-xl glass">
+                      <span className="text-sm font-medium truncate">{item.food_name}</span>
+                      <span className={`text-[10px] px-2 py-1 rounded-full font-medium shrink-0 ml-2 ${badge.cls}`}>{badge.text}</span>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </motion.div>
         </div>

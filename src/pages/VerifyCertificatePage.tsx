@@ -26,8 +26,23 @@ export function VerifyCertificatePage() {
       .eq('certificate_number', num.trim())
       .maybeSingle();
     if (data && (data as Certificate).is_valid) {
-      setCert(data as Certificate);
+      const certData = data as Certificate;
+      setCert(certData);
       setResult('valid');
+      // Mark the QR verification record as verified
+      await supabase
+        .from('qr_verifications')
+        .update({ is_verified: true, verified_at: new Date().toISOString() })
+        .eq('certificate_id', certData.id)
+        .eq('is_verified', false);
+      // Log a qr_verified event
+      await supabase.from('donation_events').insert({
+        donation_id: null,
+        event_type: 'qr_verified',
+        actor_name: certData.volunteer_name ?? 'Verifier',
+        actor_role: 'system',
+        notes: `Certificate ${certData.certificate_number} verified`,
+      });
     } else {
       setCert(null);
       setResult('invalid');
