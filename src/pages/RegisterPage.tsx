@@ -3,7 +3,7 @@ import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Mail, Lock, User, Building2, Eye, EyeOff, UserPlus, ArrowRight,
-  Hotel, HeartHandshake, ShieldCheck, Phone, AtSign, Check, X, Truck, MapPin,
+  Hotel, HeartHandshake, Phone, AtSign, Check, X, Truck, MapPin,
 } from 'lucide-react';
 import { useAuth, roleDashboardPath } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
@@ -17,7 +17,6 @@ const roles: { value: UserRole; label: string; icon: typeof Hotel; desc: string 
   { value: 'donor', label: 'Donor', icon: HeartHandshake, desc: 'I want to donate food as an individual' },
   { value: 'volunteer', label: 'Volunteer', icon: Truck, desc: 'I want to pick up and deliver food' },
   { value: 'ngo', label: 'NGO / Shelter', icon: Building2, desc: 'I receive food for people in need' },
-  { value: 'admin', label: 'Admin', icon: ShieldCheck, desc: 'I manage the platform' },
 ];
 
 const passwordRules = [

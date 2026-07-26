@@ -192,6 +192,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const username = params.username.trim();
       const phone = params.phone.trim();
 
+      if (params.role === 'admin') {
+        return { error: 'Admin accounts cannot be created through registration.' };
+      }
+
       // Pre-check for duplicates
       const fieldErrors: NonNullable<SignUpResult['fieldErrors']> = {};
       const [usernameCheck, emailCheck, phoneCheck] = await Promise.all([
