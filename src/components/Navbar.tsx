@@ -29,11 +29,11 @@ const primaryLinks: MenuLink[] = [
 
 const servicesLinks: MenuLink[] = [
   { name: 'Donate Food', path: '/services/donate-food', icon: Package, description: 'List surplus food for pickup' },
-  { name: 'Available Donations', path: '/services/available-food', icon: Search, description: 'Browse and claim nearby food' },
   { name: 'Food Quality Verification', path: '/services/food-quality', icon: ShieldCheck, description: 'Check food safety standards' },
-  { name: 'Donation Tracking', path: '/services/tracking', icon: Truck, description: 'Track deliveries in real time' },
+  { name: 'Volunteer Assignment', path: '/services/available-food', icon: Search, description: 'Claim nearby food pickups' },
+  { name: 'Live Donation Tracking', path: '/services/tracking', icon: Truck, description: 'Track deliveries in real time' },
+  { name: 'Certificate Generation', path: '/services/certificates', icon: Award, description: 'View and download certificates' },
   { name: 'QR Verification', path: '/services/verify-certificate', icon: QrCode, description: 'Verify a certificate by QR or ID' },
-  { name: 'Certificates', path: '/services/certificates', icon: Award, description: 'View and download certificates' },
 ];
 
 const dashboardLinks: MenuLink[] = [

@@ -8,6 +8,9 @@ import {
   Truck,
   Award,
   ClipboardList,
+  QrCode,
+  LayoutDashboard,
+  Building2,
   ArrowRight,
   ArrowDown,
   Leaf,
@@ -37,6 +40,57 @@ const sdgPreview = [
   { num: '2', title: 'Zero Hunger', color: 'from-gold-500 to-yellow-500' },
   { num: '12', title: 'Responsible Consumption', color: 'from-yellow-500 to-gold-600' },
   { num: '17', title: 'Partnerships', color: 'from-secondary-500 to-primary-500' },
+];
+
+const featurePreviews = [
+  {
+    title: 'Food Quality Verification',
+    desc: 'Temperature, hygiene, packaging, and freshness checks against a real safety checklist.',
+    icon: ShieldCheck,
+    color: 'from-secondary-500 to-primary-600',
+    path: '/services/food-quality',
+    cta: 'Open',
+  },
+  {
+    title: 'Live Donation Tracking',
+    desc: 'Track every delivery in real time from pickup to destination — fresh and on time.',
+    icon: Truck,
+    color: 'from-gold-400 to-gold-600',
+    path: '/services/tracking',
+    cta: 'Open',
+  },
+  {
+    title: 'Digital Certificates',
+    desc: 'Earn reward points and an official certificate for every completed delivery.',
+    icon: Award,
+    color: 'from-accent-400 to-gold-500',
+    path: '/services/certificates',
+    cta: 'Open',
+  },
+  {
+    title: 'QR Certificate Verification',
+    desc: 'Verify any certificate instantly by scanning its QR code or entering the certificate ID.',
+    icon: QrCode,
+    color: 'from-primary-600 to-secondary-600',
+    path: '/services/verify-certificate',
+    cta: 'Open',
+  },
+  {
+    title: 'Volunteer Dashboard',
+    desc: 'Manage your deliveries, track your impact, earn certificates, and climb the leaderboard.',
+    icon: LayoutDashboard,
+    color: 'from-primary-500 to-primary-700',
+    path: '/dashboard/volunteer',
+    cta: 'Open',
+  },
+  {
+    title: 'Admin Dashboard',
+    desc: 'Oversee platform operations — users, donations, analytics, and reports.',
+    icon: Building2,
+    color: 'from-accent-500 to-accent-700',
+    path: '/dashboard/admin',
+    cta: 'Open',
+  },
 ];
 
 export function HomePage() {
@@ -235,6 +289,47 @@ export function HomePage() {
 
       {/* FoodBridge Impact Analytics — premium dashboard */}
       <ImpactAnalyticsDashboard />
+
+      {/* Core feature preview cards */}
+      <section className="section bg-cream dark:bg-secondary-950">
+        <SectionHeading
+          badge="Platform Features"
+          title="Everything FoodBridge can do"
+          subtitle="Six connected tools that power the journey from surplus to served. Open any one to dive in."
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-16 max-w-6xl mx-auto">
+          {featurePreviews.map((f, i) => {
+            const Icon = f.icon;
+            return (
+              <motion.div
+                key={f.title}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: i * 0.08 }}
+                whileHover={{ y: -8 }}
+                className="card p-7 group relative overflow-hidden"
+              >
+                <div className={`h-14 w-14 rounded-2xl-premium bg-gradient-to-br ${f.color} text-white flex items-center justify-center mb-5 shadow-lg group-hover:shadow-premium transition-shadow`}>
+                  <Icon className="h-7 w-7" strokeWidth={1.75} />
+                </div>
+                <h3 className="font-display text-lg font-semibold text-ink dark:text-cream mb-2">{f.title}</h3>
+                <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed mb-5">{f.desc}</p>
+                <div className="flex items-center gap-3">
+                  <Link to={f.path} className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 group-hover:gap-2 transition-all">
+                    {f.cta} <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+        <div className="text-center mt-10">
+          <Link to="/services" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
+            View the full workflow <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
 
       {/* Featured Success Stories */}
       <section className="section bg-mist dark:bg-secondary-900">
