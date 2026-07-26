@@ -105,6 +105,7 @@ export function Navbar() {
   const { theme, toggleTheme } = useTheme();
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
+  const isDonorRole = profile?.role === 'donor' || profile?.role === 'restaurant' || profile?.role === 'ngo';
   const location = useLocation();
   const navigate = useNavigate();
   const { scrollY } = useScroll();
@@ -312,18 +313,22 @@ export function Navbar() {
               </Link>
               {/* Services dropdown */}
               {renderDropdown('services', 'Services', Package, servicesLinks)}
-              {/* Impact */}
-              <Link to="/analytics" className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${location.pathname === '/analytics' ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'}`}>
-                <BarChart3 className="h-4 w-4 opacity-70 xl:hidden" />
-                Impact
-                {location.pathname === '/analytics' && <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />}
-              </Link>
-              {/* Community */}
-              <Link to="/community" className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${location.pathname === '/community' ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'}`}>
-                <Users className="h-4 w-4 opacity-70 xl:hidden" />
-                Community
-                {location.pathname === '/community' && <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />}
-              </Link>
+              {/* Impact — hidden for donor roles */}
+              {!isDonorRole && (
+                <Link to="/analytics" className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${location.pathname === '/analytics' ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'}`}>
+                  <BarChart3 className="h-4 w-4 opacity-70 xl:hidden" />
+                  Impact
+                  {location.pathname === '/analytics' && <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />}
+                </Link>
+              )}
+              {/* Community — hidden for donor roles */}
+              {!isDonorRole && (
+                <Link to="/community" className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${location.pathname === '/community' ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'}`}>
+                  <Users className="h-4 w-4 opacity-70 xl:hidden" />
+                  Community
+                  {location.pathname === '/community' && <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />}
+                </Link>
+              )}
               {/* Contact */}
               <Link to="/resources/contact" className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${location.pathname === '/resources/contact' ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'}`}>
                 <Phone className="h-4 w-4 opacity-70 xl:hidden" />
@@ -345,8 +350,8 @@ export function Navbar() {
                   <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />
                 )}
               </button>
-              {/* Resources dropdown */}
-              {renderDropdown('resources', 'Resources', HelpCircle, resourcesLinks)}
+              {/* Resources dropdown — hidden for donor roles */}
+              {!isDonorRole && renderDropdown('resources', 'Resources', HelpCircle, resourcesLinks)}
             </div>
 
             {/* Right side — search, theme, bell, avatar, hamburger */}
@@ -563,7 +568,7 @@ export function Navbar() {
 
                 {/* Scrollable sections */}
                 <div className="flex-1 overflow-y-auto px-4 py-4 space-y-6 no-scrollbar">
-                  {drawerSections.map((section) => {
+                  {drawerSections.filter((s) => !(isDonorRole && s.id === 'resources')).map((section) => {
                     const SectionIcon = section.icon;
                     const accent = accentClasses[section.accent];
                     return (
