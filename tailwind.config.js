@@ -76,6 +76,7 @@ export default {
       },
       spacing: {
         '18': '4.5rem',
+        '5.5': '1.375rem',
       },
       maxWidth: {
         '8xl': '88rem',
