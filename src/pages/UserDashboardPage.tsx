@@ -1,5 +1,5 @@
 import {
-  Plus, MapPin, Award, ShieldCheck, Bell, User as UserIcon,
+  Plus, MapPin, Award, ShieldCheck, Bell, User as UserIcon, QrCode,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import {
@@ -7,6 +7,7 @@ import {
   UserTrackDonationSection,
   UserCertificatesSection,
   UserQrVerificationSection,
+  UserMyQrSection,
   UserNotificationsSection,
   UserProfileSection,
 } from '@/components/dashboard/sections/UserSections';
@@ -20,6 +21,7 @@ export function UserDashboardPage() {
     { key: 'donate', label: 'Donate Food', icon: Plus, content: <UserDonateFoodSection /> },
     { key: 'track', label: 'Track Donation', icon: MapPin, content: <UserTrackDonationSection /> },
     { key: 'certificates', label: 'My Certificates', icon: Award, content: <UserCertificatesSection /> },
+    { key: 'my-qr', label: 'My QR Code', icon: QrCode, content: <UserMyQrSection /> },
     { key: 'qr', label: 'QR Verification', icon: ShieldCheck, content: <UserQrVerificationSection /> },
     { key: 'notifications', label: 'Notifications', icon: Bell, content: <UserNotificationsSection /> },
     { key: 'profile', label: 'Profile', icon: UserIcon, content: <UserProfileSection /> },

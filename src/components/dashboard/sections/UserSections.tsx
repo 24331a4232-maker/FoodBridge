@@ -4,8 +4,10 @@ import { motion } from 'framer-motion';
 import {
   Package, Clock, CheckCircle2, TrendingUp, Plus, MapPin, Award,
   Loader2, Search, ShieldCheck, CheckCircle, XCircle, Bell, User as UserIcon,
-  Mail, Phone, MapPin, Calendar, Building2, Edit3,
+  Mail, Phone, MapPin, Calendar, Building2, Edit3, QrCode, Download, ExternalLink,
 } from 'lucide-react';
+import QRCode from 'qrcode';
+import { useToast } from '@/context/ToastContext';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/context/NotificationContext';
@@ -214,6 +216,101 @@ export function UserCertificatesSection() {
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+/* ---------- My QR Code ---------- */
+export function UserMyQrSection() {
+  const { profile } = useAuth();
+  const { showToast } = useToast();
+  const [qrUrl, setQrUrl] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const donorUrl = profile?.username ? `${window.location.origin}/donor/${profile.username}` : '';
+
+  useEffect(() => {
+    if (!donorUrl) return;
+    QRCode.toDataURL(donorUrl, {
+      width: 320,
+      margin: 2,
+      color: { dark: '#1B4332', light: '#ffffff' },
+      errorCorrectionLevel: 'H',
+    })
+      .then(setQrUrl)
+      .catch(() => setQrUrl(''));
+  }, [donorUrl]);
+
+  const downloadQr = () => {
+    if (!qrUrl || !profile) return;
+    const a = document.createElement('a');
+    a.href = qrUrl;
+    a.download = `FoodBridge-QR-${profile.username}.png`;
+    a.click();
+    showToast('QR code downloaded', 'success');
+  };
+
+  const copyLink = async () => {
+    if (!donorUrl) return;
+    await navigator.clipboard.writeText(donorUrl);
+    setCopied(true);
+    showToast('Link copied', 'success');
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div>
+      <DashboardSectionHeader
+        title="My QR Code"
+        description="Your unique donor code — volunteers scan it to confirm your identity."
+        action={
+          <Link to={`/donor/${profile?.username}`} target="_blank">
+            <RippleButton variant="secondary"><ExternalLink className="h-4 w-4" /> Open page</RippleButton>
+          </Link>
+        }
+      />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div className="glass-card p-6 flex flex-col items-center text-center">
+          <div className="relative">
+            <div className="absolute -inset-2 bg-gradient-to-br from-primary-400/20 to-accent-400/20 rounded-2xl blur-lg" />
+            <div className="relative bg-white p-4 rounded-2xl shadow-lg ring-1 ring-black/5">
+              {qrUrl ? (
+                <img src={qrUrl} alt="Your donor QR code" className="w-44 h-44" />
+              ) : (
+                <div className="w-44 h-44 flex items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                </div>
+              )}
+            </div>
+          </div>
+          <p className="text-xs text-gray-400 mt-4 font-mono break-all">{donorUrl}</p>
+          <div className="flex gap-2 mt-4">
+            <RippleButton onClick={downloadQr} variant="primary" className="text-xs"><Download className="h-3.5 w-3.5" /> Download</RippleButton>
+            <RippleButton onClick={copyLink} variant="ghost" className="text-xs">{copied ? <CheckCircle className="h-3.5 w-3.5 text-green-500" /> : <QrCode className="h-3.5 w-3.5" />} {copied ? 'Copied' : 'Copy link'}</RippleButton>
+          </div>
+        </div>
+        <div className="glass-card p-6">
+          <h3 className="font-display font-bold mb-3 flex items-center gap-2"><QrCode className="h-5 w-5 text-primary-500" /> How it works</h3>
+          <ol className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
+            <li className="flex gap-3">
+              <span className="h-6 w-6 rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center text-xs font-bold shrink-0">1</span>
+              <span>When a volunteer arrives for pickup, show them this QR code on your phone.</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="h-6 w-6 rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center text-xs font-bold shrink-0">2</span>
+              <span>They scan it with their phone camera to open your public donor page.</span>
+            </li>
+            <li className="flex gap-3">
+              <span className="h-6 w-6 rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center text-xs font-bold shrink-0">3</span>
+              <span>Your page confirms your identity, username, and donation stats — no login required on their end.</span>
+            </li>
+          </ol>
+          <div className="mt-4 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-xs text-amber-700 dark:text-amber-300 flex items-start gap-2">
+            <ShieldCheck className="h-4 w-4 shrink-0 mt-0.5" />
+            <span>Keep this code private. Anyone who scans it can view your public donor profile.</span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
