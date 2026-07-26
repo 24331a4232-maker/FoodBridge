@@ -4,7 +4,7 @@ import {
   Target, Eye, Calendar, Lightbulb, UtensilsCrossed, Globe2,
   TrendingDown, Award, ArrowRight, Info,
 } from 'lucide-react';
-import { SectionHeading, AnimatedCounter, fadeInUp, staggerContainer } from '@/lib/animations';
+import { SectionHeading, fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { SectionPageHeader } from '@/components/SectionPageHeader';
 import { SectionTabs } from '@/components/SectionTabs';
@@ -26,13 +26,6 @@ const team = [
 
 const founderQuote =
   '"We started FoodBridge because we could not ignore the contradiction around us - mountains of food being thrown away while people went to bed hungry. Technology gave us the tool, but it is the community that makes it work. Every volunteer, every donor, every recipient is a bridge. Together, we are making sure no plate stays empty."';
-
-const impactStats = [
-  { label: 'Meals Delivered', value: 128450, suffix: '+' },
-  { label: 'CO2 Saved (kg)', value: 154000, suffix: '+' },
-  { label: 'Families Helped', value: 9200, suffix: '+' },
-  { label: 'Volunteer Hours', value: 24500, suffix: '+' },
-];
 
 function MissionVisionTab() {
   return (
@@ -101,19 +94,10 @@ function OurStoryTab() {
         );
       })}
 
-      <div className="mt-12 rounded-3xl bg-gradient-to-br from-primary-600 to-primary-500 text-white p-8 sm:p-10 mx-4">
-        <div className="text-center">
-          <h3 className="font-display text-2xl sm:text-3xl font-bold mb-4">Our Impact So Far</h3>
-          <p className="text-white/80 max-w-xl mx-auto mb-10">Numbers that represent real meals, real people, and real change.</p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {impactStats.map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="font-stat text-3xl sm:text-4xl font-bold"><AnimatedCounter value={s.value} suffix={s.suffix} /></p>
-                <p className="text-sm text-white/80 mt-2">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div className="mt-12 text-center">
+        <Link to="/global-impact" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
+          See our full impact <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import {
   Users, Heart, Quote, Star, MapPin, ArrowRight,
   Building2, Sparkles,
 } from 'lucide-react';
-import { SectionHeading, fadeInUp, staggerContainer } from '@/lib/animations';
+import { SectionHeading } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Illustration } from '@/components/Illustration';
 import { SectionPageHeader } from '@/components/SectionPageHeader';
@@ -23,13 +23,6 @@ const successStories = [
   { name: 'The Grand Hotel, Bangalore', illustration: 'donation' as const, quote: 'We used to throw away 40+ meals after every banquet. FoodBridge now redirects all of it to a nearby shelter the same night. Zero waste, full hearts.', meals: 12400, period: '8 months' },
   { name: 'Sunrise Orphanage, Delhi', illustration: 'community' as const, quote: 'Our children get warm, fresh meals every evening from partner hotels. The quality verification gives us complete peace of mind about what they eat.', meals: 8600, period: '6 months' },
   { name: 'Rahul Verma, Volunteer', illustration: 'volunteers' as const, quote: 'I have completed 45 deliveries. The certificate I earned helped me in my college application. FoodBridge gave me purpose and a community.', meals: 45, period: '6 months' },
-];
-
-const volunteerStories = [
-  { name: 'Rahul Verma', text: 'I started volunteering 6 months ago. The sense of purpose when you deliver food to someone hungry is unmatched. FoodBridge made it so easy to contribute.', hours: 120, deliveries: 45 },
-  { name: 'Fatima Khan', text: 'As a college student, I wanted to give back but did not know how. FoodBridge fit perfectly into my schedule. I have completed 60+ deliveries now.', hours: 95, deliveries: 60 },
-  { name: 'Vikram Singh', text: 'The app makes everything seamless — from finding nearby donations to tracking the route. I earned a certificate that I added to my resume.', hours: 80, deliveries: 52 },
-  { name: 'Sneha Patel', text: 'What I love most is the community. I have met people from all walks of life who share the same mission. We are making a real difference.', hours: 65, deliveries: 41 },
 ];
 
 const partnerOrgs = [
@@ -94,31 +87,6 @@ function SuccessStoriesTab() {
   );
 }
 
-function VolunteerStoriesTab() {
-  return (
-    <div>
-      <SectionHeading badge="Volunteer Stories" title="Voices from the field" subtitle="Why our volunteers keep coming back." />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-14">
-        {volunteerStories.map((v, i) => (
-          <motion.div key={v.name} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12 }} className="card p-6">
-            <p className="text-ink-soft dark:text-cream/70 leading-relaxed mb-4">"{v.text}"</p>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-ink dark:text-cream">{v.name}</p>
-                <p className="text-xs text-ink-soft dark:text-cream/50">Volunteer</p>
-              </div>
-              <div className="flex gap-4 text-right">
-                <div><p className="font-stat font-bold text-primary-600">{v.hours}h</p><p className="text-xs text-ink-soft dark:text-cream/50">Hours</p></div>
-                <div><p className="font-stat font-bold text-accent-500">{v.deliveries}</p><p className="text-xs text-ink-soft dark:text-cream/50">Deliveries</p></div>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function PartnersTab() {
   return (
     <div>
@@ -145,28 +113,6 @@ function PartnersTab() {
           );
         })}
       </div>
-    </div>
-  );
-}
-
-function TestimonialsTab() {
-  return (
-    <div>
-      <SectionHeading badge="Testimonials" title="Trusted by the community" subtitle="Words from the people who make FoodBridge possible." />
-      <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-3xl mx-auto mt-14 space-y-6">
-        {testimonials.slice(0, 3).map((t) => (
-          <motion.figure key={t.name} variants={fadeInUp} className="card p-8 flex flex-col sm:flex-row gap-6">
-            <div className="h-16 w-16 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center font-display text-2xl font-bold shrink-0">{t.name[0]}</div>
-            <div className="flex-1">
-              <div className="flex items-center gap-1 mb-3">
-                {[...Array(5)].map((_, j) => <Star key={j} className="h-4 w-4 text-gold-500 fill-gold-500" />)}
-              </div>
-              <blockquote className="text-lg text-ink-soft dark:text-cream/70 leading-relaxed">"{t.text}"</blockquote>
-              <figcaption className="mt-4"><p className="font-semibold text-ink dark:text-cream">{t.name}</p><p className="text-sm text-ink-soft dark:text-cream/50">{t.role}</p></figcaption>
-            </div>
-          </motion.figure>
-        ))}
-      </motion.div>
       <div className="text-center mt-12">
         <Link to="/register"><RippleButton variant="primary">Join the community <ArrowRight className="h-4 w-4" /></RippleButton></Link>
       </div>
@@ -181,7 +127,7 @@ export function CommunitySectionPage() {
         crumbs={[{ label: 'Community', icon: Users }]}
         eyebrow="Community"
         title="The people who make it real"
-        subtitle="Reviews, stories, and testimonials from the FoodBridge community — donors, volunteers, shelters, and partners."
+        subtitle="Reviews, stories, and partners from the FoodBridge community — donors, volunteers, shelters, and organizations."
         icon={Users}
       />
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16">
@@ -189,9 +135,7 @@ export function CommunitySectionPage() {
           tabs={[
             { id: 'reviews', label: 'Reviews', icon: Star, content: <ReviewsTab /> },
             { id: 'success-stories', label: 'Success Stories', icon: Sparkles, content: <SuccessStoriesTab /> },
-            { id: 'volunteer-stories', label: 'Volunteer Stories', icon: Heart, content: <VolunteerStoriesTab /> },
             { id: 'partners', label: 'Partner Organizations', icon: Building2, content: <PartnersTab /> },
-            { id: 'testimonials', label: 'Testimonials', icon: Quote, content: <TestimonialsTab /> },
           ]}
         />
       </section>

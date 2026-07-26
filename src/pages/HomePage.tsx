@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   Package, ShieldCheck, Truck, Award,
-  ArrowRight, Leaf, Sparkles,
+  ArrowRight, Leaf, Sparkles, Globe2, Users, Heart, Recycle,
   type LucideIcon,
 } from 'lucide-react';
 import { SectionHeading } from '@/lib/animations';
@@ -37,6 +37,19 @@ const reviews = [
   { name: 'The Grand Hotel, Bangalore', text: 'We used to throw away 40+ meals after every banquet. FoodBridge now redirects all of it to a nearby shelter the same night.', meals: 12400, period: '8 months' },
   { name: 'Sunrise Orphanage, Delhi', text: 'Our children get warm, fresh meals every evening from partner hotels. The quality verification gives us complete peace of mind.', meals: 8600, period: '6 months' },
   { name: 'Rahul Verma, Volunteer', text: 'I have completed 45 deliveries. The certificate I earned helped me in my college application. FoodBridge gave me purpose.', meals: 45, period: '6 months' },
+];
+
+const globalImpact = [
+  { value: '128K+', label: 'Meals Delivered', icon: Heart },
+  { value: '1,560+', label: 'Active Volunteers', icon: Users },
+  { value: '340+', label: 'Partner Hotels', icon: Globe2 },
+  { value: '154K kg', label: 'CO2 Saved', icon: Recycle },
+];
+
+const sdgs = [
+  { num: '2', title: 'Zero Hunger' },
+  { num: '12', title: 'Responsible Consumption' },
+  { num: '13', title: 'Climate Action' },
 ];
 
 export function HomePage() {
@@ -196,8 +209,51 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Reviews Preview */}
+      {/* Global Impact Preview */}
       <section className="section bg-mist dark:bg-secondary-900">
+        <SectionHeading
+          badge="Global Impact"
+          title="A movement measured in meals"
+          subtitle="FoodBridge contributes to the UN Sustainable Development Goals by reducing food waste and feeding those who need it most."
+        />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-14 max-w-5xl mx-auto">
+          {globalImpact.map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <motion.div
+                key={s.label}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: i * 0.08 }}
+                className="text-center"
+              >
+                <div className="h-12 w-12 rounded-2xl-premium bg-gradient-to-br from-primary-500 to-primary-700 text-white flex items-center justify-center mx-auto mb-4 shadow-glow-green">
+                  <Icon className="h-6 w-6" strokeWidth={1.75} />
+                </div>
+                <p className="font-stat text-3xl sm:text-4xl font-bold gradient-text">{s.value}</p>
+                <p className="text-sm text-ink-soft dark:text-cream/60 mt-2">{s.label}</p>
+              </motion.div>
+            );
+          })}
+        </div>
+        <div className="flex flex-wrap items-center justify-center gap-3 mt-12">
+          {sdgs.map((sdg) => (
+            <span key={sdg.num} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-sm font-medium">
+              <span className="h-6 w-6 rounded-full bg-primary-600 text-white flex items-center justify-center text-xs font-bold">{sdg.num}</span>
+              {sdg.title}
+            </span>
+          ))}
+        </div>
+        <div className="text-center mt-10">
+          <Link to="/global-impact" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
+            Explore global impact <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
+      {/* Reviews Preview */}
+      <section className="section bg-cream dark:bg-secondary-950">
         <SectionHeading
           badge="Reviews"
           title="Real deliveries, real impact"
