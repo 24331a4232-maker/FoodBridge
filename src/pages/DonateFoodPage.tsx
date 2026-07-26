@@ -8,7 +8,8 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { useNotifications } from '@/context/NotificationContext';
-import type { OrganizationType, FoodCategory, StorageMethod, FoodCondition } from '@/types';
+import type { OrganizationType, FoodCategory, StorageMethod, FoodCondition, FoodDonation } from '@/types';
+import { createHandoverForDonation } from '@/lib/handover';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Link } from 'react-router-dom';
@@ -240,6 +241,47 @@ export function DonateFoodPage() {
           actor_role: profile?.role ?? 'donor',
           notes: `${form.food_name} from ${form.organization}`,
         });
+        const fullDonation: FoodDonation = {
+          id: inserted.id,
+          donor_id: user.id,
+          donor_name: form.donor_name || profile?.full_name || '',
+          organization: form.organization,
+          organization_type: form.organization_type,
+          food_name: form.food_name,
+          category: form.category,
+          quantity: form.quantity,
+          quantity_unit: form.quantity_unit,
+          pickup_time: new Date(form.pickup_time).toISOString(),
+          expiry_time: new Date(form.expiry_time).toISOString(),
+          preparation_time: form.preparation_time ? new Date(form.preparation_time).toISOString() : null,
+          storage_method: form.storage_method,
+          food_temperature: form.food_temperature ? parseFloat(form.food_temperature) : null,
+          food_condition: form.food_condition,
+          quality_score: quality?.score ?? 0,
+          freshness_status: quality?.freshness ?? 'fresh',
+          estimated_meals: quality?.estimatedMeals ?? 0,
+          recommended_recipient: quality?.recommendedRecipient ?? '',
+          priority_level: quality?.priority ?? 'medium',
+          address: form.address,
+          city: form.city,
+          latitude: lat,
+          longitude: lng,
+          description: form.description,
+          contact_phone: form.contact_phone,
+          is_urgent: form.is_urgent || quality?.isCloseToExpiry || false,
+          image_url: form.image_url || null,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+          status: 'available',
+          delivery_time: null,
+          quality_result: null,
+          certificate_id: null,
+          qr_verified: false,
+          donation_code: null,
+          handover_status: 'waiting_volunteer',
+          pickup_confirmed_at: null,
+        } as FoodDonation;
+        await createHandoverForDonation(fullDonation, form.donor_name || profile?.full_name || '');
       }
       setSuccess(true);
       pushToast('Donation Submitted Successfully', 'success');

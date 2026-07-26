@@ -1,5 +1,5 @@
 import {
-  Package, MapPin, CheckCircle2, ShieldCheck, Truck, User as UserIcon,
+  Package, MapPin, CheckCircle2, ShieldCheck, Truck, User as UserIcon, QrCode,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import {
@@ -10,9 +10,11 @@ import {
   VolunteerAvailabilitySection,
   VolunteerProfileSection,
 } from '@/components/dashboard/sections/VolunteerSections';
+import { VolunteerQrHandoverSection } from '@/components/dashboard/sections/VolunteerQrHandoverSection';
 
 export function VolunteerDashboardPage() {
   const navItems: NavItem[] = [
+    { key: 'qr-handover', label: 'QR Handover', icon: QrCode, content: <VolunteerQrHandoverSection /> },
     { key: 'assigned', label: 'Assigned Donations', icon: Package, content: <VolunteerAssignedSection /> },
     { key: 'live', label: 'Live Tracking', icon: MapPin, content: <VolunteerLiveTrackingSection /> },
     { key: 'history', label: 'Delivery History', icon: CheckCircle2, content: <VolunteerDeliveryHistorySection /> },

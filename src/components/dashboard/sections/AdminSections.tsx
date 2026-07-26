@@ -22,7 +22,7 @@ import {
   type OpsStat, type OpsActivity, type ActivityKind, type TimeFilter,
   fetchLiveStats, fetchLiveActivities, fetchLiveAnalytics, subscribeToStats,
 } from '@/lib/opsData';
-import type { Profile, FoodDonation, Pickup, Certificate, QrVerification, FoodQualityInspection, UserRole } from '@/types';
+import type { Profile, FoodDonation, Pickup, Certificate, QrVerification, FoodQualityInspection, UserRole, DonationHandover } from '@/types';
 
 /* ---------- Dashboard Overview ---------- */
 const statIcons: Record<string, { icon: typeof Users; bg: string }> = {
@@ -646,40 +646,91 @@ export function AdminFoodQualitySection() {
 
 /* ---------- QR Verification ---------- */
 export function AdminQrVerificationSection() {
-  const [verifications, setVerifications] = useState<QrVerification[]>([]);
+  const [handovers, setHandovers] = useState<DonationHandover[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
-      const { data } = await supabase.from('qr_verifications').select('*').order('created_at', { ascending: false }).limit(30);
-      setVerifications((data as QrVerification[]) ?? []);
+      const { data } = await supabase
+        .from('donation_handovers')
+        .select('*, donation:food_donations(*), volunteer:profiles!volunteer_id(*), donor:profiles!donor_id(*)')
+        .order('created_at', { ascending: false })
+        .limit(40);
+      setHandovers((data as DonationHandover[]) ?? []);
       setLoading(false);
     };
     load();
-    const ch = supabase.channel('admin-qr').on('postgres_changes', { event: '*', schema: 'public', table: 'qr_verifications' }, load).subscribe();
+    const ch = supabase.channel('admin-qr').on('postgres_changes', { event: '*', schema: 'public', table: 'donation_handovers' }, load).subscribe();
     return () => { supabase.removeChannel(ch); };
   }, []);
 
+  const statusColors: Record<string, string> = {
+    waiting_volunteer: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+    volunteer_assigned: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+    qr_verified: 'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300',
+    quality_approved: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
+    quality_rejected: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
+    picked_up: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
+    delivered: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
+    cancelled: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+  };
+
   return (
     <div>
-      <DashboardSectionHeader title="QR Verification" description="Monitor QR code verifications across certificates." />
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <StatCard icon={QrCode} label="Total QR Codes" value={verifications.length} color="bg-purple-500" />
-        <StatCard icon={CheckCircle2} label="Verified" value={verifications.filter((v) => v.is_verified).length} color="bg-green-500" />
-        <StatCard icon={Clock} label="Pending" value={verifications.filter((v) => !v.is_verified).length} color="bg-amber-500" />
+      <DashboardSectionHeader title="QR Verification" description="Monitor QR-based donation handovers: verification status, volunteer, donor, pickup time, and food quality reports." />
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+        <StatCard icon={QrCode} label="Total Handovers" value={handovers.length} color="bg-purple-500" />
+        <StatCard icon={CheckCircle2} label="QR Verified" value={handovers.filter((h) => h.qr_verified).length} color="bg-cyan-500" />
+        <StatCard icon={ShieldCheck} label="Quality Approved" value={handovers.filter((h) => h.handover_status === 'quality_approved' || h.handover_status === 'picked_up' || h.handover_status === 'delivered').length} color="bg-green-500" />
+        <StatCard icon={Package} label="Picked Up" value={handovers.filter((h) => h.pickup_confirmed).length} color="bg-primary-500" />
       </div>
-      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : verifications.length === 0 ? <div className="glass-card p-10 text-center"><QrCode className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No QR verifications yet.</p></div> : (
-        <div className="space-y-2">
-          {verifications.map((v, i) => (
-            <motion.div key={v.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="glass-card p-4 flex items-center gap-4">
-              <div className="h-10 w-10 rounded-xl bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300 flex items-center justify-center shrink-0"><QrCode className="h-5 w-5" /></div>
-              <div className="flex-1 min-w-0">
-                <p className="font-medium text-sm truncate font-mono">{v.qr_code}</p>
-                <p className="text-xs text-gray-500">{v.verified_at ? `Verified ${new Date(v.verified_at).toLocaleDateString()}` : 'Not yet verified'}</p>
-              </div>
-              {v.is_verified ? <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" /> : <Clock className="h-5 w-5 text-amber-500 shrink-0" />}
-            </motion.div>
-          ))}
+      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : handovers.length === 0 ? <div className="glass-card p-10 text-center"><QrCode className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No donation handovers yet.</p></div> : (
+        <div className="space-y-3">
+          {handovers.map((h, i) => {
+            const donation = (h as unknown as { donation?: FoodDonation }).donation;
+            const volunteer = (h as unknown as { volunteer?: Profile }).volunteer;
+            const donor = (h as unknown as { donor?: Profile }).donor;
+            const badgeClass = statusColors[h.handover_status] || statusColors.cancelled;
+            return (
+              <motion.div key={h.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="glass-card p-4">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="h-10 w-10 rounded-xl bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300 flex items-center justify-center shrink-0"><QrCode className="h-5 w-5" /></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium text-sm truncate">{donation?.food_name ?? 'Donation'}</p>
+                    <p className="text-xs text-gray-500 truncate font-mono">{h.qr_code.slice(0, 40)}...</p>
+                  </div>
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0 ${badgeClass}`}>{h.handover_status.replace(/_/g, ' ')}</span>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                  <div><span className="text-gray-400">Donor</span><p className="font-medium truncate">{donor?.full_name ?? h.donor_id?.slice(0, 8) ?? 'N/A'}</p></div>
+                  <div><span className="text-gray-400">Volunteer</span><p className="font-medium truncate">{volunteer?.full_name ?? 'Unassigned'}</p></div>
+                  <div><span className="text-gray-400">QR Verified</span><p className="font-medium">{h.qr_verified_at ? new Date(h.qr_verified_at).toLocaleString() : 'Not verified'}</p></div>
+                  <div><span className="text-gray-400">Pickup Time</span><p className="font-medium">{h.pickup_confirmed_at ? new Date(h.pickup_confirmed_at).toLocaleString() : 'Pending'}</p></div>
+                </div>
+                <div className="flex items-center gap-3 mt-3 pt-3 border-t border-linen dark:border-secondary-800">
+                  {h.pickup_photo_url ? (
+                    <img src={h.pickup_photo_url} alt="Pickup" className="h-12 w-12 rounded-lg object-cover shrink-0" />
+                  ) : (
+                    <div className="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0"><Camera className="h-5 w-5 text-gray-400" /></div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    {h.inspection_rating != null && (
+                      <div className="flex items-center gap-1 mb-0.5">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <Star key={n} className={`h-3.5 w-3.5 ${n <= h.inspection_rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                        ))}
+                        <span className="ml-1 text-xs text-gray-500">{h.inspection_rating}/5</span>
+                      </div>
+                    )}
+                    <p className="text-xs text-gray-500 truncate">
+                      {h.quality_report ? `Quality: ${(h.quality_report as { approval?: string }).approval ?? 'N/A'}` : 'No quality report'}
+                    </p>
+                  </div>
+                  {h.qr_verified ? <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" /> : <Clock className="h-5 w-5 text-amber-500 shrink-0" />}
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       )}
     </div>

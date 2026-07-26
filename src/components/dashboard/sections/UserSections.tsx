@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Package, Clock, CheckCircle2, TrendingUp, Plus, MapPin, Award,
   Loader2, Search, ShieldCheck, CheckCircle, XCircle, Bell, User as UserIcon,
-  Mail, Phone, MapPin, Calendar, Building2, Edit3, QrCode, Download, ExternalLink,
+  Mail, Phone, MapPin, Calendar, Building2, Edit3, QrCode, Download, ExternalLink, Eye,
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { useToast } from '@/context/ToastContext';
@@ -14,6 +14,7 @@ import { useNotifications } from '@/context/NotificationContext';
 import { AnimatedCounter } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { DashboardSectionHeader, StatCard } from '@/components/dashboard/DashboardLayout';
+import { DonationQrModal } from '@/components/DonationQrCard';
 import type { FoodDonation, Certificate, Notification } from '@/types';
 
 /* ---------- Donate Food ---------- */
@@ -90,6 +91,7 @@ export function UserTrackDonationSection() {
   const { profile } = useAuth();
   const [donations, setDonations] = useState<FoodDonation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [qrDonation, setQrDonation] = useState<FoodDonation | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -171,11 +173,16 @@ export function UserTrackDonationSection() {
             return (
               <motion.div key={d.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass-card p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <div>
-                    <p className="font-medium">{d.food_name}</p>
-                    <p className="text-xs text-gray-500">{d.organization} - {d.city}</p>
+                  <div className="min-w-0">
+                    <p className="font-medium truncate">{d.food_name}</p>
+                    <p className="text-xs text-gray-500 truncate">{d.organization} - {d.city}</p>
                   </div>
-                  {d.donation_code && <span className="text-xs font-mono text-gray-400">{d.donation_code}</span>}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {d.donation_code && <span className="text-xs font-mono text-gray-400 hidden sm:inline">{d.donation_code}</span>}
+                    <RippleButton onClick={() => setQrDonation(d)} variant="ghost" className="text-xs px-2.5 py-1.5">
+                      <QrCode className="h-3.5 w-3.5" /> Show QR
+                    </RippleButton>
+                  </div>
                 </div>
                 <div className="flex items-center gap-1">
                   {steps.map((s, idx) => (
@@ -194,6 +201,7 @@ export function UserTrackDonationSection() {
           })}
         </div>
       )}
+      <DonationQrModal donation={qrDonation} donorName={profile?.full_name ?? ''} onClose={() => setQrDonation(null)} />
     </div>
   );
 }

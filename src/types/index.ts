@@ -3,6 +3,46 @@ export type OrganizationType = 'hotel' | 'restaurant' | 'event' | 'caterer' | 'o
 export type FoodCategory = 'cooked' | 'raw' | 'packaged' | 'beverages' | 'bakery' | 'other';
 export type DonationStatus = 'available' | 'claimed' | 'picked_up' | 'delivered' | 'expired' | 'cancelled';
 export type PickupStatus = 'accepted' | 'in_progress' | 'delivered' | 'cancelled';
+export type HandoverStatus =
+  | 'waiting_volunteer'
+  | 'volunteer_assigned'
+  | 'qr_verified'
+  | 'quality_approved'
+  | 'quality_rejected'
+  | 'picked_up'
+  | 'delivered'
+  | 'cancelled';
+
+export interface DonationHandover {
+  id: string;
+  donation_id: string;
+  qr_code: string;
+  qr_code_url: string | null;
+  donor_id: string | null;
+  volunteer_id: string | null;
+  qr_verified: boolean;
+  qr_verified_at: string | null;
+  pickup_confirmed: boolean;
+  pickup_confirmed_at: string | null;
+  quality_report: Record<string, unknown> | null;
+  inspection_rating: number | null;
+  pickup_photo_url: string | null;
+  handover_status: HandoverStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface QrPayload {
+  donationId: string;
+  donorId: string;
+  donorName: string;
+  foodName: string;
+  foodCategory: string;
+  quantity: string;
+  pickupAddress: string;
+  createdAt: string;
+  status: string;
+}
 
 export interface NotificationSettings {
   email: boolean;
@@ -100,6 +140,8 @@ export interface FoodDonation {
   certificate_id: string | null;
   qr_verified: boolean;
   donation_code: string | null;
+  handover_status: HandoverStatus | null;
+  pickup_confirmed_at: string | null;
 }
 
 export type TrackingStatus =
