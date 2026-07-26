@@ -191,6 +191,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const email = params.email.trim().toLowerCase();
       const username = params.username.trim();
       const phone = params.phone.trim();
+      const password = params.password;
 
       if (params.role === 'admin') {
         return { error: 'Admin accounts cannot be created through registration.' };
