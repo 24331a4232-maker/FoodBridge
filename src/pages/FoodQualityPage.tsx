@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { motion, useInView, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
 import {
   ShieldCheck, Sparkles, UtensilsCrossed, CheckCircle2, ChefHat, Heart,
-  Package, Thermometer, Eye, ClipboardCheck, Truck, Star,
+  Package, Thermometer, Eye, ClipboardCheck, Truck,
   Leaf, Lock, BadgeCheck, Award, Download, QrCode, Hash, Calendar, X,
   CheckCircle, AlertTriangle, XCircle, Clock, HandHeart, Users, Building2, Utensils,
-  ZoomIn, ZoomOut, Maximize, Printer, ScanLine,
+  ZoomIn, ZoomOut, Maximize, Printer, ScanLine, TrendingUp,
 } from 'lucide-react';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Illustration } from '@/components/Illustration';
@@ -57,17 +57,17 @@ const approvalStatuses = [
 ];
 
 const stats = [
-  { value: 25000, suffix: '+', label: 'Meals Verified', icon: Utensils, color: 'text-primary-600' },
-  { value: 98, suffix: '%', label: 'Quality Score', icon: Sparkles, color: 'text-accent-500' },
-  { value: 120, suffix: '+', label: 'Partner Hotels', icon: Building2, color: 'text-primary-600' },
-  { value: 350, suffix: '+', label: 'Quality Volunteers', icon: Users, color: 'text-accent-500' },
+  { value: 25000, suffix: '+', label: 'Meals Verified', icon: Utensils, color: 'text-primary-600', trend: '+12%' },
+  { value: 98, suffix: '%', label: 'Quality Score', icon: Sparkles, color: 'text-accent-500', trend: '+3%' },
+  { value: 120, suffix: '+', label: 'Partner Hotels', icon: Building2, color: 'text-primary-600', trend: '+8%' },
+  { value: 350, suffix: '+', label: 'Quality Volunteers', icon: Users, color: 'text-accent-500', trend: '+15%' },
 ];
 
 const scoreCategories = [
-  { label: 'Freshness', stars: 5 },
-  { label: 'Packaging', stars: 5 },
-  { label: 'Temperature', stars: 4 },
-  { label: 'Hygiene', stars: 5 },
+  { label: 'Freshness', percent: 98 },
+  { label: 'Packaging', percent: 95 },
+  { label: 'Temperature', percent: 85 },
+  { label: 'Hygiene', percent: 100 },
 ];
 
 const certificateInfo = {
@@ -236,8 +236,15 @@ export function FoodQualityPage() {
       <PageNav crumbs={[{ label: 'Features' }, { label: 'Food Quality', icon: ShieldCheck }]} />
 
       {/* HERO */}
-      <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 pt-12 pb-16 max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-10 items-center">
+      <section className="relative overflow-hidden px-4 sm:px-6 lg:px-8 pt-12 pb-20 max-w-7xl mx-auto">
+        {/* Gradient mesh background */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute top-0 left-1/4 h-72 w-72 rounded-full bg-primary-300/20 dark:bg-primary-700/20 blur-3xl" />
+          <div className="absolute bottom-0 right-1/4 h-80 w-80 rounded-full bg-accent-300/20 dark:bg-accent-700/20 blur-3xl" />
+          <div className="absolute top-1/3 right-1/3 h-40 w-40 rounded-full bg-gold-300/15 dark:bg-gold-700/15 blur-2xl" />
+        </div>
+
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
           <motion.div variants={staggerContainer} initial="hidden" animate="visible">
             <motion.span variants={fadeInUp} className="badge bg-primary-100 text-primary-700 mb-4">
               <ShieldCheck className="h-3.5 w-3.5" /> Trusted & Verified
@@ -248,15 +255,23 @@ export function FoodQualityPage() {
             <motion.p variants={fadeInUp} className="text-gray-600 dark:text-gray-300 mt-4 text-lg max-w-xl leading-relaxed">
               Every meal donated through FoodBridge is inspected to ensure it is fresh, hygienic and safe before reaching people in need.
             </motion.p>
+            {/* Trust pillars */}
+            <motion.div variants={fadeInUp} className="flex flex-wrap gap-x-6 gap-y-2 mt-6">
+              {['6-Step Inspection', 'Real-time Scoring', 'Verified Certificates'].map((p) => (
+                <div key={p} className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+                  <CheckCircle2 className="h-4 w-4 text-primary-500" /> {p}
+                </div>
+              ))}
+            </motion.div>
             <motion.div variants={fadeInUp} className="flex flex-wrap gap-3 mt-8">
               <a href="#process"><RippleButton variant="primary"><ClipboardCheck className="h-4 w-4" /> Learn Inspection Process</RippleButton></a>
               <Link to="/register"><RippleButton variant="secondary"><ChefHat className="h-4 w-4" /> Become a Certified Donor</RippleButton></Link>
             </motion.div>
           </motion.div>
 
-          {/* Animated illustration */}
-          <motion.div variants={scaleIn} initial="hidden" animate="visible" className="relative flex items-center justify-center h-80">
-            <div className="absolute h-64 w-64 rounded-full bg-gradient-to-br from-primary-200/40 to-accent-200/40 blur-2xl" />
+          {/* Animated illustration with floating indicators */}
+          <motion.div variants={scaleIn} initial="hidden" animate="visible" className="relative flex items-center justify-center h-96">
+            <div className="absolute h-72 w-72 rounded-full bg-gradient-to-br from-primary-200/40 to-accent-200/40 blur-3xl" />
             <motion.div animate={{ y: [0, -14, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }} className="relative glass-card p-10 rounded-[2.5rem] shadow-2xl">
               <div className="relative h-40 w-40 flex items-center justify-center">
                 <motion.div animate={{ rotate: 360 }} transition={{ duration: 30, repeat: Infinity, ease: 'linear' }} className="absolute inset-0 rounded-full border-2 border-dashed border-primary-300/60" />
@@ -270,6 +285,19 @@ export function FoodQualityPage() {
                   <CheckCircle2 className="h-7 w-7 text-accent-500" />
                 </motion.div>
               </div>
+            </motion.div>
+            {/* Floating quality score chips */}
+            <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }} className="absolute top-4 left-0 glass-card px-3 py-2 rounded-xl shadow-lg flex items-center gap-2">
+              <Thermometer className="h-4 w-4 text-accent-500" />
+              <div><p className="text-[10px] text-gray-400 leading-none">Temperature</p><p className="text-sm font-bold text-gray-700 dark:text-gray-200">4°C Safe</p></div>
+            </motion.div>
+            <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }} className="absolute bottom-6 right-0 glass-card px-3 py-2 rounded-xl shadow-lg flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary-500" />
+              <div><p className="text-[10px] text-gray-400 leading-none">Quality Score</p><p className="text-sm font-bold text-primary-600">98% A+</p></div>
+            </motion.div>
+            <motion.div animate={{ y: [0, -7, 0] }} transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }} className="absolute top-1/2 right-2 glass-card px-3 py-2 rounded-xl shadow-lg flex items-center gap-2">
+              <Leaf className="h-4 w-4 text-green-500" />
+              <div><p className="text-[10px] text-gray-400 leading-none">Freshness</p><p className="text-sm font-bold text-green-600">Fresh</p></div>
             </motion.div>
           </motion.div>
         </div>
@@ -287,12 +315,19 @@ export function FoodQualityPage() {
             <motion.div variants={scaleIn} className="flex justify-center"><ScoreCircle score={98} /></motion.div>
             <motion.div variants={slideInRight} className="space-y-4">
               {scoreCategories.map((c) => (
-                <div key={c.label} className="flex items-center justify-between p-4 rounded-2xl bg-white/60 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
-                  <span className="font-medium text-gray-700 dark:text-gray-200">{c.label}</span>
-                  <div className="flex gap-0.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className={`h-5 w-5 ${i < c.stars ? 'text-accent-400 fill-accent-400' : 'text-gray-300 dark:text-gray-600'}`} />
-                    ))}
+                <div key={c.label} className="p-4 rounded-2xl bg-white/60 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-medium text-gray-700 dark:text-gray-200">{c.label}</span>
+                    <span className="text-sm font-bold text-primary-600">{c.percent}%</span>
+                  </div>
+                  <div className="h-2.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      whileInView={{ width: `${c.percent}%` }}
+                      viewport={{ once: true }}
+                      transition={{ duration: 1, ease: 'easeOut', delay: 0.2 }}
+                      className="h-full rounded-full bg-gradient-to-r from-primary-500 to-accent-500"
+                    />
                   </div>
                 </div>
               ))}
@@ -331,6 +366,23 @@ export function FoodQualityPage() {
           <span className="badge bg-accent-100 text-accent-700 mb-3"><CheckCircle2 className="h-3.5 w-3.5" /> Interactive</span>
           <h2 className="section-title">Food Safety Checklist</h2>
           <p className="section-subtitle">Tap each item to confirm it has been verified.</p>
+        </motion.div>
+        <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-md mx-auto mb-8">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Completion</span>
+            <span className="text-sm font-bold text-primary-600">{Math.round((Object.values(checked).filter(Boolean).length / safetyChecklist.length) * 100)}%</span>
+          </div>
+          <div className="h-3 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+            <motion.div
+              animate={{ width: `${Math.round((Object.values(checked).filter(Boolean).length / safetyChecklist.length) * 100)}%` }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              className="h-full rounded-full bg-gradient-to-r from-primary-500 to-accent-500 flex items-center justify-end pr-2"
+            >
+              {Object.values(checked).filter(Boolean).length === safetyChecklist.length && (
+                <CheckCircle2 className="h-4 w-4 text-white" />
+              )}
+            </motion.div>
+          </div>
         </motion.div>
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-2 gap-4">
           {safetyChecklist.map((item, i) => (
@@ -418,12 +470,15 @@ export function FoodQualityPage() {
           </motion.div>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
             {stats.map((s) => (
-              <motion.div key={s.label} variants={scaleIn} className="text-center">
+              <motion.div key={s.label} variants={scaleIn} whileHover={{ y: -6 }} className="glass-card p-6 text-center">
                 <div className={`h-14 w-14 rounded-2xl bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center mx-auto mb-3 ${s.color}`}>
                   <s.icon className="h-7 w-7" />
                 </div>
                 <p className={`font-display text-3xl sm:text-4xl font-bold ${s.color}`}><Counter value={s.value} suffix={s.suffix} /></p>
                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{s.label}</p>
+                <div className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-semibold">
+                  <TrendingUp className="h-3 w-3" /> {s.trend}
+                </div>
               </motion.div>
             ))}
           </div>
