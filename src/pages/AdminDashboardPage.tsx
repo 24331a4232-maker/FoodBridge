@@ -15,6 +15,7 @@ import {
   type OpsStat, type OpsActivity, type ActivityKind, type TimeFilter,
   fetchLiveStats, fetchLiveActivities, fetchLiveAnalytics, subscribeToStats,
 } from '@/lib/opsData';
+import { UserManagementTable } from '@/components/admin/UserManagementTable';
 
 const statIcons: Record<string, { icon: typeof Users; bg: string; spark: string }> = {
   total_users: { icon: Users, bg: 'from-secondary-500 to-primary-500', spark: '#4F8060' },
@@ -260,6 +261,10 @@ export function AdminDashboardPage() {
             </div>
           </motion.div>
         </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
+        <UserManagementTable />
       </section>
     </div>
   );
