@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  Package, ShieldCheck, HeartHandshake, Truck, CheckCircle2,
-  Award, QrCode, ArrowRight, ArrowDown, Leaf, Sparkles, Globe2,
+  Package, ShieldCheck, Truck, Award,
+  ArrowRight, Leaf, Sparkles,
   type LucideIcon,
 } from 'lucide-react';
 import { SectionHeading } from '@/lib/animations';
@@ -10,36 +10,27 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { Illustration } from '@/components/Illustration';
 import { ImpactAnalyticsDashboard } from '@/components/ImpactAnalyticsDashboard';
 
-interface JourneyStep {
+interface Step {
   title: string;
   desc: string;
   icon: LucideIcon;
   path?: string;
 }
 
-const journey: JourneyStep[] = [
+const steps: Step[] = [
   { title: 'Donate Food', desc: 'A hotel or caterer lists surplus food with quantity and pickup window.', icon: Package, path: '/services/donate-food' },
-  { title: 'Food Quality Verification', desc: 'Temperature, hygiene, and freshness are checked against a safety checklist.', icon: ShieldCheck, path: '/services/food-quality' },
-  { title: 'Volunteer Assigned', desc: 'A nearby volunteer claims the pickup from the live map.', icon: HeartHandshake, path: '/services/available-food' },
-  { title: 'Live Tracking', desc: 'Follow the delivery in real time from pickup to destination.', icon: Truck, path: '/services/tracking' },
-  { title: 'Food Delivered', desc: 'The meal reaches a shelter or community kitchen within four hours.', icon: CheckCircle2 },
-  { title: 'Certificate Generated', desc: 'The volunteer earns reward points and an official certificate.', icon: Award, path: '/services/certificates' },
-  { title: 'QR Verification', desc: 'Anyone can verify the certificate instantly by QR code or ID.', icon: QrCode, path: '/services/verify-certificate' },
+  { title: 'Verify Quality', desc: 'Temperature, hygiene, and freshness are checked against a safety checklist.', icon: ShieldCheck, path: '/services/food-quality' },
+  { title: 'Volunteer Delivers', desc: 'A nearby volunteer claims the pickup and delivers it in real time.', icon: Truck, path: '/services/tracking' },
+  { title: 'Certificate Earned', desc: 'The volunteer earns reward points and a verifiable certificate.', icon: Award, path: '/services/certificates' },
 ];
 
 const services = [
   { title: 'Donate Food', desc: 'List surplus food for pickup.', icon: Package, color: 'from-primary-500 to-primary-700', path: '/services/donate-food' },
-  { title: 'Food Quality Verification', desc: 'Verify safety and freshness.', icon: ShieldCheck, color: 'from-secondary-500 to-primary-600', path: '/services/food-quality' },
+  { title: 'Food Quality', desc: 'Verify safety and freshness.', icon: ShieldCheck, color: 'from-secondary-500 to-primary-600', path: '/services/food-quality' },
   { title: 'Live Tracking', desc: 'Track deliveries in real time.', icon: Truck, color: 'from-gold-400 to-gold-600', path: '/services/tracking' },
-  { title: 'Digital Certificates', desc: 'Earn and download certificates.', icon: Award, color: 'from-accent-400 to-gold-500', path: '/services/certificates' },
-  { title: 'QR Verification', desc: 'Verify any certificate instantly.', icon: QrCode, color: 'from-primary-600 to-secondary-600', path: '/services/verify-certificate' },
-  { title: 'Volunteer Dashboard', desc: 'Manage deliveries and impact.', icon: HeartHandshake, color: 'from-accent-500 to-accent-700', path: '/dashboard/volunteer' },
-];
-
-const sdgPreview = [
-  { num: '2', title: 'Zero Hunger', color: 'from-gold-500 to-yellow-500' },
-  { num: '12', title: 'Responsible Consumption', color: 'from-yellow-500 to-gold-600' },
-  { num: '17', title: 'Partnerships', color: 'from-secondary-500 to-primary-500' },
+  { title: 'Certificates', desc: 'Earn and download certificates.', icon: Award, color: 'from-accent-400 to-gold-500', path: '/services/certificates' },
+  { title: 'QR Verification', desc: 'Verify any certificate instantly.', icon: ShieldCheck, color: 'from-primary-600 to-secondary-600', path: '/services/verify-certificate' },
+  { title: 'Volunteer Dashboard', desc: 'Manage deliveries and impact.', icon: Package, color: 'from-accent-500 to-accent-700', path: '/dashboard/volunteer' },
 ];
 
 const reviews = [
@@ -96,7 +87,7 @@ export function HomePage() {
               </Link>
               <Link to="/register">
                 <RippleButton variant="accent" className="text-base px-7 py-3.5">
-                  Become Volunteer <HeartHandshake className="h-4 w-4" />
+                  Become Volunteer
                 </RippleButton>
               </Link>
             </motion.div>
@@ -114,79 +105,56 @@ export function HomePage() {
             </div>
           </motion.div>
         </div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-ink-soft/50 dark:text-cream/40"
-        >
-          <ArrowDown className="h-5 w-5" />
-        </motion.div>
       </section>
 
-      {/* How It Works — progress timeline */}
+      {/* 4-Step Workflow */}
       <section className="section bg-cream dark:bg-secondary-950">
         <SectionHeading
           badge="How It Works"
-          title="A simple seven-step journey"
-          subtitle="From a kitchen with too much to a plate that needs it — every step guided, tracked, and rewarded."
+          title="Four steps from surplus to served"
+          subtitle="A guided journey that takes food from a kitchen to someone who needs it."
         />
-        <div className="mt-16 max-w-3xl mx-auto">
-          {/* Vertical progress line */}
-          <div className="relative">
-            <div className="absolute left-7 top-4 bottom-4 w-px bg-linen dark:bg-secondary-800" />
-            <motion.div
-              initial={{ scaleY: 0 }}
-              whileInView={{ scaleY: 1 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 1.4, ease: 'easeInOut' }}
-              style={{ originY: 0 }}
-              className="absolute left-7 top-4 bottom-4 w-px bg-gradient-to-b from-primary-500 via-secondary-500 to-gold-500"
-            />
-
-            <div className="space-y-8">
-              {journey.map((step, i) => {
-                const Icon = step.icon;
-                return (
-                  <motion.div
-                    key={step.title}
-                    initial={{ opacity: 0, x: -16 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true, margin: '-60px' }}
-                    transition={{ duration: 0.4, delay: i * 0.06 }}
-                    className="relative pl-20"
-                  >
-                    <div className="absolute left-0 top-0 z-10">
-                      <div className="h-14 w-14 rounded-2xl-premium bg-gradient-to-br from-primary-500 to-primary-700 text-cream flex items-center justify-center shadow-glow-green ring-4 ring-cream dark:ring-secondary-950">
-                        <Icon className="h-6 w-6" strokeWidth={1.75} />
-                      </div>
-                    </div>
-                    <div className="flex items-baseline gap-3 mb-1">
-                      <span className="font-display text-sm font-semibold text-primary-400 dark:text-primary-700">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <h3 className="font-display text-lg font-semibold text-ink dark:text-cream tracking-[-0.02em]">
-                        {step.title}
-                      </h3>
-                    </div>
-                    <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed">
-                      {step.desc}
-                    </p>
-                    {step.path && (
-                      <Link to={step.path} className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
-                        Open <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
-                    )}
-                  </motion.div>
-                );
-              })}
-            </div>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-16 max-w-5xl mx-auto">
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            return (
+              <motion.div
+                key={step.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ delay: i * 0.08 }}
+                className="relative"
+              >
+                <div className="flex items-center justify-center mb-5">
+                  <div className="h-14 w-14 rounded-2xl-premium bg-gradient-to-br from-primary-500 to-primary-700 text-cream flex items-center justify-center shadow-glow-green">
+                    <Icon className="h-6 w-6" strokeWidth={1.75} />
+                  </div>
+                </div>
+                <div className="text-center">
+                  <span className="font-display text-xs font-semibold text-primary-400 dark:text-primary-700 tracking-widest">
+                    STEP {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <h3 className="font-display text-lg font-semibold text-ink dark:text-cream mt-2 mb-2">{step.title}</h3>
+                  <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed">{step.desc}</p>
+                  {step.path && (
+                    <Link to={step.path} className="inline-flex items-center gap-1 mt-3 text-xs font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
+                      Open <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  )}
+                </div>
+                {i < steps.length - 1 && (
+                  <div className="hidden lg:block absolute top-7 -right-3 z-10">
+                    <ArrowRight className="h-5 w-5 text-primary-300 dark:text-primary-700" />
+                  </div>
+                )}
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
-      {/* One Analytics Graph */}
+      {/* One Impact Analytics Graph */}
       <ImpactAnalyticsDashboard />
 
       {/* Services Preview */}
@@ -202,7 +170,7 @@ export function HomePage() {
             return (
               <motion.div
                 key={s.title}
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ delay: i * 0.06 }}
@@ -223,45 +191,13 @@ export function HomePage() {
         </div>
         <div className="text-center mt-10">
           <Link to="/services" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
-            View the full workflow <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
-
-      {/* Global Impact Preview */}
-      <section className="section bg-mist dark:bg-secondary-900">
-        <SectionHeading
-          badge="Global Impact"
-          title="Aligned with global goals"
-          subtitle="FoodBridge directly contributes to the UN Sustainable Development Goals."
-        />
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto">
-          {sdgPreview.map((sdg, i) => (
-            <motion.div
-              key={sdg.num}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.08 }}
-              whileHover={{ y: -5 }}
-              className="card p-6 text-center"
-            >
-              <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br ${sdg.color} text-white flex items-center justify-center font-display text-xl font-bold mb-4 shadow-lg mx-auto`}>
-                {sdg.num}
-              </div>
-              <h3 className="font-display font-semibold text-lg text-ink dark:text-cream">{sdg.title}</h3>
-            </motion.div>
-          ))}
-        </div>
-        <div className="text-center mt-10">
-          <Link to="/global-impact" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
-            Explore our global impact <Globe2 className="h-4 w-4" />
+            View all services <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>
 
       {/* Reviews Preview */}
-      <section className="section bg-cream dark:bg-secondary-950">
+      <section className="section bg-mist dark:bg-secondary-900">
         <SectionHeading
           badge="Reviews"
           title="Real deliveries, real impact"
@@ -271,7 +207,7 @@ export function HomePage() {
           {reviews.map((s, i) => (
             <motion.figure
               key={s.name}
-              initial={{ opacity: 0, y: 24 }}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-40px' }}
               transition={{ delay: i * 0.1 }}
@@ -296,15 +232,10 @@ export function HomePage() {
             </motion.figure>
           ))}
         </div>
-        <div className="text-center mt-10">
-          <Link to="/community" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
-            Read more stories <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
       </section>
 
       {/* Call to Action */}
-      <section className="section bg-mist dark:bg-secondary-900">
+      <section className="section bg-cream dark:bg-secondary-950">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -331,7 +262,7 @@ export function HomePage() {
                   Join as a volunteer <ArrowRight className="h-4 w-4" />
                 </RippleButton>
               </Link>
-              <Link to="/contact">
+              <Link to="/resources/contact">
                 <RippleButton variant="secondary" className="text-base px-7 py-3.5">
                   Talk to us
                 </RippleButton>
