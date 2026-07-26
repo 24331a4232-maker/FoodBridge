@@ -32,6 +32,7 @@ interface AuthContextValue {
     city?: string;
     state?: string;
     pincode?: string;
+    mobileVerified?: boolean;
   }) => Promise<SignUpResult>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
@@ -186,6 +187,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     city?: string;
     state?: string;
     pincode?: string;
+    mobileVerified?: boolean;
   }): Promise<SignUpResult> => {
     try {
       const email = params.email.trim().toLowerCase();
@@ -195,6 +197,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (params.role === 'admin') {
         return { error: 'Admin accounts cannot be created through registration.' };
+      }
+
+      // Enforce OTP verification for non-admin roles
+      if (params.role !== 'admin' && !params.mobileVerified) {
+        return { error: 'Mobile number verification is required before registration.' };
       }
 
       // Pre-check for duplicates
@@ -266,6 +273,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           city: params.city?.trim() ?? '',
           state: params.state?.trim() ?? '',
           pincode: params.pincode?.trim() ?? '',
+          mobile_verified: params.mobileVerified ?? false,
+          mobile_verified_at: params.mobileVerified ? new Date().toISOString() : null,
         });
 
         if (insertError) {

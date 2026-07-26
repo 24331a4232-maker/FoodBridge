@@ -83,6 +83,8 @@ export interface Profile {
   total_hours: number;
   badges: string[];
   is_verified: boolean;
+  mobile_verified: boolean;
+  mobile_verified_at: string | null;
   notification_settings: NotificationSettings | null;
   privacy_settings: PrivacySettings | null;
   preferences: Preferences | null;
