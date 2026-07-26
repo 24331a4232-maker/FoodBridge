@@ -5,7 +5,7 @@ import {
   Menu, X, Moon, Sun, LogOut, ChevronDown, LayoutDashboard, User as UserIcon,
   Award, Package, Search, ShieldCheck, Truck,
   Building2, FileText, Lock, HelpCircle, Home, Info, Phone, Search as SearchIcon,
-  Settings, LogIn, UserPlus, ChevronRight, QrCode, Globe2, Users, BarChart3,
+  Settings, LogIn, UserPlus, ChevronRight, QrCode, Users, BarChart3,
   type LucideIcon,
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';

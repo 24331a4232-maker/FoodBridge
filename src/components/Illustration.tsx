@@ -43,11 +43,11 @@ function Blob({ className = '', fill = palette.primarySoft }: { className?: stri
   );
 }
 
-function Circle({ cx, cy, r, fill, opacity = 1 }: { cx: number; cy: number; r: number; fill: string; opacity?: number }) {
-  return <circle cx={cx} cy={cy} r={r} fill={fill} opacity={opacity} />;
+function Circle({ cx, cy, r, fill, opacity = 1, stroke, strokeWidth }: { cx: number | string; cy: number | string; r: number | string; fill: string; opacity?: number | string; stroke?: string; strokeWidth?: number | string }) {
+  return <circle cx={cx} cy={cy} r={r} fill={fill} opacity={opacity} stroke={stroke} strokeWidth={strokeWidth} />;
 }
 
-function Hand({ x, y, color = palette.secondary, flip = false }: { x: number; y: number; color?: string; flip?: boolean }) {
+function Hand({ x, y, color = palette.secondary, flip = false }: { x: number | string; y: number | string; color?: string; flip?: boolean }) {
   return (
     <g transform={`translate(${x} ${y}) ${flip ? 'scale(-1 1)' : ''}`}>
       <path
@@ -59,7 +59,7 @@ function Hand({ x, y, color = palette.secondary, flip = false }: { x: number; y:
   );
 }
 
-function Box({ x, y, color = palette.accent, label }: { x: number; y: number; color?: string; label?: string }) {
+function Box({ x, y, color = palette.accent, label }: { x: number | string; y: number | string; color?: string; label?: string }) {
   return (
     <g transform={`translate(${x} ${y})`}>
       <path d="M0 12l16-8 16 8v20l-16 8-16-8V12z" fill={color} opacity="0.9" />
@@ -74,7 +74,7 @@ function Box({ x, y, color = palette.accent, label }: { x: number; y: number; co
   );
 }
 
-function Person({ x, y, shirt = palette.primary, skin = '#E8C9A8', hair = palette.ink }: { x: number; y: number; shirt?: string; skin?: string; hair?: string }) {
+function Person({ x, y, shirt = palette.primary, skin = '#E8C9A8', hair = palette.ink }: { x: number | string; y: number | string; shirt?: string; skin?: string; hair?: string }) {
   return (
     <g transform={`translate(${x} ${y})`}>
       <circle cx="0" cy="-6" r="6.5" fill={skin} />
@@ -84,7 +84,7 @@ function Person({ x, y, shirt = palette.primary, skin = '#E8C9A8', hair = palett
   );
 }
 
-function Heart({ x, y, size = 1, color = palette.primary }: { x: number; y: number; size?: number; color?: string }) {
+function Heart({ x, y, size = 1, color = palette.primary }: { x: number | string; y: number | string; size?: number | string; color?: string }) {
   return (
     <g transform={`translate(${x} ${y}) scale(${size})`}>
       <path
@@ -95,7 +95,7 @@ function Heart({ x, y, size = 1, color = palette.primary }: { x: number; y: numb
   );
 }
 
-function Leaf({ x, y, size = 1, color = palette.secondary }: { x: number; y: number; size?: number; color?: string }) {
+function Leaf({ x, y, size = 1, color = palette.secondary }: { x: number | string; y: number | string; size?: number | string; color?: string }) {
   return (
     <g transform={`translate(${x} ${y}) scale(${size})`}>
       <path d="M0 0c8 2 14 8 14 16 0 6-4 10-10 10-6 0-10-4-10-10 0-6 2-12 6-16z" fill={color} />

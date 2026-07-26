@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import {
   Globe2, Recycle, TrendingDown, BarChart3, Droplet, Users, Heart,
-  UtensilsCrossed, ShieldCheck, Cloud, Leaf, Zap,
+  UtensilsCrossed, Cloud, Leaf, Zap,
   Target, Handshake, MapPin,
 } from 'lucide-react';
 import { SectionHeading, AnimatedCounter } from '@/lib/animations';

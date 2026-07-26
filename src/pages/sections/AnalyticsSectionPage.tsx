@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion';
-import { BarChart3, FileText, ArrowRight, TrendingUp, TrendingDown } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { BarChart3, FileText } from 'lucide-react';
 import { SectionPageHeader } from '@/components/SectionPageHeader';
 import { SectionTabs } from '@/components/SectionTabs';
 import { SectionHeading } from '@/lib/animations';
