@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   QrCode, ScanLine, Loader2, Package, MapPin, Phone, Clock, Calendar,
-  ShieldCheck, CheckCircle2, XCircle, Star, Camera, User, FileText, Truck,
+  ShieldCheck, CheckCircle2, XCircle, Star, Camera, User, FileText, Truck, Navigation,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
@@ -12,6 +12,8 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { DashboardSectionHeader, StatCard } from '@/components/dashboard/DashboardLayout';
 import { QrScanner } from '@/components/QrScanner';
 import { DonationImage } from '@/components/Illustration';
+import { haversineKm } from '@/components/LeafletMap';
+import { useGeolocation } from '@/lib/geo';
 import {
   verifyQrForHandover, submitQualityReport, confirmPickup, assignVolunteerToHandover,
   QUALITY_CHECKLIST, REJECTION_REASONS, type QualityReportInput,
@@ -42,6 +44,13 @@ export function VolunteerQrHandoverSection() {
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const { position } = useGeolocation();
+
+  const distanceFor = (d: FoodDonation): string | null => {
+    if (!position || d.latitude == null || d.longitude == null) return null;
+    const km = haversineKm([position.lat, position.lng], [d.latitude, d.longitude]);
+    return km < 1 ? `${Math.round(km * 1000)} m` : `${km.toFixed(1)} km`;
+  };
 
   // available donations (waiting for volunteer)
   const [available, setAvailable] = useState<FoodDonation[]>([]);
@@ -180,6 +189,15 @@ export function VolunteerQrHandoverSection() {
       actor_role: 'volunteer',
       notes: 'Pickup confirmed by volunteer. Food collected from donor.',
     });
+    if (donation.donor_id) {
+      await supabase.from('notifications').insert({
+        user_id: donation.donor_id,
+        type: 'pickup_confirmed',
+        title: 'Food Collected Successfully',
+        description: `Your food (${donation.food_name}) has been collected by ${profile?.full_name ?? 'a volunteer'}. Thank you for your contribution!`,
+        action_url: '/dashboard/user',
+      });
+    }
     pushToast('Pickup confirmed! Food collected successfully.', 'success');
     pushNotification({
       type: 'pickup_confirmed',
@@ -224,6 +242,8 @@ export function VolunteerQrHandoverSection() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{d.food_name}</p>
                   <p className="text-xs text-gray-500 truncate flex items-center gap-1"><MapPin className="h-3 w-3" /> {d.address ?? d.city}</p>
+                  {distanceFor(d) && <p className="text-xs text-primary-600 dark:text-primary-400 font-medium flex items-center gap-1"><Navigation className="h-3 w-3" /> {distanceFor(d)}</p>}
+                  <p className="text-xs text-gray-400 flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(d.pickup_time).toLocaleString()}</p>
                 </div>
                 <RippleButton onClick={() => handleAccept(d)} variant="primary" className="text-xs px-3 py-1.5 shrink-0">Accept</RippleButton>
               </div>

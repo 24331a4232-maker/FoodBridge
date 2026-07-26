@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import {
   FileText, ShieldCheck, CheckCircle2, UserCheck, MapPin, PackageCheck, Truck,
-  MapPinned, HandHeart, Award, BadgeCheck, ChevronDown, Sparkles, Clock, User, Route, ShieldAlert, type LucideIcon,
+  MapPinned, HandHeart, Award, BadgeCheck, ChevronDown, Sparkles, Clock, User, Route, ShieldAlert, QrCode, type LucideIcon,
 } from 'lucide-react';
 import type { FoodDonation, Pickup, Certificate, Profile } from '@/types';
 import { Confetti } from '@/components/Confetti';
@@ -37,10 +37,11 @@ const STEP_DEFS = [
   { id: 'submitted', title: 'Donation Submitted', description: 'Your donation has been listed on FoodBridge and is awaiting review.', icon: FileText, emoji: '🍱' },
   { id: 'quality', title: 'AI Food Quality Inspection', description: 'Freshness, temperature, and hygiene verified by our quality system.', icon: ShieldCheck, emoji: '🛡' },
   { id: 'approved', title: 'Donation Approved', description: 'Verified and approved for redistribution to those in need.', icon: CheckCircle2, emoji: '✅' },
-  { id: 'assigned', title: 'Volunteer Accepted Request', description: 'A volunteer has accepted the pickup and is on the way.', icon: UserCheck, emoji: '🙋' },
-  { id: 'reached_pickup', title: 'Volunteer Reached Pickup Location', description: 'The volunteer has arrived at the pickup address.', icon: MapPin, emoji: '📍' },
-  { id: 'picked_up', title: 'Food Collected', description: 'The food has been collected from the donor.', icon: PackageCheck, emoji: '📦' },
-  { id: 'on_the_way', title: 'Delivery In Progress', description: 'The volunteer is en route to the recipient location.', icon: Truck, emoji: '🚚' },
+  { id: 'assigned', title: 'Volunteer Assigned', description: 'A volunteer has accepted the pickup and is on the way.', icon: UserCheck, emoji: '🙋' },
+  { id: 'qr_verified', title: 'QR Verified at Pickup', description: 'The volunteer scanned the donor QR code and verified the donation on site.', icon: QrCode, emoji: '📱' },
+  { id: 'quality_approved', title: 'Food Quality Approved', description: 'On-site quality inspection passed. Food is safe to transport.', icon: ShieldCheck, emoji: '✔' },
+  { id: 'picked_up', title: 'Picked Up', description: 'The food has been collected from the donor.', icon: PackageCheck, emoji: '📦' },
+  { id: 'on_the_way', title: 'On The Way', description: 'The volunteer is en route to the recipient location.', icon: Truck, emoji: '🚚' },
   { id: 'reached_dest', title: 'Reached Destination', description: 'The volunteer has arrived at the delivery location.', icon: MapPinned, emoji: '📍' },
   { id: 'delivered', title: 'Food Successfully Delivered', description: 'The recipient has received the food. Thank you for your contribution!', icon: HandHeart, emoji: '❤' },
   { id: 'certificate', title: 'Digital Certificate Generated', description: 'A volunteer appreciation certificate has been issued.', icon: Award, emoji: '🏆' },
@@ -86,9 +87,13 @@ function buildDetails(
       if (pickup?.volunteer_id) details.push({ label: 'Volunteer ID', value: pickup.volunteer_id.slice(0, 8) });
       if (pickup?.recipient_name) details.push({ label: 'Recipient', value: pickup.recipient_name });
       break;
-    case 'reached_pickup':
-      if (donation.address) details.push({ label: 'Pickup Address', value: `${donation.address}, ${donation.city ?? ''}` });
-      if (donation.contact_phone) details.push({ label: 'Contact', value: donation.contact_phone });
+    case 'qr_verified':
+      if (donation.donor_name) details.push({ label: 'Donor', value: donation.donor_name });
+      if (donation.id) details.push({ label: 'Donation ID', value: donation.id.slice(0, 8) });
+      break;
+    case 'quality_approved':
+      if (donation.quality_score != null) details.push({ label: 'Quality Score', value: `${donation.quality_score}/100` });
+      details.push({ label: 'On-site Check', value: 'Passed' });
       break;
     case 'picked_up':
       if (pickup?.picked_up_at) details.push({ label: 'Collected At', value: fmt(pickup.picked_up_at) ?? '-' });
@@ -130,19 +135,22 @@ export function resolveTracker(
   const isReachedDest = isDelivered;
   const isOnTheWay = pickup?.status === 'in_progress' || isReachedDest;
   const isPickedUp = !!pickup?.picked_up_at || isOnTheWay;
-  const isReachedPickup = isPickedUp;
   const isAssigned = !!pickup || donation.status === 'claimed';
   const isApproved = donation.quality_score != null && !cancelled;
   const isQualityDone = donation.quality_score != null;
   const hasCert = !!certificate;
   const certVerified = !!certificate?.is_valid;
+  const hs = donation.handover_status;
+  const isQrVerified = donation.qr_verified || hs === 'qr_verified' || hs === 'quality_approved' || hs === 'picked_up' || hs === 'delivered' || isPickedUp;
+  const isQualityApproved = hs === 'quality_approved' || hs === 'picked_up' || hs === 'delivered' || isPickedUp;
 
   const timestamps: (string | null)[] = [
     donation.created_at,
     donation.updated_at,
     isApproved ? donation.updated_at : null,
     pickup?.accepted_at ?? (isAssigned ? donation.updated_at : null),
-    isReachedPickup ? (pickup?.accepted_at ?? donation.updated_at) : null,
+    isQrVerified ? donation.updated_at : null,
+    isQualityApproved ? donation.updated_at : null,
     pickup?.picked_up_at ?? (isPickedUp ? donation.updated_at : null),
     isOnTheWay ? (pickup?.picked_up_at ?? donation.updated_at) : null,
     isReachedDest ? (pickup?.delivered_at ?? donation.updated_at) : null,
@@ -156,7 +164,8 @@ export function resolveTracker(
     isQualityDone,
     isApproved,
     isAssigned,
-    isReachedPickup,
+    isQrVerified,
+    isQualityApproved,
     isPickedUp,
     isOnTheWay,
     isReachedDest,
