@@ -185,7 +185,7 @@ export function Navbar() {
         <button
           onClick={() => setOpenDropdown(isOpen ? null : id)}
           onMouseEnter={() => setOpenDropdown(id)}
-          className={`relative flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
+          className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
             isActive || isOpen
               ? 'text-primary-700 dark:text-primary-300'
               : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'
@@ -256,22 +256,22 @@ export function Navbar() {
           scrolled ? 'glass-nav shadow-soft' : 'bg-cream/60 dark:bg-secondary-950/60 backdrop-blur-md'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-18">
+        <div className="max-w-7xl lg:max-w-[88rem] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 lg:h-18">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-2.5 group shrink-0">
               <motion.img
                 src="/logo.png"
                 alt="FoodBridge"
-                className="h-9 w-9 sm:h-10 sm:w-10 object-contain"
+                className="h-8 w-8 sm:h-10 sm:w-10 object-contain"
                 whileHover={{ rotate: 10, scale: 1.05 }}
                 transition={{ type: 'spring', stiffness: 300 }}
               />
-              <span className="font-display text-lg sm:text-xl font-semibold gradient-text-soft">FoodBridge</span>
+              <span className="font-display text-base sm:text-lg lg:text-xl font-semibold gradient-text-soft">FoodBridge</span>
             </Link>
 
             {/* Primary links + dropdowns — desktop */}
-            <div ref={dropdownRef} className="hidden md:flex items-center gap-1">
+            <div ref={dropdownRef} className="hidden lg:flex items-center gap-0.5 xl:gap-1">
               {primaryLinks.map((item) => {
                 const active = location.pathname === item.path;
                 const Icon = item.icon;
@@ -279,16 +279,16 @@ export function Navbar() {
                   <Link
                     key={item.name}
                     to={item.path}
-                    className={`relative flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
+                    className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
                       active
                         ? 'text-primary-700 dark:text-primary-300'
                         : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'
                     }`}
                   >
-                    <Icon className="h-4 w-4 opacity-70" />
+                    <Icon className="h-4 w-4 opacity-70 xl:hidden" />
                     {item.name}
                     {active && (
-                      <motion.span layoutId="navUnderline" className="absolute left-3.5 right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />
+                      <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />
                     )}
                   </Link>
                 );

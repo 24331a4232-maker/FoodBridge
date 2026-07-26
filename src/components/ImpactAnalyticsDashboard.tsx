@@ -259,7 +259,7 @@ export function UnifiedImpactGraph() {
             transition={{ duration: 0.4, ease: 'easeOut' }}
             className="relative"
           >
-            <ResponsiveContainer width="100%" height={380}>
+            <ResponsiveContainer width="100%" height={300} className="h-[280px] sm:h-[380px]">
               <ComposedChart data={chartData} margin={{ top: 12, right: 16, left: -14, bottom: 4 }}>
                 <defs>
                   <linearGradient id="donationAreaGradient" x1="0" y1="0" x2="0" y2="1">

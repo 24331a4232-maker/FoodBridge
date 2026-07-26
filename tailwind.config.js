@@ -74,6 +74,13 @@ export default {
         display: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
         stat: ['Manrope', 'Inter', 'system-ui', 'sans-serif'],
       },
+      spacing: {
+        '18': '4.5rem',
+      },
+      maxWidth: {
+        '8xl': '88rem',
+        '9xl': '100rem',
+      },
       borderRadius: {
         'xl-premium': '20px',
         '2xl-premium': '24px',

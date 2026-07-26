@@ -61,7 +61,7 @@ export function HomePage() {
         <div className="absolute top-24 -left-10 h-80 w-80 rounded-full bg-primary-200/40 blur-3xl pointer-events-none" />
         <div className="absolute bottom-10 right-0 h-96 w-96 rounded-full bg-accent-200/30 blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
+        <div className="relative z-10 max-w-6xl lg:max-w-7xl 2xl:max-w-[88rem] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
           <div className="text-center lg:text-left">
             <motion.span
               initial={{ opacity: 0, y: 16 }}
