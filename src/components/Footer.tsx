@@ -70,7 +70,7 @@ export function Footer() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
 
   return (
-    <footer className="relative overflow-hidden bg-secondary-900 dark:bg-secondary-950 text-cream border-t border-secondary-800">
+    <footer className="relative overflow-hidden bg-secondary-900 dark:bg-secondary-950 text-cream border-t border-secondary-800 pb-safe">
       <div className="relative max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 py-20">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-10 lg:gap-12">
           {/* Brand */}

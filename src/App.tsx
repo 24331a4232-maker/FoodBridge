@@ -159,14 +159,20 @@ function AppShell() {
 }
 
 function App() {
-  const [loading, setLoading] = useState(() => !sessionStorage.getItem('foodbridge-loaded'));
+  const [loading, setLoading] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    if (sessionStorage.getItem('foodbridge-loaded')) return false;
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    return isMobile ? false : true;
+  });
 
   useEffect(() => {
     if (loading) {
+      const isMobile = window.matchMedia('(max-width: 768px)').matches;
       const timer = setTimeout(() => {
         sessionStorage.setItem('foodbridge-loaded', 'true');
         setLoading(false);
-      }, 1800);
+      }, isMobile ? 800 : 1800);
       return () => clearTimeout(timer);
     }
   }, [loading]);

@@ -94,7 +94,7 @@ export function DashboardLayout({ navItems, title, subtitle, roles, accent = 'pr
       </aside>
 
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-16 left-0 right-0 z-30 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 flex items-center justify-between">
+      <div className="lg:hidden fixed top-16 left-0 right-0 z-30 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 pl-safe pr-safe flex items-center justify-between">
         <div className="flex items-center gap-2">
           <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
             <Menu className="h-5 w-5" />
@@ -120,7 +120,7 @@ export function DashboardLayout({ navItems, title, subtitle, roles, accent = 'pr
               animate={{ x: 0 }}
               exit={{ x: -280 }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className={`lg:hidden fixed inset-y-0 left-0 top-0 w-72 bg-gradient-to-b ${a.sidebar} text-white z-50 flex flex-col`}
+              className={`lg:hidden fixed inset-y-0 left-0 top-0 w-72 bg-gradient-to-b ${a.sidebar} text-white z-50 flex flex-col pt-safe`}
             >
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
                 <div>
@@ -174,7 +174,7 @@ export function DashboardLayout({ navItems, title, subtitle, roles, accent = 'pr
 
       {/* Main content */}
       <div className="flex-1 lg:ml-64 pt-14 lg:pt-16">
-        <div className={`px-4 sm:px-6 lg:px-8 py-6 max-w-6xl mx-auto`}>
+        <div className={`px-4 sm:px-6 lg:px-8 py-6 max-w-6xl mx-auto pb-safe`}>
           <AnimatePresence mode="wait">
             <motion.div
               key={activeKey}

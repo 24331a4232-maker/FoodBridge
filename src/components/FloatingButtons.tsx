@@ -44,14 +44,14 @@ export function FloatingButtons() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => toast('Need help? Email hello@foodbridge.org', 'info')}
-        className="fixed bottom-6 left-6 z-40 h-12 w-12 rounded-full glass flex items-center justify-center text-accent-600 shadow-lg"
+        className="fixed bottom-6 left-6 mb-safe ml-safe z-40 h-12 w-12 rounded-full glass flex items-center justify-center text-accent-600 shadow-lg"
         aria-label="Help"
       >
         <HelpCircle className="h-5 w-5" />
       </motion.button>
 
       {/* Chat */}
-      <div className="fixed bottom-6 right-6 z-40">
+      <div className="fixed bottom-6 right-6 mb-safe mr-safe z-40">
         <AnimatePresence>
           {chatOpen && (
             <motion.div
@@ -123,7 +123,7 @@ export function FloatingButtons() {
             exit={{ opacity: 0, scale: 0 }}
             whileHover={{ scale: 1.1 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-24 right-6 z-40 h-11 w-11 rounded-full glass flex items-center justify-center text-primary-600 shadow-lg"
+            className="fixed bottom-24 right-6 mb-safe mr-safe z-40 h-11 w-11 rounded-full glass flex items-center justify-center text-primary-600 shadow-lg"
             aria-label="Scroll to top"
           >
             <ArrowUp className="h-5 w-5" />

@@ -278,7 +278,7 @@ export function Navbar() {
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: hidden ? -100 : 0, opacity: 1 }}
         transition={{ duration: 0.35, ease: [0.25, 0.4, 0.25, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 pt-safe transition-all duration-300 ${
           scrolled ? 'glass-nav shadow-soft' : 'bg-cream/60 dark:bg-secondary-950/60 backdrop-blur-md'
         }`}
       >
@@ -502,7 +502,7 @@ export function Navbar() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', stiffness: 320, damping: 34 }}
-              className="fixed top-0 right-0 bottom-0 z-[70] w-full max-w-md flex flex-col"
+              className="fixed top-0 right-0 bottom-0 z-[70] w-full max-w-md flex flex-col pt-safe"
             >
               <div className="h-full m-3 rounded-3xl overflow-hidden flex flex-col bg-cream/90 dark:bg-secondary-950/90 backdrop-blur-2xl border border-linen/70 dark:border-secondary-800/60 shadow-premium-lg">
                 {/* Drawer header */}
