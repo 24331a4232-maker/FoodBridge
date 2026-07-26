@@ -51,6 +51,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       .eq('id', uid)
       .maybeSingle();
     setProfile(data as Profile | null);
+    return data as Profile | null;
+  };
+
+  // Wait for a profile row to appear (trigger may take a moment)
+  const waitForProfile = async (uid: string, retries = 10): Promise<Profile | null> => {
+    for (let i = 0; i < retries; i++) {
+      const { data } = await supabase.from('profiles').select('*').eq('id', uid).maybeSingle();
+      if (data) {
+        setProfile(data as Profile);
+        return data as Profile;
+      }
+      await new Promise((r) => setTimeout(r, 300));
+    }
+    return null;
   };
 
   useEffect(() => {
@@ -82,38 +96,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const id = identifier.trim();
     if (!id) return { error: 'Please enter your email or username' };
 
-    // If it looks like an email, sign in directly with email
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(id);
-    if (isEmail) {
-      const { error } = await supabase.auth.signInWithPassword({ email: id, password });
-      if (error) return { error: 'Invalid username/email or password.' };
-      // Update last_login timestamp
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        await supabase.from('profiles').update({ last_login: new Date().toISOString() }).eq('id', session.user.id);
+    let emailToUse = id;
+
+    if (!isEmail) {
+      const { data: profileRow } = await supabase
+        .from('profiles')
+        .select('email')
+        .ilike('username', id)
+        .maybeSingle();
+
+      if (!profileRow) {
+        return { error: 'Invalid email/username or password.' };
       }
-      return { error: null };
+      emailToUse = profileRow.email;
     }
 
-    // Otherwise, look up the email associated with this username (case-insensitive)
-    const { data: profileRow, error: lookupError } = await supabase
-      .from('profiles')
-      .select('email')
-      .ilike('username', id)
-      .maybeSingle();
-
-    if (lookupError || !profileRow) {
-      return { error: 'Invalid username/email or password.' };
+    const { error } = await supabase.auth.signInWithPassword({ email: emailToUse, password });
+    if (error) {
+      return { error: 'Invalid email/username or password.' };
     }
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email: profileRow.email,
-      password,
-    });
-    if (error) return { error: 'Invalid username/email or password.' };
-    // Update last_login timestamp
     const { data: { session } } = await supabase.auth.getSession();
     if (session?.user) {
+      await fetchProfile(session.user.id);
       await supabase.from('profiles').update({ last_login: new Date().toISOString() }).eq('id', session.user.id);
     }
     return { error: null };
@@ -136,24 +142,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const username = params.username.trim();
     const phone = params.phone.trim();
 
-    // Check for duplicates before creating the auth account
+    // Pre-check for duplicates
     const fieldErrors: NonNullable<SignUpResult['fieldErrors']> = {};
-
     const [usernameCheck, emailCheck, phoneCheck] = await Promise.all([
       supabase.from('profiles').select('id').ilike('username', username).maybeSingle(),
       supabase.from('profiles').select('id').eq('email', email).maybeSingle(),
       supabase.from('profiles').select('id').eq('phone', phone).maybeSingle(),
     ]);
 
-    if (usernameCheck.data) fieldErrors.username = 'Username is already taken.';
+    if (usernameCheck.data) fieldErrors.username = 'Username already exists.';
     if (emailCheck.data) fieldErrors.email = 'Email is already registered.';
-    if (phoneCheck.data) fieldErrors.phone = 'Mobile number is already registered.';
+    if (phoneCheck.data) fieldErrors.phone = 'Mobile number already registered.';
 
     if (Object.keys(fieldErrors).length > 0) {
       return { error: 'Please fix the errors below.', fieldErrors };
     }
 
-    // Create the auth user
+    // Create the auth user — the database trigger auto-creates the profile row
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -168,6 +173,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           city: params.city?.trim() ?? '',
           state: params.state?.trim() ?? '',
           pincode: params.pincode?.trim() ?? '',
+          email: email,
         },
       },
     });
@@ -179,7 +185,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: error.message };
     }
 
-    if (data.user) {
+    if (!data.user) {
+      return { error: 'Registration failed. Please try again.' };
+    }
+
+    // Wait for the trigger to create the profile row
+    const newProfile = await waitForProfile(data.user.id, 15);
+
+    if (!newProfile) {
+      // Fallback: try inserting manually (trigger may have failed)
       const { error: insertError } = await supabase.from('profiles').insert({
         id: data.user.id,
         full_name: params.fullName.trim(),
@@ -195,20 +209,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
 
       if (insertError) {
-        // The DB unique constraint caught a race condition — clean up the auth user
-        await supabase.auth.signOut();
         const msg = insertError.message.toLowerCase();
         if (msg.includes('username')) {
-          return { error: 'Username is already taken.', fieldErrors: { username: 'Username is already taken.' } };
+          return { error: 'Username already exists.', fieldErrors: { username: 'Username already exists.' } };
         }
         if (msg.includes('email')) {
           return { error: 'Email is already registered.', fieldErrors: { email: 'Email is already registered.' } };
         }
         if (msg.includes('phone')) {
-          return { error: 'Mobile number is already registered.', fieldErrors: { phone: 'Mobile number is already registered.' } };
+          return { error: 'Mobile number already registered.', fieldErrors: { phone: 'Mobile number already registered.' } };
         }
-        return { error: 'Could not create your profile. Please try again.' };
+        return { error: 'Account created but profile setup failed. Please log in.' };
       }
+
+      await fetchProfile(data.user.id);
     }
 
     return { error: null };
@@ -216,10 +230,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    // Clear all auth/session data from storage so no stale session lingers
-    try {
-      localStorage.removeItem('sb-' + (import.meta.env.VITE_SUPABASE_URL as string).replace(/^https?:\/\//, '').replace(/\./g, '-') + '-auth-token');
-    } catch { /* ignore */ }
     try {
       Object.keys(localStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => localStorage.removeItem(k));
     } catch { /* ignore */ }
@@ -239,7 +249,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
 export function useAuth() {
   const ctx = useContext(AuthContext);

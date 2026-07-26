@@ -116,7 +116,9 @@ export function RegisterPage() {
       toast(result.error, 'error');
     } else {
       toast('Account created! Welcome to FoodBridge.', 'success');
-      navigate(roleDashboardPath[role]);
+      // The AuthContext signUp already waited for the profile to be created.
+      // Navigate to the role-based dashboard.
+      navigate(roleDashboardPath[role], { replace: true });
     }
   };
 

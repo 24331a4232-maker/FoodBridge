@@ -19,6 +19,15 @@ export function ProtectedRoute({ children, roles }: { children: ReactNode; roles
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
+  // If user exists but profile hasn't loaded yet, wait briefly
+  if (user && !profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="h-10 w-10 rounded-full border-4 border-primary-200 border-t-primary-600 animate-spin" />
+      </div>
+    );
+  }
+
   if (roles && profile && !roles.includes(profile.role)) {
     return <Navigate to="/access-denied" replace />;
   }

@@ -43,10 +43,15 @@ export function LoginPage() {
       toast(error, 'error');
     } else {
       toast('Welcome back to FoodBridge!', 'success');
-      // Fetch profile to determine role-based redirect
-      const { data: p } = await supabase.from('profiles').select('role').eq('id', (await supabase.auth.getSession()).data.session?.user.id ?? '').maybeSingle();
-      const role = (p as { role?: import('@/types').UserRole } | null)?.role;
-      navigate(role ? roleDashboardPath[role] : from, { replace: true });
+      // AuthContext onAuthStateChange will set the profile; redirect based on role
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const { data: p } = await supabase.from('profiles').select('role').eq('id', session.user.id).maybeSingle();
+        const role = (p as { role?: import('@/types').UserRole } | null)?.role;
+        navigate(role ? roleDashboardPath[role] : from, { replace: true });
+      } else {
+        navigate(from, { replace: true });
+      }
     }
   };
 
