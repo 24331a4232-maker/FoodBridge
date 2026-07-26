@@ -24,8 +24,6 @@ interface MenuLink {
 const primaryLinks: MenuLink[] = [
   { name: 'Home', path: '/', icon: Home },
   { name: 'About', path: '/about', icon: Info },
-  { name: 'Services', path: '/services', icon: Package },
-  { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
   { name: 'Impact', path: '/analytics', icon: BarChart3 },
   { name: 'Community', path: '/community', icon: Users },
   { name: 'Contact', path: '/resources/contact', icon: Phone },
@@ -103,7 +101,7 @@ export function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [openDropdown, setOpenDropdown] = useState<'services' | 'dashboard' | 'resources' | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<'services' | 'resources' | null>(null);
   const { theme, toggleTheme } = useTheme();
   const { user, profile, signOut } = useAuth();
   const { toast } = useToast();
@@ -148,6 +146,14 @@ export function Navbar() {
     if (openDropdown || profileMenuOpen) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [openDropdown, profileMenuOpen]);
+
+  const handleDashboardClick = () => {
+    if (user && profile?.role) {
+      navigate(roleDashboardPath[profile.role]);
+    } else {
+      navigate('/login');
+    }
+  };
 
   const handleSignOut = async () => {
     setDrawerOpen(false);
@@ -196,7 +202,7 @@ export function Navbar() {
 
   const isPathInLinks = (path: string, links: MenuLink[]) => links.some((l) => l.path === path);
 
-  const renderDropdown = (id: 'services' | 'dashboard' | 'resources', label: string, icon: LucideIcon, links: MenuLink[]) => {
+  const renderDropdown = (id: 'services' | 'resources', label: string, icon: LucideIcon, links: MenuLink[]) => {
     const isOpen = openDropdown === id;
     const isActive = isPathInLinks(location.pathname, links);
     const Icon = icon;
@@ -292,29 +298,54 @@ export function Navbar() {
 
             {/* Primary links + dropdowns — desktop */}
             <div ref={dropdownRef} className="hidden lg:flex items-center gap-0.5 xl:gap-1">
-              {primaryLinks.map((item) => {
-                const active = location.pathname === item.path;
-                const Icon = item.icon;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.path}
-                    className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
-                      active
-                        ? 'text-primary-700 dark:text-primary-300'
-                        : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'
-                    }`}
-                  >
-                    <Icon className="h-4 w-4 opacity-70 xl:hidden" />
-                    {item.name}
-                    {active && (
-                      <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />
-                    )}
-                  </Link>
-                );
-              })}
+              {/* Home */}
+              <Link to="/" className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${location.pathname === '/' ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'}`}>
+                <Home className="h-4 w-4 opacity-70 xl:hidden" />
+                Home
+                {location.pathname === '/' && <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />}
+              </Link>
+              {/* About */}
+              <Link to="/about" className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${location.pathname === '/about' ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'}`}>
+                <Info className="h-4 w-4 opacity-70 xl:hidden" />
+                About
+                {location.pathname === '/about' && <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />}
+              </Link>
+              {/* Services dropdown */}
               {renderDropdown('services', 'Services', Package, servicesLinks)}
-              {renderDropdown('dashboard', 'Dashboard', LayoutDashboard, dashboardLinks)}
+              {/* Impact */}
+              <Link to="/analytics" className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${location.pathname === '/analytics' ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'}`}>
+                <BarChart3 className="h-4 w-4 opacity-70 xl:hidden" />
+                Impact
+                {location.pathname === '/analytics' && <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />}
+              </Link>
+              {/* Community */}
+              <Link to="/community" className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${location.pathname === '/community' ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'}`}>
+                <Users className="h-4 w-4 opacity-70 xl:hidden" />
+                Community
+                {location.pathname === '/community' && <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />}
+              </Link>
+              {/* Contact */}
+              <Link to="/resources/contact" className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${location.pathname === '/resources/contact' ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'}`}>
+                <Phone className="h-4 w-4 opacity-70 xl:hidden" />
+                Contact
+                {location.pathname === '/resources/contact' && <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />}
+              </Link>
+              {/* Dashboard — no dropdown, role-aware */}
+              <button
+                onClick={handleDashboardClick}
+                className={`relative flex items-center gap-1.5 px-2.5 xl:px-3.5 py-2 text-sm font-medium rounded-full transition-colors duration-200 ${
+                  location.pathname.startsWith('/dashboard')
+                    ? 'text-primary-700 dark:text-primary-300'
+                    : 'text-ink-soft dark:text-cream/70 hover:text-primary-600 dark:hover:text-primary-400'
+                }`}
+              >
+                <LayoutDashboard className="h-4 w-4 opacity-70 xl:hidden" />
+                Dashboard
+                {location.pathname.startsWith('/dashboard') && (
+                  <motion.span layoutId="navUnderline" className="absolute left-2.5 right-2.5 xl:left-3.5 xl:right-3.5 -bottom-0.5 h-0.5 rounded-full bg-primary-500" />
+                )}
+              </button>
+              {/* Resources dropdown */}
               {renderDropdown('resources', 'Resources', HelpCircle, resourcesLinks)}
             </div>
 
@@ -503,14 +534,10 @@ export function Navbar() {
                       <Search className="h-4 w-4 text-secondary-600 dark:text-secondary-400" strokeWidth={1.75} />
                       <span className="text-sm font-medium text-ink dark:text-cream">Available</span>
                     </Link>
-                    <Link to="/dashboard/volunteer" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-800/40 transition-colors">
+                    <button onClick={handleDashboardClick} className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-accent-50 dark:bg-accent-900/30 hover:bg-accent-100 dark:hover:bg-accent-800/40 transition-colors">
                       <LayoutDashboard className="h-4 w-4 text-accent-600 dark:text-accent-400" strokeWidth={1.75} />
-                      <span className="text-sm font-medium text-ink dark:text-cream">Volunteer</span>
-                    </Link>
-                    <Link to="/dashboard/admin" className="flex items-center gap-2 px-3 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-900/30 hover:bg-primary-100 dark:hover:bg-primary-800/40 transition-colors">
-                      <Building2 className="h-4 w-4 text-primary-600 dark:text-primary-400" strokeWidth={1.75} />
-                      <span className="text-sm font-medium text-ink dark:text-cream">Admin</span>
-                    </Link>
+                      <span className="text-sm font-medium text-ink dark:text-cream">{user && profile?.role ? `${profile.role} Dashboard` : 'Dashboard'}</span>
+                    </button>
                   </div>
                 </div>
 
