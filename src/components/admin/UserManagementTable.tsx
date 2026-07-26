@@ -1,11 +1,14 @@
 import { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, Search, Filter, Eye, EyeOff, Loader2, MapPin, Phone, Mail,
   Building2, Calendar, Clock, ShieldCheck, Hotel, HeartHandshake, Truck,
+  Trash2, AlertTriangle, X, UserX,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Profile, UserRole } from '@/types';
+
+type DeleteState = 'idle' | 'confirming' | 'deleting' | 'error';
 
 const roleMeta: Record<UserRole, { label: string; icon: typeof Users; color: string; bg: string }> = {
   admin: { label: 'Admin', icon: ShieldCheck, color: 'text-rose-600', bg: 'bg-rose-100 dark:bg-rose-900/30' },
@@ -45,6 +48,50 @@ export function UserManagementTable() {
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<UserRole | 'all'>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Profile | null>(null);
+  const [deleteState, setDeleteState] = useState<DeleteState>('idle');
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleteState('deleting');
+    setDeleteError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setDeleteState('error');
+        setDeleteError('Your session has expired. Please sign in again.');
+        return;
+      }
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({ userId: deleteTarget.id }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setDeleteState('error');
+        setDeleteError(json?.error ?? 'Failed to delete user');
+        return;
+      }
+      setUsers((prev) => prev.filter((u) => u.id !== deleteTarget.id));
+      setDeleteTarget(null);
+      setDeleteState('idle');
+    } catch (err) {
+      setDeleteState('error');
+      setDeleteError(err instanceof Error ? err.message : 'Unexpected error');
+    }
+  };
+
+  const closeDeleteModal = () => {
+    if (deleteState === 'deleting') return;
+    setDeleteTarget(null);
+    setDeleteState('idle');
+    setDeleteError(null);
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -197,12 +244,24 @@ export function UserManagementTable() {
                         <td className="py-3 text-xs text-gray-500">{formatDate(u.created_at)}</td>
                         <td className="py-3 text-xs text-gray-500">{formatDate(u.last_login)}</td>
                         <td className="py-3 text-right">
-                          <button
-                            onClick={() => setExpandedId(expanded ? null : u.id)}
-                            className="text-primary-600 hover:text-primary-700 p-1 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/30"
-                          >
-                            {expanded ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </button>
+                          <div className="flex items-center justify-end gap-1">
+                            <button
+                              onClick={() => setExpandedId(expanded ? null : u.id)}
+                              className="text-primary-600 hover:text-primary-700 p-1 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/30"
+                              title="Toggle details"
+                            >
+                              {expanded ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
+                            {u.role !== 'admin' && (
+                              <button
+                                onClick={() => { setDeleteTarget(u); setDeleteState('confirming'); setDeleteError(null); }}
+                                className="text-red-500 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30"
+                                title="Delete user"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            )}
+                          </div>
                         </td>
                       </tr>
                       {expanded && (
@@ -294,12 +353,22 @@ export function UserManagementTable() {
                     <p className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 text-gray-400" /> Joined {formatDate(u.created_at)}</p>
                     <p className="flex items-center gap-2"><Clock className="h-3.5 w-3.5 text-gray-400" /> Last login {formatDateTime(u.last_login)}</p>
                   </div>
-                  <button
-                    onClick={() => setExpandedId(expanded ? null : u.id)}
-                    className="mt-3 text-xs font-medium text-primary-600 hover:underline flex items-center gap-1"
-                  >
-                    {expanded ? <><EyeOff className="h-3.5 w-3.5" /> Hide details</> : <><Eye className="h-3.5 w-3.5" /> Show details</>}
-                  </button>
+                  <div className="mt-3 flex items-center justify-between gap-2">
+                    <button
+                      onClick={() => setExpandedId(expanded ? null : u.id)}
+                      className="text-xs font-medium text-primary-600 hover:underline flex items-center gap-1"
+                    >
+                      {expanded ? <><EyeOff className="h-3.5 w-3.5" /> Hide details</> : <><Eye className="h-3.5 w-3.5" /> Show details</>}
+                    </button>
+                    {u.role !== 'admin' && (
+                      <button
+                        onClick={() => { setDeleteTarget(u); setDeleteState('confirming'); setDeleteError(null); }}
+                        className="text-xs font-medium text-red-500 hover:text-red-600 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" /> Delete
+                      </button>
+                    )}
+                  </div>
                   {expanded && (
                     <div className="mt-3 grid grid-cols-2 gap-2 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 text-xs">
                       <div><p className="text-gray-400">Organization</p><p className="font-medium">{u.organization || 'N/A'}</p></div>
@@ -320,6 +389,91 @@ export function UserManagementTable() {
           </div>
         </>
       )}
+
+      {/* Delete confirmation modal */}
+      <AnimatePresence>
+        {deleteTarget && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={closeDeleteModal}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative w-full max-w-md rounded-2xl bg-white dark:bg-secondary-900 shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+            >
+              <button
+                onClick={closeDeleteModal}
+                className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+                aria-label="Close"
+              >
+                <X className="h-4 w-4" />
+              </button>
+              <div className="p-6">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 flex items-center justify-center shrink-0">
+                    <UserX className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <h3 className="font-display text-lg font-bold text-gray-900 dark:text-white">Delete User</h3>
+                    <p className="text-xs text-gray-500">This action cannot be undone.</p>
+                  </div>
+                </div>
+
+                <div className="rounded-xl bg-gray-50 dark:bg-gray-800/50 p-3 mb-4 flex items-center gap-3">
+                  <div className="h-9 w-9 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center text-xs font-bold shrink-0">
+                    {initials(deleteTarget.full_name)}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate text-gray-900 dark:text-white">{deleteTarget.full_name}</p>
+                    <p className="text-xs text-gray-500 truncate">{deleteTarget.email}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 p-3 mb-4">
+                  <AlertTriangle className="h-4 w-4 text-red-500 shrink-0 mt-0.5" />
+                  <p className="text-xs text-red-700 dark:text-red-300 leading-relaxed">
+                    The account and all related data (donations, pickups, certificates, inspection reports, and notifications) will be permanently removed from the database. The user will no longer be able to sign in.
+                  </p>
+                </div>
+
+                {deleteState === 'error' && deleteError && (
+                  <div className="rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 p-3 mb-4 text-xs text-red-600 dark:text-red-400">
+                    {deleteError}
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <button
+                    onClick={closeDeleteModal}
+                    disabled={deleteState === 'deleting'}
+                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={confirmDelete}
+                    disabled={deleteState === 'deleting'}
+                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {deleteState === 'deleting' ? (
+                      <><Loader2 className="h-4 w-4 animate-spin" /> Deleting...</>
+                    ) : (
+                      <><Trash2 className="h-4 w-4" /> Delete Permanently</>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
