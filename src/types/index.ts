@@ -102,6 +102,14 @@ export interface FoodDonation {
   donation_code: string | null;
 }
 
+export type TrackingStatus =
+  | 'accepted'
+  | 'pickup_started'
+  | 'picked_up'
+  | 'on_the_way'
+  | 'delivered'
+  | 'cancelled';
+
 export interface Pickup {
   id: string;
   donation_id: string;
@@ -115,6 +123,11 @@ export interface Pickup {
   recipient_org: string;
   points_earned: number;
   created_at: string;
+  current_lat: number | null;
+  current_lng: number | null;
+  tracking_status: TrackingStatus;
+  started_at: string | null;
+  on_the_way_at: string | null;
   donation?: FoodDonation;
 }
 
@@ -176,9 +189,27 @@ export interface Certificate {
   volunteer?: Profile;
 }
 
+export type RejectionReason =
+  | ''
+  | 'expired'
+  | 'damaged_packaging'
+  | 'bad_smell'
+  | 'contaminated'
+  | 'unsafe_temperature';
+
+export interface InspectionChecklist {
+  visual_inspection?: boolean;
+  temperature_check?: boolean;
+  packaging_intact?: boolean;
+  no_contamination?: boolean;
+  within_expiry?: boolean;
+  no_off_odour?: boolean;
+}
+
 export interface FoodQualityInspection {
   id: string;
   donation_id: string;
+  pickup_id: string | null;
   inspector_id: string | null;
   inspector_name: string;
   freshness: 'fresh' | 'good' | 'average' | 'stale';
@@ -186,6 +217,12 @@ export interface FoodQualityInspection {
   temperature: string;
   expiry_check: 'pass' | 'fail';
   approval_status: 'approved' | 'pending' | 'rejected';
+  rejection_reason: RejectionReason;
+  rating: number;
+  photo_url: string;
+  checklist: InspectionChecklist;
+  inspector_lat: number | null;
+  inspector_lng: number | null;
   notes: string;
   created_at: string;
 }

@@ -5,6 +5,7 @@ import {
   BarChart3, FileText, Bell, Settings, Radio, TrendingUp, TrendingDown,
   Loader2, Search, CheckCircle2, Clock, XCircle, Download, Star,
   Activity, AlertTriangle, Eye, EyeOff, Filter, Save, RefreshCw,
+  Camera, MapPin,
 } from 'lucide-react';
 import {
   ResponsiveContainer, ComposedChart, Line, Area, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
@@ -396,17 +397,24 @@ export function AdminNgoManagementSection() {
 export function AdminFoodQualitySection() {
   const [inspections, setInspections] = useState<FoodQualityInspection[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<FoodQualityInspection | null>(null);
+  const [filter, setFilter] = useState<'all' | 'approved' | 'rejected' | 'pending'>('all');
+
+  const load = useCallback(async () => {
+    const { data } = await supabase
+      .from('food_quality_inspections')
+      .select('*, donation:food_donations(*), pickup:pickups(*)')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    setInspections((data as FoodQualityInspection[]) ?? []);
+    setLoading(false);
+  }, []);
 
   useEffect(() => {
-    const load = async () => {
-      const { data } = await supabase.from('food_quality_inspections').select('*').order('created_at', { ascending: false }).limit(30);
-      setInspections((data as FoodQualityInspection[]) ?? []);
-      setLoading(false);
-    };
     load();
     const ch = supabase.channel('admin-quality').on('postgres_changes', { event: '*', schema: 'public', table: 'food_quality_inspections' }, load).subscribe();
     return () => { supabase.removeChannel(ch); };
-  }, []);
+  }, [load]);
 
   const statusColors: Record<string, string> = {
     approved: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
@@ -414,29 +422,99 @@ export function AdminFoodQualitySection() {
     rejected: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
   };
 
+  const reasonLabel = (reason: string) =>
+    ({ expired: 'Expired', damaged_packaging: 'Damaged Packaging', bad_smell: 'Bad Smell', contaminated: 'Contaminated', unsafe_temperature: 'Unsafe Temperature' } as Record<string, string>)[reason] ?? reason;
+
+  const filtered = inspections.filter((i) => filter === 'all' || i.approval_status === filter);
+
   return (
     <div>
-      <DashboardSectionHeader title="Food Quality Monitoring" description="Review food quality inspections across all donations." />
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <DashboardSectionHeader title="Food Quality Monitoring" description="Review food quality inspections, photos, ratings, and volunteer reports." />
+      <div className="grid grid-cols-4 gap-4 mb-6">
         <StatCard icon={CheckCircle2} label="Approved" value={inspections.filter((i) => i.approval_status === 'approved').length} color="bg-green-500" />
         <StatCard icon={Clock} label="Pending" value={inspections.filter((i) => i.approval_status === 'pending').length} color="bg-amber-500" />
         <StatCard icon={XCircle} label="Rejected" value={inspections.filter((i) => i.approval_status === 'rejected').length} color="bg-red-500" />
+        <StatCard icon={Star} label="Avg Rating" value={(inspections.reduce((s, i) => s + (i.rating ?? 0), 0) / (inspections.length || 1)).toFixed(1)} color="bg-yellow-500" />
       </div>
-      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : inspections.length === 0 ? <div className="glass-card p-10 text-center"><ShieldCheck className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No quality inspections yet.</p></div> : (
-        <div className="space-y-2">
-          {inspections.map((insp, i) => (
+
+      <div className="flex gap-2 mb-4 overflow-x-auto no-scrollbar">
+        {(['all', 'approved', 'rejected', 'pending'] as const).map((f) => (
+          <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all whitespace-nowrap ${filter === f ? 'bg-primary-600 text-white' : 'glass hover:bg-primary-50 dark:hover:bg-primary-900/30'}`}>{f}</button>
+        ))}
+      </div>
+
+      {loading ? (
+        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+      ) : filtered.length === 0 ? (
+        <div className="glass-card p-10 text-center"><ShieldCheck className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No quality inspections yet.</p></div>
+      ) : (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {filtered.map((insp, i) => (
             <motion.div key={insp.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="glass-card p-4">
-              <div className="flex items-center justify-between mb-2">
-                <p className="font-medium text-sm">{insp.inspector_name || 'Unknown inspector'}</p>
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="h-10 w-10 rounded-full bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center text-sm font-bold shrink-0">
+                    {insp.inspector_name?.[0]?.toUpperCase() ?? 'V'}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-medium text-sm truncate">{insp.inspector_name || 'Unknown inspector'}</p>
+                    <p className="text-xs text-gray-400 truncate">{insp.donation?.food_name ?? 'Donation'} - {new Date(insp.created_at).toLocaleDateString()}</p>
+                  </div>
+                </div>
                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0 ${statusColors[insp.approval_status]}`}>{insp.approval_status}</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+
+              {/* Photo + rating */}
+              <div className="flex gap-3 mb-3">
+                {insp.photo_url ? (
+                  <img src={insp.photo_url} alt="Food" className="h-20 w-20 rounded-xl object-cover shrink-0" />
+                ) : (
+                  <div className="h-20 w-20 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0"><Camera className="h-6 w-6 text-gray-400" /></div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-1 mb-1">
+                    {[1, 2, 3, 4, 5].map((n) => (
+                      <Star key={n} className={`h-4 w-4 ${n <= (insp.rating ?? 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                    ))}
+                    <span className="ml-1 text-xs text-gray-500">{insp.rating ?? 0}/5</span>
+                  </div>
+                  {insp.approval_status === 'rejected' && insp.rejection_reason && (
+                    <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1 mt-1"><XCircle className="h-3 w-3" /> {reasonLabel(insp.rejection_reason)}</p>
+                  )}
+                  {insp.pickup?.current_lat != null && (
+                    <p className="text-xs text-gray-500 flex items-center gap-1 mt-1"><MapPin className="h-3 w-3" /> {insp.pickup.current_lat.toFixed(4)}, {insp.pickup.current_lng?.toFixed(4)}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Quality grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs mb-3">
                 <div><span className="text-gray-400">Freshness:</span> <span className="font-medium capitalize">{insp.freshness}</span></div>
                 <div><span className="text-gray-400">Packaging:</span> <span className="font-medium capitalize">{insp.packaging}</span></div>
                 <div><span className="text-gray-400">Temp:</span> <span className="font-medium">{insp.temperature || 'N/A'}</span></div>
                 <div><span className="text-gray-400">Expiry:</span> <span className="font-medium capitalize">{insp.expiry_check}</span></div>
               </div>
-              {insp.notes && <p className="text-xs text-gray-500 mt-2">{insp.notes}</p>}
+
+              {insp.notes && <p className="text-xs text-gray-500 mb-3">{insp.notes}</p>}
+
+              <RippleButton onClick={() => setSelected(selected?.id === insp.id ? null : insp)} variant="ghost" className="text-xs w-full">
+                <Eye className="h-3.5 w-3.5" /> {selected?.id === insp.id ? 'Hide' : 'View'} Full Report
+              </RippleButton>
+
+              {selected?.id === insp.id && (
+                <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="overflow-hidden mt-3 pt-3 border-t border-linen dark:border-secondary-800">
+                  <p className="text-xs font-medium mb-2">Checklist</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
+                    {Object.entries(insp.checklist ?? {}).map(([k, v]) => (
+                      <div key={k} className="flex items-center gap-2 text-xs">
+                        {v ? <CheckCircle2 className="h-3.5 w-3.5 text-green-500" /> : <XCircle className="h-3.5 w-3.5 text-red-400" />}
+                        <span className="capitalize">{k.replace(/_/g, ' ')}</span>
+                      </div>
+                    ))}
+                  </div>
+                  {insp.photo_url && <img src={insp.photo_url} alt="Food full" className="mt-3 w-full max-h-64 object-cover rounded-xl" />}
+                </motion.div>
+              )}
             </motion.div>
           ))}
         </div>

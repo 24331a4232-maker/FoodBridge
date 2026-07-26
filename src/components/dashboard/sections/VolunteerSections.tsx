@@ -18,7 +18,7 @@ import { DonationStatusTracker } from '@/components/DonationStatusTracker';
 import { FoodQualityBadge } from '@/components/FoodQualityBadge';
 import { DonationImage } from '@/components/Illustration';
 import { DashboardSectionHeader, StatCard } from '@/components/dashboard/DashboardLayout';
-import type { FoodDonation, Pickup } from '@/types';
+import type { FoodDonation, Pickup, InspectionChecklist } from '@/types';
 
 /* ---------- Assigned Donations ---------- */
 export function VolunteerAssignedSection() {
@@ -280,88 +280,434 @@ export function VolunteerDeliveryHistorySection() {
   );
 }
 
-/* ---------- Food Quality Update ---------- */
+/* ---------- Food Quality Inspection ---------- */
+const REJECTION_REASONS: { value: string; label: string }[] = [
+  { value: 'expired', label: 'Expired' },
+  { value: 'damaged_packaging', label: 'Damaged Packaging' },
+  { value: 'bad_smell', label: 'Bad Smell' },
+  { value: 'contaminated', label: 'Contaminated' },
+  { value: 'unsafe_temperature', label: 'Unsafe Temperature' },
+];
+
+const CHECKLIST_ITEMS: { key: keyof InspectionChecklist; label: string }[] = [
+  { key: 'visual_inspection', label: 'Visual inspection - food looks fresh and appealing' },
+  { key: 'temperature_check', label: 'Temperature check - within safe range' },
+  { key: 'packaging_intact', label: 'Packaging intact - no tears or leaks' },
+  { key: 'no_contamination', label: 'No contamination signs' },
+  { key: 'within_expiry', label: 'Within expiry / best-before date' },
+  { key: 'no_off_odour', label: 'No off-odour detected' },
+];
+
+interface InspectionForm {
+  checklist: InspectionChecklist;
+  temperature: string;
+  freshness: 'fresh' | 'good' | 'average' | 'stale';
+  packaging: 'excellent' | 'good' | 'fair' | 'poor';
+  rating: number;
+  photoUrl: string;
+  approval: 'approved' | 'rejected';
+  rejectionReason: string;
+  notes: string;
+}
+
+const EMPTY_FORM: InspectionForm = {
+  checklist: {},
+  temperature: '',
+  freshness: 'fresh',
+  packaging: 'good',
+  rating: 0,
+  photoUrl: '',
+  approval: 'approved',
+  rejectionReason: '',
+  notes: '',
+};
+
 export function VolunteerFoodQualitySection() {
   const { user, profile } = useAuth();
   const { toast } = useToast();
+  const { pushToast } = useNotifications();
+  const { position, loading: geoLoading, request: requestGeo } = useGeolocation();
   const [pickups, setPickups] = useState<Pickup[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState<string | null>(null);
-  const [quality, setQuality] = useState<Record<string, { freshness: string; temp: string; notes: string }>>({});
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [forms, setForms] = useState<Record<string, InspectionForm>>({});
+  const [uploading, setUploading] = useState<string | null>(null);
 
-  useEffect(() => {
-    const load = async () => {
-      if (!user) return;
-      const { data } = await supabase.from('pickups').select('*, donation:food_donations(*)').eq('volunteer_id', user.id).in('status', ['accepted', 'in_progress']).order('created_at', { ascending: false });
-      setPickups((data as Pickup[]) ?? []);
-      setLoading(false);
-    };
-    load();
+  const load = useCallback(async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from('pickups')
+      .select('*, donation:food_donations(*)')
+      .eq('volunteer_id', user.id)
+      .in('status', ['accepted', 'in_progress'])
+      .order('created_at', { ascending: false });
+    setPickups((data as Pickup[]) ?? []);
+    setLoading(false);
   }, [user]);
 
-  const submitQuality = async (pickup: Pickup) => {
-    const q = quality[pickup.id];
-    if (!q) return;
-    setSubmitting(pickup.id);
-    await supabase.from('food_donations').update({
-      food_condition: q.freshness as 'fresh' | 'good' | 'average',
-      food_temperature: q.temp ? parseFloat(q.temp) : null,
-      quality_result: 'approved',
-    }).eq('id', pickup.donation_id);
+  useEffect(() => {
+    load();
+    const ch = supabase
+      .channel('vol-quality')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'pickups' }, load)
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [load]);
+
+  const updateForm = (pickupId: string, patch: Partial<InspectionForm>) =>
+    setForms((prev) => ({ ...prev, [pickupId]: { ...(prev[pickupId] ?? EMPTY_FORM), ...patch } }));
+
+  const handlePhoto = async (pickupId: string, file: File) => {
+    setUploading(pickupId);
+    const ext = file.name.split('.').pop() ?? 'jpg';
+    const path = `${user?.id}/${pickupId}-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from('food-photos').upload(path, file, { cacheControl: '3600', upsert: true });
+    if (upErr) {
+      toast('Photo upload failed', 'error');
+      setUploading(null);
+      return;
+    }
+    const { data: pub } = supabase.storage.from('food-photos').getPublicUrl(path);
+    updateForm(pickupId, { photoUrl: pub.publicUrl });
+    setUploading(null);
+    toast('Photo uploaded', 'success');
+  };
+
+  const startPickup = async (pickup: Pickup) => {
+    const now = new Date().toISOString();
+    await supabase.from('pickups').update({
+      status: 'in_progress',
+      tracking_status: 'pickup_started',
+      started_at: now,
+      current_lat: position?.lat ?? null,
+      current_lng: position?.lng ?? null,
+    }).eq('id', pickup.id);
     await supabase.from('donation_events').insert({
       donation_id: pickup.donation_id,
-      event_type: 'food_quality_approved',
+      event_type: 'pickup_started',
       actor_name: profile?.full_name ?? 'Volunteer',
       actor_role: 'volunteer',
-      notes: q.notes || `Quality: ${q.freshness}, Temp: ${q.temp}°C`,
+      notes: 'Volunteer started navigation to pickup location.',
     });
-    toast('Food quality updated successfully', 'success');
-    setSubmitting(null);
-    setQuality((prev) => { const n = { ...prev }; delete n[pickup.id]; return n; });
-    setPickups((p) => p.filter((x) => x.id !== pickup.id));
+    pushToast('Pickup started - navigate to the donor location', 'success');
+    load();
   };
+
+  const submitInspection = async (pickup: Pickup) => {
+    const f = forms[pickup.id] ?? EMPTY_FORM;
+    if (f.rating === 0) { toast('Please rate the food quality (1-5 stars)', 'error'); return; }
+    if (f.approval === 'rejected' && !f.rejectionReason) { toast('Please select a rejection reason', 'error'); return; }
+    if (!f.photoUrl) { toast('Please upload a food photo', 'error'); return; }
+    setSubmitting(pickup.id);
+
+    const checklistDone = CHECKLIST_ITEMS.filter((c) => f.checklist[c.key]).length;
+    if (checklistDone < CHECKLIST_ITEMS.length) {
+      toast('Please complete every checklist item before submitting', 'error');
+      setSubmitting(null);
+      return;
+    }
+
+    const isApproved = f.approval === 'approved';
+    const qualityScore = isApproved ? Math.round(60 + (f.rating / 5) * 40) : Math.round((f.rating / 5) * 40);
+
+    await supabase.from('food_quality_inspections').insert({
+      donation_id: pickup.donation_id,
+      pickup_id: pickup.id,
+      inspector_id: user?.id ?? null,
+      inspector_name: profile?.full_name ?? 'Volunteer',
+      freshness: f.freshness,
+      packaging: f.packaging,
+      temperature: f.temperature,
+      expiry_check: f.checklist.within_expiry ? 'pass' : 'fail',
+      approval_status: f.approval,
+      rejection_reason: f.rejectionReason,
+      rating: f.rating,
+      photo_url: f.photoUrl,
+      checklist: f.checklist,
+      inspector_lat: position?.lat ?? null,
+      inspector_lng: position?.lng ?? null,
+      notes: f.notes,
+    });
+
+    await supabase.from('food_donations').update({
+      food_condition: f.freshness,
+      food_temperature: f.temperature ? parseFloat(f.temperature) : null,
+      quality_score: qualityScore,
+      freshness_status: isApproved ? 'fresh' : 'spoiled',
+      status: isApproved ? 'claimed' : 'cancelled',
+    }).eq('id', pickup.donation_id);
+
+    await supabase.from('donation_events').insert({
+      donation_id: pickup.donation_id,
+      event_type: isApproved ? 'food_quality_approved' : 'food_quality_rejected',
+      actor_name: profile?.full_name ?? 'Volunteer',
+      actor_role: 'volunteer',
+      notes: isApproved
+        ? `Approved - ${f.rating}/5 stars. ${f.notes || ''}`
+        : `Rejected - ${REJECTION_REASONS.find((r) => r.value === f.rejectionReason)?.label ?? f.rejectionReason}. ${f.notes || ''}`,
+    });
+
+    if (!isApproved) {
+      await supabase.from('pickups').update({ status: 'cancelled', tracking_status: 'cancelled' }).eq('id', pickup.id);
+    }
+
+    pushToast(isApproved ? 'Inspection approved - proceed to pickup' : 'Inspection submitted - donation rejected', isApproved ? 'success' : 'error');
+    setSubmitting(null);
+    setForms((prev) => { const n = { ...prev }; delete n[pickup.id]; return n; });
+    setActiveId(null);
+    load();
+  };
+
+  const mapPoints: MapPoint[] = [];
+  if (position) mapPoints.push({ lat: position.lat, lng: position.lng, type: 'user', popup: 'Your location' });
+  pickups.forEach((p) => {
+    if (p.donation?.latitude != null && p.donation?.longitude != null) {
+      mapPoints.push({
+        lat: p.donation.latitude,
+        lng: p.donation.longitude,
+        type: 'donor',
+        popup: `<b>${p.donation.food_name}</b><br/>${p.donation.organization}`,
+      });
+    }
+  });
 
   return (
     <div>
-      <DashboardSectionHeader title="Food Quality Update" description="Inspect and report food quality for your active pickups." />
+      <DashboardSectionHeader title="Food Quality Inspection" description="Accept a donation, navigate to pickup, inspect the food, and submit your report." />
+
+      {!position && (
+        <div className="glass-card p-4 mb-4 flex items-center justify-between gap-3">
+          <p className="text-sm text-gray-500 flex items-center gap-2"><MapPin className="h-4 w-4 text-primary-500" /> Enable location to track your route and tag inspections.</p>
+          <RippleButton onClick={requestGeo} variant="ghost" className="text-xs shrink-0" disabled={geoLoading}>
+            {geoLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <MapPin className="h-3 w-3" />} Enable
+          </RippleButton>
+        </div>
+      )}
+
       {loading ? (
         <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
       ) : pickups.length === 0 ? (
-        <div className="glass-card p-10 text-center"><ShieldCheck className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No active pickups to inspect.</p></div>
+        <div className="glass-card p-10 text-center">
+          <ShieldCheck className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+          <p className="text-gray-500">No active pickups to inspect.</p>
+        </div>
       ) : (
         <div className="space-y-4">
-          {pickups.map((p) => {
-            const q = quality[p.id] ?? { freshness: 'fresh', temp: '', notes: '' };
+          {position && mapPoints.length > 1 && (
+            <div className="glass-card p-4">
+              <h3 className="font-display font-bold flex items-center gap-2 mb-3"><MapPin className="h-5 w-5 text-primary-500" /> Pickup Map</h3>
+              <LeafletMap points={mapPoints} center={[position.lat, position.lng]} zoom={12} height="h-64" />
+            </div>
+          )}
+
+          {pickups.map((p, idx) => {
+            const f = forms[p.id] ?? EMPTY_FORM;
+            const isActive = activeId === p.id;
+            const started = p.tracking_status !== 'accepted';
             return (
-              <div key={p.id} className="glass-card p-5">
+              <motion.div
+                key={p.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.05 }}
+                className="glass-card p-5"
+              >
+                {/* Header */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="h-10 w-10 rounded-xl bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center shrink-0">
                     <Package className="h-5 w-5" />
                   </div>
-                  <div className="min-w-0">
+                  <div className="min-w-0 flex-1">
                     <p className="font-medium truncate">{p.donation?.food_name}</p>
-                    <p className="text-xs text-gray-500 truncate">{p.donation?.organization}</p>
+                    <p className="text-xs text-gray-500 truncate">{p.donation?.organization} - {p.donation?.address ?? ''}</p>
                   </div>
+                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium shrink-0 ${started ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'}`}>
+                    {started ? 'In Progress' : 'Assigned'}
+                  </span>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Freshness</label>
-                    <select value={q.freshness} onChange={(e) => setQuality((prev) => ({ ...prev, [p.id]: { ...q, freshness: e.target.value } }))} className="input-field text-sm">
-                      <option value="fresh">Fresh</option>
-                      <option value="good">Good</option>
-                      <option value="average">Average</option>
-                    </select>
+
+                {/* Step 1: Accept / Navigate */}
+                {!started && (
+                  <div className="mb-4">
+                    <div className="flex items-center gap-2 mb-2 text-sm font-medium">
+                      <span className="h-6 w-6 rounded-full bg-primary-500 text-white flex items-center justify-center text-xs">1</span>
+                      Accept & Navigate to Pickup
+                    </div>
+                    <p className="text-xs text-gray-500 mb-3 ml-8">Accept the donation to start navigating to the pickup location.</p>
+                    <RippleButton onClick={() => startPickup(p)} variant="primary" className="ml-8">
+                      <Navigation className="h-4 w-4" /> Accept & Start Pickup
+                    </RippleButton>
                   </div>
-                  <div>
-                    <label className="text-xs text-gray-500 mb-1 block">Temperature (°C)</label>
-                    <input type="number" value={q.temp} onChange={(e) => setQuality((prev) => ({ ...prev, [p.id]: { ...q, temp: e.target.value } }))} placeholder="e.g. 4" className="input-field text-sm" />
+                )}
+
+                {/* Steps 2-8: Inspection form */}
+                {started && (
+                  <div className="space-y-5">
+                    {/* Step 2: Checklist */}
+                    <div>
+                      <p className="flex items-center gap-2 mb-2 text-sm font-medium">
+                        <span className="h-6 w-6 rounded-full bg-primary-500 text-white flex items-center justify-center text-xs">2</span>
+                        Quality Inspection Checklist
+                      </p>
+                      <div className="ml-8 space-y-2">
+                        {CHECKLIST_ITEMS.map((c) => {
+                          const checked = !!f.checklist[c.key];
+                          return (
+                            <button
+                              key={c.key}
+                              type="button"
+                              onClick={() => updateForm(p.id, { checklist: { ...f.checklist, [c.key]: !checked } })}
+                              className={`w-full flex items-center gap-3 p-3 rounded-xl text-left text-sm transition-colors ${checked ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                            >
+                              <div className={`h-5 w-5 rounded-md flex items-center justify-center shrink-0 ${checked ? 'bg-primary-500 text-white' : 'border-2 border-gray-300 dark:border-gray-600'}`}>
+                                {checked && <CheckCircle className="h-3.5 w-3.5" />}
+                              </div>
+                              {c.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Step 3: Photo upload */}
+                    <div>
+                      <p className="flex items-center gap-2 mb-2 text-sm font-medium">
+                        <span className="h-6 w-6 rounded-full bg-primary-500 text-white flex items-center justify-center text-xs">3</span>
+                        Upload Food Photo
+                      </p>
+                      <div className="ml-8">
+                        <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 cursor-pointer hover:border-primary-400 transition-colors">
+                          {uploading === p.id ? (
+                            <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
+                          ) : f.photoUrl ? (
+                            <img src={f.photoUrl} alt="Food" className="h-32 w-full object-cover rounded-lg" />
+                          ) : (
+                            <>
+                              <Camera className="h-8 w-8 text-gray-400" />
+                              <span className="text-xs text-gray-500">Tap to add a photo</span>
+                            </>
+                          )}
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => { const file = e.target.files?.[0]; if (file) handlePhoto(p.id, file); }}
+                          />
+                        </label>
+                      </div>
+                    </div>
+
+                    {/* Step 4: Rating */}
+                    <div>
+                      <p className="flex items-center gap-2 mb-2 text-sm font-medium">
+                        <span className="h-6 w-6 rounded-full bg-primary-500 text-white flex items-center justify-center text-xs">4</span>
+                        Rate Food Quality
+                      </p>
+                      <div className="ml-8 flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((n) => (
+                          <button key={n} type="button" onClick={() => updateForm(p.id, { rating: n })} className="p-1">
+                            <Star className={`h-7 w-7 transition-colors ${n <= f.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                          </button>
+                        ))}
+                        <span className="ml-2 text-sm text-gray-500">{f.rating > 0 ? `${f.rating}/5` : 'Tap a star'}</span>
+                      </div>
+                    </div>
+
+                    {/* Step 5: Approve / Reject */}
+                    <div>
+                      <p className="flex items-center gap-2 mb-2 text-sm font-medium">
+                        <span className="h-6 w-6 rounded-full bg-primary-500 text-white flex items-center justify-center text-xs">5</span>
+                        Decision
+                      </p>
+                      <div className="ml-8 grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => updateForm(p.id, { approval: 'approved', rejectionReason: '' })}
+                          className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${f.approval === 'approved' ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20'}`}
+                        >
+                          <CheckCircle className="h-4 w-4" /> Approved
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => updateForm(p.id, { approval: 'rejected' })}
+                          className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${f.approval === 'rejected' ? 'bg-red-500 text-white shadow-lg' : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20'}`}
+                        >
+                          <XCircle className="h-4 w-4" /> Rejected
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Step 6: Rejection reason */}
+                    {f.approval === 'rejected' && (
+                      <div>
+                        <p className="flex items-center gap-2 mb-2 text-sm font-medium">
+                          <span className="h-6 w-6 rounded-full bg-red-500 text-white flex items-center justify-center text-xs">6</span>
+                          Rejection Reason
+                        </p>
+                        <div className="ml-8 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {REJECTION_REASONS.map((r) => (
+                            <button
+                              key={r.value}
+                              type="button"
+                              onClick={() => updateForm(p.id, { rejectionReason: r.value })}
+                              className={`flex items-center gap-2 p-3 rounded-xl text-sm text-left transition-colors ${f.rejectionReason === r.value ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 ring-2 ring-red-400' : 'bg-gray-50 dark:bg-gray-800/50 hover:bg-red-50 dark:hover:bg-red-900/20'}`}
+                            >
+                              <div className={`h-4 w-4 rounded-full border-2 shrink-0 ${f.rejectionReason === r.value ? 'border-red-500 bg-red-500' : 'border-gray-300 dark:border-gray-600'}`} />
+                              {r.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Extra details */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                      <div>
+                        <label className="text-xs text-gray-500 mb-1 block">Freshness</label>
+                        <select value={f.freshness} onChange={(e) => updateForm(p.id, { freshness: e.target.value as InspectionForm['freshness'] })} className="input-field text-sm">
+                          <option value="fresh">Fresh</option>
+                          <option value="good">Good</option>
+                          <option value="average">Average</option>
+                          <option value="stale">Stale</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-500 mb-1 block">Packaging</label>
+                        <select value={f.packaging} onChange={(e) => updateForm(p.id, { packaging: e.target.value as InspectionForm['packaging'] })} className="input-field text-sm">
+                          <option value="excellent">Excellent</option>
+                          <option value="good">Good</option>
+                          <option value="fair">Fair</option>
+                          <option value="poor">Poor</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="text-xs text-gray-500 mb-1 block">Temperature (°C)</label>
+                        <input type="number" value={f.temperature} onChange={(e) => updateForm(p.id, { temperature: e.target.value })} placeholder="e.g. 4" className="input-field text-sm" />
+                      </div>
+                    </div>
+
+                    <textarea value={f.notes} onChange={(e) => updateForm(p.id, { notes: e.target.value })} placeholder="Additional inspection notes..." rows={2} className="input-field text-sm resize-none" />
+
+                    {/* Step 8: Submit */}
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      <RippleButton onClick={() => submitInspection(p)} variant="primary" disabled={submitting === p.id} className="flex-1">
+                        {submitting === p.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+                        Submit Inspection Report
+                      </RippleButton>
+                      <RippleButton onClick={() => setActiveId(isActive ? null : p.id)} variant="ghost" className="text-xs">
+                        {isActive ? 'Hide' : 'Inspect'}
+                      </RippleButton>
+                    </div>
                   </div>
-                </div>
-                <textarea value={q.notes} onChange={(e) => setQuality((prev) => ({ ...prev, [p.id]: { ...q, notes: e.target.value } }))} placeholder="Inspection notes..." rows={2} className="input-field text-sm mb-3 resize-none" />
-                <RippleButton onClick={() => submitQuality(p)} variant="primary" disabled={submitting === p.id}>
-                  {submitting === p.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle className="h-4 w-4" />} Submit Quality Report
-                </RippleButton>
-              </div>
+                )}
+
+                {p.donation && (isActive || started) && (
+                  <div className="mt-4 pt-4 border-t border-linen dark:border-secondary-800">
+                    <DonationStatusTracker donation={p.donation} pickup={p} compact />
+                  </div>
+                )}
+              </motion.div>
             );
           })}
         </div>
