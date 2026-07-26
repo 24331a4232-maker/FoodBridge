@@ -93,14 +93,9 @@ export function HomePage() {
               transition={{ delay: 0.6 }}
               className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-10"
             >
-              <Link to="/services/donate-food">
+              <Link to="/services">
                 <RippleButton variant="primary" className="text-base px-7 py-3.5">
-                  Donate Food <ArrowRight className="h-4 w-4" />
-                </RippleButton>
-              </Link>
-              <Link to="/register">
-                <RippleButton variant="accent" className="text-base px-7 py-3.5">
-                  Become Volunteer
+                  Explore Services <ArrowRight className="h-4 w-4" />
                 </RippleButton>
               </Link>
             </motion.div>
