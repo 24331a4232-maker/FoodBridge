@@ -1,10 +1,9 @@
-import { useState, useEffect, useRef, type FormEvent } from 'react';
+import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Mail, Lock, User, Building2, Eye, EyeOff, UserPlus, ArrowRight,
   Hotel, HeartHandshake, Phone, AtSign, Check, X, Truck, MapPin,
-  ShieldCheck, Loader2, KeyRound, RefreshCw, Smartphone,
 } from 'lucide-react';
 import { useAuth, roleDashboardPath } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
@@ -12,7 +11,6 @@ import type { UserRole } from '@/types';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { PageNav } from '@/components/PageNav';
-import { sendOtp, verifyOtp, OTP_LENGTH, RESEND_COOLDOWN_SEC } from '@/lib/otp';
 
 const roles: { value: UserRole; label: string; icon: typeof Hotel; desc: string }[] = [
   { value: 'restaurant', label: 'Restaurant', icon: Hotel, desc: 'I run a restaurant and want to donate surplus food' },
@@ -29,8 +27,6 @@ const passwordRules = [
   { label: 'One special character (!@#$...)', test: (pw: string) => /[^A-Za-z0-9]/.test(pw) },
 ];
 
-type OtpStatus = 'idle' | 'sending' | 'sent' | 'verifying' | 'verified' | 'error';
-
 export function RegisterPage() {
   const { signUp, user, profile, loading: authLoading } = useAuth();
   const { toast } = useToast();
@@ -42,7 +38,6 @@ export function RegisterPage() {
     email: '',
     phone: '',
     password: '',
-    confirmPassword: '',
     organization: '',
     address: '',
     city: '',
@@ -54,53 +49,23 @@ export function RegisterPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  // OTP state
-  const [otpStatus, setOtpStatus] = useState<OtpStatus>('idle');
-  const [otpDigits, setOtpDigits] = useState<string[]>(Array(OTP_LENGTH).fill(''));
-  const [otpError, setOtpError] = useState('');
-  const [devOtp, setDevOtp] = useState('');
-  const [cooldown, setCooldown] = useState(0);
-  const [mobileChanged, setMobileChanged] = useState(false);
-  const otpInputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
-  const otpRequired = role !== 'admin';
-  const isOtpVerified = otpStatus === 'verified';
-  const canRegister = !otpRequired || isOtpVerified;
-
-  // Cooldown timer
-  useEffect(() => {
-    if (cooldown <= 0) return;
-    const t = setTimeout(() => setCooldown((c) => c - 1), 1000);
-    return () => clearTimeout(t);
-  }, [cooldown]);
-
-  // Reset OTP state when mobile number changes after verification
-  useEffect(() => {
-    if (mobileChanged && otpStatus !== 'idle') {
-      setOtpStatus('idle');
-      setOtpDigits(Array(OTP_LENGTH).fill(''));
-      setOtpError('');
-      setDevOtp('');
-      setMobileChanged(false);
-    }
-  }, [mobileChanged, otpStatus]);
-
+  // Only redirect if we're NOT in the middle of a registration.
+  // During signUp, the user may exist briefly before the profile is ready.
   if (!authLoading && !loading && user && profile) return <Navigate to={roleDashboardPath[profile.role]} replace />;
 
   const setField = (key: string, value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
     setErrors((e) => ({ ...e, [key]: '' }));
-    if (key === 'phone') setMobileChanged(true);
   };
 
   const validate = () => {
     const e: Record<string, string> = {};
+
     const fullName = form.fullName.trim();
     const username = form.username.trim();
     const email = form.email.trim();
     const phone = form.phone.trim();
     const password = form.password.trim();
-    const confirmPassword = form.confirmPassword.trim();
 
     if (!fullName) e.fullName = 'Full name is required';
     if (!username) e.username = 'Username is required';
@@ -119,112 +84,15 @@ export function RegisterPage() {
       if (failed) e.password = failed.label;
     }
 
-    if (!confirmPassword) e.confirmPassword = 'Please confirm your password';
-    else if (password !== confirmPassword) e.confirmPassword = 'Passwords do not match';
-
     if ((role === 'donor' || role === 'ngo') && !form.organization.trim()) e.organization = 'Organization name is required';
 
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleSendOtp = async () => {
-    const phone = form.phone.trim();
-    if (!phone) { setErrors((e) => ({ ...e, phone: 'Mobile number is required' })); return; }
-    if (!/^\d{10}$/.test(phone)) { setErrors((e) => ({ ...e, phone: 'Mobile number must contain exactly 10 digits' })); return; }
-
-    setOtpStatus('sending');
-    setOtpError('');
-    setDevOtp('');
-
-    const result = await sendOtp(phone);
-    if (!result.success) {
-      setOtpStatus('error');
-      setOtpError(result.error ?? 'Failed to send OTP');
-      if (result.cooldownRemaining) setCooldown(result.cooldownRemaining);
-      return;
-    }
-
-    setOtpStatus('sent');
-    setCooldown(RESEND_COOLDOWN_SEC);
-    if (result.devMode && result.otp) setDevOtp(result.otp);
-    toast('OTP sent to your mobile number', 'success');
-    setTimeout(() => otpInputRefs.current[0]?.focus(), 100);
-  };
-
-  const handleResendOtp = async () => {
-    if (cooldown > 0) return;
-    setOtpStatus('sending');
-    setOtpError('');
-    setOtpDigits(Array(OTP_LENGTH).fill(''));
-    setDevOtp('');
-
-    const result = await sendOtp(form.phone.trim());
-    if (!result.success) {
-      setOtpStatus('error');
-      setOtpError(result.error ?? 'Failed to resend OTP');
-      if (result.cooldownRemaining) setCooldown(result.cooldownRemaining);
-      return;
-    }
-    setOtpStatus('sent');
-    setCooldown(RESEND_COOLDOWN_SEC);
-    if (result.devMode && result.otp) setDevOtp(result.otp);
-    toast('New OTP sent', 'success');
-  };
-
-  const handleOtpChange = (idx: number, value: string) => {
-    const digit = value.replace(/\D/g, '').slice(-1);
-    const next = [...otpDigits];
-    next[idx] = digit;
-    setOtpDigits(next);
-    setOtpError('');
-
-    if (digit && idx < OTP_LENGTH - 1) otpInputRefs.current[idx + 1]?.focus();
-    if (digit && idx === OTP_LENGTH - 1 && next.every((d) => d !== '')) handleVerifyOtp(next.join(''));
-  };
-
-  const handleOtpKeyDown = (idx: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !otpDigits[idx] && idx > 0) otpInputRefs.current[idx - 1]?.focus();
-  };
-
-  const handleOtpPaste = (e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, OTP_LENGTH);
-    if (pasted.length > 0) {
-      const next = Array(OTP_LENGTH).fill('');
-      pasted.split('').forEach((d, i) => { next[i] = d; });
-      setOtpDigits(next);
-      if (pasted.length === OTP_LENGTH) handleVerifyOtp(pasted);
-      else otpInputRefs.current[pasted.length]?.focus();
-    }
-  };
-
-  const handleVerifyOtp = async (code?: string) => {
-    const otp = code ?? otpDigits.join('');
-    if (otp.length !== OTP_LENGTH) { setOtpError('Please enter all 6 digits'); return; }
-
-    setOtpStatus('verifying');
-    setOtpError('');
-    const result = await verifyOtp(form.phone.trim(), otp);
-    if (!result.success) {
-      setOtpStatus('sent');
-      setOtpError(result.error ?? 'Invalid OTP');
-      setOtpDigits(Array(OTP_LENGTH).fill(''));
-      otpInputRefs.current[0]?.focus();
-      return;
-    }
-    setOtpStatus('verified');
-    setOtpError('');
-    toast('Mobile Number Verified Successfully.', 'success');
-  };
-
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    if (otpRequired && !isOtpVerified) {
-      toast('Please verify your mobile number first.', 'error');
-      return;
-    }
     setLoading(true);
     try {
       const result = await signUp({
@@ -239,11 +107,12 @@ export function RegisterPage() {
         city: form.city,
         state: form.state,
         pincode: form.pincode,
-        mobileVerified: isOtpVerified,
       });
 
       if (result.error) {
-        if (result.fieldErrors) setErrors((prev) => ({ ...prev, ...result.fieldErrors }));
+        if (result.fieldErrors) {
+          setErrors((prev) => ({ ...prev, ...result.fieldErrors }));
+        }
         toast(result.error, 'error');
       } else {
         toast('Account created! Welcome to FoodBridge.', 'success');
@@ -358,117 +227,6 @@ export function RegisterPage() {
             </motion.div>
           </div>
 
-          {/* OTP Verification Section — required for all non-admin roles */}
-          {otpRequired && (
-            <motion.div variants={fadeInUp} className="rounded-2xl bg-primary-50/50 dark:bg-primary-900/10 p-4 border border-primary-200/50 dark:border-primary-800/30">
-              <div className="flex items-center gap-2 mb-3">
-                <Smartphone className="h-4 w-4 text-primary-500" />
-                <p className="text-sm font-semibold text-primary-700 dark:text-primary-300">Mobile OTP Verification</p>
-                <span className="text-xs text-gray-400">Required</span>
-              </div>
-
-              {(otpStatus === 'idle' || otpStatus === 'error') && (
-                <div>
-                  <p className="text-xs text-gray-500 mb-3">Click below to receive a 6-digit verification code on your mobile number.</p>
-                  {otpError && (
-                    <div className="mb-3 p-2.5 rounded-xl bg-red-50 dark:bg-red-900/20 text-xs text-red-600 dark:text-red-400 flex items-center gap-2">
-                      <X className="h-4 w-4 shrink-0" /> {otpError}
-                    </div>
-                  )}
-                  <RippleButton
-                    type="button"
-                    onClick={handleSendOtp}
-                    variant="primary"
-                    disabled={otpStatus === 'sending' || form.phone.length !== 10}
-                    className="text-sm"
-                  >
-                    {otpStatus === 'sending' ? <Loader2 className="h-4 w-4 animate-spin" /> : <KeyRound className="h-4 w-4" />}
-                    Send OTP
-                  </RippleButton>
-                </div>
-              )}
-
-              {(otpStatus === 'sent' || otpStatus === 'verifying' || otpStatus === 'verified') && (
-                <div>
-                  {otpStatus === 'verified' ? (
-                    <div className="flex items-center gap-3 p-3 rounded-xl bg-green-50 dark:bg-green-900/20">
-                      <div className="h-9 w-9 rounded-full bg-green-500 text-white flex items-center justify-center shrink-0">
-                        <Check className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-green-700 dark:text-green-300">Mobile Number Verified Successfully.</p>
-                        <p className="text-xs text-green-600 dark:text-green-400">You can now complete your registration.</p>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-between mb-3">
-                        <p className="text-xs text-gray-500">Enter the 6-digit code sent to {form.phone}</p>
-                        <button
-                          type="button"
-                          onClick={handleResendOtp}
-                          disabled={cooldown > 0 || otpStatus === 'verifying'}
-                          className="text-xs text-primary-600 dark:text-primary-400 font-medium hover:underline disabled:opacity-50 disabled:no-underline flex items-center gap-1"
-                        >
-                          {cooldown > 0 ? (
-                            <span className="text-gray-400">Resend in {cooldown}s</span>
-                          ) : (
-                            <><RefreshCw className="h-3 w-3" /> Resend OTP</>
-                          )}
-                        </button>
-                      </div>
-
-                      {devOtp && (
-                        <div className="mb-3 p-2.5 rounded-xl bg-amber-50 dark:bg-amber-900/20 text-xs text-amber-700 dark:text-amber-300 flex items-center gap-2">
-                          <ShieldCheck className="h-4 w-4 shrink-0" />
-                          <span>Dev mode: Your OTP is <span className="font-mono font-bold tracking-widest">{devOtp}</span></span>
-                        </div>
-                      )}
-
-                      <div className="flex gap-2 justify-center mb-3" onPaste={handleOtpPaste}>
-                        {otpDigits.map((digit, idx) => (
-                          <input
-                            key={idx}
-                            ref={(el) => { otpInputRefs.current[idx] = el; }}
-                            type="text"
-                            inputMode="numeric"
-                            maxLength={1}
-                            value={digit}
-                            onChange={(e) => handleOtpChange(idx, e.target.value)}
-                            onKeyDown={(e) => handleOtpKeyDown(idx, e)}
-                            disabled={otpStatus === 'verifying'}
-                            className={`w-11 h-12 text-center text-lg font-bold rounded-xl border-2 transition-all focus:outline-none ${
-                              otpError
-                                ? 'border-red-400 focus:border-red-500'
-                                : 'border-gray-200 dark:border-gray-700 focus:border-primary-500'
-                            } bg-white dark:bg-gray-800`}
-                          />
-                        ))}
-                      </div>
-
-                      {otpError && (
-                        <div className="mb-3 p-2.5 rounded-xl bg-red-50 dark:bg-red-900/20 text-xs text-red-600 dark:text-red-400 flex items-center gap-2">
-                          <X className="h-4 w-4 shrink-0" /> {otpError}
-                        </div>
-                      )}
-
-                      <RippleButton
-                        type="button"
-                        onClick={() => handleVerifyOtp()}
-                        variant="primary"
-                        disabled={otpStatus === 'verifying' || otpDigits.some((d) => !d)}
-                        className="text-sm"
-                      >
-                        {otpStatus === 'verifying' ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-                        Verify OTP
-                      </RippleButton>
-                    </>
-                  )}
-                </div>
-              )}
-            </motion.div>
-          )}
-
           {(role === 'donor' || role === 'ngo') && (
             <motion.div variants={fadeInUp}>
               <label className="input-label">Organization Name</label>
@@ -547,63 +305,38 @@ export function RegisterPage() {
             {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <motion.div variants={fadeInUp}>
-              <label className="input-label">Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type={show ? 'text' : 'password'}
-                  value={form.password}
-                  onChange={(e) => setField('password', e.target.value)}
-                  onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-                  className={`input-field pl-12 pr-12 ${errors.password ? 'border-red-400 focus:ring-red-400' : ''}`}
-                  placeholder="Create a strong password"
-                />
-                <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-                  {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                </button>
-              </div>
-              <div className="mt-2 grid grid-cols-1 gap-1">
-                {passwordRules.map((r, i) => (
-                  <div key={r.label} className={`flex items-center gap-1.5 text-[11px] ${passwordChecks[i] ? 'text-green-600' : 'text-gray-400'}`}>
-                    {passwordChecks[i] ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                    {r.label}
-                  </div>
-                ))}
-              </div>
-              {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
-            </motion.div>
-
-            <motion.div variants={fadeInUp}>
-              <label className="input-label">Confirm Password</label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type={show ? 'text' : 'password'}
-                  value={form.confirmPassword}
-                  onChange={(e) => setField('confirmPassword', e.target.value)}
-                  className={`input-field pl-12 ${errors.confirmPassword ? 'border-red-400 focus:ring-red-400' : ''}`}
-                  placeholder="Re-enter your password"
-                />
-              </div>
-              {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>}
-            </motion.div>
-          </div>
+          <motion.div variants={fadeInUp}>
+            <label className="input-label">Password</label>
+            <div className="relative">
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type={show ? 'text' : 'password'}
+                value={form.password}
+                onChange={(e) => setField('password', e.target.value)}
+                onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+                className={`input-field pl-12 pr-12 ${errors.password ? 'border-red-400 focus:ring-red-400' : ''}`}
+                placeholder="Create a strong password"
+              />
+              <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
+            </div>
+            {/* Password strength checklist */}
+            <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1">
+              {passwordRules.map((r, i) => (
+                <div key={r.label} className={`flex items-center gap-1.5 text-[11px] ${passwordChecks[i] ? 'text-green-600' : 'text-gray-400'}`}>
+                  {passwordChecks[i] ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                  {r.label}
+                </div>
+              ))}
+            </div>
+            {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
+          </motion.div>
 
           <motion.div variants={fadeInUp}>
-            <RippleButton type="submit" variant="primary" fullWidth disabled={loading || !canRegister}>
-              {loading ? (
-                <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" />
-              ) : !canRegister ? (
-                <><Lock className="h-4 w-4" /> Verify Mobile to Register</>
-              ) : (
-                <>Create Account <UserPlus className="h-4 w-4" /></>
-              )}
+            <RippleButton type="submit" variant="primary" fullWidth disabled={loading}>
+              {loading ? <span className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin" /> : <>Create Account <UserPlus className="h-4 w-4" /></>}
             </RippleButton>
-            {!canRegister && (
-              <p className="text-xs text-center text-gray-400 mt-2">The Register button is locked until your mobile number is verified.</p>
-            )}
           </motion.div>
 
           <motion.p variants={fadeInUp} className="text-center text-sm text-gray-500">
