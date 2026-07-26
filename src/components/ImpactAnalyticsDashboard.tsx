@@ -33,7 +33,7 @@ const metrics: MetricDef[] = [
     label: 'Donations',
     emoji: '🍱',
     icon: UtensilsCrossed,
-    color: '#2D6A4F',
+    color: '#2D6A4F', // Pine Green
     glow: 'rgba(45, 106, 79, 0.45)',
     values: [1200, 1380, 1560, 1740, 1920, 2100, 2280, 2460, 2640, 2820, 3000, 3180],
     unit: '',
@@ -46,8 +46,8 @@ const metrics: MetricDef[] = [
     label: 'Volunteers',
     emoji: '🙋',
     icon: Users,
-    color: '#3B82F6',
-    glow: 'rgba(59, 130, 246, 0.45)',
+    color: '#52796F', // Forest Green
+    glow: 'rgba(82, 121, 111, 0.45)',
     values: [860, 918, 976, 1034, 1092, 1150, 1208, 1266, 1324, 1382, 1440, 1560],
     unit: '',
     total: 1560,
@@ -59,8 +59,8 @@ const metrics: MetricDef[] = [
     label: 'Families Helped',
     emoji: '❤️',
     icon: Heart,
-    color: '#EA580C',
-    glow: 'rgba(234, 88, 12, 0.45)',
+    color: '#8B5E3C', // Mocha Brown
+    glow: 'rgba(139, 94, 60, 0.45)',
     values: [21000, 22500, 24200, 25800, 27600, 29500, 31200, 33000, 34800, 36500, 37800, 38900],
     unit: '',
     total: 38900,
@@ -72,8 +72,8 @@ const metrics: MetricDef[] = [
     label: 'Food Waste Prevented',
     emoji: '♻️',
     icon: Recycle,
-    color: '#7C3AED',
-    glow: 'rgba(124, 58, 237, 0.45)',
+    color: '#C9A66B', // Gold
+    glow: 'rgba(201, 166, 107, 0.5)',
     values: [280, 312, 344, 376, 408, 440, 472, 504, 536, 568, 600, 632],
     unit: ' kg',
     total: 5472,
