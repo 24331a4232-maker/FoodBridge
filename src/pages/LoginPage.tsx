@@ -37,15 +37,21 @@ export function LoginPage() {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    const { error, role } = await signIn(identifier, password);
-    if (error) {
+    try {
+      const { error, role } = await signIn(identifier, password);
+      if (error) {
+        toast(error, 'error');
+      } else {
+        toast('Welcome back to FoodBridge!', 'success');
+        const dest = role ? roleDashboardPath[role] : from;
+        navigate(dest, { replace: true });
+      }
+    } catch (err) {
+      console.error('[login] handleSubmit threw:', err);
+      const msg = err instanceof Error ? err.message : 'An unexpected error occurred. Please try again.';
+      toast(msg, 'error');
+    } finally {
       setLoading(false);
-      toast(error, 'error');
-    } else {
-      toast('Welcome back to FoodBridge!', 'success');
-      // signIn returns the role from the fetched profile — navigate immediately.
-      const dest = role ? roleDashboardPath[role] : from;
-      navigate(dest, { replace: true });
     }
   };
 

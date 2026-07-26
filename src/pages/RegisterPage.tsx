@@ -95,31 +95,36 @@ export function RegisterPage() {
     e.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    const result = await signUp({
-      email: form.email,
-      password: form.password,
-      fullName: form.fullName,
-      username: form.username,
-      phone: form.phone,
-      role,
-      organization: form.organization,
-      address: form.address,
-      city: form.city,
-      state: form.state,
-      pincode: form.pincode,
-    });
-    setLoading(false);
+    try {
+      const result = await signUp({
+        email: form.email,
+        password: form.password,
+        fullName: form.fullName,
+        username: form.username,
+        phone: form.phone,
+        role,
+        organization: form.organization,
+        address: form.address,
+        city: form.city,
+        state: form.state,
+        pincode: form.pincode,
+      });
 
-    if (result.error) {
-      if (result.fieldErrors) {
-        setErrors((prev) => ({ ...prev, ...result.fieldErrors }));
+      if (result.error) {
+        if (result.fieldErrors) {
+          setErrors((prev) => ({ ...prev, ...result.fieldErrors }));
+        }
+        toast(result.error, 'error');
+      } else {
+        toast('Account created! Welcome to FoodBridge.', 'success');
+        navigate(roleDashboardPath[role], { replace: true });
       }
-      toast(result.error, 'error');
-    } else {
-      toast('Account created! Welcome to FoodBridge.', 'success');
-      // AuthContext.signUp waited for the profile to be created.
-      // Give the auth state a moment to settle, then navigate.
-      setTimeout(() => navigate(roleDashboardPath[role], { replace: true }), 100);
+    } catch (err) {
+      console.error('[register] handleSubmit threw:', err);
+      const msg = err instanceof Error ? err.message : 'Registration failed. Please try again.';
+      toast(msg, 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
