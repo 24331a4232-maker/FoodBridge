@@ -22,9 +22,9 @@ interface MenuLink {
 const primaryLinks: MenuLink[] = [
   { name: 'Home', path: '/', icon: Home },
   { name: 'About', path: '/about', icon: Info },
-  { name: 'Global Impact', path: '/global-impact', icon: Globe2 },
-  { name: 'Community', path: '/community', icon: Users },
   { name: 'Analytics', path: '/analytics', icon: BarChart3 },
+  { name: 'Community', path: '/community', icon: Users },
+  { name: 'Contact', path: '/resources/contact', icon: Phone },
 ];
 
 const servicesLinks: MenuLink[] = [

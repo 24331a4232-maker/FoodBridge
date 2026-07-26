@@ -1,39 +1,39 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  HeartHandshake,
-  Package,
-  ShieldCheck,
-  Truck,
-  Award,
-  ClipboardList,
-  QrCode,
-  LayoutDashboard,
-  Building2,
-  ArrowRight,
-  ArrowDown,
-  Leaf,
-  Sparkles,
+  Package, ShieldCheck, HeartHandshake, Truck, CheckCircle2,
+  Award, QrCode, ArrowRight, ArrowDown, Leaf, Sparkles, Globe2,
+  type LucideIcon,
 } from 'lucide-react';
 import { SectionHeading } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Illustration } from '@/components/Illustration';
 import { ImpactAnalyticsDashboard } from '@/components/ImpactAnalyticsDashboard';
 
-const steps = [
-  { title: 'Donate Food', desc: 'A hotel, event, or caterer lists surplus food on FoodBridge with quantity, type, and pickup window.', icon: Package, illustration: 'donation' as const },
-  { title: 'Quality Check', desc: 'Temperature, hygiene, packaging, and freshness are verified against a real safety checklist.', icon: ShieldCheck, illustration: 'quality' as const },
-  { title: 'Donation Listed', desc: 'Once approved, the donation appears on the live map for nearby volunteers to see and claim.', icon: ClipboardList, illustration: 'community' as const },
-  { title: 'Volunteer Pickup', desc: 'The nearest available volunteer accepts the request, navigates the route, and picks up the food.', icon: HeartHandshake, illustration: 'volunteers' as const },
-  { title: 'Food Delivered', desc: 'Within four hours, the food reaches a shelter, school, or community kitchen — fresh and warm.', icon: Truck, illustration: 'delivery' as const },
-  { title: 'Certificate Generated', desc: 'The volunteer earns reward points and an official certificate, verifiable by QR code.', icon: Award, illustration: 'bridge' as const },
+interface JourneyStep {
+  title: string;
+  desc: string;
+  icon: LucideIcon;
+  path?: string;
+}
+
+const journey: JourneyStep[] = [
+  { title: 'Donate Food', desc: 'A hotel or caterer lists surplus food with quantity and pickup window.', icon: Package, path: '/services/donate-food' },
+  { title: 'Food Quality Verification', desc: 'Temperature, hygiene, and freshness are checked against a safety checklist.', icon: ShieldCheck, path: '/services/food-quality' },
+  { title: 'Volunteer Assigned', desc: 'A nearby volunteer claims the pickup from the live map.', icon: HeartHandshake, path: '/services/available-food' },
+  { title: 'Live Tracking', desc: 'Follow the delivery in real time from pickup to destination.', icon: Truck, path: '/services/tracking' },
+  { title: 'Food Delivered', desc: 'The meal reaches a shelter or community kitchen within four hours.', icon: CheckCircle2 },
+  { title: 'Certificate Generated', desc: 'The volunteer earns reward points and an official certificate.', icon: Award, path: '/services/certificates' },
+  { title: 'QR Verification', desc: 'Anyone can verify the certificate instantly by QR code or ID.', icon: QrCode, path: '/services/verify-certificate' },
 ];
 
-const featuredStories = [
-  { name: 'The Grand Hotel, Bangalore', text: 'We used to throw away 40+ meals after every banquet. FoodBridge now redirects all of it to a nearby shelter the same night.', meals: 12400, period: '8 months' },
-  { name: 'Sunrise Orphanage, Delhi', text: 'Our children get warm, fresh meals every evening from partner hotels. The quality verification gives us complete peace of mind.', meals: 8600, period: '6 months' },
-  { name: 'Rahul Verma, Volunteer', text: 'I have completed 45 deliveries. The certificate I earned helped me in my college application. FoodBridge gave me purpose.', meals: 45, period: '6 months' },
+const services = [
+  { title: 'Donate Food', desc: 'List surplus food for pickup.', icon: Package, color: 'from-primary-500 to-primary-700', path: '/services/donate-food' },
+  { title: 'Food Quality Verification', desc: 'Verify safety and freshness.', icon: ShieldCheck, color: 'from-secondary-500 to-primary-600', path: '/services/food-quality' },
+  { title: 'Live Tracking', desc: 'Track deliveries in real time.', icon: Truck, color: 'from-gold-400 to-gold-600', path: '/services/tracking' },
+  { title: 'Digital Certificates', desc: 'Earn and download certificates.', icon: Award, color: 'from-accent-400 to-gold-500', path: '/services/certificates' },
+  { title: 'QR Verification', desc: 'Verify any certificate instantly.', icon: QrCode, color: 'from-primary-600 to-secondary-600', path: '/services/verify-certificate' },
+  { title: 'Volunteer Dashboard', desc: 'Manage deliveries and impact.', icon: HeartHandshake, color: 'from-accent-500 to-accent-700', path: '/dashboard/volunteer' },
 ];
 
 const sdgPreview = [
@@ -42,75 +42,22 @@ const sdgPreview = [
   { num: '17', title: 'Partnerships', color: 'from-secondary-500 to-primary-500' },
 ];
 
-const featurePreviews = [
-  {
-    title: 'Food Quality Verification',
-    desc: 'Temperature, hygiene, packaging, and freshness checks against a real safety checklist.',
-    icon: ShieldCheck,
-    color: 'from-secondary-500 to-primary-600',
-    path: '/services/food-quality',
-    cta: 'Open',
-  },
-  {
-    title: 'Live Donation Tracking',
-    desc: 'Track every delivery in real time from pickup to destination — fresh and on time.',
-    icon: Truck,
-    color: 'from-gold-400 to-gold-600',
-    path: '/services/tracking',
-    cta: 'Open',
-  },
-  {
-    title: 'Digital Certificates',
-    desc: 'Earn reward points and an official certificate for every completed delivery.',
-    icon: Award,
-    color: 'from-accent-400 to-gold-500',
-    path: '/services/certificates',
-    cta: 'Open',
-  },
-  {
-    title: 'QR Certificate Verification',
-    desc: 'Verify any certificate instantly by scanning its QR code or entering the certificate ID.',
-    icon: QrCode,
-    color: 'from-primary-600 to-secondary-600',
-    path: '/services/verify-certificate',
-    cta: 'Open',
-  },
-  {
-    title: 'Volunteer Dashboard',
-    desc: 'Manage your deliveries, track your impact, earn certificates, and climb the leaderboard.',
-    icon: LayoutDashboard,
-    color: 'from-primary-500 to-primary-700',
-    path: '/dashboard/volunteer',
-    cta: 'Open',
-  },
-  {
-    title: 'Admin Dashboard',
-    desc: 'Oversee platform operations — users, donations, analytics, and reports.',
-    icon: Building2,
-    color: 'from-accent-500 to-accent-700',
-    path: '/dashboard/admin',
-    cta: 'Open',
-  },
+const reviews = [
+  { name: 'The Grand Hotel, Bangalore', text: 'We used to throw away 40+ meals after every banquet. FoodBridge now redirects all of it to a nearby shelter the same night.', meals: 12400, period: '8 months' },
+  { name: 'Sunrise Orphanage, Delhi', text: 'Our children get warm, fresh meals every evening from partner hotels. The quality verification gives us complete peace of mind.', meals: 8600, period: '6 months' },
+  { name: 'Rahul Verma, Volunteer', text: 'I have completed 45 deliveries. The certificate I earned helped me in my college application. FoodBridge gave me purpose.', meals: 45, period: '6 months' },
 ];
 
 export function HomePage() {
-  const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] });
-  const heroY = useTransform(scrollYProgress, [0, 1], [0, 120]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-
-
   return (
     <div>
       {/* Hero */}
-      <section ref={heroRef} className="relative min-h-[92vh] flex items-center gradient-bg dark:bg-secondary-950 overflow-hidden pt-20">
+      <section className="relative min-h-[88vh] flex items-center gradient-bg dark:bg-secondary-950 overflow-hidden pt-20">
         <div className="absolute inset-0 hero-glow pointer-events-none" />
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-24 -left-10 h-80 w-80 rounded-full bg-primary-200/40 blur-3xl animate-blob" />
-          <div className="absolute bottom-10 right-0 h-96 w-96 rounded-full bg-accent-200/30 blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
-        </div>
+        <div className="absolute top-24 -left-10 h-80 w-80 rounded-full bg-primary-200/40 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 right-0 h-96 w-96 rounded-full bg-accent-200/30 blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center w-full">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
           <div className="text-center lg:text-left">
             <motion.span
               initial={{ opacity: 0, y: 16 }}
@@ -120,16 +67,14 @@ export function HomePage() {
             >
               <Leaf className="h-3.5 w-3.5" /> Every Meal Deserves a Purpose
             </motion.span>
-
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.8 }}
+              transition={{ delay: 0.25, duration: 0.7 }}
               className="font-display text-[2.75rem] sm:text-6xl lg:text-7xl font-semibold tracking-[-0.03em] leading-[1.02] text-ink dark:text-cream text-balance"
             >
               Every Meal<br />Deserves a Purpose.
             </motion.h1>
-
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -138,7 +83,6 @@ export function HomePage() {
             >
               Connecting surplus food with people who need it most — within four hours, before it ever becomes waste.
             </motion.p>
-
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -158,118 +102,68 @@ export function HomePage() {
             </motion.div>
           </div>
 
-          {/* Hero illustration */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.9, ease: [0.25, 0.4, 0.25, 1] }}
+            transition={{ delay: 0.5, duration: 0.8 }}
             className="relative hidden lg:flex items-center justify-center"
           >
             <div className="relative w-full max-w-md aspect-square">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-100/60 via-accent-100/40 to-secondary-100/50 blur-2xl" />
-              <motion.div
-                animate={{ y: [0, -12, 0] }}
-                transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                className="relative"
-              >
-                <Illustration variant="community" className="w-full h-full drop-shadow-premium" />
-              </motion.div>
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-                className="absolute -bottom-2 -left-2 w-28 h-28"
-              >
-                <Illustration variant="delivery" className="w-full h-full" />
-              </motion.div>
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
-                className="absolute -top-2 -right-2 w-24 h-24"
-              >
-                <Illustration variant="donation" className="w-full h-full" />
-              </motion.div>
+              <Illustration variant="community" className="relative w-full h-full drop-shadow-premium" />
             </div>
           </motion.div>
         </div>
 
         <motion.div
-          style={{ y: heroY, opacity: heroOpacity }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.2 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-ink-soft/50 dark:text-cream/40"
         >
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.6, repeat: Infinity }} className="text-ink-soft/50 dark:text-cream/40">
-            <ArrowDown className="h-5 w-5" />
-          </motion.div>
+          <ArrowDown className="h-5 w-5" />
         </motion.div>
       </section>
 
-      {/* How FoodBridge Works — curved journey path */}
-      <section className="section-wide bg-cream dark:bg-secondary-950">
+      {/* How It Works — progress timeline */}
+      <section className="section bg-cream dark:bg-secondary-950">
         <SectionHeading
-          badge="How FoodBridge Works"
-          title="From a kitchen to a plate"
-          subtitle="Six steps. Four hours. One meal that would have been waste, now feeding someone who was hungry."
+          badge="How It Works"
+          title="A simple seven-step journey"
+          subtitle="From a kitchen with too much to a plate that needs it — every step guided, tracked, and rewarded."
         />
-        <div className="mt-20 relative max-w-3xl mx-auto">
-          {/* Curved SVG connector */}
-          <svg
-            className="absolute left-7 top-8 bottom-8 w-4 -z-0 pointer-events-none"
-            preserveAspectRatio="none"
-            viewBox="0 0 16 100"
-          >
-            <path d="M 8 0 Q 0 20 8 40 Q 16 60 8 80 Q 0 90 8 100" fill="none" stroke="currentColor" strokeWidth="2" className="text-linen dark:text-secondary-800" strokeDasharray="4 4" />
-            <motion.path
-              d="M 8 0 Q 0 20 8 40 Q 16 60 8 80 Q 0 90 8 100"
-              fill="none"
-              stroke="url(#journeyGradient)"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              pathLength={1}
-              initial={{ pathLength: 0 }}
-              whileInView={{ pathLength: 1 }}
-              viewport={{ once: true, margin: '-80px' }}
-              transition={{ duration: 2, ease: 'easeInOut' }}
+        <div className="mt-16 max-w-3xl mx-auto">
+          {/* Vertical progress line */}
+          <div className="relative">
+            <div className="absolute left-7 top-4 bottom-4 w-px bg-linen dark:bg-secondary-800" />
+            <motion.div
+              initial={{ scaleY: 0 }}
+              whileInView={{ scaleY: 1 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 1.4, ease: 'easeInOut' }}
+              style={{ originY: 0 }}
+              className="absolute left-7 top-4 bottom-4 w-px bg-gradient-to-b from-primary-500 via-secondary-500 to-gold-500"
             />
-            <defs>
-              <linearGradient id="journeyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#1B4332" />
-                <stop offset="60%" stopColor="#74A57F" />
-                <stop offset="100%" stopColor="#8B5E3C" />
-              </linearGradient>
-            </defs>
-          </svg>
 
-          <div className="space-y-5">
-            {steps.map((step, i) => {
-              const Icon = step.icon;
-              return (
-                <motion.div
-                  key={step.title}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, margin: '-60px' }}
-                  transition={{ duration: 0.5, delay: i * 0.08 }}
-                  className="relative pl-20"
-                >
-                  {/* Node */}
-                  <div className="absolute left-0 top-4 z-10">
-                    <motion.div
-                      whileHover={{ scale: 1.1 }}
-                      className="relative h-14 w-14 rounded-2xl-premium bg-gradient-to-br from-primary-500 to-primary-700 text-cream flex items-center justify-center shadow-glow-green ring-4 ring-cream dark:ring-secondary-950"
-                    >
-                      <Icon className="h-6 w-6" strokeWidth={1.75} />
-                    </motion.div>
-                  </div>
-
-                  {/* Card */}
+            <div className="space-y-8">
+              {journey.map((step, i) => {
+                const Icon = step.icon;
+                return (
                   <motion.div
-                    whileHover={{ y: -3 }}
-                    className="glass-card p-6"
+                    key={step.title}
+                    initial={{ opacity: 0, x: -16 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true, margin: '-60px' }}
+                    transition={{ duration: 0.4, delay: i * 0.06 }}
+                    className="relative pl-20"
                   >
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="font-display text-2xl font-semibold text-primary-300 dark:text-primary-800 leading-none">
+                    <div className="absolute left-0 top-0 z-10">
+                      <div className="h-14 w-14 rounded-2xl-premium bg-gradient-to-br from-primary-500 to-primary-700 text-cream flex items-center justify-center shadow-glow-green ring-4 ring-cream dark:ring-secondary-950">
+                        <Icon className="h-6 w-6" strokeWidth={1.75} />
+                      </div>
+                    </div>
+                    <div className="flex items-baseline gap-3 mb-1">
+                      <span className="font-display text-sm font-semibold text-primary-400 dark:text-primary-700">
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <h3 className="font-display text-lg font-semibold text-ink dark:text-cream tracking-[-0.02em]">
@@ -279,47 +173,50 @@ export function HomePage() {
                     <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed">
                       {step.desc}
                     </p>
+                    {step.path && (
+                      <Link to={step.path} className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
+                        Open <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    )}
                   </motion.div>
-                </motion.div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* FoodBridge Impact Analytics — premium dashboard */}
+      {/* One Analytics Graph */}
       <ImpactAnalyticsDashboard />
 
-      {/* Core feature preview cards */}
+      {/* Services Preview */}
       <section className="section bg-cream dark:bg-secondary-950">
         <SectionHeading
-          badge="Platform Features"
-          title="Everything FoodBridge can do"
-          subtitle="Six connected tools that power the journey from surplus to served. Open any one to dive in."
+          badge="Services"
+          title="Tools that power the journey"
+          subtitle="Six connected tools — open any one to dive in."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-16 max-w-6xl mx-auto">
-          {featurePreviews.map((f, i) => {
-            const Icon = f.icon;
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14 max-w-6xl mx-auto">
+          {services.map((s, i) => {
+            const Icon = s.icon;
             return (
               <motion.div
-                key={f.title}
-                initial={{ opacity: 0, y: 30 }}
+                key={s.title}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
-                transition={{ delay: i * 0.08 }}
-                whileHover={{ y: -8 }}
-                className="card p-7 group relative overflow-hidden"
+                transition={{ delay: i * 0.06 }}
+                whileHover={{ y: -6 }}
+                className="card p-6 group"
               >
-                <div className={`h-14 w-14 rounded-2xl-premium bg-gradient-to-br ${f.color} text-white flex items-center justify-center mb-5 shadow-lg group-hover:shadow-premium transition-shadow`}>
-                  <Icon className="h-7 w-7" strokeWidth={1.75} />
+                <div className={`h-12 w-12 rounded-2xl-premium bg-gradient-to-br ${s.color} text-white flex items-center justify-center mb-4 shadow-lg`}>
+                  <Icon className="h-6 w-6" strokeWidth={1.75} />
                 </div>
-                <h3 className="font-display text-lg font-semibold text-ink dark:text-cream mb-2">{f.title}</h3>
-                <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed mb-5">{f.desc}</p>
-                <div className="flex items-center gap-3">
-                  <Link to={f.path} className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 group-hover:gap-2 transition-all">
-                    {f.cta} <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
+                <h3 className="font-display text-base font-semibold text-ink dark:text-cream mb-1">{s.title}</h3>
+                <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed mb-4">{s.desc}</p>
+                <Link to={s.path} className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 group-hover:gap-2 transition-all">
+                  Open <ArrowRight className="h-4 w-4" />
+                </Link>
               </motion.div>
             );
           })}
@@ -331,66 +228,23 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Featured Success Stories */}
+      {/* Global Impact Preview */}
       <section className="section bg-mist dark:bg-secondary-900">
         <SectionHeading
-          badge="Featured Stories"
-          title="Real deliveries, real impact"
-          subtitle="Stories of food that found a second home instead of a landfill."
-        />
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16">
-          {featuredStories.map((s, i) => (
-            <motion.figure
-              key={s.name}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-40px' }}
-              transition={{ delay: i * 0.12 }}
-              className="card-hover p-7 flex flex-col"
-            >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="h-11 w-11 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center font-display font-semibold text-lg">
-                  {s.name[0]}
-                </div>
-                <div>
-                  <p className="font-medium text-sm text-ink dark:text-cream">{s.name}</p>
-                  <p className="text-xs text-ink-soft dark:text-cream/50">{s.period}</p>
-                </div>
-              </div>
-              <blockquote className="text-ink-soft dark:text-cream/70 leading-relaxed flex-1">
-                "{s.text}"
-              </blockquote>
-              <div className="flex items-center gap-3 mt-5 pt-4 border-t border-linen dark:border-secondary-800">
-                <span className="font-stat font-bold text-primary-600">{s.meals.toLocaleString()}</span>
-                <span className="text-xs text-ink-soft dark:text-cream/50">meals saved</span>
-              </div>
-            </motion.figure>
-          ))}
-        </div>
-        <div className="text-center mt-10">
-          <Link to="/community" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
-            Explore more stories <ArrowRight className="h-4 w-4" />
-          </Link>
-        </div>
-      </section>
-
-      {/* SDG Preview */}
-      <section className="section bg-cream dark:bg-secondary-950">
-        <SectionHeading
-          badge="UN SDGs"
+          badge="Global Impact"
           title="Aligned with global goals"
           subtitle="FoodBridge directly contributes to the UN Sustainable Development Goals."
         />
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-14 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto">
           {sdgPreview.map((sdg, i) => (
             <motion.div
               key={sdg.num}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-              whileHover={{ y: -6 }}
-              className="card p-6 text-center group"
+              transition={{ delay: i * 0.08 }}
+              whileHover={{ y: -5 }}
+              className="card p-6 text-center"
             >
               <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br ${sdg.color} text-white flex items-center justify-center font-display text-xl font-bold mb-4 shadow-lg mx-auto`}>
                 {sdg.num}
@@ -401,22 +255,65 @@ export function HomePage() {
         </div>
         <div className="text-center mt-10">
           <Link to="/global-impact" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
-            Explore our global impact <ArrowRight className="h-4 w-4" />
+            Explore our global impact <Globe2 className="h-4 w-4" />
           </Link>
         </div>
       </section>
 
-      {/* Contact CTA */}
+      {/* Reviews Preview */}
+      <section className="section bg-cream dark:bg-secondary-950">
+        <SectionHeading
+          badge="Reviews"
+          title="Real deliveries, real impact"
+          subtitle="Stories of food that found a second home instead of a landfill."
+        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 max-w-5xl mx-auto">
+          {reviews.map((s, i) => (
+            <motion.figure
+              key={s.name}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ delay: i * 0.1 }}
+              className="card p-6 flex flex-col"
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center font-display font-semibold">
+                  {s.name[0]}
+                </div>
+                <div>
+                  <p className="font-medium text-sm text-ink dark:text-cream">{s.name}</p>
+                  <p className="text-xs text-ink-soft dark:text-cream/50">{s.period}</p>
+                </div>
+              </div>
+              <blockquote className="text-sm text-ink-soft dark:text-cream/70 leading-relaxed flex-1">
+                "{s.text}"
+              </blockquote>
+              <div className="flex items-center gap-2 mt-4 pt-4 border-t border-linen dark:border-secondary-800">
+                <span className="font-stat font-bold text-primary-600">{s.meals.toLocaleString()}</span>
+                <span className="text-xs text-ink-soft dark:text-cream/50">meals saved</span>
+              </div>
+            </motion.figure>
+          ))}
+        </div>
+        <div className="text-center mt-10">
+          <Link to="/community" className="inline-flex items-center gap-1 text-sm font-medium text-primary-600 dark:text-primary-400 hover:gap-2 transition-all">
+            Read more stories <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
+
+      {/* Call to Action */}
       <section className="section bg-mist dark:bg-secondary-900">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.6 }}
           >
             <div className="flex justify-center mb-6">
-              <div className="relative w-24 h-24">
+              <div className="relative w-20 h-20">
                 <div className="absolute inset-0 rounded-full bg-accent-100/60 dark:bg-accent-900/30 blur-xl" />
                 <Illustration variant="bridge" className="relative w-full h-full" />
               </div>
@@ -434,7 +331,7 @@ export function HomePage() {
                   Join as a volunteer <ArrowRight className="h-4 w-4" />
                 </RippleButton>
               </Link>
-              <Link to="/resources/contact">
+              <Link to="/contact">
                 <RippleButton variant="secondary" className="text-base px-7 py-3.5">
                   Talk to us
                 </RippleButton>
