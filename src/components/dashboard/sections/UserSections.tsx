@@ -110,12 +110,48 @@ export function UserTrackDonationSection() {
   const active = donations.filter((d) => d.status === 'available' || d.status === 'claimed' || d.status === 'picked_up');
   const completed = donations.filter((d) => d.status === 'delivered');
 
+  const totalMeals = donations.reduce((sum, d) => sum + (d.estimated_meals ?? 0), 0);
+  const totalKg = donations.reduce((sum, d) => {
+    const q = parseFloat(d.quantity);
+    if (!isNaN(q) && d.quantity_unit?.toLowerCase().match(/kg|kilo/)) return sum + q;
+    return sum;
+  }, 0);
+  const totalLiters = donations.reduce((sum, d) => {
+    const q = parseFloat(d.quantity);
+    if (!isNaN(q) && d.quantity_unit?.toLowerCase().match(/l|liter/)) return sum + q;
+    return sum;
+  }, 0);
+
   const stepMap: Record<string, number> = { available: 1, claimed: 2, picked_up: 3, delivered: 4 };
   const steps = ['Created', 'Assigned', 'Picked Up', 'Delivered'];
 
   return (
     <div>
       <DashboardSectionHeader title="Track Donations" description="Follow your donations from creation to delivery in real time." />
+      <div className="glass-card p-5 mb-6 bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20">
+        <div className="flex items-center gap-2 mb-3">
+          <Package className="h-5 w-5 text-primary-500" />
+          <h3 className="font-display font-bold text-sm">Total Food Donated</h3>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div>
+            <p className="font-stat text-2xl font-bold text-primary-600 dark:text-primary-400">{donations.length}</p>
+            <p className="text-xs text-gray-500">Donations</p>
+          </div>
+          <div>
+            <p className="font-stat text-2xl font-bold text-primary-600 dark:text-primary-400">{totalMeals.toLocaleString()}</p>
+            <p className="text-xs text-gray-500">Meals Provided</p>
+          </div>
+          <div>
+            <p className="font-stat text-2xl font-bold text-primary-600 dark:text-primary-400">{totalKg > 0 ? `${totalKg.toFixed(1)} kg` : '—'}</p>
+            <p className="text-xs text-gray-500">Food (kg)</p>
+          </div>
+          <div>
+            <p className="font-stat text-2xl font-bold text-primary-600 dark:text-primary-400">{totalLiters > 0 ? `${totalLiters.toFixed(1)} L` : '—'}</p>
+            <p className="text-xs text-gray-500">Beverages (L)</p>
+          </div>
+        </div>
+      </div>
       <div className="grid grid-cols-3 gap-4 mb-6">
         <StatCard icon={Clock} label="Active" value={active.length} color="bg-amber-500" />
         <StatCard icon={CheckCircle2} label="Delivered" value={completed.length} color="bg-green-500" />
