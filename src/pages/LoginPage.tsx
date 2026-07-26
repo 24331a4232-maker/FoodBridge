@@ -2,7 +2,8 @@ import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, Eye, EyeOff, LogIn, ArrowRight, AtSign } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth, roleDashboardPath } from '@/context/AuthContext';
+import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
@@ -21,7 +22,8 @@ export function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ identifier?: string; password?: string }>({});
 
-  if (!authLoading && user) return <Navigate to={from} replace />;
+  if (!authLoading && user && profile) return <Navigate to={roleDashboardPath[profile.role]} replace />;
+  if (!authLoading && user && !profile) return <Navigate to="/" replace />;
 
   const validate = () => {
     const e: typeof errors = {};
@@ -41,7 +43,10 @@ export function LoginPage() {
       toast(error, 'error');
     } else {
       toast('Welcome back to FoodBridge!', 'success');
-      navigate(from);
+      // Fetch profile to determine role-based redirect
+      const { data: p } = await supabase.from('profiles').select('role').eq('id', (await supabase.auth.getSession()).data.session?.user.id ?? '').maybeSingle();
+      const role = (p as { role?: import('@/types').UserRole } | null)?.role;
+      navigate(role ? roleDashboardPath[role] : from, { replace: true });
     }
   };
 

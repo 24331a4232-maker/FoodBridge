@@ -3,9 +3,9 @@ import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Mail, Lock, User, Building2, Eye, EyeOff, UserPlus, ArrowRight,
-  Hotel, HeartHandshake, ShieldCheck, Phone, AtSign, Check, X,
+  Hotel, HeartHandshake, ShieldCheck, Phone, AtSign, Check, X, Truck,
 } from 'lucide-react';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth, roleDashboardPath } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import type { UserRole } from '@/types';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
@@ -13,10 +13,11 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { PageNav } from '@/components/PageNav';
 
 const roles: { value: UserRole; label: string; icon: typeof Hotel; desc: string }[] = [
-  { value: 'donor', label: 'Hotel / Restaurant', icon: Hotel, desc: 'I want to donate surplus food' },
-  { value: 'volunteer', label: 'Volunteer', icon: HeartHandshake, desc: 'I want to deliver food' },
-  { value: 'admin', label: 'Admin', icon: ShieldCheck, desc: 'Manage the platform' },
-  { value: 'ngo', label: 'NGO / Shelter', icon: Building2, desc: 'Receive food donations' },
+  { value: 'restaurant', label: 'Restaurant', icon: Hotel, desc: 'I run a restaurant and want to donate surplus food' },
+  { value: 'donor', label: 'Donor', icon: HeartHandshake, desc: 'I want to donate food as an individual' },
+  { value: 'volunteer', label: 'Volunteer', icon: Truck, desc: 'I want to pick up and deliver food' },
+  { value: 'ngo', label: 'NGO / Shelter', icon: Building2, desc: 'I receive food for people in need' },
+  { value: 'admin', label: 'Admin', icon: ShieldCheck, desc: 'I manage the platform' },
 ];
 
 const passwordRules = [
@@ -45,7 +46,8 @@ export function RegisterPage() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
-  if (!authLoading && user) return <Navigate to="/" replace />;
+  if (!authLoading && user && profile) return <Navigate to={roleDashboardPath[profile.role]} replace />;
+  if (!authLoading && user && !profile) return <Navigate to="/" replace />;
 
   const setField = (key: string, value: string) => {
     setForm((f) => ({ ...f, [key]: value }));
@@ -106,7 +108,7 @@ export function RegisterPage() {
       toast(result.error, 'error');
     } else {
       toast('Account created! Welcome to FoodBridge.', 'success');
-      navigate('/');
+      navigate(roleDashboardPath[role]);
     }
   };
 

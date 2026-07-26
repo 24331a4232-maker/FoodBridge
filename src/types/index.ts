@@ -1,4 +1,4 @@
-export type UserRole = 'donor' | 'volunteer' | 'admin' | 'ngo';
+export type UserRole = 'donor' | 'volunteer' | 'admin' | 'ngo' | 'restaurant';
 export type OrganizationType = 'hotel' | 'restaurant' | 'event' | 'caterer' | 'other';
 export type FoodCategory = 'cooked' | 'raw' | 'packaged' | 'beverages' | 'bakery' | 'other';
 export type DonationStatus = 'available' | 'claimed' | 'picked_up' | 'delivered' | 'expired' | 'cancelled';

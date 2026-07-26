@@ -20,7 +20,7 @@ export function ProtectedRoute({ children, roles }: { children: ReactNode; roles
   }
 
   if (roles && profile && !roles.includes(profile.role)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/access-denied" replace />;
   }
 
   return <>{children}</>;

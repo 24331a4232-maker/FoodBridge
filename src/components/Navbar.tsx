@@ -9,8 +9,10 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useTheme } from '@/context/ThemeContext';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth, roleDashboardPath } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
 import { NotificationBell } from '@/components/NotificationBell';
+import type { UserRole } from '@/types';
 
 interface MenuLink {
   name: string;
@@ -104,12 +106,16 @@ export function Navbar() {
   const [openDropdown, setOpenDropdown] = useState<'services' | 'dashboard' | 'resources' | null>(null);
   const { theme, toggleTheme } = useTheme();
   const { user, profile, signOut } = useAuth();
+  const { toast } = useToast();
   const location = useLocation();
   const navigate = useNavigate();
   const { scrollY } = useScroll();
   const [hidden, setHidden] = useState(false);
   const prevY = useRef(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const profileMenuRef = useRef<HTMLDivElement>(null);
 
   useMotionValueEvent(scrollY, 'change', (latest) => {
     const prev = prevY.current;
@@ -135,15 +141,29 @@ export function Navbar() {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setOpenDropdown(null);
       }
+      if (profileMenuRef.current && !profileMenuRef.current.contains(e.target as Node)) {
+        setProfileMenuOpen(false);
+      }
     };
-    if (openDropdown) document.addEventListener('mousedown', handleClickOutside);
+    if (openDropdown || profileMenuOpen) document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [openDropdown]);
+  }, [openDropdown, profileMenuOpen]);
 
   const handleSignOut = async () => {
     setDrawerOpen(false);
+    setShowLogoutConfirm(false);
+    setProfileMenuOpen(false);
     await signOut();
-    navigate('/');
+    toast('You have been logged out successfully.', 'success');
+    navigate('/login');
+  };
+
+  const roleBadgeColors: Record<UserRole, string> = {
+    admin: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
+    volunteer: 'bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300',
+    donor: 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300',
+    restaurant: 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
+    ngo: 'bg-teal-100 text-teal-700 dark:bg-teal-900/40 dark:text-teal-300',
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -329,18 +349,63 @@ export function Navbar() {
               {user && <NotificationBell />}
 
               {user ? (
-                <Link
-                  to="/profile"
-                  className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full glass hover:shadow-soft transition-all"
-                  aria-label="My profile"
-                >
-                  <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center text-cream text-sm font-bold">
-                    {profile?.full_name?.[0]?.toUpperCase() ?? 'U'}
-                  </div>
-                  <span className="hidden sm:block text-sm font-medium max-w-[110px] truncate text-ink dark:text-cream">
-                    {profile?.full_name?.split(' ')[0] ?? 'User'}
-                  </span>
-                </Link>
+                <div className="relative" ref={profileMenuRef}>
+                  <button
+                    onClick={() => setProfileMenuOpen((o) => !o)}
+                    className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full glass hover:shadow-soft transition-all"
+                    aria-label="Profile menu"
+                  >
+                    <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center text-cream text-sm font-bold">
+                      {profile?.full_name?.[0]?.toUpperCase() ?? 'U'}
+                    </div>
+                    <div className="hidden sm:flex flex-col items-start leading-tight">
+                      <span className="text-sm font-medium max-w-[110px] truncate text-ink dark:text-cream">
+                        {profile?.full_name?.split(' ')[0] ?? 'User'}
+                      </span>
+                      {profile?.role && (
+                        <span className={`text-[9px] font-semibold uppercase tracking-wide px-1.5 rounded-full ${roleBadgeColors[profile.role]}`}>
+                          {profile.role}
+                        </span>
+                      )}
+                    </div>
+                    <ChevronDown className={`h-4 w-4 text-ink-soft dark:text-cream/60 transition-transform ${profileMenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                  <AnimatePresence>
+                    {profileMenuOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -8, scale: 0.96 }}
+                        transition={{ duration: 0.18 }}
+                        className="absolute right-0 mt-2 w-56 rounded-2xl-premium glass-card p-2 shadow-premium-lg z-50"
+                      >
+                        <div className="px-3 py-2.5 mb-1 border-b border-linen/60 dark:border-secondary-800/60">
+                          <p className="text-sm font-semibold truncate text-ink dark:text-cream">{profile?.full_name ?? 'User'}</p>
+                          <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{profile?.email ?? user.email}</p>
+                          {profile?.role && (
+                            <span className={`inline-block mt-1 text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-full ${roleBadgeColors[profile.role]}`}>
+                              {profile.role}
+                            </span>
+                          )}
+                        </div>
+                        <Link to="/profile" onClick={() => setProfileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors text-sm text-ink dark:text-cream">
+                          <UserIcon className="h-4 w-4 text-primary-600" /> My Profile
+                        </Link>
+                        <Link to="/profile" onClick={() => setProfileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors text-sm text-ink dark:text-cream">
+                          <Settings className="h-4 w-4 text-primary-600" /> Settings
+                        </Link>
+                        {profile?.role && (
+                          <Link to={roleDashboardPath[profile.role]} onClick={() => setProfileMenuOpen(false)} className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors text-sm text-ink dark:text-cream">
+                            <LayoutDashboard className="h-4 w-4 text-primary-600" /> My Dashboard
+                          </Link>
+                        )}
+                        <button onClick={() => setShowLogoutConfirm(true)} className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors text-sm text-red-600">
+                          <LogOut className="h-4 w-4" /> Logout
+                        </button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               ) : (
                 <div className="hidden sm:flex items-center gap-2">
                   <Link to="/login" className="btn-ghost text-sm">Login</Link>
@@ -456,9 +521,14 @@ export function Navbar() {
                       <div className="h-11 w-11 rounded-full bg-cream/15 backdrop-blur flex items-center justify-center text-cream font-bold text-lg">
                         {profile?.full_name?.[0]?.toUpperCase() ?? 'U'}
                       </div>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="font-medium truncate">{profile?.full_name ?? 'User'}</p>
                         <p className="text-xs text-cream/70 truncate">{profile?.email ?? user.email}</p>
+                        {profile?.role && (
+                          <span className="inline-block mt-1 text-[9px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-full bg-cream/15">
+                            {profile.role}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -521,7 +591,7 @@ export function Navbar() {
                     </div>
                     {user ? (
                       <button
-                        onClick={handleSignOut}
+                        onClick={() => setShowLogoutConfirm(true)}
                         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl-premium hover:bg-red-50 dark:hover:bg-red-900/30 text-red-600 transition-colors"
                       >
                         <span className="h-8 w-8 rounded-lg flex items-center justify-center bg-red-100 dark:bg-red-900/40 text-red-600">
@@ -560,6 +630,42 @@ export function Navbar() {
                 </div>
               </div>
             </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Logout confirmation modal */}
+      <AnimatePresence>
+        {showLogoutConfirm && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowLogoutConfirm(false)}
+              className="fixed inset-0 z-[80] bg-ink/40 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              transition={{ duration: 0.25 }}
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[90] w-[calc(100%-2rem)] max-w-sm"
+            >
+              <div className="glass-card p-6 text-center">
+                <div className="h-14 w-14 rounded-2xl-premium bg-gradient-to-br from-red-500 to-rose-600 text-white flex items-center justify-center mx-auto mb-4 shadow-lg shadow-red-500/30">
+                  <LogOut className="h-7 w-7" />
+                </div>
+                <h3 className="font-display text-lg font-bold mb-1">Are you sure you want to logout?</h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">You will need to sign in again to access your dashboard.</p>
+                <div className="flex gap-3">
+                  <button onClick={() => setShowLogoutConfirm(false)} className="btn-ghost flex-1">Cancel</button>
+                  <button onClick={handleSignOut} className="btn-primary flex-1 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700">
+                    <LogOut className="h-4 w-4" /> Logout
+                  </button>
+                </div>
+              </div>
+            </motion.div>
           </>
         )}
       </AnimatePresence>

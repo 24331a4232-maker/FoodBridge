@@ -7,6 +7,14 @@ export interface SignUpResult {
   fieldErrors?: { username?: string; email?: string; phone?: string };
 }
 
+export const roleDashboardPath: Record<UserRole, string> = {
+  admin: '/dashboard/admin',
+  volunteer: '/dashboard/volunteer',
+  donor: '/dashboard/donor',
+  restaurant: '/dashboard/restaurant',
+  ngo: '/dashboard/ngo',
+};
+
 interface AuthContextValue {
   user: import('@supabase/supabase-js').User | null;
   profile: Profile | null;
@@ -182,6 +190,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    // Clear all auth/session data from storage so no stale session lingers
+    try {
+      localStorage.removeItem('sb-' + (import.meta.env.VITE_SUPABASE_URL as string).replace(/^https?:\/\//, '').replace(/\./g, '-') + '-auth-token');
+    } catch { /* ignore */ }
+    try {
+      Object.keys(localStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => localStorage.removeItem(k));
+    } catch { /* ignore */ }
+    try {
+      Object.keys(sessionStorage).filter((k) => k.startsWith('sb-') && k.endsWith('-auth-token')).forEach((k) => sessionStorage.removeItem(k));
+    } catch { /* ignore */ }
+    setUser(null);
     setProfile(null);
   };
 
