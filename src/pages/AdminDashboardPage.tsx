@@ -1,6 +1,6 @@
 import {
   Radio, Users, Package, Truck, Store, Building2, ShieldCheck, QrCode,
-  Award, BarChart3, FileText, Bell, Settings,
+  Award, BarChart3, FileText, Bell, Settings, MapPin,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import {
@@ -8,6 +8,7 @@ import {
   AdminUserManagementSection,
   AdminDonationManagementSection,
   AdminVolunteerManagementSection,
+  AdminVolunteerTrackingSection,
   AdminRestaurantManagementSection,
   AdminNgoManagementSection,
   AdminFoodQualitySection,
@@ -25,6 +26,7 @@ export function AdminDashboardPage() {
     { key: 'users', label: 'User Management', icon: Users, content: <AdminUserManagementSection /> },
     { key: 'donations', label: 'Donation Management', icon: Package, content: <AdminDonationManagementSection /> },
     { key: 'volunteers', label: 'Volunteer Management', icon: Truck, content: <AdminVolunteerManagementSection /> },
+    { key: 'volunteer-tracking', label: 'Volunteer Tracking', icon: MapPin, content: <AdminVolunteerTrackingSection /> },
     { key: 'restaurants', label: 'Restaurant Management', icon: Store, content: <AdminRestaurantManagementSection /> },
     { key: 'ngos', label: 'NGO Management', icon: Building2, content: <AdminNgoManagementSection /> },
     { key: 'quality', label: 'Food Quality Monitoring', icon: ShieldCheck, content: <AdminFoodQualitySection /> },

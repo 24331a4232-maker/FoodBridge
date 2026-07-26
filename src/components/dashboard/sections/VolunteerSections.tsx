@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
   Package, Clock, CheckCircle2, MapPin, Truck, Navigation, Loader2,
   Award, ShieldCheck, Zap, Target, Trophy, Star,
-  Camera, Thermometer, CheckCircle, XCircle, Calendar,
+  Camera, Thermometer, CheckCircle, XCircle, Calendar, Radio,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
@@ -113,6 +113,8 @@ export function VolunteerLiveTrackingSection() {
   const [loading, setLoading] = useState(true);
   const [route, setRoute] = useState<RouteInfo | null>(null);
   const [routeLoading, setRouteLoading] = useState(false);
+  const [broadcasting, setBroadcasting] = useState(false);
+  const [watchId, setWatchId] = useState<number | null>(null);
 
   useEffect(() => {
     const load = async () => {
@@ -125,6 +127,52 @@ export function VolunteerLiveTrackingSection() {
     const ch = supabase.channel('vol-live').on('postgres_changes', { event: '*', schema: 'public', table: 'pickups' }, load).subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [user]);
+
+  // Push the volunteer's live position to their profile so admins can track them.
+  useEffect(() => {
+    if (!broadcasting || !user || !position) return;
+    supabase
+      .from('profiles')
+      .update({
+        current_location_lat: position.lat,
+        current_location_lng: position.lng,
+      })
+      .eq('id', user.id)
+      .then(() => {});
+  }, [broadcasting, position, user]);
+
+  const toggleBroadcast = async () => {
+    if (!broadcasting) {
+      if (!position) requestGeo();
+      setBroadcasting(true);
+    } else {
+      setBroadcasting(false);
+      if (watchId != null && 'geolocation' in navigator) {
+        navigator.geolocation.clearWatch(watchId);
+        setWatchId(null);
+      }
+      if (user) {
+        await supabase
+          .from('profiles')
+          .update({ current_location_lat: null, current_location_lng: null })
+          .eq('id', user.id);
+      }
+    }
+  };
+
+  // Start a high-accuracy watch when broadcasting so the position keeps refreshing.
+  useEffect(() => {
+    if (!broadcasting || !('geolocation' in navigator)) return;
+    const id = navigator.geolocation.watchPosition(
+      () => {},
+      () => {},
+      { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 },
+    );
+    setWatchId(id);
+    return () => {
+      navigator.geolocation.clearWatch(id);
+    };
+  }, [broadcasting]);
 
   const active = pickups.filter((p) => p.status === 'accepted' || p.status === 'in_progress');
 
@@ -151,6 +199,9 @@ export function VolunteerLiveTrackingSection() {
         <div className="flex items-center justify-between mb-3">
           <h3 className="font-display font-bold flex items-center gap-2"><MapPin className="h-5 w-5 text-primary-500" /> Live Map</h3>
           {!position && <RippleButton onClick={requestGeo} variant="ghost" className="text-xs" disabled={geoLoading}>{geoLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <MapPin className="h-3 w-3" />} Enable Location</RippleButton>}
+          <RippleButton onClick={toggleBroadcast} variant={broadcasting ? 'primary' : 'ghost'} className="text-xs">
+            <Radio className="h-3 w-3" /> {broadcasting ? 'Stop Sharing' : 'Share Live Location'}
+          </RippleButton>
         </div>
         <LeafletMap points={mapPoints} showRoute={!!route} routeCoords={route?.coordinates ?? []} height="h-80" center={position ? [position.lat, position.lng] : [20.5937, 78.9629]} zoom={position ? 13 : 5} />
       </div>
