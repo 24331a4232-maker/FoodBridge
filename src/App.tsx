@@ -29,9 +29,7 @@ const DonateFoodPage = lazy(() => import('@/pages/DonateFoodPage').then(m => ({ 
 const FoodQualityPage = lazy(() => import('@/pages/FoodQualityPage').then(m => ({ default: m.FoodQualityPage })));
 const VolunteerDashboardPage = lazy(() => import('@/pages/VolunteerDashboardPage').then(m => ({ default: m.VolunteerDashboardPage })));
 const AdminDashboardPage = lazy(() => import('@/pages/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
-const DonorDashboardPage = lazy(() => import('@/pages/DonorDashboardPage').then(m => ({ default: m.DonorDashboardPage })));
-const RestaurantDashboardPage = lazy(() => import('@/pages/RestaurantDashboardPage').then(m => ({ default: m.RestaurantDashboardPage })));
-const NgoDashboardPage = lazy(() => import('@/pages/NgoDashboardPage').then(m => ({ default: m.NgoDashboardPage })));
+const UserDashboardPage = lazy(() => import('@/pages/UserDashboardPage').then(m => ({ default: m.UserDashboardPage })));
 const AccessDeniedPage = lazy(() => import('@/pages/AccessDeniedPage').then(m => ({ default: m.AccessDeniedPage })));
 const LoginPage = lazy(() => import('@/pages/LoginPage').then(m => ({ default: m.LoginPage })));
 const RegisterPage = lazy(() => import('@/pages/RegisterPage').then(m => ({ default: m.RegisterPage })));
@@ -100,9 +98,9 @@ function AnimatedRoutes() {
           <Route path="/dashboard" element={<PageTransition><DashboardSectionPage /></PageTransition>} />
           <Route path="/dashboard/volunteer" element={<ProtectedRoute roles={['volunteer']}><PageTransition><VolunteerDashboardPage /></PageTransition></ProtectedRoute>} />
           <Route path="/dashboard/admin" element={<ProtectedRoute roles={['admin']}><PageTransition><AdminDashboardPage /></PageTransition></ProtectedRoute>} />
-          <Route path="/dashboard/donor" element={<ProtectedRoute roles={['donor']}><PageTransition><DonorDashboardPage /></PageTransition></ProtectedRoute>} />
-          <Route path="/dashboard/restaurant" element={<ProtectedRoute roles={['restaurant']}><PageTransition><RestaurantDashboardPage /></PageTransition></ProtectedRoute>} />
-          <Route path="/dashboard/ngo" element={<ProtectedRoute roles={['ngo']}><PageTransition><NgoDashboardPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/dashboard/donor" element={<ProtectedRoute roles={['donor']}><PageTransition><UserDashboardPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/dashboard/restaurant" element={<ProtectedRoute roles={['restaurant']}><PageTransition><UserDashboardPage /></PageTransition></ProtectedRoute>} />
+          <Route path="/dashboard/ngo" element={<ProtectedRoute roles={['ngo']}><PageTransition><UserDashboardPage /></PageTransition></ProtectedRoute>} />
           <Route path="/access-denied" element={<PageTransition><AccessDeniedPage /></PageTransition>} />
 
           {/* Resources section */}
