@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Package, Clock, CheckCircle2, MapPin, Truck, Navigation, Loader2,
-  QrCode, ScanLine, Award, ShieldCheck, Zap, Target, Trophy, Star,
+  Award, ShieldCheck, Zap, Target, Trophy, Star,
   Camera, Thermometer, CheckCircle, XCircle, Calendar,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -181,53 +181,6 @@ export function VolunteerLiveTrackingSection() {
             );
           })}
         </div>
-      )}
-    </div>
-  );
-}
-
-/* ---------- QR Scanner ---------- */
-export function VolunteerQrScannerSection() {
-  const [scanned, setScanned] = useState<string | null>(null);
-  const [status, setStatus] = useState<'idle' | 'verifying' | 'verified' | 'failed'>('idle');
-
-  const handleVerify = async (code: string) => {
-    setStatus('verifying');
-    // Simulate scan verification
-    await new Promise((r) => setTimeout(r, 800));
-    setScanned(code);
-    setStatus('verified');
-  };
-
-  return (
-    <div>
-      <DashboardSectionHeader title="QR Scanner" description="Scan a donation QR code to verify and update pickup status." />
-      <div className="glass-card p-8 text-center mb-4">
-        <div className="h-48 w-48 mx-auto rounded-3xl border-4 border-dashed border-primary-300 dark:border-primary-700 flex items-center justify-center mb-4 relative overflow-hidden">
-          <ScanLine className="h-20 w-20 text-primary-400" />
-          <motion.div
-            animate={{ y: [-80, 80, -80] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute left-4 right-4 h-1 bg-primary-500 rounded-full shadow-lg shadow-primary-500/50"
-          />
-        </div>
-        <p className="text-sm text-gray-500 mb-4">Point your camera at the donation QR code</p>
-        <RippleButton onClick={() => handleVerify('FB-DON-2026-0001')} variant="primary">
-          <QrCode className="h-4 w-4" /> Simulate Scan
-        </RippleButton>
-      </div>
-      {status === 'verifying' && <div className="flex justify-center py-4"><Loader2 className="h-6 w-6 animate-spin text-primary-500" /></div>}
-      {status === 'verified' && scanned && (
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6">
-          <div className="flex items-center gap-2 mb-4">
-            <CheckCircle className="h-6 w-6 text-green-500" />
-            <h3 className="font-display text-lg font-bold text-green-600">Donation Verified</h3>
-          </div>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div><p className="text-xs text-gray-400">Donation Code</p><p className="font-medium font-mono">{scanned}</p></div>
-            <div><p className="text-xs text-gray-400">Status</p><span className="badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">Verified</span></div>
-          </div>
-        </motion.div>
       )}
     </div>
   );
@@ -459,19 +412,6 @@ export function VolunteerFoodQualitySection() {
     load();
   };
 
-  const mapPoints: MapPoint[] = [];
-  if (position) mapPoints.push({ lat: position.lat, lng: position.lng, type: 'user', popup: 'Your location' });
-  pickups.forEach((p) => {
-    if (p.donation?.latitude != null && p.donation?.longitude != null) {
-      mapPoints.push({
-        lat: p.donation.latitude,
-        lng: p.donation.longitude,
-        type: 'donor',
-        popup: `<b>${p.donation.food_name}</b><br/>${p.donation.organization}`,
-      });
-    }
-  });
-
   return (
     <div>
       <DashboardSectionHeader title="Food Quality Inspection" description="Accept a donation, navigate to pickup, inspect the food, and submit your report." />
@@ -494,13 +434,6 @@ export function VolunteerFoodQualitySection() {
         </div>
       ) : (
         <div className="space-y-4">
-          {position && mapPoints.length > 1 && (
-            <div className="glass-card p-4">
-              <h3 className="font-display font-bold flex items-center gap-2 mb-3"><MapPin className="h-5 w-5 text-primary-500" /> Pickup Map</h3>
-              <LeafletMap points={mapPoints} center={[position.lat, position.lng]} zoom={12} height="h-64" />
-            </div>
-          )}
-
           {pickups.map((p, idx) => {
             const f = forms[p.id] ?? EMPTY_FORM;
             const isActive = activeId === p.id;
