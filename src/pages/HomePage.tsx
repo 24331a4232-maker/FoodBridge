@@ -82,7 +82,7 @@ export function HomePage() {
             src="/images/ChatGPT_Image_Jul_27,_2026,_05_33_56_PM.png"
             alt="FoodBridge volunteers distributing surplus meals to a family during golden hour"
             className="w-full h-full object-cover object-right"
-            style={{ filter: 'brightness(0.8) saturate(1.05)', opacity: 0.55 }}
+            style={{ filter: 'brightness(0.8) saturate(1.05)', opacity: 0.3 }}
           />
           {/* Solid left panel fading right — fully hides baked-in image text */}
           <div
