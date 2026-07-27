@@ -107,6 +107,7 @@ export interface Profile {
   rating: number;
   assigned_deliveries: number;
   completed_deliveries_count: number;
+  vehicle: string | null;
 }
 
 export type StorageMethod = 'room_temperature' | 'refrigerated' | 'frozen';

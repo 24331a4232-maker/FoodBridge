@@ -17,6 +17,7 @@ import { AnimatedCounter } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { DashboardSectionHeader, StatCard } from '@/components/dashboard/DashboardLayout';
 import { UserManagementTable } from '@/components/admin/UserManagementTable';
+import { VolunteerTrackingSystem } from '@/components/admin/VolunteerTrackingSystem';
 import { LeafletMap, type MapPoint } from '@/components/LeafletMap';
 import {
   type OpsStat, type OpsActivity, type ActivityKind, type TimeFilter,
@@ -304,122 +305,7 @@ export function AdminVolunteerManagementSection() {
 
 /* ---------- Volunteer Location Tracking ---------- */
 export function AdminVolunteerTrackingSection() {
-  const [volunteers, setVolunteers] = useState<Profile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  const load = useCallback(async () => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('role', 'volunteer')
-      .order('created_at', { ascending: false });
-    setVolunteers((data as Profile[]) ?? []);
-    setLoading(false);
-  }, []);
-
-  useEffect(() => {
-    load();
-    const ch = supabase
-      .channel('admin-vol-track')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' }, load)
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [load]);
-
-  const located = volunteers.filter(
-    (v) => v.current_location_lat != null && v.current_location_lng != null,
-  );
-
-  const mapPoints: MapPoint[] = located.map((v) => ({
-    lat: v.current_location_lat as number,
-    lng: v.current_location_lng as number,
-    type: 'volunteer',
-    label: v.full_name,
-    popup: `<strong>${v.full_name}</strong><br/>${v.availability}<br/>${v.total_deliveries} deliveries`,
-  }));
-
-  const selected = located.find((v) => v.id === selectedId) ?? null;
-  const selectedPoint: MapPoint | null = selected
-    ? { lat: selected.current_location_lat as number, lng: selected.current_location_lng as number, type: 'volunteer', label: selected.full_name }
-    : null;
-
-  return (
-    <div>
-      <DashboardSectionHeader
-        title="Volunteer Location Tracking"
-        description="See where volunteers are currently sharing their live location."
-        action={
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl glass">
-            <span className={`h-2 w-2 rounded-full ${located.length > 0 ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
-            <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
-              {located.length} live
-            </span>
-          </div>
-        }
-      />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="lg:col-span-2 glass-card p-4">
-          <div className="h-[420px]">
-            {loading ? (
-              <div className="flex justify-center items-center h-full">
-                <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
-              </div>
-            ) : mapPoints.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full text-center">
-                <MapPin className="h-10 w-10 text-gray-300 mb-2" />
-                <p className="text-sm text-gray-500">No volunteers are sharing their location right now.</p>
-                <p className="text-xs text-gray-400 mt-1">Volunteers can enable sharing from their Live Tracking tab.</p>
-              </div>
-            ) : (
-              <LeafletMap points={mapPoints} selectedPoint={selectedPoint} height="h-full" />
-            )}
-          </div>
-        </div>
-
-        <div className="glass-card p-4 flex flex-col">
-          <h3 className="font-display font-bold mb-3 flex items-center gap-2">
-            <Radio className="h-4 w-4 text-primary-500" /> Live Volunteers
-          </h3>
-          <div className="space-y-2 flex-1 overflow-y-auto no-scrollbar max-h-[380px]">
-            {located.length === 0 && !loading && (
-              <p className="text-sm text-gray-400 text-center py-6">No active locations.</p>
-            )}
-            {located.map((v) => {
-              const availColors: Record<string, string> = {
-                available: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
-                on_delivery: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-                offline: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
-              };
-              return (
-                <button
-                  key={v.id}
-                  onClick={() => setSelectedId(selectedId === v.id ? null : v.id)}
-                  className={`w-full text-left p-3 rounded-xl transition-all ${selectedId === v.id ? 'bg-primary-50 dark:bg-primary-900/30 ring-2 ring-primary-500' : 'glass hover:bg-primary-50/50 dark:hover:bg-primary-900/20'}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 flex items-center justify-center text-sm font-bold shrink-0">
-                      {v.full_name?.[0]?.toUpperCase() ?? 'V'}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{v.full_name}</p>
-                      <p className="text-xs text-gray-500 truncate">
-                        {v.current_location_lat?.toFixed(4)}, {v.current_location_lng?.toFixed(4)}
-                      </p>
-                    </div>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium capitalize shrink-0 ${availColors[v.availability]}`}>
-                      {v.availability}
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  return <VolunteerTrackingSystem />;
 }
 
 /* ---------- Restaurant Management ---------- */
