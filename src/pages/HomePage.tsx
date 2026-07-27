@@ -74,124 +74,237 @@ export function HomePage() {
   return (
     <div style={{ backgroundColor: C.cream, color: C.text }} className="overflow-x-hidden">
       {/* ---------- HERO ---------- */}
-      <section
-        className="relative min-h-[90vh] flex items-center pt-24 pb-20 overflow-hidden"
-        style={{ background: `linear-gradient(135deg, ${C.beige} 0%, ${C.cream} 45%, ${C.sand} 100%)` }}
-      >
-        {/* soft glows */}
-        <div className="absolute top-20 -left-16 h-80 w-80 rounded-full blur-3xl pointer-events-none" style={{ backgroundColor: `${C.accent}33` }} />
-        <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full blur-3xl pointer-events-none" style={{ backgroundColor: `${C.coffee}22` }} />
+      <section className="relative w-full min-h-screen flex flex-col overflow-hidden">
 
-        <div className="relative z-10 max-w-6xl lg:max-w-7xl 2xl:max-w-[88rem] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center w-full">
-          <div className="text-center lg:text-left">
-            <motion.span
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 }}
-              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] mb-7 px-3.5 py-1.5 rounded-full"
-              style={{ color: C.coffee, backgroundColor: `${C.accent}1A`, border: `1px solid ${C.accent}40` }}
-            >
-              <Leaf className="h-3.5 w-3.5" /> Every Meal Deserves a Purpose
-            </motion.span>
+        {/* Full-bleed photo */}
+        <div className="absolute inset-0">
+          <img
+            src="/images/ChatGPT_Image_Jul_27,_2026,_05_33_56_PM.png"
+            alt="FoodBridge volunteers distributing surplus meals to a family during golden hour"
+            className="w-full h-full object-cover object-center"
+            style={{ filter: 'brightness(0.88) saturate(1.08)' }}
+          />
+          {/* Cinematic left-to-right dark brown gradient for text legibility */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(
+                100deg,
+                rgba(30,18,10,0.93) 0%,
+                rgba(40,24,12,0.82) 28%,
+                rgba(50,30,14,0.55) 52%,
+                rgba(30,16,6,0.18) 72%,
+                rgba(0,0,0,0.04) 100%
+              )`,
+            }}
+          />
+          {/* Subtle vertical vignette bottom */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-40 pointer-events-none"
+            style={{ background: 'linear-gradient(to top, rgba(20,12,6,0.55) 0%, transparent 100%)' }}
+          />
+        </div>
 
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.25, duration: 0.7 }}
-              className="font-display text-[2.75rem] sm:text-6xl lg:text-7xl font-semibold tracking-[-0.03em] leading-[1.02] text-balance"
-              style={{ color: C.dark }}
-            >
-              Every Meal<br />
-              <span style={{ color: C.primary }}>Deserves a Purpose.</span>
-            </motion.h1>
+        {/* Content */}
+        <div className="relative z-10 flex flex-col flex-1">
 
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.45 }}
-              className="text-lg sm:text-xl mt-8 max-w-xl mx-auto lg:mx-0 leading-relaxed text-pretty"
-              style={{ color: C.sub }}
-            >
-              Connecting surplus food with people who need it most — within four hours, before it ever becomes waste.
-            </motion.p>
+          {/* ── Navbar ── */}
+          <header className="w-full px-6 lg:px-10 pt-6 pb-4">
+            <div className="max-w-7xl mx-auto flex items-center justify-between">
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mt-10"
-            >
-              <Link to="/services">
-                <RippleButton
-                  className="text-base px-7 py-3.5 rounded-2xl font-semibold text-white shadow-lg transition-all duration-300 hover:-translate-y-0.5"
-                  style={{ backgroundColor: C.primary, boxShadow: `0 10px 30px -10px ${C.primary}66` }}
+              {/* Logo */}
+              <motion.div
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.6 }}
+                className="flex items-center gap-3"
+              >
+                <div
+                  className="h-10 w-10 rounded-xl flex items-center justify-center shadow-lg"
+                  style={{ backgroundColor: C.primary }}
                 >
-                  Explore Services <ArrowRight className="h-4 w-4" />
-                </RippleButton>
-              </Link>
-              <Link to="/about">
-                <span
-                  className="inline-flex items-center gap-2 px-7 py-3.5 rounded-2xl font-semibold transition-all duration-300 hover:-translate-y-0.5"
-                  style={{ backgroundColor: C.cream, color: C.primary, border: `1.5px solid ${C.accent}` }}
-                >
-                  Our Story
-                </span>
-              </Link>
-            </motion.div>
+                  <Leaf className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <span className="font-display text-xl font-bold tracking-tight text-white">FoodBridge</span>
+                  <p className="text-[10px] text-white/50 -mt-0.5 tracking-widest uppercase">Share Food. Share Hope.</p>
+                </div>
+              </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.8 }}
-              className="flex items-center justify-center lg:justify-start gap-6 mt-10 text-sm"
-              style={{ color: C.sub }}
-            >
-              <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" style={{ color: C.coffee }} /> 4-hour pickup</span>
-              <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" style={{ color: C.coffee }} /> Quality verified</span>
-              <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" style={{ color: C.coffee }} /> Zero waste</span>
-            </motion.div>
+              {/* Nav links */}
+              <motion.nav
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="hidden lg:flex items-center gap-8"
+              >
+                {['Home','About','Services','Impact','Community','Contact'].map((item) => (
+                  <Link
+                    key={item}
+                    to={item === 'Home' ? '/' : `/${item.toLowerCase()}`}
+                    className="text-sm font-medium text-white/80 hover:text-white transition-colors duration-200 relative group"
+                  >
+                    {item}
+                    <span className="absolute -bottom-0.5 left-0 h-px w-0 group-hover:w-full transition-all duration-300" style={{ backgroundColor: C.accent }} />
+                  </Link>
+                ))}
+              </motion.nav>
+
+              {/* Auth buttons */}
+              <motion.div
+                initial={{ opacity: 0, x: 16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+                className="hidden lg:flex items-center gap-3"
+              >
+                <Link to="/login">
+                  <span className="text-sm font-semibold text-white/80 hover:text-white px-4 py-2 rounded-xl transition-colors duration-200">
+                    Login
+                  </span>
+                </Link>
+                <Link to="/register">
+                  <span
+                    className="text-sm font-semibold px-5 py-2.5 rounded-xl transition-all duration-200 hover:-translate-y-px"
+                    style={{ backgroundColor: C.primary, color: '#fff', boxShadow: `0 4px 18px -4px ${C.primary}99` }}
+                  >
+                    Register
+                  </span>
+                </Link>
+              </motion.div>
+            </div>
+          </header>
+
+          {/* ── Hero text ── */}
+          <div className="flex-1 flex items-center">
+            <div className="max-w-7xl mx-auto px-6 lg:px-10 w-full py-16 lg:py-24">
+              <div className="max-w-[640px]">
+
+                {/* Badge */}
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.35, duration: 0.6 }}
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-8"
+                  style={{
+                    backgroundColor: 'rgba(111,78,55,0.35)',
+                    border: '1px solid rgba(176,137,104,0.55)',
+                    backdropFilter: 'blur(10px)',
+                  }}
+                >
+                  <Leaf className="h-3.5 w-3.5" style={{ color: C.sand }} />
+                  <span className="text-[11px] font-bold uppercase tracking-[0.2em]" style={{ color: C.sand }}>
+                    Food Surplus Redistribution Platform
+                  </span>
+                </motion.div>
+
+                {/* Heading */}
+                <motion.h1
+                  initial={{ opacity: 0, y: 28 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.48, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                  className="font-display font-bold leading-[1.0] tracking-[-0.04em] mb-7"
+                  style={{ fontSize: 'clamp(3rem, 7.5vw, 5.5rem)', color: '#FFFFFF' }}
+                >
+                  Every Meal<br />
+                  Has a<br />
+                  <span style={{ color: C.sand }}>Second Chance.</span>
+                </motion.h1>
+
+                {/* Description */}
+                <motion.p
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.65, duration: 0.7 }}
+                  className="text-base sm:text-lg leading-[1.75] max-w-md mb-10"
+                  style={{ color: 'rgba(250,247,240,0.82)' }}
+                >
+                  FoodBridge connects food donors, volunteers, and communities to rescue surplus food before it goes to waste, ensuring every meal reaches someone who truly needs it with dignity, safety, and care.
+                </motion.p>
+
+                {/* Buttons */}
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.78, duration: 0.6 }}
+                  className="flex flex-wrap items-center gap-4"
+                >
+                  <Link to="/register">
+                    <RippleButton
+                      className="inline-flex items-center gap-2 text-base font-semibold px-8 py-4 rounded-2xl text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-2xl"
+                      style={{
+                        backgroundColor: C.primary,
+                        boxShadow: `0 12px 36px -10px ${C.dark}99`,
+                      }}
+                    >
+                      Get Started <ArrowRight className="h-4.5 w-4.5" />
+                    </RippleButton>
+                  </Link>
+                  <Link to="/about">
+                    <span
+                      className="inline-flex items-center gap-2 text-base font-semibold px-8 py-4 rounded-2xl transition-all duration-300 hover:-translate-y-0.5"
+                      style={{
+                        backgroundColor: 'rgba(255,255,255,0.1)',
+                        color: '#FFFFFF',
+                        border: '1.5px solid rgba(255,255,255,0.35)',
+                        backdropFilter: 'blur(14px)',
+                      }}
+                    >
+                      Learn How It Works
+                    </span>
+                  </Link>
+                </motion.div>
+
+                {/* Trust pills */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.95 }}
+                  className="flex flex-wrap items-center gap-3 mt-10"
+                >
+                  {[
+                    { icon: CheckCircle2, label: 'Quality Verified' },
+                    { icon: ShieldCheck,  label: 'Hygiene Checked' },
+                    { icon: Clock,        label: '4-Hour Pickup' },
+                  ].map(({ icon: Icon, label }) => (
+                    <span
+                      key={label}
+                      className="inline-flex items-center gap-2 text-xs font-medium px-3.5 py-1.5 rounded-full"
+                      style={{
+                        backgroundColor: 'rgba(255,255,255,0.08)',
+                        color: 'rgba(250,247,240,0.75)',
+                        border: '1px solid rgba(255,255,255,0.15)',
+                        backdropFilter: 'blur(8px)',
+                      }}
+                    >
+                      <Icon className="h-3.5 w-3.5" style={{ color: C.sand }} />
+                      {label}
+                    </span>
+                  ))}
+                </motion.div>
+              </div>
+            </div>
           </div>
 
-          {/* Hero illustration — custom brown/beige themed */}
+          {/* ── Bottom stat strip ── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-            className="relative hidden lg:flex items-center justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.05, duration: 0.7 }}
+            className="w-full"
+            style={{ backgroundColor: 'rgba(20,10,4,0.6)', backdropFilter: 'blur(16px)', borderTop: '1px solid rgba(255,255,255,0.08)' }}
           >
-            <div className="relative w-full max-w-md aspect-square">
-              <div className="absolute inset-0 rounded-full blur-2xl" style={{ background: `radial-gradient(circle, ${C.sand} 0%, transparent 70%)` }} />
-              <svg viewBox="0 0 200 200" className="relative w-full h-full" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <circle cx="100" cy="100" r="78" fill={C.card} stroke={C.accent} strokeWidth="2" opacity="0.9" />
-                <circle cx="100" cy="100" r="78" fill="none" stroke={C.coffee} strokeWidth="1" opacity="0.3" />
-                {/* bridge */}
-                <path d="M40 112h120v8H40z" fill={C.primary} />
-                <path d="M40 112c0-22 27-34 60-34s60 12 60 34" fill="none" stroke={C.primary} strokeWidth="4" />
-                <path d="M52 120v10M70 120v10M88 120v10M106 120v10M124 120v10M142 120v10" stroke={C.primary} strokeWidth="3" strokeLinecap="round" />
-                {/* leaves */}
-                <g transform="translate(36 126) scale(0.8)">
-                  <path d="M0 0c8 2 14 8 14 16 0 6-4 10-10 10-6 0-10-4-10-10 0-6 2-12 6-16z" fill={C.coffee} />
-                </g>
-                <g transform="translate(150 126) scale(0.8)">
-                  <path d="M0 0c8 2 14 8 14 16 0 6-4 10-10 10-6 0-10-4-10-10 0-6 2-12 6-16z" fill={C.coffee} />
-                </g>
-                {/* heart */}
-                <g transform="translate(100 84) scale(0.6)">
-                  <path d="M0 6c-4-4-10-2-10 4 0 5 6 8 10 12 4-4 10-7 10-12 0-6-6-8-10-4z" fill={C.accent} />
-                </g>
-                {/* hands */}
-                <g transform="translate(58 96)">
-                  <path d="M0 28c0-4 3-7 7-7h12c4 0 7 3 7 7v16c0 4-3 7-7 7H7c-4 0-7-3-7-7V28z" fill={C.coffee} />
-                </g>
-                <g transform="translate(124 96) scale(-1 1)">
-                  <path d="M0 28c0-4 3-7 7-7h12c4 0 7 3 7 7v16c0 4-3 7-7 7H7c-4 0-7-3-7-7V28z" fill={C.coffee} />
-                </g>
-                {/* box */}
-                <g transform="translate(84 80)">
-                  <path d="M0 10l16-8 16 8v18l-16 8-16-8V10z" fill={C.accent} opacity="0.9" />
-                  <path d="M0 10l16-8 16 8-16 8-16-8z" fill={C.primary} />
-                </g>
-              </svg>
+            <div className="max-w-7xl mx-auto px-6 lg:px-10 py-5 grid grid-cols-2 sm:grid-cols-4 gap-6 divide-x divide-white/10">
+              {[
+                { value: '128K+', label: 'Meals Delivered' },
+                { value: '1,560+', label: 'Active Volunteers' },
+                { value: '340+',  label: 'Partner Hotels' },
+                { value: '154K kg', label: 'CO₂ Saved' },
+              ].map((s) => (
+                <div key={s.label} className="text-center pl-4 first:pl-0 sm:pl-6 sm:first:pl-0">
+                  <p className="font-display text-2xl font-bold text-white tabular-nums">{s.value}</p>
+                  <p className="text-xs mt-0.5" style={{ color: 'rgba(250,247,240,0.55)' }}>{s.label}</p>
+                </div>
+              ))}
             </div>
           </motion.div>
         </div>
