@@ -231,19 +231,19 @@ export function VolunteerQrHandoverSection() {
       <div className="glass-card p-4 mb-6">
         <h3 className="font-display font-bold text-sm mb-3 flex items-center gap-2"><Package className="h-4 w-4 text-primary-500" /> Available Donations</h3>
         {loadingAvail ? (
-          <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>
+          <div className="flex justify-center py-6"><Loader2 className="h-5 w-5 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
         ) : available.length === 0 ? (
-          <p className="text-xs text-gray-400 text-center py-4">No donations waiting for a volunteer right now.</p>
+          <p className="text-xs text-ink-soft/60 dark:text-cream/40 text-center py-4">No donations waiting for a volunteer right now.</p>
         ) : (
           <div className="space-y-2">
             {available.slice(0, 5).map((d) => (
-              <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+              <div key={d.id} className="flex items-center gap-3 p-3 rounded-xl bg-oat dark:bg-secondary-800/50">
                 <div className="h-9 w-9 rounded-lg bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center shrink-0"><Package className="h-4 w-4" /></div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{d.food_name}</p>
-                  <p className="text-xs text-gray-500 truncate flex items-center gap-1"><MapPin className="h-3 w-3" /> {d.address ?? d.city}</p>
+                  <p className="text-xs text-ink-soft dark:text-cream/60 truncate flex items-center gap-1"><MapPin className="h-3 w-3" /> {d.address ?? d.city}</p>
                   {distanceFor(d) && <p className="text-xs text-primary-600 dark:text-primary-400 font-medium flex items-center gap-1"><Navigation className="h-3 w-3" /> {distanceFor(d)}</p>}
-                  <p className="text-xs text-gray-400 flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(d.pickup_time).toLocaleString()}</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 flex items-center gap-1"><Clock className="h-3 w-3" /> {new Date(d.pickup_time).toLocaleString()}</p>
                 </div>
                 <RippleButton onClick={() => handleAccept(d)} variant="primary" className="text-xs px-3 py-1.5 shrink-0">Accept</RippleButton>
               </div>
@@ -264,11 +264,11 @@ export function VolunteerQrHandoverSection() {
             <QrCode className="h-8 w-8" />
           </div>
           <h3 className="font-display font-bold mb-1">Scan Donor QR Code</h3>
-          <p className="text-xs text-gray-500 mb-4 max-w-xs mx-auto">When you reach the donor, ask them to show their QR code and scan it here to verify the donation.</p>
+          <p className="text-xs text-ink-soft dark:text-cream/60 mb-4 max-w-xs mx-auto">When you reach the donor, ask them to show their QR code and scan it here to verify the donation.</p>
           <RippleButton onClick={() => setShowScanner(true)} variant="primary">
             <ScanLine className="h-4 w-4" /> Open Scanner
           </RippleButton>
-          {verifying && <div className="mt-4 flex items-center justify-center gap-2 text-xs text-gray-500"><Loader2 className="h-4 w-4 animate-spin" /> Verifying QR...</div>}
+          {verifying && <div className="mt-4 flex items-center justify-center gap-2 text-xs text-ink-soft dark:text-cream/60"><Loader2 className="h-4 w-4 animate-spin" /> Verifying QR...</div>}
         </div>
       )}
 
@@ -278,31 +278,31 @@ export function VolunteerQrHandoverSection() {
           <div className="glass-card p-5">
             <div className="flex items-center gap-2 mb-4">
               <span className="badge bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 text-xs"><CheckCircle2 className="h-3 w-3" /> QR Verified</span>
-              <span className="text-xs text-gray-400">Donor is Ready to Donate Food</span>
+              <span className="text-xs text-ink-soft/60 dark:text-cream/40">Donor is Ready to Donate Food</span>
             </div>
             {/* Donor details */}
             <h4 className="font-display font-bold text-sm mb-2 flex items-center gap-2"><User className="h-4 w-4 text-primary-500" /> Donor Details</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 text-sm">
-              <div><span className="text-xs text-gray-400">Name</span><p className="font-medium">{donor?.full_name ?? donation.donor_name}</p></div>
-              <div><span className="text-xs text-gray-400">Phone</span><p className="font-medium flex items-center gap-1"><Phone className="h-3 w-3" /> {donor?.phone ?? donation.contact_phone ?? 'N/A'}</p></div>
-              <div className="sm:col-span-2"><span className="text-xs text-gray-400">Address</span><p className="font-medium flex items-center gap-1"><MapPin className="h-3 w-3" /> {donation.address ?? ''}{donation.city ? ', ' + donation.city : ''}</p></div>
+              <div><span className="text-xs text-ink-soft/60 dark:text-cream/40">Name</span><p className="font-medium">{donor?.full_name ?? donation.donor_name}</p></div>
+              <div><span className="text-xs text-ink-soft/60 dark:text-cream/40">Phone</span><p className="font-medium flex items-center gap-1"><Phone className="h-3 w-3" /> {donor?.phone ?? donation.contact_phone ?? 'N/A'}</p></div>
+              <div className="sm:col-span-2"><span className="text-xs text-ink-soft/60 dark:text-cream/40">Address</span><p className="font-medium flex items-center gap-1"><MapPin className="h-3 w-3" /> {donation.address ?? ''}{donation.city ? ', ' + donation.city : ''}</p></div>
             </div>
             {/* Food details */}
             <h4 className="font-display font-bold text-sm mb-2 flex items-center gap-2"><Package className="h-4 w-4 text-primary-500" /> Food Details</h4>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4 text-sm">
-              <div><span className="text-xs text-gray-400">Food Name</span><p className="font-medium">{donation.food_name}</p></div>
-              <div><span className="text-xs text-gray-400">Category</span><p className="font-medium capitalize">{donation.category}</p></div>
-              <div><span className="text-xs text-gray-400">Quantity</span><p className="font-medium">{donation.quantity} {donation.quantity_unit}</p></div>
-              <div><span className="text-xs text-gray-400">Cooked Time</span><p className="font-medium">{donation.preparation_time ? new Date(donation.preparation_time).toLocaleString() : 'N/A'}</p></div>
-              <div><span className="text-xs text-gray-400">Expiry Time</span><p className="font-medium">{donation.expiry_time ? new Date(donation.expiry_time).toLocaleString() : 'N/A'}</p></div>
+              <div><span className="text-xs text-ink-soft/60 dark:text-cream/40">Food Name</span><p className="font-medium">{donation.food_name}</p></div>
+              <div><span className="text-xs text-ink-soft/60 dark:text-cream/40">Category</span><p className="font-medium capitalize">{donation.category}</p></div>
+              <div><span className="text-xs text-ink-soft/60 dark:text-cream/40">Quantity</span><p className="font-medium">{donation.quantity} {donation.quantity_unit}</p></div>
+              <div><span className="text-xs text-ink-soft/60 dark:text-cream/40">Cooked Time</span><p className="font-medium">{donation.preparation_time ? new Date(donation.preparation_time).toLocaleString() : 'N/A'}</p></div>
+              <div><span className="text-xs text-ink-soft/60 dark:text-cream/40">Expiry Time</span><p className="font-medium">{donation.expiry_time ? new Date(donation.expiry_time).toLocaleString() : 'N/A'}</p></div>
             </div>
             {donation.image_url && <DonationImage src={donation.image_url} alt={donation.food_name} className="h-40 w-full object-cover rounded-xl mb-4" />}
             {/* Donation details */}
             <h4 className="font-display font-bold text-sm mb-2 flex items-center gap-2"><FileText className="h-4 w-4 text-primary-500" /> Donation Details</h4>
             <div className="grid grid-cols-2 gap-2 text-sm mb-4">
-              <div><span className="text-xs text-gray-400">Donation ID</span><p className="font-mono text-xs">{donation.id.slice(0, 8)}</p></div>
-              <div><span className="text-xs text-gray-400">Pickup Time</span><p className="font-medium">{new Date(donation.pickup_time).toLocaleString()}</p></div>
-              {donation.description && <div className="col-span-2"><span className="text-xs text-gray-400">Special Instructions</span><p className="text-sm">{donation.description}</p></div>}
+              <div><span className="text-xs text-ink-soft/60 dark:text-cream/40">Donation ID</span><p className="font-mono text-xs">{donation.id.slice(0, 8)}</p></div>
+              <div><span className="text-xs text-ink-soft/60 dark:text-cream/40">Pickup Time</span><p className="font-medium">{new Date(donation.pickup_time).toLocaleString()}</p></div>
+              {donation.description && <div className="col-span-2"><span className="text-xs text-ink-soft/60 dark:text-cream/40">Special Instructions</span><p className="text-sm">{donation.description}</p></div>}
             </div>
             <RippleButton onClick={() => setPhase('inspection')} variant="primary" fullWidth>
               <ShieldCheck className="h-4 w-4" /> Proceed to Food Quality Inspection
@@ -323,8 +323,8 @@ export function VolunteerQrHandoverSection() {
                 const checked = !!checklist[c.key];
                 return (
                   <button key={c.key} type="button" onClick={() => setChecklist((p) => ({ ...p, [c.key]: !checked }))}
-                    className={`w-full flex items-center gap-3 p-3 rounded-xl text-left text-sm transition-colors ${checked ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800'}`}>
-                    <div className={`h-5 w-5 rounded-md flex items-center justify-center shrink-0 ${checked ? 'bg-primary-500 text-white' : 'border-2 border-gray-300 dark:border-gray-600'}`}>
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl text-left text-sm transition-colors ${checked ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-oat dark:bg-secondary-800/50 hover:bg-linen dark:hover:bg-secondary-800'}`}>
+                    <div className={`h-5 w-5 rounded-md flex items-center justify-center shrink-0 ${checked ? 'bg-primary-500 text-white' : 'border-2 border-linen dark:border-secondary-600'}`}>
                       {checked && <CheckCircle2 className="h-3.5 w-3.5" />}
                     </div>
                     {c.label}
@@ -336,10 +336,10 @@ export function VolunteerQrHandoverSection() {
           {/* Photo */}
           <div>
             <p className="text-sm font-medium mb-2">Upload Pickup Photo</p>
-            <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 cursor-pointer hover:border-primary-400 transition-colors">
+            <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-linen dark:border-secondary-600 cursor-pointer hover:border-primary-400 transition-colors">
               {uploading ? <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
                 : photoUrl ? <img src={photoUrl} alt="Pickup" className="h-32 w-full object-cover rounded-lg" />
-                : <><Camera className="h-8 w-8 text-gray-400" /><span className="text-xs text-gray-500">Tap to add a photo</span></>}
+                : <><Camera className="h-8 w-8 text-ink-soft/60 dark:text-cream/40" /><span className="text-xs text-ink-soft dark:text-cream/60">Tap to add a photo</span></>}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhoto(f); }} />
             </label>
           </div>
@@ -349,10 +349,10 @@ export function VolunteerQrHandoverSection() {
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((n) => (
                 <button key={n} type="button" onClick={() => setRating(n)} className="p-1">
-                  <Star className={`h-7 w-7 transition-colors ${n <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                  <Star className={`h-7 w-7 transition-colors ${n <= rating ? 'fill-yellow-400 text-yellow-400' : 'text-linen dark:text-secondary-600'}`} />
                 </button>
               ))}
-              <span className="ml-2 text-sm text-gray-500">{rating > 0 ? `${rating}/5` : 'Tap a star'}</span>
+              <span className="ml-2 text-sm text-ink-soft dark:text-cream/60">{rating > 0 ? `${rating}/5` : 'Tap a star'}</span>
             </div>
           </div>
           {/* Decision */}
@@ -360,11 +360,11 @@ export function VolunteerQrHandoverSection() {
             <p className="text-sm font-medium mb-2">Decision</p>
             <div className="grid grid-cols-2 gap-3">
               <button type="button" onClick={() => { setApproval('approved'); setRejectionReason(''); }}
-                className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${approval === 'approved' ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-green-50'}`}>
+                className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${approval === 'approved' ? 'bg-green-500 text-white shadow-lg' : 'bg-oat dark:bg-secondary-800/50 text-ink-soft dark:text-cream/70 hover:bg-green-50'}`}>
                 <CheckCircle2 className="h-4 w-4" /> Approved
               </button>
               <button type="button" onClick={() => setApproval('rejected')}
-                className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${approval === 'rejected' ? 'bg-red-500 text-white shadow-lg' : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-red-50'}`}>
+                className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${approval === 'rejected' ? 'bg-red-500 text-white shadow-lg' : 'bg-oat dark:bg-secondary-800/50 text-ink-soft dark:text-cream/70 hover:bg-red-50'}`}>
                 <XCircle className="h-4 w-4" /> Rejected
               </button>
             </div>
@@ -376,8 +376,8 @@ export function VolunteerQrHandoverSection() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {REJECTION_REASONS.map((r) => (
                   <button key={r.value} type="button" onClick={() => setRejectionReason(r.value)}
-                    className={`flex items-center gap-2 p-3 rounded-xl text-sm text-left transition-colors ${rejectionReason === r.value ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 ring-2 ring-red-400' : 'bg-gray-50 dark:bg-gray-800/50 hover:bg-red-50'}`}>
-                    <div className={`h-4 w-4 rounded-full border-2 shrink-0 ${rejectionReason === r.value ? 'border-red-500 bg-red-500' : 'border-gray-300'}`} />
+                    className={`flex items-center gap-2 p-3 rounded-xl text-sm text-left transition-colors ${rejectionReason === r.value ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 ring-2 ring-red-400' : 'bg-oat dark:bg-secondary-800/50 hover:bg-red-50'}`}>
+                    <div className={`h-4 w-4 rounded-full border-2 shrink-0 ${rejectionReason === r.value ? 'border-red-500 bg-red-500' : 'border-linen dark:border-secondary-600'}`} />
                     {r.label}
                   </button>
                 ))}
@@ -399,7 +399,7 @@ export function VolunteerQrHandoverSection() {
             <CheckCircle2 className="h-7 w-7 text-green-500" />
           </div>
           <h3 className="font-display font-bold mb-1">Food Quality Approved</h3>
-          <p className="text-xs text-gray-500 mb-4">Confirm that you have collected the food from the donor.</p>
+          <p className="text-xs text-ink-soft dark:text-cream/60 mb-4">Confirm that you have collected the food from the donor.</p>
           <RippleButton onClick={handleConfirmPickup} variant="primary" fullWidth disabled={confirming}>
             {confirming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Truck className="h-4 w-4" />}
             Confirm Pickup
@@ -416,7 +416,7 @@ export function VolunteerQrHandoverSection() {
               : <CheckCircle2 className="h-7 w-7 text-green-500" />}
           </div>
           <h3 className="font-display font-bold mb-1">{handover?.handover_status === 'quality_rejected' ? 'Donation Rejected' : 'Pickup Confirmed'}</h3>
-          <p className="text-xs text-gray-500 mb-4">
+          <p className="text-xs text-ink-soft dark:text-cream/60 mb-4">
             {handover?.handover_status === 'quality_rejected'
               ? 'The donation was rejected due to food quality issues.'
               : 'The donor has been notified that their food was collected successfully.'}

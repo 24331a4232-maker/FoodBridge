@@ -43,7 +43,7 @@ export function FoodQualityBadge({
         {freshness === 'fresh' ? 'Fresh' : freshness === 'consume_soon' ? 'Consume Soon' : 'Expired'}
       </span>
       {showScore && score != null && (
-        <span className={`badge bg-gray-100 dark:bg-gray-800 ${sizeClasses[size]} inline-flex items-center font-semibold ${getScoreColor(score)}`}>
+        <span className={`badge bg-oat dark:bg-secondary-800 ${sizeClasses[size]} inline-flex items-center font-semibold ${getScoreColor(score)}`}>
           <Sparkles className={iconSize} />
           {score}%
         </span>

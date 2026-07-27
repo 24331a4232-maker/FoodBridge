@@ -134,14 +134,14 @@ export function NotFoundPage() {
           <motion.h2 variants={fadeInUp} className="font-display text-xl sm:text-2xl font-bold mt-3">
             Page Not Found
           </motion.h2>
-          <motion.p variants={fadeInUp} className="text-gray-500 dark:text-gray-400 max-w-md mx-auto mt-2">
+          <motion.p variants={fadeInUp} className="text-ink-soft dark:text-cream/60 max-w-md mx-auto mt-2">
             Oops! The page you're looking for doesn't exist or may have been moved.
           </motion.p>
 
           {/* Search */}
           <motion.form variants={fadeInUp} onSubmit={handleSearch} className="relative max-w-md mx-auto mt-6">
             <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -168,7 +168,7 @@ export function NotFoundPage() {
                       >
                         <Icon className="h-4 w-4 text-primary-600" />
                         <span className="text-sm font-medium flex-1 text-left">{r.name}</span>
-                        <ChevronRight className="h-4 w-4 text-gray-400" />
+                        <ChevronRight className="h-4 w-4 text-ink-soft/60 dark:text-cream/40" />
                       </button>
                     );
                   })}
@@ -204,7 +204,7 @@ export function NotFoundPage() {
 
         {/* You may be looking for */}
         <motion.div variants={fadeInUp} className="mt-8">
-          <p className="text-center text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">
+          <p className="text-center text-sm font-medium text-ink-soft dark:text-cream/60 mb-4">
             You may be looking for:
           </p>
           <motion.div
@@ -235,7 +235,7 @@ export function NotFoundPage() {
         {/* Footer message */}
         <motion.p
           variants={fadeInUp}
-          className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8 italic"
+          className="text-center text-sm text-ink-soft dark:text-cream/60 mt-8 italic"
         >
           "Every meal matters. Let's continue making a difference together."
         </motion.p>

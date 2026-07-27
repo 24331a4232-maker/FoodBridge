@@ -48,7 +48,7 @@ export function DashboardLayout({ navItems, title, subtitle, roles, accent = 'pr
   const a = accentClasses[accent] ?? accentClasses.primary;
 
   return (
-    <div className="pt-16 min-h-screen flex bg-gray-50 dark:bg-gray-950">
+    <div className="pt-16 min-h-screen flex bg-cream dark:bg-secondary-950">
       {/* Desktop sidebar */}
       <aside className={`hidden lg:flex flex-col w-64 fixed inset-y-0 left-0 pt-16 bg-gradient-to-b ${a.sidebar} text-white z-30`}>
         <div className="px-5 py-5 border-b border-white/10">
@@ -94,9 +94,9 @@ export function DashboardLayout({ navItems, title, subtitle, roles, accent = 'pr
       </aside>
 
       {/* Mobile top bar */}
-      <div className="lg:hidden fixed top-16 left-0 right-0 z-30 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 pl-safe pr-safe flex items-center justify-between">
+      <div className="lg:hidden fixed top-16 left-0 right-0 z-30 glass-nav px-4 py-3 pl-safe pr-safe flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+          <button onClick={() => setMobileOpen(true)} className="p-1.5 rounded-lg hover:bg-oat dark:hover:bg-secondary-800 text-ink dark:text-cream">
             <Menu className="h-5 w-5" />
           </button>
           <h2 className="font-display text-base font-bold">{title}</h2>
@@ -197,7 +197,7 @@ export function DashboardSectionHeader({ title, description, action }: { title: 
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
       <div>
         <h1 className="font-display text-xl sm:text-2xl font-bold">{title}</h1>
-        {description && <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{description}</p>}
+        {description && <p className="text-sm text-ink-soft dark:text-cream/60 mt-1">{description}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>
@@ -211,14 +211,14 @@ export function StatCard({ icon: Icon, label, value, color }: { icon: typeof Log
         <Icon className="h-5 w-5" />
       </div>
       <p className="font-display text-2xl font-bold tabular-nums">{value}</p>
-      <p className="text-xs text-gray-500 mt-0.5">{label}</p>
+      <p className="text-xs text-ink-soft dark:text-cream/60 mt-0.5">{label}</p>
     </div>
   );
 }
 
 export function BackToDashboardLink({ to }: { to: string }) {
   return (
-    <Link to={to} className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-primary-600 mb-4">
+    <Link to={to} className="inline-flex items-center gap-1 text-sm text-ink-soft dark:text-cream/60 hover:text-primary-600 dark:hover:text-primary-400 mb-4">
       <ChevronLeft className="h-4 w-4" /> Back to Dashboard
     </Link>
   );

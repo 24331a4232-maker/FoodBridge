@@ -75,20 +75,20 @@ export function FloatingButtons() {
                   <X className="h-5 w-5" />
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50/50 dark:bg-gray-900/50">
+              <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-cream/50 dark:bg-secondary-950/50">
                 {messages.map((m, i) => (
                   <div key={i} className={`flex ${m.from === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[75%] px-4 py-2.5 rounded-2xl text-sm ${
                       m.from === 'user'
                         ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white rounded-br-sm'
-                        : 'glass text-gray-800 dark:text-gray-100 rounded-bl-sm'
+                        : 'glass text-ink dark:text-cream rounded-bl-sm'
                     }`}>
                       {m.text}
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="p-3 border-t border-gray-200 dark:border-gray-700 flex gap-2">
+              <div className="p-3 border-t border-linen dark:border-secondary-700 flex gap-2">
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}

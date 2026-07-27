@@ -27,7 +27,7 @@ export function AccessDeniedPage() {
           <ShieldX className="h-10 w-10" />
         </motion.div>
         <h1 className="font-display text-2xl font-bold mb-2">Access Denied</h1>
-        <p className="text-gray-500 dark:text-gray-400 mb-6">
+        <p className="text-ink-soft dark:text-cream/60 mb-6">
           You don't have permission to view this page. This area is restricted to a different role.
           {profile && <> You are currently signed in as <span className="font-semibold text-primary-600 capitalize">{profile.role}</span>.</>}
         </p>

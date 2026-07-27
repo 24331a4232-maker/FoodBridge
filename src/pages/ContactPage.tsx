@@ -54,7 +54,7 @@ export function ContactPage() {
             <MessageSquare className="h-3.5 w-3.5" /> Get In Touch
           </span>
           <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold">Contact Us</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-xl mx-auto">Have a question, partnership idea, or feedback? We would love to hear from you.</p>
+          <p className="text-ink-soft dark:text-cream/60 mt-3 max-w-xl mx-auto">Have a question, partnership idea, or feedback? We would love to hear from you.</p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -91,7 +91,7 @@ export function ContactPage() {
                   <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center mb-3">
                     <c.icon className="h-5 w-5" />
                   </div>
-                  <p className="text-xs text-gray-400">{c.label}</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40">{c.label}</p>
                   <p className="text-sm font-medium mt-0.5">{c.value}</p>
                 </motion.a>
               ))}
@@ -107,7 +107,7 @@ export function ContactPage() {
                   { lat: 12.9756, lng: 77.6053, type: 'donor', popup: '<strong>FoodBridge HQ</strong><br/>MG Road, Bangalore' },
                 ] as MapPoint[]}
               />
-              <p className="text-xs text-gray-400 flex items-center gap-1"><MapPin className="h-3 w-3" /> FoodBridge HQ - MG Road, Bangalore</p>
+              <p className="text-xs text-ink-soft/60 dark:text-cream/40 flex items-center gap-1"><MapPin className="h-3 w-3" /> FoodBridge HQ - MG Road, Bangalore</p>
             </motion.div>
 
             {/* Social */}
@@ -115,7 +115,7 @@ export function ContactPage() {
               <p className="text-sm font-semibold mb-3">Follow Us</p>
               <div className="flex gap-3">
                 {socials.map((Icon, i) => (
-                  <motion.a key={i} href="#" whileHover={{ y: -3, scale: 1.1 }} className="h-10 w-10 rounded-full glass flex items-center justify-center text-gray-600 dark:text-gray-300 hover:text-primary-600 transition-colors">
+                  <motion.a key={i} href="#" whileHover={{ y: -3, scale: 1.1 }} className="h-10 w-10 rounded-full glass flex items-center justify-center text-ink-soft dark:text-cream/70 hover:text-primary-600 transition-colors">
                     <Icon className="h-4 w-4" />
                   </motion.a>
                 ))}
@@ -134,7 +134,7 @@ export function ContactPage() {
                   {faq.q}
                   <ChevronDown className="h-5 w-5 text-primary-500 group-open:rotate-180 transition-transform" />
                 </summary>
-                <div className="px-5 pb-5 text-sm text-gray-600 dark:text-gray-400">{faq.a}</div>
+                <div className="px-5 pb-5 text-sm text-ink-soft dark:text-cream/60">{faq.a}</div>
               </motion.details>
             ))}
           </div>

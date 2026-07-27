@@ -41,7 +41,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
   return (
     <button
       onClick={() => onChange(!checked)}
-      className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-primary-500' : 'bg-gray-300 dark:bg-gray-700'}`}
+      className={`relative h-6 w-11 rounded-full transition-colors ${checked ? 'bg-primary-500' : 'bg-linen dark:bg-secondary-700'}`}
     >
       <motion.span
         layout
@@ -218,9 +218,9 @@ export function ProfilePage() {
             <div className="relative group">
               <div className="absolute inset-0 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 blur-md opacity-50" />
               {profile.avatar_url ? (
-                <img src={profile.avatar_url} alt="" className="relative h-24 w-24 rounded-full object-cover ring-4 ring-white dark:ring-gray-900" />
+                <img src={profile.avatar_url} alt="" className="relative h-24 w-24 rounded-full object-cover ring-4 ring-white dark:ring-secondary-900" />
               ) : (
-                <div className="relative h-24 w-24 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-display text-3xl font-bold ring-4 ring-white dark:ring-gray-900">
+                <div className="relative h-24 w-24 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-display text-3xl font-bold ring-4 ring-white dark:ring-secondary-900">
                   {profile.full_name[0]?.toUpperCase()}
                 </div>
               )}
@@ -242,11 +242,11 @@ export function ProfilePage() {
                   </span>
                 )}
               </div>
-              <p className="text-gray-500 flex items-center gap-1.5 mt-1"><Mail className="h-4 w-4" /> {profile.email}</p>
+              <p className="text-ink-soft dark:text-cream/60 flex items-center gap-1.5 mt-1"><Mail className="h-4 w-4" /> {profile.email}</p>
               <div className="flex flex-wrap gap-2 mt-3">
                 <span className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 capitalize">{profile.role}</span>
                 {profile.organization && <span className="badge bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300">{profile.organization}</span>}
-                <span className="badge bg-gray-100 dark:bg-gray-800 text-gray-500 flex items-center gap-1"><Clock className="h-3 w-3" /> Member since {memberSince}</span>
+                <span className="badge bg-oat dark:bg-secondary-800 text-ink-soft dark:text-cream/60 flex items-center gap-1"><Clock className="h-3 w-3" /> Member since {memberSince}</span>
               </div>
             </div>
             <RippleButton onClick={() => setEditing(!editing)} variant="secondary">
@@ -263,11 +263,11 @@ export function ProfilePage() {
               {(() => { const LI = currentLevel.icon; return <LI className="h-8 w-8" />; })()}
             </div>
             <div className="flex-1 text-center sm:text-left">
-              <p className="text-xs text-gray-400 uppercase tracking-wide">Current Level</p>
+              <p className="text-xs text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Current Level</p>
               <h2 className="font-display text-xl font-bold">Level {currentLevel.level} — {currentLevel.name}</h2>
               <div className="mt-2 max-w-md mx-auto sm:mx-0">
-                <div className="flex justify-between text-xs text-gray-400 mb-1"><span>{points.toLocaleString()} pts</span><span>{nextLevel ? `${nextLevel.minPoints.toLocaleString()} to ${nextLevel.name}` : 'Max'}</span></div>
-                <div className="h-2.5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                <div className="flex justify-between text-xs text-ink-soft/60 dark:text-cream/40 mb-1"><span>{points.toLocaleString()} pts</span><span>{nextLevel ? `${nextLevel.minPoints.toLocaleString()} to ${nextLevel.name}` : 'Max'}</span></div>
+                <div className="h-2.5 rounded-full bg-oat dark:bg-secondary-800 overflow-hidden">
                   <motion.div initial={{ width: 0 }} animate={{ width: `${levelProgress}%` }} transition={{ duration: 1.2, ease: 'easeOut' }} className={`h-full rounded-full bg-gradient-to-r ${currentLevel.gradient}`} />
                 </div>
               </div>
@@ -285,7 +285,7 @@ export function ProfilePage() {
                 <s.icon className="h-5 w-5" />
               </div>
               <p className="font-display text-2xl font-bold gradient-text"><AnimatedCounter value={s.value} /></p>
-              <p className="text-xs text-gray-500">{s.label}</p>
+              <p className="text-xs text-ink-soft dark:text-cream/60">{s.label}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -299,7 +299,7 @@ export function ProfilePage() {
                 key={t.id}
                 onClick={() => setActiveTab(t.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-colors ${
-                  activeTab === t.id ? 'bg-gradient-to-r from-primary-600 to-accent-500 text-white shadow-md' : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'
+                  activeTab === t.id ? 'bg-gradient-to-r from-primary-600 to-accent-500 text-white shadow-md' : 'hover:bg-oat dark:hover:bg-secondary-800 text-ink-soft dark:text-cream/70'
                 }`}
               >
                 <TI className="h-4 w-4" /> {t.label}
@@ -335,8 +335,8 @@ export function ProfilePage() {
                       <InfoTile icon={MapPin} label="City" value={profile.city} />
                       <InfoTile icon={MapPin} label="State" value={profile.state} />
                       <InfoTile icon={MapPin} label="Pincode" value={profile.pincode} />
-                      <div className="sm:col-span-2 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                        <p className="text-xs text-gray-400">Bio</p>
+                      <div className="sm:col-span-2 p-4 rounded-2xl bg-oat dark:bg-secondary-800/50">
+                        <p className="text-xs text-ink-soft/60 dark:text-cream/40">Bio</p>
                         <p className="font-medium mt-1">{profile.bio || 'No bio yet. Click Edit Profile to add one.'}</p>
                       </div>
                     </div>
@@ -346,12 +346,12 @@ export function ProfilePage() {
                 {/* My Donations */}
                 <SectionCard icon={Package} title="My Donations" accent="accent">
                   {donations.length === 0 ? (
-                    <p className="text-center text-gray-400 py-8">No donations yet. <Link to="/services/donate-food" className="text-primary-500 underline">Donate food</Link> to get started.</p>
+                    <p className="text-center text-ink-soft/60 dark:text-cream/40 py-8">No donations yet. <Link to="/services/donate-food" className="text-primary-500 underline">Donate food</Link> to get started.</p>
                   ) : (
                     <div className="overflow-x-auto -mx-2">
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-left text-xs text-gray-400 border-b border-gray-100 dark:border-gray-800">
+                          <tr className="text-left text-xs text-ink-soft/60 dark:text-cream/40 border-b border-linen dark:border-secondary-800">
                             <th className="py-2 px-2 font-medium">Donation ID</th>
                             <th className="py-2 px-2 font-medium">Food Type</th>
                             <th className="py-2 px-2 font-medium">Quantity</th>
@@ -361,11 +361,11 @@ export function ProfilePage() {
                         </thead>
                         <tbody>
                           {donations.map((d) => (
-                            <tr key={d.id} className="border-b border-gray-50 dark:border-gray-800/50 hover:bg-gray-50 dark:hover:bg-gray-800/30">
+                            <tr key={d.id} className="border-b border-linen/60 dark:border-secondary-800/50 hover:bg-oat dark:hover:bg-secondary-800/30">
                               <td className="py-3 px-2 font-mono text-xs">{d.id.slice(0, 8)}</td>
                               <td className="py-3 px-2">{d.food_name}</td>
                               <td className="py-3 px-2">{d.quantity} {d.quantity_unit}</td>
-                              <td className="py-3 px-2 text-gray-500">{new Date(d.created_at).toLocaleDateString()}</td>
+                              <td className="py-3 px-2 text-ink-soft dark:text-cream/60">{new Date(d.created_at).toLocaleDateString()}</td>
                               <td className="py-3 px-2"><span className="badge capitalize bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">{d.status}</span></td>
                             </tr>
                           ))}
@@ -378,7 +378,7 @@ export function ProfilePage() {
                 {/* My Certificates */}
                 <SectionCard icon={Award} title="My Certificates" accent="accent">
                   {certs.length === 0 ? (
-                    <p className="text-center text-gray-400 py-8">No certificates yet. Keep volunteering to earn your first certificate!</p>
+                    <p className="text-center text-ink-soft/60 dark:text-cream/40 py-8">No certificates yet. Keep volunteering to earn your first certificate!</p>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       {certs.map((c) => (
@@ -389,7 +389,7 @@ export function ProfilePage() {
                             </div>
                             <div>
                               <p className="font-semibold text-sm">{c.certificate_number}</p>
-                              <p className="text-xs text-gray-500">{c.deliveries_count} deliveries - {c.hours_served}h</p>
+                              <p className="text-xs text-ink-soft dark:text-cream/60">{c.deliveries_count} deliveries - {c.hours_served}h</p>
                             </div>
                           </div>
                           <div className="flex gap-2">
@@ -410,7 +410,7 @@ export function ProfilePage() {
                       const isEarned = earned.some((e) => e.id === a.id);
                       const AI = a.icon;
                       return (
-                        <motion.div key={a.id} whileHover={{ y: -3 }} className={`flex flex-col items-center text-center p-3 rounded-xl ${isEarned ? 'bg-primary-50 dark:bg-primary-900/20' : 'bg-gray-50 dark:bg-gray-800/30 opacity-50'}`}>
+                        <motion.div key={a.id} whileHover={{ y: -3 }} className={`flex flex-col items-center text-center p-3 rounded-xl ${isEarned ? 'bg-primary-50 dark:bg-primary-900/20' : 'bg-oat dark:bg-secondary-800/30 opacity-50'}`}>
                           <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${a.gradient} text-white flex items-center justify-center mb-2 ${isEarned ? '' : 'grayscale'}`}>
                             <AI className="h-5 w-5" />
                           </div>
@@ -444,10 +444,10 @@ export function ProfilePage() {
                 </SectionCard>
 
                 <SectionCard icon={ShieldCheck} title="Two-Step Verification">
-                  <div className="flex items-center justify-between p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
+                  <div className="flex items-center justify-between p-4 rounded-2xl bg-oat dark:bg-secondary-800/50">
                     <div>
                       <p className="font-medium text-sm">Enable 2FA</p>
-                      <p className="text-xs text-gray-400">Add an extra layer of security to your account</p>
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40">Add an extra layer of security to your account</p>
                     </div>
                     <Toggle checked={false} onChange={() => pushToast('Two-step verification setup coming soon', 'info')} />
                   </div>
@@ -460,7 +460,7 @@ export function ProfilePage() {
                         <Monitor className="h-5 w-5 text-primary-500" />
                         <div>
                           <p className="font-medium text-sm">Current Session</p>
-                          <p className="text-xs text-gray-400">This device - Active now</p>
+                          <p className="text-xs text-ink-soft/60 dark:text-cream/40">This device - Active now</p>
                         </div>
                       </div>
                       <span className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300">Active</span>
@@ -485,12 +485,12 @@ export function ProfilePage() {
                     ].map((row) => {
                       const RI = row.icon;
                       return (
-                        <div key={row.key} className="flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                        <div key={row.key} className="flex items-center justify-between p-4 rounded-2xl hover:bg-oat dark:hover:bg-secondary-800/30 transition-colors">
                           <div className="flex items-center gap-3">
                             <div className="h-9 w-9 rounded-xl bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center"><RI className="h-4.5 w-4.5" /></div>
                             <div>
                               <p className="font-medium text-sm">{row.label}</p>
-                              <p className="text-xs text-gray-400">{row.desc}</p>
+                              <p className="text-xs text-ink-soft/60 dark:text-cream/40">{row.desc}</p>
                             </div>
                           </div>
                           <Toggle checked={notifSettings[row.key]} onChange={(v) => saveNotifSettings({ ...notifSettings, [row.key]: v })} />
@@ -513,12 +513,12 @@ export function ProfilePage() {
                     ].map((row) => {
                       const RI = row.icon;
                       return (
-                        <div key={row.key} className="flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800/30 transition-colors">
+                        <div key={row.key} className="flex items-center justify-between p-4 rounded-2xl hover:bg-oat dark:hover:bg-secondary-800/30 transition-colors">
                           <div className="flex items-center gap-3">
                             <div className="h-9 w-9 rounded-xl bg-accent-100 dark:bg-accent-900/30 text-accent-600 flex items-center justify-center"><RI className="h-4.5 w-4.5" /></div>
                             <div>
                               <p className="font-medium text-sm">{row.label}</p>
-                              <p className="text-xs text-gray-400">{row.desc}</p>
+                              <p className="text-xs text-ink-soft/60 dark:text-cream/40">{row.desc}</p>
                             </div>
                           </div>
                           <Toggle checked={privacySettings[row.key]} onChange={(v) => savePrivacySettings({ ...privacySettings, [row.key]: v })} />
@@ -555,7 +555,7 @@ export function ProfilePage() {
                           key={opt.value}
                           whileHover={{ y: -4 }}
                           onClick={() => applyTheme(opt.value)}
-                          className={`p-5 rounded-2xl border-2 transition-all text-center ${active ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-primary-300'}`}
+                          className={`p-5 rounded-2xl border-2 transition-all text-center ${active ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-linen dark:border-secondary-700 hover:border-primary-300'}`}
                         >
                           <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br ${opt.gradient} text-white flex items-center justify-center mx-auto mb-3 shadow-lg ${active ? 'ring-4 ring-primary-200 dark:ring-primary-800' : ''}`}>
                             <OI className="h-7 w-7" />
@@ -580,13 +580,13 @@ export function ProfilePage() {
                         <button
                           key={lang.value}
                           onClick={() => { savePrefs({ ...prefs, language: lang.value }); pushToast('Language preference saved', 'success'); }}
-                          className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${active ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-gray-200 dark:border-gray-700 hover:border-primary-300'}`}
+                          className={`w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all ${active ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-linen dark:border-secondary-700 hover:border-primary-300'}`}
                         >
                           <div className="flex items-center gap-3">
                             <Globe className="h-5 w-5 text-primary-500" />
                             <div className="text-left">
                               <p className="font-medium text-sm">{lang.label}</p>
-                              <p className="text-xs text-gray-400">{lang.native}</p>
+                              <p className="text-xs text-ink-soft/60 dark:text-cream/40">{lang.native}</p>
                             </div>
                           </div>
                           {active && <Check className="h-5 w-5 text-primary-500" />}
@@ -602,7 +602,7 @@ export function ProfilePage() {
 
         {/* Sign out */}
         <div className="mt-6 text-center">
-          <RippleButton onClick={signOut} variant="ghost" className="text-gray-500"><LogOut className="h-4 w-4" /> Sign Out</RippleButton>
+          <RippleButton onClick={signOut} variant="ghost" className="text-ink-soft dark:text-cream/60"><LogOut className="h-4 w-4" /> Sign Out</RippleButton>
         </div>
       </section>
 
@@ -615,7 +615,7 @@ export function ProfilePage() {
                 <Trash2 className="h-7 w-7" />
               </div>
               <h3 className="font-display text-lg font-bold mb-2">Delete Account?</h3>
-              <p className="text-sm text-gray-500 mb-5">This will permanently delete your account and all associated data. This action cannot be undone.</p>
+              <p className="text-sm text-ink-soft dark:text-cream/60 mb-5">This will permanently delete your account and all associated data. This action cannot be undone.</p>
               <div className="flex gap-3">
                 <RippleButton onClick={() => setShowDelete(false)} variant="ghost" fullWidth>Cancel</RippleButton>
                 <RippleButton onClick={() => { pushToast('Account deletion requires admin verification', 'warning'); setShowDelete(false); }} variant="primary" fullWidth className="bg-red-500 hover:bg-red-600">Delete</RippleButton>
@@ -639,8 +639,8 @@ function Field({ label, children }: { label: string; children: ReactNode }) {
 
 function InfoTile({ icon: Icon, label, value }: { icon: typeof User; label: string; value: string | null }) {
   return (
-    <div className="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-      <p className="text-xs text-gray-400 flex items-center gap-1"><Icon className="h-3 w-3" /> {label}</p>
+    <div className="p-4 rounded-2xl bg-oat dark:bg-secondary-800/50">
+      <p className="text-xs text-ink-soft/60 dark:text-cream/40 flex items-center gap-1"><Icon className="h-3 w-3" /> {label}</p>
       <p className="font-medium mt-1">{value || 'Not set'}</p>
     </div>
   );

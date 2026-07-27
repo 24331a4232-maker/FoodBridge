@@ -50,7 +50,7 @@ export function StatCard({ stat, index }: { stat: StatData; index: number }) {
   const Icon = iconMap[stat.icon] ?? Users;
   const colors = colorMap[stat.icon] ?? colorMap.users;
   const TrendIcon = stat.delta > 0 ? TrendingUp : stat.delta < 0 ? TrendingDown : Minus;
-  const trendColor = stat.delta > 0 ? 'text-green-600' : stat.delta < 0 ? 'text-red-500' : 'text-gray-400';
+  const trendColor = stat.delta > 0 ? 'text-green-600 dark:text-green-400' : stat.delta < 0 ? 'text-red-500 dark:text-red-400' : 'text-ink-soft/60 dark:text-cream/40';
 
   return (
     <motion.div
@@ -70,7 +70,7 @@ export function StatCard({ stat, index }: { stat: StatData; index: number }) {
       <p className="font-display text-xl sm:text-2xl font-bold tabular-nums">
         <AnimatedCounter value={stat.value} suffix={stat.suffix ?? ''} />
       </p>
-      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-tight">{stat.label}</p>
+      <p className="text-xs text-ink-soft dark:text-cream/60 mt-0.5 leading-tight">{stat.label}</p>
       <div className="flex items-center gap-3 mt-2.5 text-[10px]">
         <span className={`flex items-center gap-0.5 font-semibold ${trendColor}`}>
           <TrendIcon className="h-3 w-3" />

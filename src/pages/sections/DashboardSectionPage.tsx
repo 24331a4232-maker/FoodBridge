@@ -110,7 +110,7 @@ export function DashboardSectionPage() {
                   <motion.div variants={fadeInUp}>
                     <label className="input-label">Email or Username</label>
                     <div className="relative">
-                      <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
                       <input
                         value={identifier}
                         onChange={(e) => setIdentifier(e.target.value)}
@@ -125,7 +125,7 @@ export function DashboardSectionPage() {
                   <motion.div variants={fadeInUp}>
                     <label className="input-label">Password</label>
                     <div className="relative">
-                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
                       <input
                         type={show ? 'text' : 'password'}
                         value={password}
@@ -133,7 +133,7 @@ export function DashboardSectionPage() {
                         className="input-field pl-12 pr-12"
                         placeholder="******"
                       />
-                      <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                      <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft/60 dark:text-cream/40 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
                         {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
                       </button>
                     </div>

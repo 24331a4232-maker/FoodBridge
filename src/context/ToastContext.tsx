@@ -62,10 +62,10 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 <div className={`shrink-0 rounded-xl p-1.5 ${colors[t.type]}`}>
                   <Icon className="h-5 w-5" />
                 </div>
-                <p className="text-sm font-medium text-gray-900 dark:text-gray-100 flex-1 pt-0.5">{t.message}</p>
+                <p className="text-sm font-medium text-ink dark:text-cream flex-1 pt-0.5">{t.message}</p>
                 <button
                   onClick={() => remove(t.id)}
-                  className="shrink-0 text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
+                  className="shrink-0 text-ink-soft/60 dark:text-cream/40 hover:text-ink-soft dark:hover:text-cream/70 transition-colors"
                 >
                   <X className="h-4 w-4" />
                 </button>

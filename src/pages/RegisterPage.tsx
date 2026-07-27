@@ -147,7 +147,7 @@ export function RegisterPage() {
         <div className="text-center mb-6">
           <motion.img src="/logo.png" alt="FoodBridge" initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', delay: 0.2 }} className="h-16 w-16 mx-auto object-contain mb-3" />
           <h1 className="font-display text-2xl font-bold">Join FoodBridge</h1>
-          <p className="text-sm text-gray-500 mt-1">Create your account and start making an impact</p>
+          <p className="text-sm text-ink-soft dark:text-cream/60 mt-1">Create your account and start making an impact</p>
         </div>
 
         {/* Role selector */}
@@ -171,7 +171,7 @@ export function RegisterPage() {
           ))}
         </motion.div>
 
-        <motion.p variants={fadeInUp} initial="hidden" animate="visible" className="text-sm text-gray-500 text-center mb-6">
+        <motion.p variants={fadeInUp} initial="hidden" animate="visible" className="text-sm text-ink-soft dark:text-cream/60 text-center mb-6">
           {roles.find((r) => r.value === role)?.desc}
         </motion.p>
 
@@ -179,7 +179,7 @@ export function RegisterPage() {
           <motion.div variants={fadeInUp}>
             <label className="input-label">Full Name</label>
             <div className="relative">
-              <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
               <input
                 value={form.fullName}
                 onChange={(e) => setField('fullName', e.target.value)}
@@ -195,7 +195,7 @@ export function RegisterPage() {
             <motion.div variants={fadeInUp}>
               <label className="input-label">Username</label>
               <div className="relative">
-                <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
                 <input
                   value={form.username}
                   onChange={(e) => setField('username', e.target.value)}
@@ -212,7 +212,7 @@ export function RegisterPage() {
             <motion.div variants={fadeInUp}>
               <label className="input-label">Mobile Number</label>
               <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
                 <input
                   value={form.phone}
                   onChange={(e) => setField('phone', e.target.value.replace(/\D/g, ''))}
@@ -231,7 +231,7 @@ export function RegisterPage() {
             <motion.div variants={fadeInUp}>
               <label className="input-label">Organization Name</label>
               <div className="relative">
-                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <Building2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
                 <input
                   value={form.organization}
                   onChange={(e) => setField('organization', e.target.value)}
@@ -246,7 +246,7 @@ export function RegisterPage() {
           <motion.div variants={fadeInUp}>
             <label className="input-label">Address</label>
             <div className="relative">
-              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
               <input
                 value={form.address}
                 onChange={(e) => setField('address', e.target.value)}
@@ -291,7 +291,7 @@ export function RegisterPage() {
           <motion.div variants={fadeInUp}>
             <label className="input-label">Email</label>
             <div className="relative">
-              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
               <input
                 type="email"
                 value={form.email}
@@ -308,7 +308,7 @@ export function RegisterPage() {
           <motion.div variants={fadeInUp}>
             <label className="input-label">Password</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
               <input
                 type={show ? 'text' : 'password'}
                 value={form.password}
@@ -317,14 +317,14 @@ export function RegisterPage() {
                 className={`input-field pl-12 pr-12 ${errors.password ? 'border-red-400 focus:ring-red-400' : ''}`}
                 placeholder="Create a strong password"
               />
-              <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft/60 dark:text-cream/40 hover:text-ink-soft dark:text-cream/70">
                 {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
             {/* Password strength checklist */}
             <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 gap-1">
               {passwordRules.map((r, i) => (
-                <div key={r.label} className={`flex items-center gap-1.5 text-[11px] ${passwordChecks[i] ? 'text-green-600' : 'text-gray-400'}`}>
+                <div key={r.label} className={`flex items-center gap-1.5 text-[11px] ${passwordChecks[i] ? 'text-green-600' : 'text-ink-soft/60 dark:text-cream/40'}`}>
                   {passwordChecks[i] ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
                   {r.label}
                 </div>
@@ -339,7 +339,7 @@ export function RegisterPage() {
             </RippleButton>
           </motion.div>
 
-          <motion.p variants={fadeInUp} className="text-center text-sm text-gray-500">
+          <motion.p variants={fadeInUp} className="text-center text-sm text-ink-soft dark:text-cream/60">
             Already have an account? <Link to="/login" className="text-primary-600 font-semibold hover:underline inline-flex items-center gap-1">Login here <ArrowRight className="h-3 w-3" /></Link>
           </motion.p>
         </motion.form>

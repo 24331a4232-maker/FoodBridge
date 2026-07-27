@@ -70,7 +70,7 @@ export function CurrentLocationPage() {
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="card p-6 mt-8 text-center">
             <Crosshair className="h-10 w-10 text-primary-500 mx-auto mb-3" />
             <h3 className="font-display font-bold text-lg mb-2">Enable Location Access</h3>
-            <p className="text-sm text-gray-500 mb-4">We use your location to show nearby donations and calculate distances.</p>
+            <p className="text-sm text-ink-soft dark:text-cream/60 mb-4">We use your location to show nearby donations and calculate distances.</p>
             {geoError && <p className="text-sm text-red-500 mb-3">{geoError}</p>}
             <RippleButton onClick={requestGeo} variant="primary" disabled={geoLoading}>
               {geoLoading ? <><Loader2 className="h-4 w-4 animate-spin" /> Locating...</> : <><MapPin className="h-4 w-4" /> Share My Location</>}
@@ -83,15 +83,15 @@ export function CurrentLocationPage() {
             {/* Your coordinates */}
             <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8 mb-6">
               <motion.div variants={fadeInUp} className="card p-4">
-                <p className="text-xs text-gray-400 flex items-center gap-1"><MapPin className="h-3 w-3" /> Latitude</p>
+                <p className="text-xs text-ink-soft/60 dark:text-cream/40 flex items-center gap-1"><MapPin className="h-3 w-3" /> Latitude</p>
                 <p className="font-display text-lg font-bold mt-1">{position.lat.toFixed(4)}</p>
               </motion.div>
               <motion.div variants={fadeInUp} className="card p-4">
-                <p className="text-xs text-gray-400 flex items-center gap-1"><Navigation className="h-3 w-3" /> Longitude</p>
+                <p className="text-xs text-ink-soft/60 dark:text-cream/40 flex items-center gap-1"><Navigation className="h-3 w-3" /> Longitude</p>
                 <p className="font-display text-lg font-bold mt-1">{position.lng.toFixed(4)}</p>
               </motion.div>
               <motion.div variants={fadeInUp} className="card p-4">
-                <p className="text-xs text-gray-400 flex items-center gap-1"><Building2 className="h-3 w-3" /> Nearby Donations</p>
+                <p className="text-xs text-ink-soft/60 dark:text-cream/40 flex items-center gap-1"><Building2 className="h-3 w-3" /> Nearby Donations</p>
                 <p className="font-display text-lg font-bold mt-1">{nearby.length}</p>
               </motion.div>
             </motion.div>
@@ -117,7 +117,7 @@ export function CurrentLocationPage() {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="card p-5">
                 <h3 className="font-display font-bold mb-4 flex items-center gap-2"><Navigation className="h-5 w-5 text-primary-500" /> Nearest Donations</h3>
                 {nearby.length === 0 ? (
-                  <p className="text-center text-gray-400 py-8 text-sm">No nearby donations found.</p>
+                  <p className="text-center text-ink-soft/60 dark:text-cream/40 py-8 text-sm">No nearby donations found.</p>
                 ) : (
                   <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
                     {nearby.map(({ d, dist }) => {
@@ -127,10 +127,10 @@ export function CurrentLocationPage() {
                         <button
                           key={d.id}
                           onClick={() => setSelected(selected?.lat === d.latitude && selected?.lng === d.longitude ? null : point)}
-                          className="w-full text-left p-3 rounded-2xl bg-gray-50 dark:bg-gray-800/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
+                          className="w-full text-left p-3 rounded-2xl bg-oat dark:bg-secondary-800/50 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
                         >
                           <p className="font-semibold text-sm truncate">{d.food_name}</p>
-                          <p className="text-xs text-gray-500 truncate">{d.organization}</p>
+                          <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{d.organization}</p>
                           <div className="flex gap-2 mt-1.5">
                             <span className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 text-[10px]">
                               <MapPin className="h-2.5 w-2.5" /> {dist.toFixed(1)} km

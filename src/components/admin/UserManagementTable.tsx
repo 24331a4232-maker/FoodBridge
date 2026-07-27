@@ -216,7 +216,7 @@ export function UserManagementTable() {
 
       {/* Search */}
       <div className="relative mb-4">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -234,7 +234,7 @@ export function UserManagementTable() {
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               roleFilter === f.value
                 ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30'
-                : 'glass hover:bg-primary-50 dark:hover:bg-primary-900/30 text-gray-600 dark:text-gray-300'
+                : 'glass hover:bg-primary-50 dark:hover:bg-primary-900/30 text-ink-soft dark:text-cream/70'
             }`}
           >
             {f.label} ({counts[f.value] ?? 0})
@@ -244,21 +244,21 @@ export function UserManagementTable() {
 
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+          <Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" />
         </div>
       ) : error ? (
         <div className="text-center py-8 text-red-500 text-sm">
           Failed to load users: {error}
         </div>
       ) : filtered.length === 0 ? (
-        <p className="text-center text-gray-400 text-sm py-8">No users match your search.</p>
+        <p className="text-center text-ink-soft/60 dark:text-cream/40 text-sm py-8">No users match your search.</p>
       ) : (
         <>
           {/* Desktop table */}
           <div className="hidden lg:block overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-gray-500 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+                <tr className="text-left text-xs text-ink-soft dark:text-cream/60 border-b border-linen dark:border-secondary-700">
                   <th className="pb-3 font-medium">User</th>
                   <th className="pb-3 font-medium">Role</th>
                   <th className="pb-3 font-medium">Contact</th>
@@ -268,7 +268,7 @@ export function UserManagementTable() {
                   <th className="pb-3 font-medium text-right">Details</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              <tbody className="divide-y divide-linen dark:divide-secondary-800">
                 {filtered.map((u) => {
                   const meta = roleMeta[u.role];
                   const RoleIcon = meta.icon;
@@ -283,7 +283,7 @@ export function UserManagementTable() {
                             </div>
                             <div className="min-w-0">
                               <p className="font-medium truncate">{u.full_name}</p>
-                              <p className="text-xs text-gray-400 truncate">@{u.username}</p>
+                              <p className="text-xs text-ink-soft/60 dark:text-cream/40 truncate">@{u.username}</p>
                             </div>
                           </div>
                         </td>
@@ -295,13 +295,13 @@ export function UserManagementTable() {
                         </td>
                         <td className="py-3">
                           <p className="text-xs truncate max-w-[180px]">{u.email}</p>
-                          <p className="text-xs text-gray-400">{u.phone ?? 'No phone'}</p>
+                          <p className="text-xs text-ink-soft/60 dark:text-cream/40">{u.phone ?? 'No phone'}</p>
                         </td>
-                        <td className="py-3 text-xs text-gray-600 dark:text-gray-300">
+                        <td className="py-3 text-xs text-ink-soft dark:text-cream/70">
                           {[u.city, u.state].filter(Boolean).join(', ') || 'Not provided'}
                         </td>
-                        <td className="py-3 text-xs text-gray-500">{formatDate(u.created_at)}</td>
-                        <td className="py-3 text-xs text-gray-500">{formatDate(u.last_login)}</td>
+                        <td className="py-3 text-xs text-ink-soft/60 dark:text-cream/40">{formatDate(u.created_at)}</td>
+                        <td className="py-3 text-xs text-ink-soft/60 dark:text-cream/40">{formatDate(u.last_login)}</td>
                         <td className="py-3 text-right">
                           <div className="flex items-center justify-end gap-1">
                             <button
@@ -333,49 +333,49 @@ export function UserManagementTable() {
                       {expanded && (
                         <tr key={`${u.id}-detail`}>
                           <td colSpan={7} className="pb-4">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 rounded-xl bg-gray-50 dark:bg-gray-800/50 text-xs">
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 p-4 rounded-xl bg-oat dark:bg-secondary-800/50 text-xs">
                               <div>
-                                <p className="text-gray-400 mb-0.5">Organization</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Organization</p>
                                 <p className="font-medium">{u.organization || 'Not provided'}</p>
                               </div>
                               <div>
-                                <p className="text-gray-400 mb-0.5">Address</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Address</p>
                                 <p className="font-medium">{u.address || 'Not provided'}</p>
                               </div>
                               <div>
-                                <p className="text-gray-400 mb-0.5">Pincode</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Pincode</p>
                                 <p className="font-medium">{u.pincode || 'Not provided'}</p>
                               </div>
                               <div>
-                                <p className="text-gray-400 mb-0.5">Verified</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Verified</p>
                                 <p className="font-medium">{u.is_verified ? 'Yes' : 'No'}</p>
                               </div>
                               <div>
-                                <p className="text-gray-400 mb-0.5">Reward Points</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Reward Points</p>
                                 <p className="font-medium">{u.reward_points}</p>
                               </div>
                               <div>
-                                <p className="text-gray-400 mb-0.5">Total Deliveries</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Total Deliveries</p>
                                 <p className="font-medium">{u.total_deliveries}</p>
                               </div>
                               <div>
-                                <p className="text-gray-400 mb-0.5">Total Hours</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Total Hours</p>
                                 <p className="font-medium">{u.total_hours}</p>
                               </div>
                               <div>
-                                <p className="text-gray-400 mb-0.5">Rating</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Rating</p>
                                 <p className="font-medium">{u.rating} / 5</p>
                               </div>
                               <div>
-                                <p className="text-gray-400 mb-0.5">Availability</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Availability</p>
                                 <p className="font-medium capitalize">{u.availability}</p>
                               </div>
                               <div>
-                                <p className="text-gray-400 mb-0.5">Badges</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Badges</p>
                                 <p className="font-medium">{u.badges?.length ?? 0} earned</p>
                               </div>
                               <div className="col-span-2">
-                                <p className="text-gray-400 mb-0.5">Bio</p>
+                                <p className="text-ink-soft/60 dark:text-cream/40 mb-0.5">Bio</p>
                                 <p className="font-medium">{u.bio || 'Not provided'}</p>
                               </div>
                             </div>
@@ -409,15 +409,15 @@ export function UserManagementTable() {
                           {meta.label}
                         </span>
                       </div>
-                      <p className="text-xs text-gray-400">@{u.username}</p>
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40">@{u.username}</p>
                     </div>
                   </div>
-                  <div className="mt-3 space-y-1.5 text-xs text-gray-600 dark:text-gray-300">
-                    <p className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-gray-400" /> {u.email}</p>
-                    <p className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-gray-400" /> {u.phone ?? 'No phone'}</p>
-                    <p className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 text-gray-400" /> {[u.city, u.state].filter(Boolean).join(', ') || 'Not provided'}</p>
-                    <p className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 text-gray-400" /> Joined {formatDate(u.created_at)}</p>
-                    <p className="flex items-center gap-2"><Clock className="h-3.5 w-3.5 text-gray-400" /> Last login {formatDateTime(u.last_login)}</p>
+                  <div className="mt-3 space-y-1.5 text-xs text-ink-soft dark:text-cream/70">
+                    <p className="flex items-center gap-2"><Mail className="h-3.5 w-3.5 text-ink-soft/60 dark:text-cream/40" /> {u.email}</p>
+                    <p className="flex items-center gap-2"><Phone className="h-3.5 w-3.5 text-ink-soft/60 dark:text-cream/40" /> {u.phone ?? 'No phone'}</p>
+                    <p className="flex items-center gap-2"><MapPin className="h-3.5 w-3.5 text-ink-soft/60 dark:text-cream/40" /> {[u.city, u.state].filter(Boolean).join(', ') || 'Not provided'}</p>
+                    <p className="flex items-center gap-2"><Calendar className="h-3.5 w-3.5 text-ink-soft/60 dark:text-cream/40" /> Joined {formatDate(u.created_at)}</p>
+                    <p className="flex items-center gap-2"><Clock className="h-3.5 w-3.5 text-ink-soft/60 dark:text-cream/40" /> Last login {formatDateTime(u.last_login)}</p>
                   </div>
                   <div className="mt-3 flex items-center justify-between gap-2">
                     <button
@@ -442,17 +442,17 @@ export function UserManagementTable() {
                     )}
                   </div>
                   {expanded && (
-                    <div className="mt-3 grid grid-cols-2 gap-2 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 text-xs">
-                      <div><p className="text-gray-400">Organization</p><p className="font-medium">{u.organization || 'N/A'}</p></div>
-                      <div><p className="text-gray-400">Address</p><p className="font-medium">{u.address || 'N/A'}</p></div>
-                      <div><p className="text-gray-400">Pincode</p><p className="font-medium">{u.pincode || 'N/A'}</p></div>
-                      <div><p className="text-gray-400">Verified</p><p className="font-medium">{u.is_verified ? 'Yes' : 'No'}</p></div>
-                      <div><p className="text-gray-400">Reward Points</p><p className="font-medium">{u.reward_points}</p></div>
-                      <div><p className="text-gray-400">Deliveries</p><p className="font-medium">{u.total_deliveries}</p></div>
-                      <div><p className="text-gray-400">Hours</p><p className="font-medium">{u.total_hours}</p></div>
-                      <div><p className="text-gray-400">Rating</p><p className="font-medium">{u.rating} / 5</p></div>
-                      <div><p className="text-gray-400">Availability</p><p className="font-medium capitalize">{u.availability}</p></div>
-                      <div><p className="text-gray-400">Badges</p><p className="font-medium">{u.badges?.length ?? 0}</p></div>
+                    <div className="mt-3 grid grid-cols-2 gap-2 p-3 rounded-lg bg-oat dark:bg-secondary-800/50 text-xs">
+                      <div><p className="text-ink-soft/60 dark:text-cream/40">Organization</p><p className="font-medium text-ink dark:text-cream">{u.organization || 'N/A'}</p></div>
+                      <div><p className="text-ink-soft/60 dark:text-cream/40">Address</p><p className="font-medium text-ink dark:text-cream">{u.address || 'N/A'}</p></div>
+                      <div><p className="text-ink-soft/60 dark:text-cream/40">Pincode</p><p className="font-medium text-ink dark:text-cream">{u.pincode || 'N/A'}</p></div>
+                      <div><p className="text-ink-soft/60 dark:text-cream/40">Verified</p><p className="font-medium text-ink dark:text-cream">{u.is_verified ? 'Yes' : 'No'}</p></div>
+                      <div><p className="text-ink-soft/60 dark:text-cream/40">Reward Points</p><p className="font-medium text-ink dark:text-cream">{u.reward_points}</p></div>
+                      <div><p className="text-ink-soft/60 dark:text-cream/40">Deliveries</p><p className="font-medium text-ink dark:text-cream">{u.total_deliveries}</p></div>
+                      <div><p className="text-ink-soft/60 dark:text-cream/40">Hours</p><p className="font-medium text-ink dark:text-cream">{u.total_hours}</p></div>
+                      <div><p className="text-ink-soft/60 dark:text-cream/40">Rating</p><p className="font-medium text-ink dark:text-cream">{u.rating} / 5</p></div>
+                      <div><p className="text-ink-soft/60 dark:text-cream/40">Availability</p><p className="font-medium text-ink dark:text-cream capitalize">{u.availability}</p></div>
+                      <div><p className="text-ink-soft/60 dark:text-cream/40">Badges</p><p className="font-medium text-ink dark:text-cream">{u.badges?.length ?? 0}</p></div>
                     </div>
                   )}
                 </div>
@@ -478,11 +478,11 @@ export function UserManagementTable() {
               exit={{ scale: 0.95, opacity: 0, y: 20 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
               onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-md rounded-2xl bg-white dark:bg-secondary-900 shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+              className="relative w-full max-w-md rounded-2xl bg-white dark:bg-secondary-900 shadow-2xl border border-linen dark:border-secondary-700 overflow-hidden"
             >
               <button
                 onClick={closeDeleteModal}
-                className="absolute top-3 right-3 p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="absolute top-3 right-3 p-1.5 rounded-lg text-ink-soft/60 dark:text-cream/40 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-oat dark:hover:bg-secondary-800"
                 aria-label="Close"
               >
                 <X className="h-4 w-4" />
@@ -493,18 +493,18 @@ export function UserManagementTable() {
                     <UserX className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="font-display text-lg font-bold text-gray-900 dark:text-white">Delete User</h3>
-                    <p className="text-xs text-gray-500">This action cannot be undone.</p>
+                    <h3 className="font-display text-lg font-bold text-ink dark:text-cream">Delete User</h3>
+                    <p className="text-xs text-ink-soft dark:text-cream/60">This action cannot be undone.</p>
                   </div>
                 </div>
 
-                <div className="rounded-xl bg-gray-50 dark:bg-gray-800/50 p-3 mb-4 flex items-center gap-3">
+                <div className="rounded-xl bg-oat dark:bg-secondary-800/50 p-3 mb-4 flex items-center gap-3">
                   <div className="h-9 w-9 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center text-xs font-bold shrink-0">
                     {initials(deleteTarget.full_name)}
                   </div>
                   <div className="min-w-0">
-                    <p className="font-medium text-sm truncate text-gray-900 dark:text-white">{deleteTarget.full_name}</p>
-                    <p className="text-xs text-gray-500 truncate">{deleteTarget.email}</p>
+                    <p className="font-medium text-sm truncate text-ink dark:text-cream">{deleteTarget.full_name}</p>
+                    <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{deleteTarget.email}</p>
                   </div>
                 </div>
 
@@ -525,7 +525,7 @@ export function UserManagementTable() {
                   <button
                     onClick={closeDeleteModal}
                     disabled={deleteState === 'deleting'}
-                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-oat dark:bg-secondary-800 text-ink-soft dark:text-cream/70 hover:bg-linen dark:hover:bg-secondary-700 transition-colors disabled:opacity-50"
                   >
                     Cancel
                   </button>
@@ -567,55 +567,55 @@ export function UserManagementTable() {
                 <h3 className="font-display text-lg font-bold flex items-center gap-2">
                   <Edit3 className="h-5 w-5 text-primary-500" /> Edit User
                 </h3>
-                <button onClick={closeEditModal} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <X className="h-5 w-5" />
+                <button onClick={closeEditModal} className="p-1 rounded-lg hover:bg-oat dark:hover:bg-secondary-800">
+                  <X className="h-5 w-5 text-ink-soft dark:text-cream/60" />
                 </button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Full Name</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">Full Name</p>
                   <input value={editForm.full_name} onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })} className="input-field" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-400 mb-1">Email</p>
+                    <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">Email</p>
                     <input value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} className="input-field" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 mb-1">Phone</p>
+                    <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">Phone</p>
                     <input value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} className="input-field" placeholder="+91 98765 43210" />
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Role</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">Role</p>
                   <select value={editForm.role} onChange={(e) => setEditForm({ ...editForm, role: e.target.value as UserRole })} className="input-field capitalize">
                     {roleOptions.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
                   </select>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Organization</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">Organization</p>
                   <input value={editForm.organization} onChange={(e) => setEditForm({ ...editForm, organization: e.target.value })} className="input-field" placeholder="Hotel / NGO name" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-xs text-gray-400 mb-1">Address</p>
+                    <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">Address</p>
                     <input value={editForm.address} onChange={(e) => setEditForm({ ...editForm, address: e.target.value })} className="input-field" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 mb-1">City</p>
+                    <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">City</p>
                     <input value={editForm.city} onChange={(e) => setEditForm({ ...editForm, city: e.target.value })} className="input-field" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 mb-1">State</p>
+                    <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">State</p>
                     <input value={editForm.state} onChange={(e) => setEditForm({ ...editForm, state: e.target.value })} className="input-field" />
                   </div>
                   <div>
-                    <p className="text-xs text-gray-400 mb-1">Pincode</p>
+                    <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">Pincode</p>
                     <input value={editForm.pincode} onChange={(e) => setEditForm({ ...editForm, pincode: e.target.value })} className="input-field" />
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1">Bio</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">Bio</p>
                   <textarea value={editForm.bio} onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })} rows={2} className="input-field resize-none" />
                 </div>
                 {editState === 'error' && (
@@ -627,7 +627,7 @@ export function UserManagementTable() {
                   <button
                     onClick={closeEditModal}
                     disabled={editState === 'saving'}
-                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-oat dark:bg-secondary-800 text-ink-soft dark:text-cream/70 hover:bg-linen dark:hover:bg-secondary-700 transition-colors disabled:opacity-50"
                   >
                     Cancel
                   </button>

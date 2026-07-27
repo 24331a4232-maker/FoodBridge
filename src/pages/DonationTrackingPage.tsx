@@ -65,7 +65,7 @@ export function DonationTrackingPage() {
 
         {!user ? (
           <div className="card p-8 text-center mt-8">
-            <p className="text-gray-500 mb-4">Please sign in to track your donations.</p>
+            <p className="text-ink-soft dark:text-cream/60 mb-4">Please sign in to track your donations.</p>
             <Link to="/login"><RippleButton variant="primary">Sign In</RippleButton></Link>
           </div>
         ) : (
@@ -82,7 +82,7 @@ export function DonationTrackingPage() {
                     <s.icon className="h-5 w-5" />
                   </div>
                   <p className="font-display text-2xl font-bold">{s.value}</p>
-                  <p className="text-xs text-gray-500">{s.label}</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40">{s.label}</p>
                 </motion.div>
               ))}
             </motion.div>
@@ -106,10 +106,10 @@ export function DonationTrackingPage() {
                 <h3 className="font-display font-bold mb-4">Your Pickups</h3>
                 {loading ? (
                   <div className="space-y-3">
-                    {[1, 2, 3].map((i) => <div key={i} className="h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse" />)}
+                    {[1, 2, 3].map((i) => <div key={i} className="h-16 bg-oat dark:bg-secondary-800 rounded-2xl animate-pulse" />)}
                   </div>
                 ) : pickups.length === 0 ? (
-                  <p className="text-center text-gray-400 py-8">No pickups yet. <Link to="/services/available-food" className="text-primary-500 underline">Browse donations</Link>.</p>
+                  <p className="text-center text-ink-soft/60 dark:text-cream/40 py-8">No pickups yet. <Link to="/services/available-food" className="text-primary-500 underline">Browse donations</Link>.</p>
                 ) : (
                   <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
                     {pickups.map((p) => {
@@ -120,16 +120,16 @@ export function DonationTrackingPage() {
                         <button
                           key={p.id}
                           onClick={() => setSelected(selected?.id === p.id ? null : p)}
-                          className={`w-full text-left flex items-center gap-3 p-3 rounded-2xl transition-colors ${selected?.id === p.id ? 'bg-primary-50 dark:bg-primary-900/30' : 'bg-gray-50 dark:bg-gray-800/50 hover:bg-primary-50/50 dark:hover:bg-primary-900/20'}`}
+                          className={`w-full text-left flex items-center gap-3 p-3 rounded-2xl transition-colors ${selected?.id === p.id ? 'bg-primary-50 dark:bg-primary-900/30' : 'bg-oat dark:bg-secondary-800/50 hover:bg-primary-50/50 dark:hover:bg-primary-900/20'}`}
                         >
                           <div className={`h-10 w-10 rounded-xl ${cfg.color} flex items-center justify-center shrink-0`}>
                             <cfg.icon className="h-5 w-5" />
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold text-sm truncate">{p.donation?.food_name ?? 'Unknown donation'}</p>
-                            <p className="text-xs text-gray-500 truncate">{p.donation?.organization}</p>
+                            <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{p.donation?.organization}</p>
                           </div>
-                          {dist != null && <span className="text-xs text-gray-400 shrink-0">{dist.toFixed(1)} km</span>}
+                          {dist != null && <span className="text-xs text-ink-soft/60 dark:text-cream/40 shrink-0">{dist.toFixed(1)} km</span>}
                         </button>
                       );
                     })}
@@ -145,13 +145,13 @@ export function DonationTrackingPage() {
                   <Truck className="h-5 w-5 text-primary-500" /> Pickup Details
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                  <div><p className="text-xs text-gray-400">Food</p><p className="font-medium">{selected.donation?.food_name}</p></div>
-                  <div><p className="text-xs text-gray-400">Donor</p><p className="font-medium">{selected.donation?.organization}</p></div>
-                  <div><p className="text-xs text-gray-400">Quantity</p><p className="font-medium">{selected.donation?.quantity} {selected.donation?.quantity_unit}</p></div>
-                  <div><p className="text-xs text-gray-400">Status</p><span className={`badge ${statusConfig[selected.status]?.color}`}>{statusConfig[selected.status]?.label}</span></div>
+                  <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Food</p><p className="font-medium text-ink dark:text-cream">{selected.donation?.food_name}</p></div>
+                  <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Donor</p><p className="font-medium text-ink dark:text-cream">{selected.donation?.organization}</p></div>
+                  <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Quantity</p><p className="font-medium text-ink dark:text-cream">{selected.donation?.quantity} {selected.donation?.quantity_unit}</p></div>
+                  <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Status</p><span className={`badge ${statusConfig[selected.status]?.color}`}>{statusConfig[selected.status]?.label}</span></div>
                 </div>
                 {selected.donation?.address && (
-                  <p className="text-sm text-gray-500 mt-3 flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {selected.donation.address}, {selected.donation.city}</p>
+                  <p className="text-sm text-ink-soft dark:text-cream/60 mt-3 flex items-center gap-1.5"><MapPin className="h-4 w-4" /> {selected.donation.address}, {selected.donation.city}</p>
                 )}
 
                 {/* Donation status timeline */}

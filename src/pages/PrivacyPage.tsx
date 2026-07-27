@@ -23,7 +23,7 @@ export function PrivacyPage() {
             <Shield className="h-7 w-7 text-white" />
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-bold">Privacy Policy</h1>
-          <p className="text-gray-500 mt-2">Last updated: {new Date().toLocaleDateString()}</p>
+          <p className="text-ink-soft dark:text-cream/60 mt-2">Last updated: {new Date().toLocaleDateString()}</p>
         </motion.div>
 
         <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="space-y-4">
@@ -35,7 +35,7 @@ export function PrivacyPage() {
                 </div>
                 <div>
                   <h2 className="font-display font-semibold text-lg mb-2">{s.title}</h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">{s.content}</p>
+                  <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed">{s.content}</p>
                 </div>
               </div>
             </motion.div>

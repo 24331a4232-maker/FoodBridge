@@ -99,7 +99,7 @@ export function QrScanner({ onScan, onClose }: QrScannerProps) {
         <div className="glass-card p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-display font-bold flex items-center gap-2"><ScanLine className="h-5 w-5 text-primary-500" /> Scan Donation QR</h3>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"><X className="h-5 w-5" /></button>
+            <button onClick={onClose} className="text-ink-soft/60 dark:text-cream/60 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"><X className="h-5 w-5" /></button>
           </div>
           <div className="relative aspect-square w-full rounded-2xl overflow-hidden bg-black ring-2 ring-primary-500/30">
             <video ref={videoRef} className="absolute inset-0 w-full h-full object-cover" playsInline muted />
@@ -131,7 +131,7 @@ export function QrScanner({ onScan, onClose }: QrScannerProps) {
               </>
             )}
           </div>
-          <p className="text-xs text-gray-400 mt-3 text-center">The scanner verifies the QR against the database automatically.</p>
+          <p className="text-xs text-ink-soft dark:text-cream/60 mt-3 text-center">The scanner verifies the QR against the database automatically.</p>
         </div>
       </div>
     </div>
@@ -157,7 +157,7 @@ export function QrScanResult({ result, onClose, onViewDetails }: { result: ScanR
             <Icon className={`h-7 w-7 ${color}`} />
           </div>
           <h3 className="font-display font-bold mb-1">{result.status === 'success' ? 'QR Verified' : 'Invalid QR'}</h3>
-          <p className="text-xs text-gray-500 mb-4">{result.message}</p>
+          <p className="text-xs text-ink-soft dark:text-cream/60 mb-4">{result.message}</p>
           <div className="flex gap-2 justify-center">
             {result.status === 'success' && onViewDetails && (
               <RippleButton onClick={onViewDetails} variant="primary" className="text-xs">View Details</RippleButton>

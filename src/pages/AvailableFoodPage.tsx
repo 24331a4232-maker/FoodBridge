@@ -29,16 +29,16 @@ const PAGE_SIZE = 6;
 function FoodCardSkeleton() {
   return (
     <div className="card overflow-hidden animate-pulse">
-      <div className="h-48 bg-gray-200 dark:bg-gray-800" />
+      <div className="h-48 bg-linen dark:bg-secondary-800" />
       <div className="p-5 space-y-3">
-        <div className="h-5 bg-gray-200 dark:bg-gray-800 rounded w-3/4" />
-        <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-1/2" />
+        <div className="h-5 bg-linen dark:bg-secondary-800 rounded w-3/4" />
+        <div className="h-4 bg-linen dark:bg-secondary-800 rounded w-1/2" />
         <div className="flex gap-2">
-          <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded-full w-16" />
-          <div className="h-6 bg-gray-200 dark:bg-gray-800 rounded-full w-20" />
+          <div className="h-6 bg-linen dark:bg-secondary-800 rounded-full w-16" />
+          <div className="h-6 bg-linen dark:bg-secondary-800 rounded-full w-20" />
         </div>
-        <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-full" />
-        <div className="h-4 bg-gray-200 dark:bg-gray-800 rounded w-2/3" />
+        <div className="h-4 bg-linen dark:bg-secondary-800 rounded w-full" />
+        <div className="h-4 bg-linen dark:bg-secondary-800 rounded w-2/3" />
       </div>
     </div>
   );
@@ -170,13 +170,13 @@ export function AvailableFoodPage() {
             <UtensilsCrossed className="h-3.5 w-3.5" /> Available Now
           </span>
           <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold">Available Food Donations</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-xl mx-auto">Browse surplus food available for pickup near you. Claim a donation and deliver it to someone in need.</p>
+          <p className="text-ink-soft dark:text-cream/60 mt-3 max-w-xl mx-auto">Browse surplus food available for pickup near you. Claim a donation and deliver it to someone in need.</p>
         </motion.div>
 
         {/* Search & Filter */}
         <div className="flex flex-col sm:flex-row gap-3 mb-8">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -185,7 +185,7 @@ export function AvailableFoodPage() {
             />
           </div>
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-            <Filter className="h-5 w-5 text-gray-400 shrink-0" />
+            <Filter className="h-5 w-5 text-ink-soft/60 dark:text-cream/40 shrink-0" />
             {categories.map((c) => (
               <button
                 key={c.value}
@@ -193,7 +193,7 @@ export function AvailableFoodPage() {
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
                   category === c.value
                     ? 'bg-primary-600 text-white shadow-lg shadow-primary-600/30'
-                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30'
+                    : 'bg-white dark:bg-secondary-800 text-ink-soft dark:text-cream/70 hover:bg-primary-50 dark:hover:bg-primary-900/30'
                 }`}
               >
                 {c.label}
@@ -204,9 +204,9 @@ export function AvailableFoodPage() {
 
         {/* Freshness Filter */}
         <div className="flex items-center gap-2 mb-6 overflow-x-auto no-scrollbar pb-1">
-          <span className="text-xs text-gray-400 shrink-0 font-medium">Quality:</span>
+          <span className="text-xs text-ink-soft dark:text-cream/60 shrink-0 font-medium">Quality:</span>
           {([
-            { value: 'all', label: 'All', dot: 'bg-gray-400' },
+            { value: 'all', label: 'All', dot: 'bg-ink-soft/40 dark:bg-cream/40' },
             { value: 'fresh', label: 'Fresh', dot: 'bg-primary-500' },
             { value: 'consume_soon', label: 'Consume Soon', dot: 'bg-gold-500' },
             { value: 'expired', label: 'Expired', dot: 'bg-red-500' },
@@ -217,7 +217,7 @@ export function AvailableFoodPage() {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
                 freshnessFilter === f.value
                   ? 'bg-primary-600 text-white shadow-md'
-                  : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/30'
+                  : 'bg-white dark:bg-secondary-800 text-ink-soft dark:text-cream/70 hover:bg-primary-50 dark:hover:bg-primary-900/30'
               }`}
             >
               <span className={`h-2 w-2 rounded-full ${f.dot}`} />
@@ -236,8 +236,8 @@ export function AvailableFoodPage() {
             {geoError && <span className="text-xs text-red-500">{geoError}</span>}
             {position && (
               <div className="flex items-center gap-2">
-                <span className="text-xs text-gray-500">Radius:</span>
-                <select value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="text-xs px-2 py-1 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                <span className="text-xs text-ink-soft dark:text-cream/60">Radius:</span>
+                <select value={radius} onChange={(e) => setRadius(Number(e.target.value))} className="text-xs px-2 py-1 rounded-lg bg-white dark:bg-secondary-800 border border-linen dark:border-secondary-700 text-ink dark:text-cream">
                   <option value={5}>5 km</option>
                   <option value={10}>10 km</option>
                   <option value={25}>25 km</option>
@@ -268,7 +268,7 @@ export function AvailableFoodPage() {
             {route && (
               <div className="mt-2 flex items-center justify-between text-sm bg-primary-50 dark:bg-primary-900/20 rounded-xl p-3">
                 <span className="font-medium flex items-center gap-2"><Ruler className="h-4 w-4 text-primary-500" /> Route: {route.distanceKm.toFixed(1)} km • ~{Math.round(route.durationMin)} min</span>
-                <button onClick={() => setRoute(null)} className="text-xs text-gray-500 hover:text-gray-700">Clear route</button>
+                <button onClick={() => setRoute(null)} className="text-xs text-ink-soft dark:text-cream/60 hover:text-primary-600 dark:hover:text-primary-400">Clear route</button>
               </div>
             )}
           </motion.div>
@@ -281,8 +281,8 @@ export function AvailableFoodPage() {
           </div>
         ) : current.length === 0 ? (
           <div className="text-center py-20">
-            <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">No donations match your search. Try different filters.</p>
+            <Package className="h-16 w-16 text-ink-soft/40 dark:text-cream/30 mx-auto mb-4" />
+            <p className="text-ink-soft dark:text-cream/60">No donations match your search. Try different filters.</p>
           </div>
         ) : (
           <motion.div
@@ -306,7 +306,7 @@ export function AvailableFoodPage() {
                       <Flame className="h-3 w-3" /> Urgent
                     </span>
                   )}
-                  <span className="absolute top-3 right-3 badge bg-white/90 dark:bg-gray-900/90 text-gray-700 dark:text-gray-200 backdrop-blur-md capitalize">
+                  <span className="absolute top-3 right-3 badge bg-white/90 dark:bg-secondary-900/90 text-ink dark:text-cream backdrop-blur-md capitalize">
                     {d.category}
                   </span>
                   {d.freshness_status && (
@@ -317,7 +317,7 @@ export function AvailableFoodPage() {
                 </div>
                 <div className="p-5">
                   <h3 className="font-display font-semibold text-lg mb-1">{d.food_name}</h3>
-                  <p className="text-sm text-gray-500 flex items-center gap-1.5 mb-3">
+                  <p className="text-sm text-ink-soft dark:text-cream/60 flex items-center gap-1.5 mb-3">
                     <Hotel className="h-3.5 w-3.5" /> {d.organization}
                   </p>
                   <div className="flex flex-wrap gap-2 mb-3">
@@ -338,7 +338,7 @@ export function AvailableFoodPage() {
                       );
                     })()}
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-1.5">
+                  <p className="text-sm text-ink-soft dark:text-cream/60 flex items-start gap-1.5">
                     <MapPin className="h-4 w-4 text-primary-500 shrink-0 mt-0.5" />
                     <span>{d.address}, {d.city}</span>
                   </p>
@@ -406,30 +406,30 @@ export function AvailableFoodPage() {
             >
               <div className="relative h-56">
                 <DonationImage src={selected.image_url} alt={selected.food_name} variant="donation" className="w-full h-full object-cover" />
-                <button onClick={() => setSelected(null)} className="absolute top-3 right-3 h-9 w-9 rounded-full bg-white/90 dark:bg-gray-900/90 flex items-center justify-center">
+                <button onClick={() => setSelected(null)} className="absolute top-3 right-3 h-9 w-9 rounded-full bg-white/90 dark:bg-secondary-900/90 flex items-center justify-center text-ink dark:text-cream">
                   <X className="h-5 w-5" />
                 </button>
               </div>
               <div className="p-6">
                 <h2 className="font-display text-2xl font-bold mb-2">{selected.food_name}</h2>
-                <p className="text-gray-500 mb-4">{selected.organization} - {selected.organization_type}</p>
-                {selected.description && <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{selected.description}</p>}
+                <p className="text-ink-soft dark:text-cream/60 mb-4">{selected.organization} - {selected.organization_type}</p>
+                {selected.description && <p className="text-sm text-ink-soft dark:text-cream/60 mb-4">{selected.description}</p>}
                 <div className="grid grid-cols-2 gap-3 text-sm">
-                  <div className="card p-3"><p className="text-gray-400 text-xs">Quantity</p><p className="font-semibold">{selected.quantity} {selected.quantity_unit}</p></div>
-                  <div className="card p-3"><p className="text-gray-400 text-xs">Category</p><p className="font-semibold capitalize">{selected.category}</p></div>
-                  <div className="card p-3"><p className="text-gray-400 text-xs">Pickup Time</p><p className="font-semibold">{new Date(selected.pickup_time).toLocaleString()}</p></div>
-                  <div className="card p-3"><p className="text-gray-400 text-xs">Expiry</p><p className="font-semibold">{new Date(selected.expiry_time).toLocaleString()}</p></div>
-                  <div className="card p-3 col-span-2"><p className="text-gray-400 text-xs">Address</p><p className="font-semibold">{selected.address}, {selected.city}</p></div>
-                  {selected.contact_phone && <div className="card p-3 col-span-2"><p className="text-gray-400 text-xs">Contact</p><p className="font-semibold">{selected.contact_phone}</p></div>}
+                  <div className="card p-3"><p className="text-ink-soft/60 dark:text-cream/40 text-xs">Quantity</p><p className="font-semibold text-ink dark:text-cream">{selected.quantity} {selected.quantity_unit}</p></div>
+                  <div className="card p-3"><p className="text-ink-soft/60 dark:text-cream/40 text-xs">Category</p><p className="font-semibold text-ink dark:text-cream capitalize">{selected.category}</p></div>
+                  <div className="card p-3"><p className="text-ink-soft/60 dark:text-cream/40 text-xs">Pickup Time</p><p className="font-semibold text-ink dark:text-cream">{new Date(selected.pickup_time).toLocaleString()}</p></div>
+                  <div className="card p-3"><p className="text-ink-soft/60 dark:text-cream/40 text-xs">Expiry</p><p className="font-semibold text-ink dark:text-cream">{new Date(selected.expiry_time).toLocaleString()}</p></div>
+                  <div className="card p-3 col-span-2"><p className="text-ink-soft/60 dark:text-cream/40 text-xs">Address</p><p className="font-semibold text-ink dark:text-cream">{selected.address}, {selected.city}</p></div>
+                  {selected.contact_phone && <div className="card p-3 col-span-2"><p className="text-ink-soft/60 dark:text-cream/40 text-xs">Contact</p><p className="font-semibold text-ink dark:text-cream">{selected.contact_phone}</p></div>}
                 </div>
                 {selected.freshness_status && (
-                  <div className="mt-4 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
-                    <p className="text-xs text-gray-400 mb-2">Food Quality Assessment</p>
+                  <div className="mt-4 p-4 rounded-2xl bg-oat dark:bg-secondary-800/50">
+                    <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-2">Food Quality Assessment</p>
                     <FoodQualityBadge freshness={selected.freshness_status} score={selected.quality_score} priority={selected.priority_level} size="md" showScore showPriority />
                     {selected.estimated_meals != null && selected.estimated_meals > 0 && (
                       <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-                        <div className="p-2 rounded-xl bg-white dark:bg-gray-800/70"><p className="text-gray-400">Est. Meals</p><p className="font-semibold">{selected.estimated_meals}</p></div>
-                        <div className="p-2 rounded-xl bg-white dark:bg-gray-800/70"><p className="text-gray-400">Recipient</p><p className="font-semibold">{selected.recommended_recipient || '-'}</p></div>
+                        <div className="p-2 rounded-xl bg-white dark:bg-secondary-800/70"><p className="text-ink-soft/60 dark:text-cream/40">Est. Meals</p><p className="font-semibold text-ink dark:text-cream">{selected.estimated_meals}</p></div>
+                        <div className="p-2 rounded-xl bg-white dark:bg-secondary-800/70"><p className="text-ink-soft/60 dark:text-cream/40">Recipient</p><p className="font-semibold text-ink dark:text-cream">{selected.recommended_recipient || '-'}</p></div>
                       </div>
                     )}
                   </div>

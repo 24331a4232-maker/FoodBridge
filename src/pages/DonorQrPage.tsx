@@ -101,9 +101,9 @@ export function DonorQrPage() {
   if (!donor) {
     return (
       <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6">
-        <UserCircle className="h-16 w-16 text-gray-300 mb-4" />
+        <UserCircle className="h-16 w-16 text-ink-soft/40 dark:text-cream/30 mb-4" />
         <h1 className="text-2xl font-display font-bold mb-2">Donor not found</h1>
-        <p className="text-gray-500 mb-6">We couldn't find a donor with that username.</p>
+        <p className="text-ink-soft dark:text-cream/60 mb-6">We couldn't find a donor with that username.</p>
         <Link to="/" className="px-5 py-2.5 rounded-xl bg-primary-600 text-white font-medium hover:bg-primary-700 transition">
           Back home
         </Link>
@@ -116,7 +116,7 @@ export function DonorQrPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-cream via-cream to-primary-50/30 dark:from-secondary-950 dark:via-secondary-950 dark:to-primary-950/20 pt-24 pb-16">
       <div className="max-w-2xl mx-auto px-4 sm:px-6">
-        <Link to="/dashboard/donor" className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-primary-600 transition mb-6">
+        <Link to="/dashboard/donor" className="inline-flex items-center gap-1.5 text-sm text-ink-soft dark:text-cream/60 hover:text-primary-600 transition mb-6">
           <ArrowLeft className="h-4 w-4" /> Back to dashboard
         </Link>
 
@@ -132,7 +132,7 @@ export function DonorQrPage() {
               {donor.full_name?.[0]?.toUpperCase() ?? 'D'}
             </div>
             <h1 className="text-2xl font-display font-bold">{donor.full_name}</h1>
-            <p className="text-sm text-gray-500">@{donor.username}</p>
+            <p className="text-sm text-ink-soft dark:text-cream/60">@{donor.username}</p>
             {donor.organization && (
               <p className="text-sm text-primary-600 dark:text-primary-400 font-medium mt-1">{donor.organization}</p>
             )}
@@ -151,18 +151,18 @@ export function DonorQrPage() {
                 <img src={qrDataUrl} alt={`QR code for ${donor.full_name}`} className="w-56 h-56 sm:w-64 sm:h-64" />
               ) : (
                 <div className="w-56 h-56 sm:w-64 sm:h-64 flex items-center justify-center">
-                  <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                  <Loader2 className="h-8 w-8 animate-spin text-ink-soft/60 dark:text-cream/40" />
                 </div>
               )}
             </div>
           </div>
 
-          <p className="text-sm text-gray-500 mb-1 max-w-sm mx-auto">
+          <p className="text-sm text-ink-soft dark:text-cream/60 mb-1 max-w-sm mx-auto">
             {isOwner
               ? 'Show this code to a volunteer when they arrive for pickup — they scan it to confirm your identity.'
               : 'Scan this code with your phone camera to view this donor on FoodBridge.'}
           </p>
-          <p className="text-xs text-gray-400 mb-6 font-mono break-all">{`${window.location.origin}/donor/${donor.username}`}</p>
+          <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-6 font-mono break-all">{`${window.location.origin}/donor/${donor.username}`}</p>
 
           {/* Actions */}
           {isOwner && (
@@ -183,18 +183,18 @@ export function DonorQrPage() {
           )}
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-3 mt-8 pt-6 border-t border-gray-200/60 dark:border-gray-800/60">
+          <div className="grid grid-cols-3 gap-3 mt-8 pt-6 border-t border-linen/60 dark:border-secondary-800/60">
             <div>
               <p className="text-2xl font-display font-bold text-primary-600 dark:text-primary-400">{stats.donations}</p>
-              <p className="text-xs text-gray-500 mt-0.5">Donations</p>
+              <p className="text-xs text-ink-soft dark:text-cream/60 mt-0.5">Donations</p>
             </div>
             <div>
               <p className="text-2xl font-display font-bold text-accent-600 dark:text-accent-400">{stats.meals}</p>
-              <p className="text-xs text-gray-500 mt-0.5">Meals Saved</p>
+              <p className="text-xs text-ink-soft dark:text-cream/60 mt-0.5">Meals Saved</p>
             </div>
             <div>
               <p className="text-2xl font-display font-bold text-blue-600 dark:text-blue-400">{stats.deliveries}</p>
-              <p className="text-xs text-gray-500 mt-0.5">Delivered</p>
+              <p className="text-xs text-ink-soft dark:text-cream/60 mt-0.5">Delivered</p>
             </div>
           </div>
         </motion.div>
@@ -208,7 +208,7 @@ export function DonorQrPage() {
             className="mt-4 glass-card p-4 flex items-start gap-3"
           >
             <MapPin className="h-5 w-5 text-primary-500 shrink-0 mt-0.5" />
-            <p className="text-sm text-gray-600 dark:text-gray-300">
+            <p className="text-sm text-ink-soft dark:text-cream/70">
               You're viewing a FoodBridge donor's public QR page. If you're a volunteer on pickup duty, confirm this donor's identity before collecting the food.
             </p>
           </motion.div>
@@ -222,7 +222,7 @@ export function DonorQrPage() {
             className="mt-4 glass-card p-4 flex items-start gap-3"
           >
             <Award className="h-5 w-5 text-accent-500 shrink-0 mt-0.5" />
-            <p className="text-sm text-gray-600 dark:text-gray-300">
+            <p className="text-sm text-ink-soft dark:text-cream/70">
               Keep this code handy. Each donation you create is linked to your account — a volunteer scanning this code instantly sees your verified donor profile.
             </p>
           </motion.div>

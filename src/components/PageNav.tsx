@@ -30,7 +30,7 @@ export function PageNav({ crumbs }: PageNavProps) {
           onClick={handleBack}
           whileHover={{ x: -3 }}
           whileTap={{ scale: 0.96 }}
-          className="group inline-flex items-center gap-1.5 self-start px-3.5 py-1.5 rounded-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 border border-gray-200/70 dark:border-gray-700/70 transition-all duration-200"
+          className="group inline-flex items-center gap-1.5 self-start px-3.5 py-1.5 rounded-full text-sm font-medium text-ink-soft dark:text-cream/70 hover:text-primary-700 dark:hover:text-primary-300 hover:bg-primary-50 dark:hover:bg-primary-900/30 border border-linen/70 dark:border-secondary-700/70 transition-all duration-200"
           aria-label="Go back"
         >
           <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-0.5" />
@@ -40,7 +40,7 @@ export function PageNav({ crumbs }: PageNavProps) {
         <nav aria-label="Breadcrumb" className="flex items-center flex-wrap gap-1 text-xs sm:text-sm min-w-0">
           <Link
             to="/"
-            className="flex items-center gap-1 px-2 py-1 rounded-md text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50/60 dark:hover:bg-primary-900/20 transition-all duration-200"
+            className="flex items-center gap-1 px-2 py-1 rounded-md text-ink-soft dark:text-cream/60 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50/60 dark:hover:bg-primary-900/20 transition-all duration-200"
           >
             <Home className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Home</span>
@@ -51,7 +51,7 @@ export function PageNav({ crumbs }: PageNavProps) {
             const Icon = crumb.icon;
             return (
               <span key={`${crumb.label}-${i}`} className="flex items-center gap-1 min-w-0">
-                <ChevronRight className="h-3.5 w-3.5 text-gray-300 dark:text-gray-600 shrink-0" />
+                <ChevronRight className="h-3.5 w-3.5 text-ink-soft/40 dark:text-cream/30 shrink-0" />
                 {isLast || !crumb.path ? (
                   <span className="flex items-center gap-1.5 px-2 py-1 rounded-md font-semibold text-primary-700 dark:text-primary-300 bg-primary-50 dark:bg-primary-900/30 truncate max-w-[180px] sm:max-w-none">
                     {Icon && <Icon className="h-3.5 w-3.5 shrink-0" />}
@@ -60,7 +60,7 @@ export function PageNav({ crumbs }: PageNavProps) {
                 ) : (
                   <Link
                     to={crumb.path}
-                    className="flex items-center gap-1.5 px-2 py-1 rounded-md text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50/60 dark:hover:bg-primary-900/20 transition-all duration-200 truncate max-w-[160px] sm:max-w-none"
+                    className="flex items-center gap-1.5 px-2 py-1 rounded-md text-ink-soft dark:text-cream/60 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-primary-50/60 dark:hover:bg-primary-900/20 transition-all duration-200 truncate max-w-[160px] sm:max-w-none"
                   >
                     {Icon && <Icon className="h-3.5 w-3.5 shrink-0" />}
                     <span className="truncate">{crumb.label}</span>

@@ -689,7 +689,7 @@ export function Navbar() {
                   <LogOut className="h-7 w-7" />
                 </div>
                 <h3 className="font-display text-lg font-bold mb-1">Are you sure you want to logout?</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">You will need to sign in again to access your dashboard.</p>
+                <p className="text-sm text-ink-soft dark:text-cream/60 mb-6">You will need to sign in again to access your dashboard.</p>
                 <div className="flex gap-3">
                   <button onClick={() => setShowLogoutConfirm(false)} className="btn-ghost flex-1">Cancel</button>
                   <button onClick={handleSignOut} className="btn-primary flex-1 bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700">

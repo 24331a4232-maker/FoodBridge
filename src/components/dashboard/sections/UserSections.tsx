@@ -48,7 +48,7 @@ export function UserDonateFoodSection() {
       delivered: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
       cancelled: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
     };
-    return map[s] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
+    return map[s] ?? 'bg-oat dark:bg-secondary-800 text-ink-soft dark:text-cream/70';
   };
 
   return (
@@ -60,11 +60,11 @@ export function UserDonateFoodSection() {
       />
       <div className="space-y-3">
         {loading ? (
-          <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+          <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
         ) : donations.length === 0 ? (
           <div className="glass-card p-10 text-center">
-            <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 mb-4">You haven't donated any food yet.</p>
+            <Package className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" />
+            <p className="text-ink-soft dark:text-cream/60 mb-4">You haven't donated any food yet.</p>
             <Link to="/services/donate-food"><RippleButton variant="primary"><Plus className="h-4 w-4" /> Create your first donation</RippleButton></Link>
           </div>
         ) : (
@@ -75,7 +75,7 @@ export function UserDonateFoodSection() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{d.food_name}</p>
-                <p className="text-xs text-gray-500 truncate">{d.quantity} {d.quantity_unit} - {d.organization}</p>
+                <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{d.quantity} {d.quantity_unit} - {d.organization}</p>
               </div>
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0 ${statusBadge(d.status)}`}>{d.status}</span>
             </motion.div>
@@ -138,19 +138,19 @@ export function UserTrackDonationSection() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div>
             <p className="font-stat text-2xl font-bold text-primary-600 dark:text-primary-400">{donations.length}</p>
-            <p className="text-xs text-gray-500">Donations</p>
+            <p className="text-xs text-ink-soft dark:text-cream/60">Donations</p>
           </div>
           <div>
             <p className="font-stat text-2xl font-bold text-primary-600 dark:text-primary-400">{totalMeals.toLocaleString()}</p>
-            <p className="text-xs text-gray-500">Meals Provided</p>
+            <p className="text-xs text-ink-soft dark:text-cream/60">Meals Provided</p>
           </div>
           <div>
             <p className="font-stat text-2xl font-bold text-primary-600 dark:text-primary-400">{totalKg > 0 ? `${totalKg.toFixed(1)} kg` : '—'}</p>
-            <p className="text-xs text-gray-500">Food (kg)</p>
+            <p className="text-xs text-ink-soft dark:text-cream/60">Food (kg)</p>
           </div>
           <div>
             <p className="font-stat text-2xl font-bold text-primary-600 dark:text-primary-400">{totalLiters > 0 ? `${totalLiters.toFixed(1)} L` : '—'}</p>
-            <p className="text-xs text-gray-500">Beverages (L)</p>
+            <p className="text-xs text-ink-soft dark:text-cream/60">Beverages (L)</p>
           </div>
         </div>
       </div>
@@ -160,11 +160,11 @@ export function UserTrackDonationSection() {
         <StatCard icon={Package} label="Total" value={donations.length} color="bg-primary-500" />
       </div>
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
       ) : donations.length === 0 ? (
         <div className="glass-card p-10 text-center">
-          <MapPin className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No donations to track yet.</p>
+          <MapPin className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" />
+          <p className="text-ink-soft dark:text-cream/60">No donations to track yet.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -175,10 +175,10 @@ export function UserTrackDonationSection() {
                 <div className="flex items-center justify-between mb-3">
                   <div className="min-w-0">
                     <p className="font-medium truncate">{d.food_name}</p>
-                    <p className="text-xs text-gray-500 truncate">{d.organization} - {d.city}</p>
+                    <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{d.organization} - {d.city}</p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
-                    {d.donation_code && <span className="text-xs font-mono text-gray-400 hidden sm:inline">{d.donation_code}</span>}
+                    {d.donation_code && <span className="text-xs font-mono text-ink-soft/60 dark:text-cream/40 hidden sm:inline">{d.donation_code}</span>}
                     <RippleButton onClick={() => setQrDonation(d)} variant="ghost" className="text-xs px-2.5 py-1.5">
                       <QrCode className="h-3.5 w-3.5" /> Show QR
                     </RippleButton>
@@ -187,13 +187,13 @@ export function UserTrackDonationSection() {
                 <div className="flex items-center gap-1">
                   {steps.map((s, idx) => (
                     <div key={s} className="flex items-center gap-1 flex-1">
-                      <div className={`h-2 flex-1 rounded-full ${idx < step ? 'bg-primary-500' : 'bg-gray-200 dark:bg-gray-700'}`} />
+                      <div className={`h-2 flex-1 rounded-full ${idx < step ? 'bg-primary-500' : 'bg-linen dark:bg-secondary-700'}`} />
                     </div>
                   ))}
                 </div>
                 <div className="flex justify-between mt-1.5">
                   {steps.map((s, idx) => (
-                    <span key={s} className={`text-[10px] ${idx < step ? 'text-primary-600 font-medium' : 'text-gray-400'}`}>{s}</span>
+                    <span key={s} className={`text-[10px] ${idx < step ? 'text-primary-600 font-medium' : 'text-ink-soft/60 dark:text-cream/40'}`}>{s}</span>
                   ))}
                 </div>
               </motion.div>
@@ -230,11 +230,11 @@ export function UserCertificatesSection() {
         action={<Link to="/services/certificate-history"><RippleButton variant="secondary">View All</RippleButton></Link>}
       />
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
       ) : certs.length === 0 ? (
         <div className="glass-card p-10 text-center">
-          <Award className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No certificates yet. Complete deliveries to earn certificates.</p>
+          <Award className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" />
+          <p className="text-ink-soft dark:text-cream/60">No certificates yet. Complete deliveries to earn certificates.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -247,14 +247,14 @@ export function UserCertificatesSection() {
                 </div>
                 <div className="min-w-0">
                   <p className="font-medium text-sm truncate">{c.volunteer_name ?? profile?.full_name}</p>
-                  <p className="text-xs text-gray-400 font-mono">{c.certificate_number}</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 font-mono">{c.certificate_number}</p>
                 </div>
                 {c.is_valid && <ShieldCheck className="h-4 w-4 text-green-500 ml-auto shrink-0" />}
               </div>
               <div className="grid grid-cols-3 gap-2 text-center">
-                <div><p className="font-bold text-sm">{c.deliveries_count}</p><p className="text-[10px] text-gray-400">Deliveries</p></div>
-                <div><p className="font-bold text-sm">{Math.round(c.hours_served)}</p><p className="text-[10px] text-gray-400">Hours</p></div>
-                <div><p className="font-bold text-sm">{c.total_meals}</p><p className="text-[10px] text-gray-400">Meals</p></div>
+                <div><p className="font-bold text-sm">{c.deliveries_count}</p><p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Deliveries</p></div>
+                <div><p className="font-bold text-sm">{Math.round(c.hours_served)}</p><p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Hours</p></div>
+                <div><p className="font-bold text-sm">{c.total_meals}</p><p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Meals</p></div>
               </div>
             </motion.div>
           ))}
@@ -322,12 +322,12 @@ export function UserMyQrSection() {
                 <img src={qrUrl} alt="Your donor QR code" className="w-44 h-44" />
               ) : (
                 <div className="w-44 h-44 flex items-center justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                  <Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" />
                 </div>
               )}
             </div>
           </div>
-          <p className="text-xs text-gray-400 mt-4 font-mono break-all">{donorUrl}</p>
+          <p className="text-xs text-ink-soft/60 dark:text-cream/40 mt-4 font-mono break-all">{donorUrl}</p>
           <div className="flex gap-2 mt-4">
             <RippleButton onClick={downloadQr} variant="primary" className="text-xs"><Download className="h-3.5 w-3.5" /> Download</RippleButton>
             <RippleButton onClick={copyLink} variant="ghost" className="text-xs">{copied ? <CheckCircle className="h-3.5 w-3.5 text-green-500" /> : <QrCode className="h-3.5 w-3.5" />} {copied ? 'Copied' : 'Copy link'}</RippleButton>
@@ -335,7 +335,7 @@ export function UserMyQrSection() {
         </div>
         <div className="glass-card p-6">
           <h3 className="font-display font-bold mb-3 flex items-center gap-2"><QrCode className="h-5 w-5 text-primary-500" /> How it works</h3>
-          <ol className="space-y-3 text-sm text-gray-600 dark:text-gray-300">
+          <ol className="space-y-3 text-sm text-ink-soft dark:text-cream/70">
             <li className="flex gap-3">
               <span className="h-6 w-6 rounded-full bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center text-xs font-bold shrink-0">1</span>
               <span>When a volunteer arrives for pickup, show them this QR code on your phone.</span>
@@ -384,7 +384,7 @@ export function UserQrVerificationSection() {
       <div className="glass-card p-6 mb-4">
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
             <input
               value={certNumber}
               onChange={(e) => setCertNumber(e.target.value)}
@@ -396,7 +396,7 @@ export function UserQrVerificationSection() {
           <RippleButton onClick={() => verify(certNumber)} variant="primary"><ShieldCheck className="h-4 w-4" /> Verify</RippleButton>
         </div>
       </div>
-      {result === 'searching' && <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>}
+      {result === 'searching' && <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>}
       {result === 'valid' && cert && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -404,10 +404,10 @@ export function UserQrVerificationSection() {
             <h3 className="font-display text-lg font-bold text-green-600">Certificate Valid</h3>
           </div>
           <div className="grid grid-cols-2 gap-4 text-sm">
-            <div><p className="text-xs text-gray-400">Volunteer</p><p className="font-medium">{cert.volunteer?.full_name ?? cert.volunteer_name}</p></div>
-            <div><p className="text-xs text-gray-400">Certificate ID</p><p className="font-medium font-mono">{cert.certificate_number}</p></div>
-            <div><p className="text-xs text-gray-400">Deliveries</p><p className="font-medium">{cert.deliveries_count}</p></div>
-            <div><p className="text-xs text-gray-400">Hours Served</p><p className="font-medium">{Math.round(cert.hours_served)}</p></div>
+            <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Volunteer</p><p className="font-medium">{cert.volunteer?.full_name ?? cert.volunteer_name}</p></div>
+            <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Certificate ID</p><p className="font-medium font-mono">{cert.certificate_number}</p></div>
+            <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Deliveries</p><p className="font-medium">{cert.deliveries_count}</p></div>
+            <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Hours Served</p><p className="font-medium">{Math.round(cert.hours_served)}</p></div>
           </div>
         </motion.div>
       )}
@@ -415,13 +415,13 @@ export function UserQrVerificationSection() {
         <div className="glass-card p-8 text-center">
           <XCircle className="h-12 w-12 text-red-500 mx-auto mb-3" />
           <p className="font-medium text-red-500">Invalid Certificate</p>
-          <p className="text-sm text-gray-400 mt-1">No valid certificate found with this ID.</p>
+          <p className="text-sm text-ink-soft/60 dark:text-cream/40 mt-1">No valid certificate found with this ID.</p>
         </div>
       )}
       {result === 'idle' && (
         <div className="glass-card p-10 text-center">
-          <ShieldCheck className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">Enter a certificate number to verify.</p>
+          <ShieldCheck className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" />
+          <p className="text-ink-soft dark:text-cream/60">Enter a certificate number to verify.</p>
         </div>
       )}
     </div>
@@ -444,15 +444,15 @@ export function UserNotificationsSection() {
       />
       <div className="flex gap-2 mb-4">
         {(['all', 'unread'] as const).map((f) => (
-          <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${filter === f ? 'bg-primary-600 text-white' : 'glass text-gray-600 dark:text-gray-300'}`}>
+          <button key={f} onClick={() => setFilter(f)} className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${filter === f ? 'bg-primary-600 text-white' : 'glass text-ink-soft dark:text-cream/70'}`}>
             {f}
           </button>
         ))}
       </div>
       {list.length === 0 ? (
         <div className="glass-card p-10 text-center">
-          <Bell className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No notifications.</p>
+          <Bell className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" />
+          <p className="text-ink-soft dark:text-cream/60">No notifications.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -463,8 +463,8 @@ export function UserNotificationsSection() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{n.title}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{n.description}</p>
-                <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleString()}</p>
+                <p className="text-xs text-ink-soft dark:text-cream/60 mt-0.5">{n.description}</p>
+                <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 mt-1">{new Date(n.created_at).toLocaleString()}</p>
               </div>
               <div className="flex gap-1 shrink-0">
                 {!n.is_read && <button onClick={() => markAsRead(n.id)} className="p-1.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 text-primary-600"><CheckCircle className="h-4 w-4" /></button>}
@@ -503,7 +503,7 @@ export function UserProfileSection() {
           </div>
           <div>
             <p className="font-display text-xl font-bold">{profile?.full_name}</p>
-            <p className="text-sm text-gray-500 capitalize">{profile?.role}</p>
+            <p className="text-sm text-ink-soft dark:text-cream/60 capitalize">{profile?.role}</p>
             {profile?.is_verified && <span className="inline-flex items-center gap-1 text-xs text-green-600 mt-1"><ShieldCheck className="h-3 w-3" /> Verified</span>}
           </div>
         </div>
@@ -511,10 +511,10 @@ export function UserProfileSection() {
           {info.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.label} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
-                <Icon className="h-5 w-5 text-gray-400 shrink-0" />
+              <div key={item.label} className="flex items-center gap-3 p-3 rounded-xl bg-oat dark:bg-secondary-800/50">
+                <Icon className="h-5 w-5 text-ink-soft/60 dark:text-cream/40 shrink-0" />
                 <div className="min-w-0">
-                  <p className="text-xs text-gray-400">{item.label}</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40">{item.label}</p>
                   <p className="text-sm font-medium truncate">{item.value}</p>
                 </div>
               </div>

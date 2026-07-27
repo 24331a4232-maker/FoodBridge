@@ -66,7 +66,7 @@ export function CertificateHistoryPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="font-display text-3xl sm:text-4xl font-bold">My Certificates</h1>
-            <p className="text-gray-500 mt-1">All your volunteer appreciation certificates in one place.</p>
+            <p className="text-ink-soft dark:text-cream/60 mt-1">All your volunteer appreciation certificates in one place.</p>
           </div>
           <Link to="/services/certificates">
             <RippleButton variant="primary"><Plus className="h-4 w-4" /> Generate New</RippleButton>
@@ -87,7 +87,7 @@ export function CertificateHistoryPage() {
                   <s.icon className="h-5 w-5" />
                 </div>
                 <p className="font-display text-2xl font-bold"><AnimatedCounter value={s.value} /></p>
-                <p className="text-xs text-gray-500">{s.label}</p>
+                <p className="text-xs text-ink-soft/60 dark:text-cream/40">{s.label}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -96,18 +96,18 @@ export function CertificateHistoryPage() {
         {/* Loading */}
         {loading && (
           <div className="space-y-4">
-            {[1, 2, 3].map((i) => <div key={i} className="h-32 bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse" />)}
+            {[1, 2, 3].map((i) => <div key={i} className="h-32 bg-oat dark:bg-secondary-800 rounded-2xl animate-pulse" />)}
           </div>
         )}
 
         {/* Empty state */}
         {!loading && certs.length === 0 && (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-12 text-center">
-            <div className="h-20 w-20 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-5">
-              <Award className="h-10 w-10 text-gray-300" />
+            <div className="h-20 w-20 rounded-full bg-oat dark:bg-secondary-800 flex items-center justify-center mx-auto mb-5">
+              <Award className="h-10 w-10 text-ink-soft/40 dark:text-cream/30" />
             </div>
             <h2 className="font-display text-xl font-bold mb-2">No certificates yet</h2>
-            <p className="text-gray-500 mb-6">Complete food deliveries to earn your first volunteer appreciation certificate.</p>
+            <p className="text-ink-soft dark:text-cream/60 mb-6">Complete food deliveries to earn your first volunteer appreciation certificate.</p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link to="/dashboard/volunteer"><RippleButton variant="primary">Go to Dashboard</RippleButton></Link>
               <Link to="/services/certificates"><RippleButton variant="secondary">Generate Certificate</RippleButton></Link>
@@ -135,7 +135,7 @@ export function CertificateHistoryPage() {
                     </div>
                     <div>
                       <p className="font-display font-bold">{cert.volunteer_name ?? 'Volunteer'}</p>
-                      <p className="text-xs text-gray-400 flex items-center gap-1">
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40 flex items-center gap-1">
                         <Hash className="h-3 w-3" /> {cert.certificate_number}
                       </p>
                     </div>
@@ -150,24 +150,24 @@ export function CertificateHistoryPage() {
                 </div>
 
                 <div className="grid grid-cols-3 gap-2 mb-4">
-                  <div className="text-center p-2 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                  <div className="text-center p-2 rounded-xl bg-oat dark:bg-secondary-800/50">
                     <Package className="h-4 w-4 text-accent-500 mx-auto mb-1" />
                     <p className="font-bold text-sm">{cert.deliveries_count}</p>
-                    <p className="text-[10px] text-gray-400">Deliveries</p>
+                    <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Deliveries</p>
                   </div>
-                  <div className="text-center p-2 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                  <div className="text-center p-2 rounded-xl bg-oat dark:bg-secondary-800/50">
                     <Clock className="h-4 w-4 text-primary-500 mx-auto mb-1" />
                     <p className="font-bold text-sm">{Math.round(cert.hours_served)}</p>
-                    <p className="text-[10px] text-gray-400">Hours</p>
+                    <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Hours</p>
                   </div>
-                  <div className="text-center p-2 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                  <div className="text-center p-2 rounded-xl bg-oat dark:bg-secondary-800/50">
                     <Sparkles className="h-4 w-4 text-yellow-500 mx-auto mb-1" />
                     <p className="font-bold text-sm">{cert.total_meals}</p>
-                    <p className="text-[10px] text-gray-400">Meals</p>
+                    <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Meals</p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 text-xs text-gray-400 mb-4">
+                <div className="flex items-center gap-2 text-xs text-ink-soft/60 dark:text-cream/40 mb-4">
                   <Calendar className="h-3.5 w-3.5" />
                   Issued on {new Date(cert.issue_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </div>

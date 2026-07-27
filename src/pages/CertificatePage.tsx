@@ -111,13 +111,13 @@ export function CertificatePage() {
             <Award className="h-3.5 w-3.5" /> Volunteer Appreciation
           </span>
           <h1 className="font-display text-3xl sm:text-4xl font-bold">Your Certificate of Appreciation</h1>
-          <p className="text-gray-500 mt-2">Download, print, and share your contribution to FoodBridge.</p>
+          <p className="text-ink-soft dark:text-cream/60 mt-2">Download, print, and share your contribution to FoodBridge.</p>
         </motion.div>
 
         {generating && (
           <div className="flex flex-col items-center justify-center py-20">
             <Loader2 className="h-12 w-12 animate-spin text-primary-500 mb-4" />
-            <p className="text-gray-500">Generating your premium certificate...</p>
+            <p className="text-ink-soft dark:text-cream/60">Generating your premium certificate...</p>
           </div>
         )}
 
@@ -161,7 +161,7 @@ export function CertificatePage() {
               {/* Content */}
               <div className="relative h-full flex flex-col items-center justify-center text-center px-12 sm:px-20 py-10">
                 {/* Top row: cert number + unique id */}
-                <div className="absolute top-8 left-8 right-8 flex justify-between text-[10px] text-gray-400">
+                <div className="absolute top-8 left-8 right-8 flex justify-between text-[10px] text-ink-soft/60 dark:text-cream/40">
                   <p className="flex items-center gap-1"><Hash className="h-2.5 w-2.5" /> {certData.certificateNumber}</p>
                   <p className="flex items-center gap-1"><ShieldCheck className="h-2.5 w-2.5" /> {certData.uniqueId}</p>
                 </div>
@@ -178,41 +178,41 @@ export function CertificatePage() {
                 <p className="text-[10px] font-semibold text-primary-700 uppercase tracking-[0.2em] mb-1">FoodBridge</p>
 
                 {/* Title */}
-                <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">
+                <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-ink dark:text-cream mb-1">
                   Volunteer Appreciation Certificate
                 </h2>
                 <div className="h-1 w-24 bg-gradient-to-r from-primary-500 to-gold-400 rounded-full my-3" />
 
                 {/* Presented to */}
-                <p className="text-sm text-gray-500 mb-2">This certificate is proudly presented to</p>
+                <p className="text-sm text-ink-soft dark:text-cream/60 mb-2">This certificate is proudly presented to</p>
                 <p className="font-display text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary-700 to-accent-500 bg-clip-text text-transparent mb-1">
                   {certData.volunteerName}
                 </p>
                 <div className="h-px w-32 bg-gradient-to-r from-primary-400 to-gold-400 my-2" />
 
                 {/* Body text */}
-                <p className="text-xs sm:text-sm text-gray-600 max-w-2xl leading-relaxed mb-1">
+                <p className="text-xs sm:text-sm text-ink-soft dark:text-cream/70 max-w-2xl leading-relaxed mb-1">
                   in recognition of outstanding dedication and valuable service in redistributing surplus food
                   from hotels and events to people in need through the FoodBridge initiative.
                 </p>
-                <p className="text-xs sm:text-sm text-gray-600 max-w-xl leading-relaxed">
+                <p className="text-xs sm:text-sm text-ink-soft dark:text-cream/70 max-w-xl leading-relaxed">
                   Your contribution has helped reduce food waste and support communities.
                 </p>
-                <p className="text-xs sm:text-sm font-medium text-gray-700 mt-1">Thank you for making a meaningful difference.</p>
+                <p className="text-xs sm:text-sm font-medium text-ink-soft dark:text-cream/70 mt-1">Thank you for making a meaningful difference.</p>
 
                 {/* Stats */}
                 <div className="flex gap-6 mt-4 text-xs">
                   <div className="text-center">
                     <p className="font-stat text-lg font-bold text-primary-700">{certData.deliveriesCount}</p>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wide">Deliveries</p>
+                    <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Deliveries</p>
                   </div>
                   <div className="text-center">
                     <p className="font-stat text-lg font-bold text-accent-500">{Math.round(certData.hoursServed)}</p>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wide">Hours</p>
+                    <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Hours</p>
                   </div>
                   <div className="text-center">
                     <p className="font-stat text-lg font-bold text-primary-700">{certData.totalMeals}</p>
-                    <p className="text-[10px] text-gray-400 uppercase tracking-wide">Meals Saved</p>
+                    <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Meals Saved</p>
                   </div>
                 </div>
 
@@ -220,9 +220,9 @@ export function CertificatePage() {
                 <div className="absolute bottom-8 left-12 right-12 flex items-end justify-between">
                   {/* Signature */}
                   <div className="text-left">
-                    <p className="font-display italic text-gray-800 text-sm" style={{ fontFamily: 'Georgia, serif' }}>FoodBridge Team</p>
-                    <div className="h-px w-24 bg-gray-300 my-1" />
-                    <p className="text-[10px] text-gray-500">Authorized Signatory</p>
+                    <p className="font-display italic text-ink dark:text-cream text-sm" style={{ fontFamily: 'Georgia, serif' }}>FoodBridge Team</p>
+                    <div className="h-px w-24 bg-linen dark:bg-secondary-600 my-1" />
+                    <p className="text-[10px] text-ink-soft dark:text-cream/60">Authorized Signatory</p>
                   </div>
 
                   {/* Golden seal */}
@@ -248,18 +248,18 @@ export function CertificatePage() {
                     {qrUrl ? (
                       <img src={qrUrl} alt="QR Code" className="h-16 w-16 rounded-lg" />
                     ) : (
-                      <div className="h-16 w-16 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <QrCode className="h-8 w-8 text-gray-300" />
+                      <div className="h-16 w-16 bg-oat dark:bg-secondary-800 rounded-lg flex items-center justify-center">
+                        <QrCode className="h-8 w-8 text-ink-soft/40 dark:text-cream/30" />
                       </div>
                     )}
-                    <p className="text-[9px] text-gray-400 flex items-center gap-1">
+                    <p className="text-[9px] text-ink-soft/60 dark:text-cream/40 flex items-center gap-1">
                       <QrCode className="h-2.5 w-2.5" /> Scan to verify
                     </p>
                   </div>
                 </div>
 
                 {/* Bottom dates */}
-                <div className="absolute bottom-3 left-12 right-12 flex justify-between text-[9px] text-gray-400">
+                <div className="absolute bottom-3 left-12 right-12 flex justify-between text-[9px] text-ink-soft/60 dark:text-cream/40">
                   <p>Issue Date: {issueDateFormatted}</p>
                   <p>Organization: {certData.organizationName}</p>
                 </div>
@@ -294,22 +294,22 @@ export function CertificatePage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-sm">
               <div>
                 <Calendar className="h-5 w-5 text-primary-500 mx-auto mb-1" />
-                <p className="text-gray-400 text-xs">Issue Date</p>
+                <p className="text-ink-soft/60 dark:text-cream/40 text-xs">Issue Date</p>
                 <p className="font-medium">{issueDateFormatted}</p>
               </div>
               <div>
                 <Hash className="h-5 w-5 text-accent-500 mx-auto mb-1" />
-                <p className="text-gray-400 text-xs">Certificate ID</p>
+                <p className="text-ink-soft/60 dark:text-cream/40 text-xs">Certificate ID</p>
                 <p className="font-medium text-xs">{certData.certificateNumber}</p>
               </div>
               <div>
                 <Award className="h-5 w-5 text-primary-500 mx-auto mb-1" />
-                <p className="text-gray-400 text-xs">Deliveries</p>
+                <p className="text-ink-soft/60 dark:text-cream/40 text-xs">Deliveries</p>
                 <p className="font-medium">{certData.deliveriesCount}</p>
               </div>
               <div>
                 <ShieldCheck className="h-5 w-5 text-accent-500 mx-auto mb-1" />
-                <p className="text-gray-400 text-xs">Unique ID</p>
+                <p className="text-ink-soft/60 dark:text-cream/40 text-xs">Unique ID</p>
                 <p className="font-medium text-xs">{certData.uniqueId}</p>
               </div>
             </div>
@@ -356,7 +356,7 @@ export function CertificatePage() {
                   transition={{ duration: 2, delay: i * 0.1, repeat: Infinity, repeatDelay: 1 }}
                 />
               ))}
-              <button onClick={() => setShowSuccess(false)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"><X className="h-5 w-5" /></button>
+              <button onClick={() => setShowSuccess(false)} className="absolute top-4 right-4 text-ink-soft/60 dark:text-cream/40 hover:text-ink-soft dark:text-cream/70"><X className="h-5 w-5" /></button>
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -366,9 +366,9 @@ export function CertificatePage() {
                 <PartyPopper className="h-10 w-10 text-white" />
               </motion.div>
               <h2 className="font-display text-2xl font-bold mb-2">Certificate Generated!</h2>
-              <p className="text-sm text-gray-500 mb-1">Your certificate has been downloaded successfully.</p>
+              <p className="text-sm text-ink-soft dark:text-cream/60 mb-1">Your certificate has been downloaded successfully.</p>
               {certData && (
-                <div className="flex items-center justify-center gap-2 text-xs text-gray-400 mb-6">
+                <div className="flex items-center justify-center gap-2 text-xs text-ink-soft/60 dark:text-cream/40 mb-6">
                   <Sparkles className="h-3 w-3 text-accent-500" />
                   Certificate No: {certData.certificateNumber}
                   <Sparkles className="h-3 w-3 text-accent-500" />

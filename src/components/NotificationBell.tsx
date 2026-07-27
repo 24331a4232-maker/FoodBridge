@@ -96,9 +96,9 @@ export function NotificationBell() {
       <button
         onClick={() => setOpen((o) => !o)}
         aria-label="Notifications"
-        className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+        className="relative p-2 rounded-full hover:bg-oat dark:hover:bg-secondary-800 transition-colors"
       >
-        <Bell className="h-5 w-5 text-gray-700 dark:text-gray-300" />
+        <Bell className="h-5 w-5 text-ink-soft dark:text-cream/70" />
         <AnimatePresence>
           {unreadCount > 0 && (
             <motion.span
@@ -125,7 +125,7 @@ export function NotificationBell() {
             className="absolute right-0 mt-2 w-[min(92vw,400px)] glass-card p-0 z-50 overflow-hidden shadow-2xl"
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-800">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-linen dark:border-secondary-800">
               <div className="flex items-center gap-2">
                 <Bell className="h-4 w-4 text-primary-500" />
                 <h3 className="font-display font-semibold text-sm">Notifications</h3>
@@ -152,27 +152,27 @@ export function NotificationBell() {
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
-                <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-                  <X className="h-4 w-4" />
+                <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-oat dark:hover:bg-secondary-800 transition-colors">
+                  <X className="h-4 w-4 text-ink-soft dark:text-cream/60" />
                 </button>
               </div>
             </div>
 
             {/* Search */}
-            <div className="px-3 py-2 border-b border-gray-100 dark:border-gray-800">
+            <div className="px-3 py-2 border-b border-linen dark:border-secondary-800">
               <div className="relative">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-ink-soft/60 dark:text-cream/40" />
                 <input
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search notifications..."
-                  className="w-full pl-8 pr-3 py-1.5 text-sm rounded-xl bg-gray-50 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-primary-400 outline-none"
+                  className="w-full pl-8 pr-3 py-1.5 text-sm rounded-xl bg-cream dark:bg-secondary-800/60 border border-linen dark:border-secondary-700 text-ink dark:text-cream placeholder-ink-soft/50 dark:placeholder-cream/40 focus:ring-2 focus:ring-primary-400 outline-none"
                 />
               </div>
             </div>
 
             {/* Filters */}
-            <div className="flex gap-1 px-3 py-2 border-b border-gray-100 dark:border-gray-800 overflow-x-auto">
+            <div className="flex gap-1 px-3 py-2 border-b border-linen dark:border-secondary-800 overflow-x-auto">
               {filters.map((f) => (
                 <button
                   key={f.value}
@@ -180,7 +180,7 @@ export function NotificationBell() {
                   className={`px-3 py-1 text-xs font-medium rounded-full whitespace-nowrap transition-colors ${
                     filter === f.value
                       ? 'bg-primary-600 text-white'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                      : 'bg-oat dark:bg-secondary-800 text-ink-soft dark:text-cream/60 hover:bg-primary-50 dark:hover:bg-primary-900/30'
                   }`}
                 >
                   {f.label}
@@ -193,13 +193,13 @@ export function NotificationBell() {
               {loading ? (
                 <div className="p-6 space-y-3">
                   {[1, 2, 3].map((i) => (
-                    <div key={i} className="h-16 bg-gray-100 dark:bg-gray-800 rounded-2xl animate-pulse" />
+                    <div key={i} className="h-16 bg-oat dark:bg-secondary-800 rounded-2xl animate-pulse" />
                   ))}
                 </div>
               ) : filtered.length === 0 ? (
                 <div className="p-10 text-center">
-                  <Inbox className="h-10 w-10 text-gray-300 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400">No notifications here</p>
+                  <Inbox className="h-10 w-10 text-ink-soft/40 dark:text-cream/30 mx-auto mb-2" />
+                  <p className="text-sm text-ink-soft dark:text-cream/60">No notifications here</p>
                 </div>
               ) : (
                 <AnimatePresence initial={false}>
@@ -216,8 +216,8 @@ export function NotificationBell() {
                         transition={{ duration: 0.2 }}
                         whileHover={{ y: -2 }}
                         onClick={() => handleCardClick(n)}
-                        className={`group relative flex gap-3 px-4 py-3 cursor-pointer border-b border-gray-50 dark:border-gray-800/50 transition-colors ${
-                          !n.is_read ? 'bg-primary-50/40 dark:bg-primary-900/10' : 'hover:bg-gray-50 dark:hover:bg-gray-800/40'
+                        className={`group relative flex gap-3 px-4 py-3 cursor-pointer border-b border-linen/60 dark:border-secondary-800/50 transition-colors ${
+                          !n.is_read ? 'bg-primary-50/40 dark:bg-primary-900/10' : 'hover:bg-oat dark:hover:bg-secondary-800/40'
                         }`}
                       >
                         {!n.is_read && <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary-500" />}
@@ -229,9 +229,9 @@ export function NotificationBell() {
                             <p className="text-sm font-semibold truncate">{n.title}</p>
                             {!n.is_read && <span className="h-2 w-2 rounded-full bg-accent-500 shrink-0" />}
                           </div>
-                          <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-0.5">{n.description}</p>
+                          <p className="text-xs text-ink-soft dark:text-cream/60 line-clamp-2 mt-0.5">{n.description}</p>
                           <div className="flex items-center justify-between mt-1.5">
-                            <span className="text-[10px] text-gray-400">{timeAgo(n.created_at)}</span>
+                            <span className="text-[10px] text-ink-soft/60 dark:text-cream/40">{timeAgo(n.created_at)}</span>
                             <span className={`badge text-[9px] bg-gradient-to-r ${meta.gradient} text-white`}>{meta.label}</span>
                           </div>
                         </div>

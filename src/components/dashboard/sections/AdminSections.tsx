@@ -94,7 +94,7 @@ export function AdminOverviewSection() {
       <DashboardSectionHeader
         title="Dashboard Overview"
         description="Real-time overview of FoodBridge platform activity."
-        action={<div className="flex items-center gap-2 px-3 py-2 rounded-xl glass"><span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" /><span className="text-xs font-medium text-gray-600 dark:text-gray-300">{loading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Live Data'}</span></div>}
+        action={<div className="flex items-center gap-2 px-3 py-2 rounded-xl glass"><span className="h-2 w-2 rounded-full bg-green-500 animate-pulse" /><span className="text-xs font-medium text-ink-soft dark:text-cream/70">{loading ? <Loader2 className="h-3 w-3 animate-spin" /> : 'Live Data'}</span></div>}
       />
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 mb-8">
         {stats.map((stat, i) => {
@@ -105,8 +105,8 @@ export function AdminOverviewSection() {
               <div className={`h-10 w-10 rounded-xl bg-gradient-to-br ${meta.bg} text-white flex items-center justify-center shadow-lg mb-3`}>
                 <Icon className="h-5 w-5" />
               </div>
-              <p className="font-display text-xl sm:text-2xl font-bold tabular-nums">{loading ? <Loader2 className="h-4 w-4 animate-spin text-gray-400" /> : <AnimatedCounter value={stat.value} suffix={stat.suffix ?? ''} />}</p>
-              <p className="text-xs text-gray-500 mt-0.5 leading-tight">{stat.label}</p>
+              <p className="font-display text-xl sm:text-2xl font-bold tabular-nums">{loading ? <Loader2 className="h-4 w-4 animate-spin text-ink-soft/60 dark:text-cream/40" /> : <AnimatedCounter value={stat.value} suffix={stat.suffix ?? ''} />}</p>
+              <p className="text-xs text-ink-soft dark:text-cream/60 mt-0.5 leading-tight">{stat.label}</p>
             </motion.div>
           );
         })}
@@ -122,7 +122,7 @@ export function AdminOverviewSection() {
             </div>
           </div>
           <div className="h-[300px] relative">
-            {chartLoading ? <div className="absolute inset-0 flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : chartData.length === 0 ? <div className="absolute inset-0 flex items-center justify-center text-gray-400 text-sm">No data for this period</div> : (
+            {chartLoading ? <div className="absolute inset-0 flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div> : chartData.length === 0 ? <div className="absolute inset-0 flex items-center justify-center text-ink-soft/60 dark:text-cream/40 text-sm">No data for this period</div> : (
               <ResponsiveContainer width="100%" height="100%">
                 <ComposedChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -10 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.3} />
@@ -141,14 +141,14 @@ export function AdminOverviewSection() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="glass-card p-5 flex flex-col">
           <div className="flex items-center gap-2 mb-4"><span className="h-2.5 w-2.5 rounded-full bg-green-500 animate-pulse" /><h2 className="font-display text-lg font-bold">Live Activity</h2></div>
           <div className="space-y-2.5 flex-1 overflow-y-auto no-scrollbar max-h-[340px]">
-            {loading && <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-gray-400" /></div>}
-            {!loading && activities.length === 0 && <p className="text-center text-gray-400 text-sm py-8">No recent activity</p>}
+            {loading && <div className="flex justify-center py-8"><Loader2 className="h-5 w-5 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>}
+            {!loading && activities.length === 0 && <p className="text-center text-ink-soft/60 dark:text-cream/40 text-sm py-8">No recent activity</p>}
             {!loading && activities.map((act, i) => {
               const { icon: Icon, color } = activityMeta[act.type];
               return (
                 <motion.div key={act.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05 }} className="flex items-start gap-3 p-3 rounded-xl glass">
                   <div className={`h-9 w-9 rounded-lg ${color} text-white flex items-center justify-center shrink-0 shadow`}><Icon className="h-4 w-4" /></div>
-                  <div className="flex-1 min-w-0"><p className="text-sm font-medium leading-tight">{act.message}</p><p className="text-[11px] text-gray-400 mt-0.5">{act.timestamp}</p></div>
+                  <div className="flex-1 min-w-0"><p className="text-sm font-medium leading-tight">{act.message}</p><p className="text-[11px] text-ink-soft/60 dark:text-cream/40 mt-0.5">{act.timestamp}</p></div>
                 </motion.div>
               );
             })}
@@ -216,7 +216,7 @@ export function AdminDonationManagementSection() {
       </div>
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search donations..." className="input-field pl-12" />
         </div>
         <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="input-field sm:w-48">
@@ -228,18 +228,18 @@ export function AdminDonationManagementSection() {
           <option value="cancelled">Cancelled</option>
         </select>
       </div>
-      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : filtered.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-gray-500">No donations found.</p></div> : (
+      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div> : filtered.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-ink-soft dark:text-cream/60">No donations found.</p></div> : (
         <div className="space-y-2">
           {filtered.slice(0, 20).map((d, i) => {
-            const badgeClass = statusColors[d.status] || 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
+            const badgeClass = statusColors[d.status] || 'bg-oat dark:bg-secondary-800 text-ink-soft dark:text-cream/70';
             return (
             <motion.div key={d.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.02 }} className="glass-card p-4 flex items-center gap-4">
               <div className="h-10 w-10 rounded-xl bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center shrink-0"><Package className="h-5 w-5" /></div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{d.food_name}</p>
-                <p className="text-xs text-gray-500 truncate">{d.organization} - {d.donor_name}</p>
+                <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{d.organization} - {d.donor_name}</p>
               </div>
-              <div className="hidden sm:block text-xs text-gray-400">{d.quantity} {d.quantity_unit}</div>
+              <div className="hidden sm:block text-xs text-ink-soft/60 dark:text-cream/40">{d.quantity} {d.quantity_unit}</div>
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0 ${badgeClass}`}>{d.status}</span>
             </motion.div>
             );
@@ -269,7 +269,7 @@ export function AdminVolunteerManagementSection() {
   const availColors: Record<string, string> = {
     available: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
     on_delivery: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
-    offline: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    offline: 'bg-oat dark:bg-secondary-800 text-ink-soft dark:text-cream/70',
   };
 
   return (
@@ -281,7 +281,7 @@ export function AdminVolunteerManagementSection() {
         <StatCard icon={Clock} label="On Delivery" value={volunteers.filter((v) => v.availability === 'on_delivery').length} color="bg-amber-500" />
         <StatCard icon={Star} label="Avg Rating" value={(volunteers.reduce((s, v) => s + (v.rating ?? 0), 0) / (volunteers.length || 1)).toFixed(1)} color="bg-yellow-500" />
       </div>
-      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : volunteers.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-gray-500">No volunteers registered.</p></div> : (
+      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div> : volunteers.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-ink-soft dark:text-cream/60">No volunteers registered.</p></div> : (
         <div className="space-y-2">
           {volunteers.map((v, i) => {
             const availClass = availColors[v.availability] || availColors.offline;
@@ -290,7 +290,7 @@ export function AdminVolunteerManagementSection() {
               <div className="h-10 w-10 rounded-full bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 flex items-center justify-center text-sm font-bold shrink-0">{v.full_name?.[0]?.toUpperCase() ?? 'V'}</div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{v.full_name}</p>
-                <p className="text-xs text-gray-500 truncate">{v.total_deliveries} deliveries - {Math.round(v.total_hours)} hrs</p>
+                <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{v.total_deliveries} deliveries - {Math.round(v.total_hours)} hrs</p>
               </div>
               <div className="hidden sm:flex items-center gap-1 text-xs"><Star className="h-3.5 w-3.5 text-yellow-500" />{v.rating ?? 0}</div>
               <span className={`text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0 ${availClass}`}>{v.availability}</span>
@@ -338,16 +338,16 @@ export function AdminRestaurantManagementSection() {
         <StatCard icon={Package} label="Total Donations" value={Object.values(donationCounts).reduce((s, c) => s + c, 0)} color="bg-primary-500" />
         <StatCard icon={CheckCircle2} label="Verified" value={restaurants.filter((r) => r.is_verified).length} color="bg-green-500" />
       </div>
-      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : restaurants.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-gray-500">No restaurants registered.</p></div> : (
+      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div> : restaurants.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-ink-soft dark:text-cream/60">No restaurants registered.</p></div> : (
         <div className="space-y-2">
           {restaurants.map((r, i) => (
             <motion.div key={r.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="glass-card p-4 flex items-center gap-4">
               <div className="h-10 w-10 rounded-full bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300 flex items-center justify-center text-sm font-bold shrink-0">{r.full_name?.[0]?.toUpperCase() ?? 'R'}</div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{r.full_name}</p>
-                <p className="text-xs text-gray-500 truncate">{r.organization ?? r.email}</p>
+                <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{r.organization ?? r.email}</p>
               </div>
-              <div className="text-xs text-gray-500">{donationCounts[r.id] ?? 0} donations</div>
+              <div className="text-xs text-ink-soft dark:text-cream/60">{donationCounts[r.id] ?? 0} donations</div>
               {r.is_verified && <ShieldCheck className="h-4 w-4 text-green-500 shrink-0" />}
             </motion.div>
           ))}
@@ -381,16 +381,16 @@ export function AdminNgoManagementSection() {
         <StatCard icon={CheckCircle2} label="Verified" value={ngos.filter((n) => n.is_verified).length} color="bg-green-500" />
         <StatCard icon={Clock} label="Pending" value={ngos.filter((n) => !n.is_verified).length} color="bg-amber-500" />
       </div>
-      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : ngos.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-gray-500">No NGOs registered.</p></div> : (
+      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div> : ngos.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-ink-soft dark:text-cream/60">No NGOs registered.</p></div> : (
         <div className="space-y-2">
           {ngos.map((n, i) => (
             <motion.div key={n.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="glass-card p-4 flex items-center gap-4">
               <div className="h-10 w-10 rounded-full bg-teal-100 text-teal-600 dark:bg-teal-900/30 dark:text-teal-300 flex items-center justify-center text-sm font-bold shrink-0">{n.full_name?.[0]?.toUpperCase() ?? 'N'}</div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{n.full_name}</p>
-                <p className="text-xs text-gray-500 truncate">{n.organization ?? n.email}</p>
+                <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{n.organization ?? n.email}</p>
               </div>
-              <div className="hidden sm:block text-xs text-gray-500">{[n.city, n.state].filter(Boolean).join(', ') || 'No location'}</div>
+              <div className="hidden sm:block text-xs text-ink-soft dark:text-cream/60">{[n.city, n.state].filter(Boolean).join(', ') || 'No location'}</div>
               {n.is_verified ? <ShieldCheck className="h-4 w-4 text-green-500 shrink-0" /> : <Clock className="h-4 w-4 text-amber-500 shrink-0" />}
             </motion.div>
           ))}
@@ -451,9 +451,9 @@ export function AdminFoodQualitySection() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
       ) : filtered.length === 0 ? (
-        <div className="glass-card p-10 text-center"><ShieldCheck className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No quality inspections yet.</p></div>
+        <div className="glass-card p-10 text-center"><ShieldCheck className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" /><p className="text-ink-soft dark:text-cream/60">No quality inspections yet.</p></div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {filtered.map((insp, i) => (
@@ -465,7 +465,7 @@ export function AdminFoodQualitySection() {
                   </div>
                   <div className="min-w-0">
                     <p className="font-medium text-sm truncate">{insp.inspector_name || 'Unknown inspector'}</p>
-                    <p className="text-xs text-gray-400 truncate">{insp.donation?.food_name ?? 'Donation'} - {new Date(insp.created_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-ink-soft/60 dark:text-cream/40 truncate">{insp.donation?.food_name ?? 'Donation'} - {new Date(insp.created_at).toLocaleDateString()}</p>
                   </div>
                 </div>
                 <span className={`text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0 ${statusColors[insp.approval_status]}`}>{insp.approval_status}</span>
@@ -476,33 +476,33 @@ export function AdminFoodQualitySection() {
                 {insp.photo_url ? (
                   <img src={insp.photo_url} alt="Food" className="h-20 w-20 rounded-xl object-cover shrink-0" />
                 ) : (
-                  <div className="h-20 w-20 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0"><Camera className="h-6 w-6 text-gray-400" /></div>
+                  <div className="h-20 w-20 rounded-xl bg-oat dark:bg-secondary-800 flex items-center justify-center shrink-0"><Camera className="h-6 w-6 text-ink-soft/60 dark:text-cream/40" /></div>
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1 mb-1">
                     {[1, 2, 3, 4, 5].map((n) => (
-                      <Star key={n} className={`h-4 w-4 ${n <= (insp.rating ?? 0) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                      <Star key={n} className={`h-4 w-4 ${n <= (insp.rating ?? 0) ? 'fill-yellow-400 text-yellow-400' : 'text-linen dark:text-secondary-600'}`} />
                     ))}
-                    <span className="ml-1 text-xs text-gray-500">{insp.rating ?? 0}/5</span>
+                    <span className="ml-1 text-xs text-ink-soft dark:text-cream/60">{insp.rating ?? 0}/5</span>
                   </div>
                   {insp.approval_status === 'rejected' && insp.rejection_reason && (
                     <p className="text-xs text-red-600 dark:text-red-400 flex items-center gap-1 mt-1"><XCircle className="h-3 w-3" /> {reasonLabel(insp.rejection_reason)}</p>
                   )}
                   {insp.pickup?.current_lat != null && (
-                    <p className="text-xs text-gray-500 flex items-center gap-1 mt-1"><MapPin className="h-3 w-3" /> {insp.pickup.current_lat.toFixed(4)}, {insp.pickup.current_lng?.toFixed(4)}</p>
+                    <p className="text-xs text-ink-soft dark:text-cream/60 flex items-center gap-1 mt-1"><MapPin className="h-3 w-3" /> {insp.pickup.current_lat.toFixed(4)}, {insp.pickup.current_lng?.toFixed(4)}</p>
                   )}
                 </div>
               </div>
 
               {/* Quality grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs mb-3">
-                <div><span className="text-gray-400">Freshness:</span> <span className="font-medium capitalize">{insp.freshness}</span></div>
-                <div><span className="text-gray-400">Packaging:</span> <span className="font-medium capitalize">{insp.packaging}</span></div>
-                <div><span className="text-gray-400">Temp:</span> <span className="font-medium">{insp.temperature || 'N/A'}</span></div>
-                <div><span className="text-gray-400">Expiry:</span> <span className="font-medium capitalize">{insp.expiry_check}</span></div>
+                <div><span className="text-ink-soft/60 dark:text-cream/40">Freshness:</span> <span className="font-medium capitalize">{insp.freshness}</span></div>
+                <div><span className="text-ink-soft/60 dark:text-cream/40">Packaging:</span> <span className="font-medium capitalize">{insp.packaging}</span></div>
+                <div><span className="text-ink-soft/60 dark:text-cream/40">Temp:</span> <span className="font-medium">{insp.temperature || 'N/A'}</span></div>
+                <div><span className="text-ink-soft/60 dark:text-cream/40">Expiry:</span> <span className="font-medium capitalize">{insp.expiry_check}</span></div>
               </div>
 
-              {insp.notes && <p className="text-xs text-gray-500 mb-3">{insp.notes}</p>}
+              {insp.notes && <p className="text-xs text-ink-soft dark:text-cream/60 mb-3">{insp.notes}</p>}
 
               <RippleButton onClick={() => setSelected(selected?.id === insp.id ? null : insp)} variant="ghost" className="text-xs w-full">
                 <Eye className="h-3.5 w-3.5" /> {selected?.id === insp.id ? 'Hide' : 'View'} Full Report
@@ -558,7 +558,7 @@ export function AdminQrVerificationSection() {
     quality_rejected: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
     picked_up: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300',
     delivered: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300',
-    cancelled: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+    cancelled: 'bg-oat dark:bg-secondary-800 text-ink-soft dark:text-cream/70',
   };
 
   return (
@@ -570,7 +570,7 @@ export function AdminQrVerificationSection() {
         <StatCard icon={ShieldCheck} label="Quality Approved" value={handovers.filter((h) => h.handover_status === 'quality_approved' || h.handover_status === 'picked_up' || h.handover_status === 'delivered').length} color="bg-green-500" />
         <StatCard icon={Package} label="Picked Up" value={handovers.filter((h) => h.pickup_confirmed).length} color="bg-primary-500" />
       </div>
-      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : handovers.length === 0 ? <div className="glass-card p-10 text-center"><QrCode className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No donation handovers yet.</p></div> : (
+      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div> : handovers.length === 0 ? <div className="glass-card p-10 text-center"><QrCode className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" /><p className="text-ink-soft dark:text-cream/60">No donation handovers yet.</p></div> : (
         <div className="space-y-3">
           {handovers.map((h, i) => {
             const donation = (h as unknown as { donation?: FoodDonation }).donation;
@@ -583,32 +583,32 @@ export function AdminQrVerificationSection() {
                   <div className="h-10 w-10 rounded-xl bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-300 flex items-center justify-center shrink-0"><QrCode className="h-5 w-5" /></div>
                   <div className="flex-1 min-w-0">
                     <p className="font-medium text-sm truncate">{donation?.food_name ?? 'Donation'}</p>
-                    <p className="text-xs text-gray-500 truncate font-mono">{h.qr_code.slice(0, 40)}...</p>
+                    <p className="text-xs text-ink-soft dark:text-cream/60 truncate font-mono">{h.qr_code.slice(0, 40)}...</p>
                   </div>
                   <span className={`text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0 ${badgeClass}`}>{h.handover_status.replace(/_/g, ' ')}</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                  <div><span className="text-gray-400">Donor</span><p className="font-medium truncate">{donor?.full_name ?? h.donor_id?.slice(0, 8) ?? 'N/A'}</p></div>
-                  <div><span className="text-gray-400">Volunteer</span><p className="font-medium truncate">{volunteer?.full_name ?? 'Unassigned'}</p></div>
-                  <div><span className="text-gray-400">QR Verified</span><p className="font-medium">{h.qr_verified_at ? new Date(h.qr_verified_at).toLocaleString() : 'Not verified'}</p></div>
-                  <div><span className="text-gray-400">Pickup Time</span><p className="font-medium">{h.pickup_confirmed_at ? new Date(h.pickup_confirmed_at).toLocaleString() : 'Pending'}</p></div>
+                  <div><span className="text-ink-soft/60 dark:text-cream/40">Donor</span><p className="font-medium truncate">{donor?.full_name ?? h.donor_id?.slice(0, 8) ?? 'N/A'}</p></div>
+                  <div><span className="text-ink-soft/60 dark:text-cream/40">Volunteer</span><p className="font-medium truncate">{volunteer?.full_name ?? 'Unassigned'}</p></div>
+                  <div><span className="text-ink-soft/60 dark:text-cream/40">QR Verified</span><p className="font-medium">{h.qr_verified_at ? new Date(h.qr_verified_at).toLocaleString() : 'Not verified'}</p></div>
+                  <div><span className="text-ink-soft/60 dark:text-cream/40">Pickup Time</span><p className="font-medium">{h.pickup_confirmed_at ? new Date(h.pickup_confirmed_at).toLocaleString() : 'Pending'}</p></div>
                 </div>
                 <div className="flex items-center gap-3 mt-3 pt-3 border-t border-linen dark:border-secondary-800">
                   {h.pickup_photo_url ? (
                     <img src={h.pickup_photo_url} alt="Pickup" className="h-12 w-12 rounded-lg object-cover shrink-0" />
                   ) : (
-                    <div className="h-12 w-12 rounded-lg bg-gray-100 dark:bg-gray-800 flex items-center justify-center shrink-0"><Camera className="h-5 w-5 text-gray-400" /></div>
+                    <div className="h-12 w-12 rounded-lg bg-oat dark:bg-secondary-800 flex items-center justify-center shrink-0"><Camera className="h-5 w-5 text-ink-soft/60 dark:text-cream/40" /></div>
                   )}
                   <div className="flex-1 min-w-0">
                     {h.inspection_rating != null && (
                       <div className="flex items-center gap-1 mb-0.5">
                         {[1, 2, 3, 4, 5].map((n) => (
-                          <Star key={n} className={`h-3.5 w-3.5 ${n <= h.inspection_rating! ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                          <Star key={n} className={`h-3.5 w-3.5 ${n <= h.inspection_rating! ? 'fill-yellow-400 text-yellow-400' : 'text-linen dark:text-secondary-600'}`} />
                         ))}
-                        <span className="ml-1 text-xs text-gray-500">{h.inspection_rating}/5</span>
+                        <span className="ml-1 text-xs text-ink-soft dark:text-cream/60">{h.inspection_rating}/5</span>
                       </div>
                     )}
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-ink-soft dark:text-cream/60 truncate">
                       {h.quality_report ? `Quality: ${(h.quality_report as { approval?: string }).approval ?? 'N/A'}` : 'No quality report'}
                     </p>
                   </div>
@@ -648,16 +648,16 @@ export function AdminCertificateManagementSection() {
         <StatCard icon={Package} label="Total Deliveries" value={certs.reduce((s, c) => s + c.deliveries_count, 0)} color="bg-primary-500" />
         <StatCard icon={Clock} label="Total Hours" value={Math.round(certs.reduce((s, c) => s + c.hours_served, 0))} color="bg-blue-500" />
       </div>
-      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : certs.length === 0 ? <div className="glass-card p-10 text-center"><Award className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No certificates issued yet.</p></div> : (
+      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div> : certs.length === 0 ? <div className="glass-card p-10 text-center"><Award className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" /><p className="text-ink-soft dark:text-cream/60">No certificates issued yet.</p></div> : (
         <div className="space-y-2">
           {certs.map((c, i) => (
             <motion.div key={c.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="glass-card p-4 flex items-center gap-4">
               <div className="h-10 w-10 rounded-xl bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300 flex items-center justify-center shrink-0"><Award className="h-5 w-5" /></div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-sm truncate">{c.volunteer_name ?? 'Volunteer'}</p>
-                <p className="text-xs text-gray-400 font-mono truncate">{c.certificate_number}</p>
+                <p className="text-xs text-ink-soft/60 dark:text-cream/40 font-mono truncate">{c.certificate_number}</p>
               </div>
-              <div className="hidden sm:flex gap-3 text-xs text-gray-500">
+              <div className="hidden sm:flex gap-3 text-xs text-ink-soft dark:text-cream/60">
                 <span>{c.deliveries_count} deliveries</span>
                 <span>{Math.round(c.hours_served)} hrs</span>
               </div>
@@ -698,7 +698,7 @@ export function AdminAnalyticsSection() {
       <div className="glass-card p-5 mb-4">
         <h3 className="font-display font-bold mb-4 flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary-500" /> User Growth & Deliveries</h3>
         <div className="h-[300px] relative">
-          {loading ? <div className="absolute inset-0 flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : (
+          {loading ? <div className="absolute inset-0 flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div> : (
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -10 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.3} />
@@ -759,7 +759,7 @@ export function AdminReportsSection() {
   return (
     <div>
       <DashboardSectionHeader title="Reports" description="Generate and download platform reports." />
-      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div> : (
+      {loading ? <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div> : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {reports.map((r, i) => {
             const Icon = r.icon;
@@ -768,8 +768,8 @@ export function AdminReportsSection() {
                 <div className={`h-12 w-12 rounded-xl ${r.color} text-white flex items-center justify-center shadow-lg shrink-0`}><Icon className="h-6 w-6" /></div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium">{r.title}</p>
-                  <p className="text-xs text-gray-500">{r.desc}</p>
-                  <p className="text-xs text-gray-400 mt-1">{r.count} records</p>
+                  <p className="text-xs text-ink-soft dark:text-cream/60">{r.desc}</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 mt-1">{r.count} records</p>
                 </div>
                 <RippleButton onClick={() => handleExport(r.title)} variant="secondary" className="text-xs px-3 py-2 shrink-0"><Download className="h-3.5 w-3.5" /> Export</RippleButton>
               </motion.div>
@@ -787,15 +787,15 @@ export function AdminNotificationsSection() {
   return (
     <div>
       <DashboardSectionHeader title="Notifications" description={`${unreadCount} unread of ${notifications.length} total`} action={unreadCount > 0 ? <RippleButton onClick={markAllAsRead} variant="secondary">Mark all read</RippleButton> : undefined} />
-      {notifications.length === 0 ? <div className="glass-card p-10 text-center"><Bell className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No notifications.</p></div> : (
+      {notifications.length === 0 ? <div className="glass-card p-10 text-center"><Bell className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" /><p className="text-ink-soft dark:text-cream/60">No notifications.</p></div> : (
         <div className="space-y-2">
           {notifications.slice(0, 20).map((n, i) => (
             <motion.div key={n.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }} className={`glass-card p-4 flex items-start gap-3 ${!n.is_read ? 'border-l-4 border-primary-500' : ''}`}>
               <div className="h-9 w-9 rounded-lg bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center shrink-0"><Bell className="h-4 w-4" /></div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium">{n.title}</p>
-                <p className="text-xs text-gray-500 mt-0.5">{n.description}</p>
-                <p className="text-[10px] text-gray-400 mt-1">{new Date(n.created_at).toLocaleString()}</p>
+                <p className="text-xs text-ink-soft dark:text-cream/60 mt-0.5">{n.description}</p>
+                <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 mt-1">{new Date(n.created_at).toLocaleString()}</p>
               </div>
             </motion.div>
           ))}
@@ -874,7 +874,7 @@ export function AdminLoginActivitySection() {
 
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -894,11 +894,11 @@ export function AdminLoginActivitySection() {
       </div>
 
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
       ) : filtered.length === 0 ? (
         <div className="glass-card p-10 text-center">
-          <Clock className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No login activity recorded yet.</p>
+          <Clock className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" />
+          <p className="text-ink-soft dark:text-cream/60">No login activity recorded yet.</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -915,14 +915,14 @@ export function AdminLoginActivitySection() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate">{l.full_name || l.email}</p>
-                <p className="text-xs text-gray-500 truncate">{l.email}</p>
+                <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{l.email}</p>
               </div>
-              <span className={`hidden sm:inline-flex text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0 ${roleBadge[l.role] ?? 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300'}`}>
+              <span className={`hidden sm:inline-flex text-xs px-2.5 py-1 rounded-full font-medium capitalize shrink-0 ${roleBadge[l.role] ?? 'bg-oat dark:bg-secondary-800 text-ink-soft dark:text-cream/70'}`}>
                 {l.role || 'user'}
               </span>
               <div className="text-right shrink-0">
                 <p className="text-xs font-medium">{new Date(l.login_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</p>
-                <p className="text-xs text-gray-400">{new Date(l.login_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
+                <p className="text-xs text-ink-soft/60 dark:text-cream/40">{new Date(l.login_at).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}</p>
               </div>
             </motion.div>
           ))}
@@ -1051,28 +1051,28 @@ export function AdminSettingsSection() {
             {editingProfile ? (
               <>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1 flex items-center gap-1"><User className="h-3 w-3" /> Name</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1 flex items-center gap-1"><User className="h-3 w-3" /> Name</p>
                   <input value={profileForm.full_name} onChange={(e) => setProfileForm({ ...profileForm, full_name: e.target.value })} className="input-field" placeholder="Admin name" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1 flex items-center gap-1"><Mail className="h-3 w-3" /> Email</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1 flex items-center gap-1"><Mail className="h-3 w-3" /> Email</p>
                   <input value={profileForm.email} onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })} className="input-field" placeholder="admin@example.com" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400 mb-1 flex items-center gap-1"><Phone className="h-3 w-3" /> Phone</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1 flex items-center gap-1"><Phone className="h-3 w-3" /> Phone</p>
                   <input value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })} className="input-field" placeholder="+91 98765 43210" />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-400">Role</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40">Role</p>
                   <p className="font-medium capitalize">{profile?.role || '—'}</p>
                 </div>
               </>
             ) : (
               <>
-                <div><p className="text-xs text-gray-400">Name</p><p className="font-medium">{profile?.full_name || '—'}</p></div>
-                <div><p className="text-xs text-gray-400">Email</p><p className="font-medium break-all">{profile?.email || '—'}</p></div>
-                <div><p className="text-xs text-gray-400">Phone</p><p className="font-medium">{profile?.phone || '—'}</p></div>
-                <div><p className="text-xs text-gray-400">Role</p><p className="font-medium capitalize">{profile?.role || '—'}</p></div>
+                <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Name</p><p className="font-medium">{profile?.full_name || '—'}</p></div>
+                <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Email</p><p className="font-medium break-all">{profile?.email || '—'}</p></div>
+                <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Phone</p><p className="font-medium">{profile?.phone || '—'}</p></div>
+                <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Role</p><p className="font-medium capitalize">{profile?.role || '—'}</p></div>
               </>
             )}
           </div>
@@ -1082,14 +1082,14 @@ export function AdminSettingsSection() {
         <h3 className="font-display font-bold mb-4 flex items-center gap-2"><Bell className="h-5 w-5 text-primary-500" /> Notification Preferences</h3>
         <div className="space-y-3">
           {toggles.map((t) => (
-            <div key={t.key} className="flex items-center justify-between p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+            <div key={t.key} className="flex items-center justify-between p-3 rounded-xl bg-oat dark:bg-secondary-800/50">
               <div>
                 <p className="text-sm font-medium">{t.label}</p>
-                <p className="text-xs text-gray-500">{t.desc}</p>
+                <p className="text-xs text-ink-soft dark:text-cream/60">{t.desc}</p>
               </div>
               <button
                 onClick={() => setSettings((s) => ({ ...s, [t.key]: !s[t.key as keyof typeof s] }))}
-                className={`relative h-6 w-11 rounded-full transition-colors ${settings[t.key as keyof typeof settings] ? 'bg-primary-500' : 'bg-gray-300 dark:bg-gray-600'}`}
+                className={`relative h-6 w-11 rounded-full transition-colors ${settings[t.key as keyof typeof settings] ? 'bg-primary-500' : 'bg-linen dark:bg-secondary-600'}`}
               >
                 <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${settings[t.key as keyof typeof settings] ? 'translate-x-5' : 'translate-x-0.5'}`} />
               </button>
@@ -1100,10 +1100,10 @@ export function AdminSettingsSection() {
       <div className="glass-card p-6">
         <h3 className="font-display font-bold mb-4 flex items-center gap-2"><Settings className="h-5 w-5 text-primary-500" /> System Information</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div><p className="text-xs text-gray-400">Platform</p><p className="font-medium">FoodBridge</p></div>
-          <div><p className="text-xs text-gray-400">Admin Account</p><p className="font-medium">{profile?.email}</p></div>
-          <div><p className="text-xs text-gray-400">Last Login</p><p className="font-medium">{profile?.last_login ? new Date(profile.last_login).toLocaleString() : 'Never'}</p></div>
-          <div><p className="text-xs text-gray-400">Member Since</p><p className="font-medium">{profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : ''}</p></div>
+          <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Platform</p><p className="font-medium">FoodBridge</p></div>
+          <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Admin Account</p><p className="font-medium">{profile?.email}</p></div>
+          <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Last Login</p><p className="font-medium">{profile?.last_login ? new Date(profile.last_login).toLocaleString() : 'Never'}</p></div>
+          <div><p className="text-xs text-ink-soft/60 dark:text-cream/40">Member Since</p><p className="font-medium">{profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : ''}</p></div>
         </div>
       </div>
     </div>

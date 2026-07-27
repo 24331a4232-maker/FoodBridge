@@ -83,10 +83,10 @@ function AchievementCard({ a, earned, index }: { a: Achievement; earned: boolean
       className={`relative group rounded-[20px] p-[1.5px] overflow-hidden ${
         earned
           ? `bg-gradient-to-br ${a.gradient}`
-          : 'bg-gray-200 dark:bg-gray-700'
+          : 'bg-linen dark:bg-secondary-700'
       }`}
     >
-      <div className="relative rounded-[19px] p-5 h-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl">
+      <div className="relative rounded-[19px] p-5 h-full bg-white/80 dark:bg-secondary-900/80 backdrop-blur-xl">
         {earned && (
           <div className={`absolute -top-8 -right-8 h-24 w-24 rounded-full bg-gradient-to-br ${a.gradient} opacity-20 blur-2xl group-hover:opacity-40 transition-opacity`} />
         )}
@@ -102,18 +102,18 @@ function AchievementCard({ a, earned, index }: { a: Achievement; earned: boolean
           >
             <Icon className="h-8 w-8" />
             {earned ? (
-              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary-500 text-white flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
+              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-primary-500 text-white flex items-center justify-center ring-2 ring-white dark:ring-secondary-900">
                 <Check className="h-3 w-3" />
               </span>
             ) : (
-              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-gray-400 text-white flex items-center justify-center ring-2 ring-white dark:ring-gray-900">
+              <span className="absolute -top-1 -right-1 h-5 w-5 rounded-full bg-ink-soft/40 dark:bg-cream/40 text-white flex items-center justify-center ring-2 ring-white dark:ring-secondary-900">
                 <Lock className="h-2.5 w-2.5" />
               </span>
             )}
           </motion.div>
           <p className="font-display font-bold text-sm mt-3">{a.label}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{a.description}</p>
-          <span className={`text-[10px] mt-2 px-2 py-0.5 rounded-full ${earned ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`}>
+          <p className="text-xs text-ink-soft dark:text-cream/60 mt-1">{a.description}</p>
+          <span className={`text-[10px] mt-2 px-2 py-0.5 rounded-full ${earned ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-oat dark:bg-secondary-800 text-ink-soft/60 dark:text-cream/40'}`}>
             {earned ? 'Unlocked' : `${a.threshold} ${a.metric}`}
           </span>
         </div>
@@ -123,7 +123,7 @@ function AchievementCard({ a, earned, index }: { a: Achievement; earned: boolean
 }
 
 function LeaderboardCard({ entry, rank }: { entry: LeaderboardEntry; rank: number }) {
-  const medal = rank === 1 ? { bg: 'bg-gradient-to-br from-yellow-400 to-gold-500', ring: 'ring-yellow-300', label: 'Gold' } : rank === 2 ? { bg: 'bg-gradient-to-br from-slate-300 to-slate-400', ring: 'ring-slate-200', label: 'Silver' } : rank === 3 ? { bg: 'bg-gradient-to-br from-gold-600 to-accent-700', ring: 'ring-gold-400', label: 'Bronze' } : { bg: 'bg-gray-100 dark:bg-gray-800', ring: 'ring-gray-200 dark:ring-gray-700', label: '' };
+  const medal = rank === 1 ? { bg: 'bg-gradient-to-br from-yellow-400 to-gold-500', ring: 'ring-yellow-300', label: 'Gold' } : rank === 2 ? { bg: 'bg-gradient-to-br from-slate-300 to-slate-400', ring: 'ring-slate-200', label: 'Silver' } : rank === 3 ? { bg: 'bg-gradient-to-br from-gold-600 to-accent-700', ring: 'ring-gold-400', label: 'Bronze' } : { bg: 'bg-oat dark:bg-secondary-800', ring: 'ring-linen dark:ring-secondary-700', label: '' };
   const isPodium = rank <= 3;
   return (
     <motion.div
@@ -144,13 +144,13 @@ function LeaderboardCard({ entry, rank }: { entry: LeaderboardEntry; rank: numbe
           <p className="font-display font-bold truncate">{entry.name}</p>
           {rank === 1 && <Crown className="h-4 w-4 text-yellow-500 flex-shrink-0" />}
         </div>
-        <p className="text-xs text-gray-500">{entry.city}</p>
+        <p className="text-xs text-ink-soft dark:text-cream/60">{entry.city}</p>
       </div>
       <div className="text-right flex-shrink-0">
         <p className="font-display font-bold text-lg gradient-text">
           <AnimatedCounter value={entry.points} />
         </p>
-        <p className="text-[10px] text-gray-400">{entry.deliveries > 0 ? `${entry.deliveries} deliveries` : `${entry.meals} meals`}</p>
+        <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">{entry.deliveries > 0 ? `${entry.deliveries} deliveries` : `${entry.meals} meals`}</p>
       </div>
     </motion.div>
   );
@@ -257,16 +257,16 @@ export function AchievementsPage() {
                 <CurrentLevelIcon className="h-8 w-8" />
               </div>
               <div>
-                <p className="text-xs text-gray-400 uppercase tracking-wide">Current Level</p>
+                <p className="text-xs text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Current Level</p>
                 <h3 className="font-display text-2xl font-bold">Level {currentLevel.level} — {currentLevel.name}</h3>
               </div>
             </div>
             <div className="relative">
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="text-gray-500">{points.toLocaleString()} pts</span>
-                <span className="text-gray-500">{nextLevel ? `${nextLevel.minPoints.toLocaleString()} pts to ${nextLevel.name}` : 'Max level reached'}</span>
+                <span className="text-ink-soft dark:text-cream/60">{points.toLocaleString()} pts</span>
+                <span className="text-ink-soft dark:text-cream/60">{nextLevel ? `${nextLevel.minPoints.toLocaleString()} pts to ${nextLevel.name}` : 'Max level reached'}</span>
               </div>
-              <div className="h-3 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+              <div className="h-3 rounded-full bg-oat dark:bg-secondary-800 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
                   whileInView={{ width: `${levelProgress}%` }}
@@ -275,17 +275,17 @@ export function AchievementsPage() {
                   className={`h-full rounded-full bg-gradient-to-r ${currentLevel.gradient}`}
                 />
               </div>
-              <p className="text-xs text-gray-400 mt-2 text-right">{levelProgress}% to next level</p>
+              <p className="text-xs text-ink-soft/60 dark:text-cream/40 mt-2 text-right">{levelProgress}% to next level</p>
             </div>
             <div className="relative grid grid-cols-3 sm:grid-cols-6 gap-2 mt-6">
               {levels.map((l) => {
                 const reached = points >= l.minPoints;
                 const LevelIcon = l.icon;
                 return (
-                  <div key={l.level} className={`text-center p-2 rounded-xl ${reached ? 'bg-primary-50 dark:bg-primary-900/20' : 'bg-gray-50 dark:bg-gray-800/30 opacity-50'}`}>
-                    <LevelIcon className={`h-5 w-5 mx-auto ${reached ? 'text-primary-600' : 'text-gray-400'}`} />
-                    <p className="text-[10px] mt-1 font-medium">L{l.level}</p>
-                    <p className="text-[9px] text-gray-400 truncate">{l.name}</p>
+                  <div key={l.level} className={`text-center p-2 rounded-xl ${reached ? 'bg-primary-50 dark:bg-primary-900/20' : 'bg-oat dark:bg-secondary-800/30 opacity-50'}`}>
+                    <LevelIcon className={`h-5 w-5 mx-auto ${reached ? 'text-primary-600' : 'text-ink-soft/40 dark:text-cream/40'}`} />
+                    <p className="text-[10px] mt-1 font-medium text-ink dark:text-cream">L{l.level}</p>
+                    <p className="text-[9px] text-ink-soft/60 dark:text-cream/40 truncate">{l.name}</p>
                   </div>
                 );
               })}
@@ -299,7 +299,7 @@ export function AchievementsPage() {
               {pointRules.map((r) => {
                 const RuleIcon = r.icon;
                 return (
-                  <div key={r.action} className="flex items-center gap-3 p-3 rounded-xl bg-gray-50 dark:bg-gray-800/50">
+                  <div key={r.action} className="flex items-center gap-3 p-3 rounded-xl bg-oat dark:bg-secondary-800/50">
                     <RuleIcon className={`h-5 w-5 ${r.color}`} />
                     <span className="text-sm flex-1">{r.action}</span>
                     <span className="font-bold text-sm text-primary-600">+{r.points}</span>
@@ -315,7 +315,7 @@ export function AchievementsPage() {
           <motion.h3 variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="font-display text-2xl font-bold mb-2">
             {tier === 'donor' ? 'Donor Achievements' : 'Volunteer Achievements'}
           </motion.h3>
-          <motion.p variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-gray-500 mb-8">
+          <motion.p variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-ink-soft dark:text-cream/60 mb-8">
             {earned.length} of {achievementList.length} badges unlocked. Keep going to earn them all!
           </motion.p>
           <motion.div
@@ -354,13 +354,13 @@ export function AchievementsPage() {
                     <ChallengeIcon className="h-6 w-6" />
                   </div>
                   <p className="font-display font-bold">{c.title}</p>
-                  <p className="text-xs text-gray-500 mt-1">Reward: +{c.reward} points</p>
+                  <p className="text-xs text-ink-soft dark:text-cream/60 mt-1">Reward: +{c.reward} points</p>
                   <div className="mt-4">
-                    <div className="flex justify-between text-xs text-gray-400 mb-1.5">
+                    <div className="flex justify-between text-xs text-ink-soft/60 dark:text-cream/40 mb-1.5">
                       <span>{value} / {c.goal} {c.unit}</span>
                       <span>{progress}%</span>
                     </div>
-                    <div className="h-2 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                    <div className="h-2 rounded-full bg-oat dark:bg-secondary-800 overflow-hidden">
                       <motion.div initial={{ width: 0 }} whileInView={{ width: `${progress}%` }} viewport={{ once: true }} transition={{ duration: 1 }} className={`h-full rounded-full bg-gradient-to-r ${c.gradient}`} />
                     </div>
                   </div>
@@ -378,7 +378,7 @@ export function AchievementsPage() {
           <motion.h3 variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="font-display text-2xl font-bold mb-2">
             Top Contributors
           </motion.h3>
-          <motion.p variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-gray-500 mb-6">
+          <motion.p variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="text-ink-soft dark:text-cream/60 mb-6">
             The leaders driving FoodBridge's mission forward.
           </motion.p>
 
@@ -391,7 +391,7 @@ export function AchievementsPage() {
                   onClick={() => setActiveTab(t.id)}
                   className={isActive
                     ? 'px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-primary-600 to-primary-600 text-white shadow-lg'
-                    : 'px-4 py-2 rounded-full text-sm font-medium glass text-gray-600 dark:text-gray-300 hover:bg-primary-50 dark:hover:bg-primary-900/20'}
+                    : 'px-4 py-2 rounded-full text-sm font-medium glass text-ink-soft dark:text-cream/70 hover:bg-primary-50 dark:hover:bg-primary-900/20'}
                 >
                   {t.label}
                 </button>
@@ -425,7 +425,7 @@ export function AchievementsPage() {
           <h2 className="font-display text-2xl sm:text-3xl font-bold mb-4 relative z-10">Climb the Leaderboard</h2>
           <p className="text-white/90 max-w-lg mx-auto mb-8 relative z-10">Every delivery earns points, unlocks badges, and moves you up the ranks.</p>
           <div className="flex flex-wrap items-center justify-center gap-4 relative z-10">
-            <Link to="/dashboard/volunteer"><RippleButton className="bg-white text-primary-700 hover:bg-gray-50">Go to Dashboard <ArrowRight className="h-4 w-4" /></RippleButton></Link>
+            <Link to="/dashboard/volunteer"><RippleButton className="bg-white text-primary-700 hover:bg-cream">Go to Dashboard <ArrowRight className="h-4 w-4" /></RippleButton></Link>
             <Link to="/profile"><RippleButton variant="ghost" className="text-white hover:bg-white/10">View Profile</RippleButton></Link>
           </div>
         </motion.div>

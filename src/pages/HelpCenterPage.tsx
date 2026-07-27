@@ -148,7 +148,7 @@ export function HelpCenterPage() {
           <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold gradient-text">
             Frequently Asked Questions
           </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-xl mx-auto">
+          <p className="text-ink-soft dark:text-cream/60 mt-3 max-w-xl mx-auto">
             Find answers to the most common questions about FoodBridge.
           </p>
         </motion.div>
@@ -160,7 +160,7 @@ export function HelpCenterPage() {
           transition={{ delay: 0.1 }}
           className="relative max-w-xl mx-auto mt-8"
         >
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
@@ -227,7 +227,7 @@ export function HelpCenterPage() {
                         transition={{ duration: 0.35, ease: [0.25, 0.4, 0.25, 1] }}
                         className="overflow-hidden"
                       >
-                        <div className="px-5 pb-5 pl-20 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        <div className="px-5 pb-5 pl-20 text-sm text-ink-soft dark:text-cream/60 leading-relaxed">
                           {f.a}
                         </div>
                       </motion.div>
@@ -241,10 +241,10 @@ export function HelpCenterPage() {
           {filtered.length === 0 && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-16">
               <div className="h-16 w-16 rounded-full glass flex items-center justify-center mx-auto mb-4">
-                <Search className="h-7 w-7 text-gray-400" />
+                <Search className="h-7 w-7 text-ink-soft/60 dark:text-cream/40" />
               </div>
               <p className="font-medium">No questions found</p>
-              <p className="text-sm text-gray-500 mt-1">Try a different search or category.</p>
+              <p className="text-sm text-ink-soft dark:text-cream/60 mt-1">Try a different search or category.</p>
             </motion.div>
           )}
         </motion.div>
@@ -269,7 +269,7 @@ export function HelpCenterPage() {
                   <Mail className="h-6 w-6" />
                 </span>
                 <span>
-                  <p className="text-xs text-gray-400">Email</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40">Email</p>
                   <p className="font-medium">support@foodbridge.org</p>
                 </span>
               </a>
@@ -278,7 +278,7 @@ export function HelpCenterPage() {
                   <Phone className="h-6 w-6" />
                 </span>
                 <span>
-                  <p className="text-xs text-gray-400">Phone</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40">Phone</p>
                   <p className="font-medium">+91 98765 43210</p>
                 </span>
               </a>
@@ -327,7 +327,7 @@ function FilterPill({
       className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
         active
           ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/30'
-          : 'glass text-gray-600 dark:text-gray-300 hover:text-primary-600'
+          : 'glass text-ink-soft dark:text-cream/70 hover:text-primary-600'
       }`}
     >
       {Icon && <Icon className="h-4 w-4" />}

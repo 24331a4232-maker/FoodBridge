@@ -73,11 +73,11 @@ export function VolunteerAssignedSection() {
         <StatCard icon={Package} label="Total" value={pickups.length} color="bg-primary-500" />
       </div>
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
       ) : active.length === 0 ? (
         <div className="glass-card p-10 text-center">
-          <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500 mb-4">No active assignments right now.</p>
+          <Package className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" />
+          <p className="text-ink-soft dark:text-cream/60 mb-4">No active assignments right now.</p>
           <Link to="/services/available-food"><RippleButton variant="primary">Browse Available Food</RippleButton></Link>
         </div>
       ) : (
@@ -90,7 +90,7 @@ export function VolunteerAssignedSection() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium truncate">{p.donation?.food_name ?? 'Pickup'}</p>
-                  <p className="text-xs text-gray-500 truncate">{p.donation?.organization} - {p.donation?.address ?? ''}</p>
+                  <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{p.donation?.organization} - {p.donation?.address ?? ''}</p>
                 </div>
                 <RippleButton onClick={() => markDelivered(p)} variant="primary" className="text-xs px-3 py-2 shrink-0">
                   <CheckCircle2 className="h-3.5 w-3.5" /> Delivered
@@ -206,9 +206,9 @@ export function VolunteerLiveTrackingSection() {
         <LeafletMap points={mapPoints} showRoute={!!route} routeCoords={route?.coordinates ?? []} height="h-80" center={position ? [position.lat, position.lng] : [20.5937, 78.9629]} zoom={position ? 13 : 5} />
       </div>
       {loading ? (
-        <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+        <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
       ) : active.length === 0 ? (
-        <div className="glass-card p-8 text-center"><p className="text-gray-500">No active deliveries to track.</p></div>
+        <div className="glass-card p-8 text-center"><p className="text-ink-soft dark:text-cream/60">No active deliveries to track.</p></div>
       ) : (
         <div className="space-y-3">
           {active.map((p) => {
@@ -220,9 +220,9 @@ export function VolunteerLiveTrackingSection() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm truncate">{p.donation?.food_name}</p>
-                  <p className="text-xs text-gray-500 truncate">{p.donation?.organization}</p>
+                  <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{p.donation?.organization}</p>
                 </div>
-                {dist != null && <span className="text-xs text-gray-400 shrink-0">{dist.toFixed(1)} km</span>}
+                {dist != null && <span className="text-xs text-ink-soft/60 dark:text-cream/40 shrink-0">{dist.toFixed(1)} km</span>}
                 {position && p.donation?.latitude != null && (
                   <RippleButton onClick={() => generateRoute(p.donation!)} variant="ghost" className="text-xs px-3 py-1.5 shrink-0" disabled={routeLoading}>
                     <Navigation className="h-3 w-3" /> Route
@@ -264,9 +264,9 @@ export function VolunteerDeliveryHistorySection() {
         <StatCard icon={Zap} label="Points" value={profile?.reward_points ?? 0} color="bg-yellow-500" />
       </div>
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
       ) : completed.length === 0 ? (
-        <div className="glass-card p-10 text-center"><CheckCircle2 className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No completed deliveries yet.</p></div>
+        <div className="glass-card p-10 text-center"><CheckCircle2 className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" /><p className="text-ink-soft dark:text-cream/60">No completed deliveries yet.</p></div>
       ) : (
         <div className="relative pl-6 space-y-4">
           <div className="absolute left-2 top-2 bottom-2 w-0.5 bg-primary-200 dark:bg-primary-800" />
@@ -274,7 +274,7 @@ export function VolunteerDeliveryHistorySection() {
             <div key={p.id} className="relative">
               <div className="absolute -left-4 top-1 h-3 w-3 rounded-full bg-primary-500 ring-4 ring-primary-100 dark:ring-primary-900" />
               <p className="font-semibold text-sm">{p.donation?.food_name ?? 'Delivery'}</p>
-              <p className="text-xs text-gray-500">{p.donation?.organization} - {new Date(p.delivered_at ?? p.created_at).toLocaleDateString()}</p>
+              <p className="text-xs text-ink-soft dark:text-cream/60">{p.donation?.organization} - {new Date(p.delivered_at ?? p.created_at).toLocaleDateString()}</p>
               <span className="badge bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 mt-1">+{p.points_earned} pts</span>
             </div>
           ))}
@@ -469,7 +469,7 @@ export function VolunteerFoodQualitySection() {
 
       {!position && (
         <div className="glass-card p-4 mb-4 flex items-center justify-between gap-3">
-          <p className="text-sm text-gray-500 flex items-center gap-2"><MapPin className="h-4 w-4 text-primary-500" /> Enable location to track your route and tag inspections.</p>
+          <p className="text-sm text-ink-soft dark:text-cream/60 flex items-center gap-2"><MapPin className="h-4 w-4 text-primary-500" /> Enable location to track your route and tag inspections.</p>
           <RippleButton onClick={requestGeo} variant="ghost" className="text-xs shrink-0" disabled={geoLoading}>
             {geoLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <MapPin className="h-3 w-3" />} Enable
           </RippleButton>
@@ -477,11 +477,11 @@ export function VolunteerFoodQualitySection() {
       )}
 
       {loading ? (
-        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
       ) : pickups.length === 0 ? (
         <div className="glass-card p-10 text-center">
-          <ShieldCheck className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-          <p className="text-gray-500">No active pickups to inspect.</p>
+          <ShieldCheck className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" />
+          <p className="text-ink-soft dark:text-cream/60">No active pickups to inspect.</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -504,7 +504,7 @@ export function VolunteerFoodQualitySection() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="font-medium truncate">{p.donation?.food_name}</p>
-                    <p className="text-xs text-gray-500 truncate">{p.donation?.organization} - {p.donation?.address ?? ''}</p>
+                    <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{p.donation?.organization} - {p.donation?.address ?? ''}</p>
                   </div>
                   <span className={`text-xs px-2.5 py-1 rounded-full font-medium shrink-0 ${started ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300'}`}>
                     {started ? 'In Progress' : 'Assigned'}
@@ -518,7 +518,7 @@ export function VolunteerFoodQualitySection() {
                       <span className="h-6 w-6 rounded-full bg-primary-500 text-white flex items-center justify-center text-xs">1</span>
                       Accept & Navigate to Pickup
                     </div>
-                    <p className="text-xs text-gray-500 mb-3 ml-8">Accept the donation to start navigating to the pickup location.</p>
+                    <p className="text-xs text-ink-soft dark:text-cream/60 mb-3 ml-8">Accept the donation to start navigating to the pickup location.</p>
                     <RippleButton onClick={() => startPickup(p)} variant="primary" className="ml-8">
                       <Navigation className="h-4 w-4" /> Accept & Start Pickup
                     </RippleButton>
@@ -542,9 +542,9 @@ export function VolunteerFoodQualitySection() {
                               key={c.key}
                               type="button"
                               onClick={() => updateForm(p.id, { checklist: { ...f.checklist, [c.key]: !checked } })}
-                              className={`w-full flex items-center gap-3 p-3 rounded-xl text-left text-sm transition-colors ${checked ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800'}`}
+                              className={`w-full flex items-center gap-3 p-3 rounded-xl text-left text-sm transition-colors ${checked ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300' : 'bg-oat dark:bg-secondary-800/50 hover:bg-linen dark:hover:bg-secondary-800'}`}
                             >
-                              <div className={`h-5 w-5 rounded-md flex items-center justify-center shrink-0 ${checked ? 'bg-primary-500 text-white' : 'border-2 border-gray-300 dark:border-gray-600'}`}>
+                              <div className={`h-5 w-5 rounded-md flex items-center justify-center shrink-0 ${checked ? 'bg-primary-500 text-white' : 'border-2 border-linen dark:border-secondary-600'}`}>
                                 {checked && <CheckCircle className="h-3.5 w-3.5" />}
                               </div>
                               {c.label}
@@ -561,15 +561,15 @@ export function VolunteerFoodQualitySection() {
                         Upload Food Photo
                       </p>
                       <div className="ml-8">
-                        <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 cursor-pointer hover:border-primary-400 transition-colors">
+                        <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-linen dark:border-secondary-600 cursor-pointer hover:border-primary-400 transition-colors">
                           {uploading === p.id ? (
                             <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
                           ) : f.photoUrl ? (
                             <img src={f.photoUrl} alt="Food" className="h-32 w-full object-cover rounded-lg" />
                           ) : (
                             <>
-                              <Camera className="h-8 w-8 text-gray-400" />
-                              <span className="text-xs text-gray-500">Tap to add a photo</span>
+                              <Camera className="h-8 w-8 text-ink-soft/60 dark:text-cream/40" />
+                              <span className="text-xs text-ink-soft dark:text-cream/60">Tap to add a photo</span>
                             </>
                           )}
                           <input
@@ -591,10 +591,10 @@ export function VolunteerFoodQualitySection() {
                       <div className="ml-8 flex items-center gap-1">
                         {[1, 2, 3, 4, 5].map((n) => (
                           <button key={n} type="button" onClick={() => updateForm(p.id, { rating: n })} className="p-1">
-                            <Star className={`h-7 w-7 transition-colors ${n <= f.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300 dark:text-gray-600'}`} />
+                            <Star className={`h-7 w-7 transition-colors ${n <= f.rating ? 'fill-yellow-400 text-yellow-400' : 'text-linen dark:text-secondary-600'}`} />
                           </button>
                         ))}
-                        <span className="ml-2 text-sm text-gray-500">{f.rating > 0 ? `${f.rating}/5` : 'Tap a star'}</span>
+                        <span className="ml-2 text-sm text-ink-soft dark:text-cream/60">{f.rating > 0 ? `${f.rating}/5` : 'Tap a star'}</span>
                       </div>
                     </div>
 
@@ -608,14 +608,14 @@ export function VolunteerFoodQualitySection() {
                         <button
                           type="button"
                           onClick={() => updateForm(p.id, { approval: 'approved', rejectionReason: '' })}
-                          className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${f.approval === 'approved' ? 'bg-green-500 text-white shadow-lg' : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-green-50 dark:hover:bg-green-900/20'}`}
+                          className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${f.approval === 'approved' ? 'bg-green-500 text-white shadow-lg' : 'bg-oat dark:bg-secondary-800/50 text-ink-soft dark:text-cream/70 hover:bg-green-50 dark:hover:bg-green-900/20'}`}
                         >
                           <CheckCircle className="h-4 w-4" /> Approved
                         </button>
                         <button
                           type="button"
                           onClick={() => updateForm(p.id, { approval: 'rejected' })}
-                          className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${f.approval === 'rejected' ? 'bg-red-500 text-white shadow-lg' : 'bg-gray-50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20'}`}
+                          className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${f.approval === 'rejected' ? 'bg-red-500 text-white shadow-lg' : 'bg-oat dark:bg-secondary-800/50 text-ink-soft dark:text-cream/70 hover:bg-red-50 dark:hover:bg-red-900/20'}`}
                         >
                           <XCircle className="h-4 w-4" /> Rejected
                         </button>
@@ -635,9 +635,9 @@ export function VolunteerFoodQualitySection() {
                               key={r.value}
                               type="button"
                               onClick={() => updateForm(p.id, { rejectionReason: r.value })}
-                              className={`flex items-center gap-2 p-3 rounded-xl text-sm text-left transition-colors ${f.rejectionReason === r.value ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 ring-2 ring-red-400' : 'bg-gray-50 dark:bg-gray-800/50 hover:bg-red-50 dark:hover:bg-red-900/20'}`}
+                              className={`flex items-center gap-2 p-3 rounded-xl text-sm text-left transition-colors ${f.rejectionReason === r.value ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300 ring-2 ring-red-400' : 'bg-oat dark:bg-secondary-800/50 hover:bg-red-50 dark:hover:bg-red-900/20'}`}
                             >
-                              <div className={`h-4 w-4 rounded-full border-2 shrink-0 ${f.rejectionReason === r.value ? 'border-red-500 bg-red-500' : 'border-gray-300 dark:border-gray-600'}`} />
+                              <div className={`h-4 w-4 rounded-full border-2 shrink-0 ${f.rejectionReason === r.value ? 'border-red-500 bg-red-500' : 'border-linen dark:border-secondary-600'}`} />
                               {r.label}
                             </button>
                           ))}
@@ -648,7 +648,7 @@ export function VolunteerFoodQualitySection() {
                     {/* Extra details */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       <div>
-                        <label className="text-xs text-gray-500 mb-1 block">Freshness</label>
+                        <label className="text-xs text-ink-soft dark:text-cream/60 mb-1 block">Freshness</label>
                         <select value={f.freshness} onChange={(e) => updateForm(p.id, { freshness: e.target.value as InspectionForm['freshness'] })} className="input-field text-sm">
                           <option value="fresh">Fresh</option>
                           <option value="good">Good</option>
@@ -657,7 +657,7 @@ export function VolunteerFoodQualitySection() {
                         </select>
                       </div>
                       <div>
-                        <label className="text-xs text-gray-500 mb-1 block">Packaging</label>
+                        <label className="text-xs text-ink-soft dark:text-cream/60 mb-1 block">Packaging</label>
                         <select value={f.packaging} onChange={(e) => updateForm(p.id, { packaging: e.target.value as InspectionForm['packaging'] })} className="input-field text-sm">
                           <option value="excellent">Excellent</option>
                           <option value="good">Good</option>
@@ -666,7 +666,7 @@ export function VolunteerFoodQualitySection() {
                         </select>
                       </div>
                       <div>
-                        <label className="text-xs text-gray-500 mb-1 block">Temperature (°C)</label>
+                        <label className="text-xs text-ink-soft dark:text-cream/60 mb-1 block">Temperature (°C)</label>
                         <input type="number" value={f.temperature} onChange={(e) => updateForm(p.id, { temperature: e.target.value })} placeholder="e.g. 4" className="input-field text-sm" />
                       </div>
                     </div>
@@ -732,7 +732,7 @@ export function VolunteerAvailabilitySection() {
           const colorMap: Record<string, string> = {
             green: isActive ? 'bg-green-500 text-white' : 'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-300',
             amber: isActive ? 'bg-amber-500 text-white' : 'bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300',
-            gray: isActive ? 'bg-gray-500 text-white' : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300',
+            gray: isActive ? 'bg-ink-soft text-white' : 'bg-oat text-ink-soft dark:bg-secondary-800 dark:text-cream/60',
           };
           return (
             <button key={opt.value} onClick={() => update(opt.value)} disabled={saving} className={`glass-card p-5 text-left transition-all ${isActive ? 'ring-2 ring-primary-500 shadow-lg' : 'hover:shadow-md'}`}>
@@ -740,7 +740,7 @@ export function VolunteerAvailabilitySection() {
                 <Icon className="h-6 w-6" />
               </div>
               <p className="font-medium">{opt.label}</p>
-              <p className="text-xs text-gray-500 mt-0.5">{opt.desc}</p>
+              <p className="text-xs text-ink-soft dark:text-cream/60 mt-0.5">{opt.desc}</p>
             </button>
           );
         })}
@@ -763,7 +763,7 @@ export function VolunteerProfileSection() {
           </div>
           <div>
             <p className="font-display text-xl font-bold">{profile?.full_name}</p>
-            <p className="text-sm text-gray-500">Volunteer</p>
+            <p className="text-sm text-ink-soft dark:text-cream/60">Volunteer</p>
             {profile?.is_verified && <span className="inline-flex items-center gap-1 text-xs text-green-600 mt-1"><ShieldCheck className="h-3 w-3" /> Verified</span>}
           </div>
         </div>
@@ -776,9 +776,9 @@ export function VolunteerProfileSection() {
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
             <p className="text-sm font-medium flex items-center gap-2"><Target className="h-4 w-4 text-primary-500" /> Progress to 50 deliveries</p>
-            <p className="text-xs text-gray-500">{profile?.total_deliveries ?? 0} / 50</p>
+            <p className="text-xs text-ink-soft dark:text-cream/60">{profile?.total_deliveries ?? 0} / 50</p>
           </div>
-          <div className="h-3 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden">
+          <div className="h-3 bg-oat dark:bg-secondary-800 rounded-full overflow-hidden">
             <motion.div initial={{ width: 0 }} animate={{ width: `${progress}%` }} transition={{ duration: 1, ease: 'easeOut' }} className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full" />
           </div>
         </div>

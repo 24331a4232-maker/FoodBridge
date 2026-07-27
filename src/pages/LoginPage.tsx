@@ -94,7 +94,7 @@ export function LoginPage() {
             className="h-16 w-16 mx-auto object-contain mb-3"
           />
           <h1 className="font-display text-2xl font-bold">{adminMode ? 'Admin Login' : 'Welcome Back'}</h1>
-          <p className="text-sm text-gray-500 mt-1">{adminMode ? 'Secure access for platform administrators' : 'Login to continue making a difference'}</p>
+          <p className="text-sm text-ink-soft dark:text-cream/60 mt-1">{adminMode ? 'Secure access for platform administrators' : 'Login to continue making a difference'}</p>
         </div>
 
         <motion.div variants={fadeInUp} className="mb-5">
@@ -104,7 +104,7 @@ export function LoginPage() {
             className={`w-full flex items-center justify-center gap-2 rounded-2xl-premium py-2.5 text-sm font-semibold transition-all ${
               adminMode
                 ? 'bg-gradient-to-br from-primary-600 to-primary-500 text-white shadow-lg shadow-primary-600/30'
-                : 'glass hover:bg-primary-50 dark:hover:bg-primary-900/20 text-gray-700 dark:text-gray-300'
+                : 'glass hover:bg-primary-50 dark:hover:bg-primary-900/20 text-ink-soft dark:text-cream/70'
             }`}
           >
             <ShieldCheck className="h-4 w-4" />
@@ -119,7 +119,7 @@ export function LoginPage() {
               {adminMode ? (
                 <ShieldCheck className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-primary-500" />
               ) : (
-                <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
               )}
               <input
                 value={identifier}
@@ -136,7 +136,7 @@ export function LoginPage() {
           <motion.div variants={fadeInUp}>
             <label className="input-label">Password</label>
             <div className="relative">
-              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
               <input
                 type={show ? 'text' : 'password'}
                 value={password}
@@ -144,7 +144,7 @@ export function LoginPage() {
                 className={`input-field pl-12 pr-12 ${errors.password ? 'border-red-400 focus:ring-red-400' : ''}`}
                 placeholder="******"
               />
-              <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+              <button type="button" onClick={() => setShow(!show)} className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-soft/60 dark:text-cream/40 hover:text-ink-soft dark:text-cream/70">
                 {show ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
             </div>
@@ -155,7 +155,7 @@ export function LoginPage() {
             <motion.div variants={fadeInUp} className="flex items-center justify-between text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="h-4 w-4 rounded text-primary-600 focus:ring-primary-500" />
-                <span className="text-gray-600 dark:text-gray-400">Remember me</span>
+                <span className="text-ink-soft dark:text-cream/60">Remember me</span>
               </label>
               <button type="button" onClick={() => toast('Please use the password reset link sent to your email, or contact support@foodbridge.org.', 'info')} className="text-primary-600 hover:underline">
                 Forgot password?
@@ -170,7 +170,7 @@ export function LoginPage() {
           </motion.div>
 
           {!adminMode && (
-            <motion.p variants={fadeInUp} className="text-center text-sm text-gray-500">
+            <motion.p variants={fadeInUp} className="text-center text-sm text-ink-soft dark:text-cream/60">
               New to FoodBridge? <Link to="/register" className="text-primary-600 font-semibold hover:underline flex items-center justify-center gap-1">Register here <ArrowRight className="h-3 w-3" /></Link>
             </motion.p>
           )}

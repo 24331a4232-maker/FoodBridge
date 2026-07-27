@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 export function LoadingScreen() {
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-gray-950">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-cream dark:bg-secondary-950">
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -left-40 h-96 w-96 rounded-full bg-primary-400/20 blur-3xl animate-blob" />
         <div className="absolute -bottom-40 -right-40 h-96 w-96 rounded-full bg-accent-400/20 blur-3xl animate-blob" style={{ animationDelay: '2s' }} />
@@ -24,7 +24,7 @@ export function LoadingScreen() {
           className="text-center"
         >
           <h1 className="font-display text-2xl font-bold gradient-text">FoodBridge</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">FoodBridge</p>
+          <p className="text-sm text-ink-soft dark:text-cream/60 mt-1">FoodBridge</p>
         </motion.div>
         <div className="flex gap-1.5">
           {[0, 1, 2].map((i) => (

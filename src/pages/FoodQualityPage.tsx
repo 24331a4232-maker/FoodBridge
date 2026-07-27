@@ -122,7 +122,7 @@ function ScoreCircle({ score }: { score: number }) {
   return (
     <div className="relative h-56 w-56">
       <svg className="h-full w-full -rotate-90" viewBox="0 0 200 200">
-        <circle cx="100" cy="100" r={radius} fill="none" stroke="#e5e7eb" strokeWidth="14" className="dark:stroke-gray-700" />
+        <circle cx="100" cy="100" r={radius} fill="none" stroke="#e5e7eb" strokeWidth="14" className="dark:stroke-secondary-700" />
         <motion.circle
           ref={ref}
           cx="100" cy="100" r={radius} fill="none" stroke="url(#scoreGrad)" strokeWidth="14" strokeLinecap="round"
@@ -138,7 +138,7 @@ function ScoreCircle({ score }: { score: number }) {
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
         <span className="font-display text-5xl font-bold gradient-text">{display}%</span>
-        <span className="text-xs text-gray-400 uppercase tracking-wider mt-1">Overall Score</span>
+        <span className="text-xs text-ink-soft/60 dark:text-cream/40 uppercase tracking-wider mt-1">Overall Score</span>
       </div>
     </div>
   );
@@ -172,7 +172,7 @@ function CertificateDocument({ scale = 1 }: { scale?: number }) {
       {/* Content */}
       <div className="relative h-full flex flex-col items-center justify-center text-center px-10 sm:px-16 py-10">
         {/* Top row */}
-        <div className="absolute top-8 left-10 right-10 flex justify-between text-[10px] text-gray-400">
+        <div className="absolute top-8 left-10 right-10 flex justify-between text-[10px] text-ink-soft/60 dark:text-cream/40">
           <p className="flex items-center gap-1"><Hash className="h-2.5 w-2.5" /> {certificateInfo.id}</p>
           <p className="flex items-center gap-1"><ShieldCheck className="h-2.5 w-2.5" /> {certificateInfo.uniqueId}</p>
         </div>
@@ -180,26 +180,26 @@ function CertificateDocument({ scale = 1 }: { scale?: number }) {
         <motion.img src="/logo.png" alt="FoodBridge" initial={{ scale: 0 }} whileInView={{ scale: 1 }} viewport={{ once: true }} transition={{ type: 'spring' }} className="h-16 w-16 object-contain mb-2 relative z-10" />
         <p className="text-[10px] font-semibold text-primary-700 uppercase tracking-[0.25em] mb-1">FoodBridge</p>
         {/* Title */}
-        <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-1">Food Quality Certificate</h2>
-        <p className="text-xs sm:text-sm text-gray-500 mb-2">Certified Safe for Redistribution</p>
+        <h2 className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold text-ink dark:text-cream mb-1">Food Quality Certificate</h2>
+        <p className="text-xs sm:text-sm text-ink-soft dark:text-cream/60 mb-2">Certified Safe for Redistribution</p>
         <div className="h-1 w-28 bg-gradient-to-r from-primary-700 to-gold-500 rounded-full my-3" />
         {/* Issued to */}
-        <p className="text-sm text-gray-500 mb-1">Issued To</p>
+        <p className="text-sm text-ink-soft dark:text-cream/60 mb-1">Issued To</p>
         <p className="font-display text-xl sm:text-2xl font-bold bg-gradient-to-r from-primary-700 to-accent-600 bg-clip-text text-transparent mb-2">{certificateInfo.issuedTo}</p>
         <div className="h-px w-48 bg-gradient-to-r from-primary-400 to-gold-400 my-2" />
         {/* Details grid */}
         <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-xs sm:text-sm mt-3 max-w-2xl">
-          <div className="text-left"><p className="text-gray-400 text-[10px] uppercase tracking-wide">Inspection Date</p><p className="font-medium text-gray-700">{certificateInfo.inspectionDate}</p></div>
-          <div className="text-left"><p className="text-gray-400 text-[10px] uppercase tracking-wide">Expiry Date</p><p className="font-medium text-gray-700">{certificateInfo.expiryDate}</p></div>
-          <div className="text-left"><p className="text-gray-400 text-[10px] uppercase tracking-wide">Food Category</p><p className="font-medium text-gray-700">{certificateInfo.foodCategory}</p></div>
-          <div className="text-left"><p className="text-gray-400 text-[10px] uppercase tracking-wide">Quality Grade</p><p className="font-display font-bold text-primary-700 text-lg">{certificateInfo.grade}</p></div>
+          <div className="text-left"><p className="text-ink-soft/60 dark:text-cream/40 text-[10px] uppercase tracking-wide">Inspection Date</p><p className="font-medium text-ink-soft dark:text-cream/70">{certificateInfo.inspectionDate}</p></div>
+          <div className="text-left"><p className="text-ink-soft/60 dark:text-cream/40 text-[10px] uppercase tracking-wide">Expiry Date</p><p className="font-medium text-ink-soft dark:text-cream/70">{certificateInfo.expiryDate}</p></div>
+          <div className="text-left"><p className="text-ink-soft/60 dark:text-cream/40 text-[10px] uppercase tracking-wide">Food Category</p><p className="font-medium text-ink-soft dark:text-cream/70">{certificateInfo.foodCategory}</p></div>
+          <div className="text-left"><p className="text-ink-soft/60 dark:text-cream/40 text-[10px] uppercase tracking-wide">Quality Grade</p><p className="font-display font-bold text-primary-700 text-lg">{certificateInfo.grade}</p></div>
         </div>
         {/* Bottom row: signature, seal, QR */}
         <div className="absolute bottom-9 left-12 right-12 flex items-end justify-between">
           <div className="text-left">
-            <p className="font-display italic text-gray-800 text-sm" style={{ fontFamily: 'Georgia, serif' }}>{certificateInfo.signature}</p>
-            <div className="h-px w-24 bg-gray-300 my-1" />
-            <p className="text-[10px] text-gray-500">{certificateInfo.inspector}, Certified Inspector</p>
+            <p className="font-display italic text-ink dark:text-cream text-sm" style={{ fontFamily: 'Georgia, serif' }}>{certificateInfo.signature}</p>
+            <div className="h-px w-24 bg-linen dark:bg-secondary-600 my-1" />
+            <p className="text-[10px] text-ink-soft dark:text-cream/60">{certificateInfo.inspector}, Certified Inspector</p>
           </div>
           <div className="flex flex-col items-center">
             <div className="h-14 w-14 rounded-full border-2 border-gold-500 flex items-center justify-center text-gold-600 font-bold text-[8px] relative bg-gold-50">
@@ -208,10 +208,10 @@ function CertificateDocument({ scale = 1 }: { scale?: number }) {
             </div>
           </div>
           <div className="flex flex-col items-center gap-1">
-            <div className="h-14 w-14 rounded-lg bg-white border border-gray-200 flex items-center justify-center">
+            <div className="h-14 w-14 rounded-lg bg-white border border-linen dark:border-secondary-700 flex items-center justify-center">
               <QrCode className="h-8 w-8 text-primary-700" />
             </div>
-            <p className="text-[9px] text-gray-400 flex items-center gap-1"><QrCode className="h-2.5 w-2.5" /> Scan to verify</p>
+            <p className="text-[9px] text-ink-soft/60 dark:text-cream/40 flex items-center gap-1"><QrCode className="h-2.5 w-2.5" /> Scan to verify</p>
           </div>
         </div>
         {/* Verified stamp */}
@@ -221,7 +221,7 @@ function CertificateDocument({ scale = 1 }: { scale?: number }) {
           </div>
         </div>
         {/* Bottom dates */}
-        <div className="absolute bottom-3 left-12 right-12 flex justify-between text-[9px] text-gray-400">
+        <div className="absolute bottom-3 left-12 right-12 flex justify-between text-[9px] text-ink-soft/60 dark:text-cream/40">
           <p>Organization: FoodBridge</p>
           <p>Grade: {certificateInfo.grade} — Status: Verified</p>
         </div>
@@ -313,13 +313,13 @@ export function FoodQualityPage() {
             <motion.h1 variants={fadeInUp} className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
               Food Quality <span className="gradient-text">Verification</span>
             </motion.h1>
-            <motion.p variants={fadeInUp} className="text-gray-600 dark:text-gray-300 mt-4 text-lg max-w-xl leading-relaxed">
+            <motion.p variants={fadeInUp} className="text-ink-soft dark:text-cream/70 mt-4 text-lg max-w-xl leading-relaxed">
               Every meal donated through FoodBridge is inspected to ensure it is fresh, hygienic and safe before reaching people in need.
             </motion.p>
             {/* Trust pillars */}
             <motion.div variants={fadeInUp} className="flex flex-wrap gap-x-6 gap-y-2 mt-6">
               {['6-Step Inspection', 'Real-time Scoring', 'Verified Certificates'].map((p) => (
-                <div key={p} className="flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400">
+                <div key={p} className="flex items-center gap-1.5 text-sm text-ink-soft dark:text-cream/60">
                   <CheckCircle2 className="h-4 w-4 text-primary-500" /> {p}
                 </div>
               ))}
@@ -350,15 +350,15 @@ export function FoodQualityPage() {
             {/* Floating quality score chips */}
             <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }} className="absolute top-4 left-0 glass-card px-3 py-2 rounded-xl shadow-lg flex items-center gap-2">
               <Thermometer className="h-4 w-4 text-accent-500" />
-              <div><p className="text-[10px] text-gray-400 leading-none">Temperature</p><p className="text-sm font-bold text-gray-700 dark:text-gray-200">4°C Safe</p></div>
+              <div><p className="text-[10px] text-ink-soft/60 dark:text-cream/40 leading-none">Temperature</p><p className="text-sm font-bold text-ink-soft dark:text-cream/70">4°C Safe</p></div>
             </motion.div>
             <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }} className="absolute bottom-6 right-0 glass-card px-3 py-2 rounded-xl shadow-lg flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-primary-500" />
-              <div><p className="text-[10px] text-gray-400 leading-none">Quality Score</p><p className="text-sm font-bold text-primary-600">98% A+</p></div>
+              <div><p className="text-[10px] text-ink-soft/60 dark:text-cream/40 leading-none">Quality Score</p><p className="text-sm font-bold text-primary-600">98% A+</p></div>
             </motion.div>
             <motion.div animate={{ y: [0, -7, 0] }} transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }} className="absolute top-1/2 right-2 glass-card px-3 py-2 rounded-xl shadow-lg flex items-center gap-2">
               <Leaf className="h-4 w-4 text-green-500" />
-              <div><p className="text-[10px] text-gray-400 leading-none">Freshness</p><p className="text-sm font-bold text-green-600">Fresh</p></div>
+              <div><p className="text-[10px] text-ink-soft/60 dark:text-cream/40 leading-none">Freshness</p><p className="text-sm font-bold text-green-600">Fresh</p></div>
             </motion.div>
           </motion.div>
         </div>
@@ -376,12 +376,12 @@ export function FoodQualityPage() {
             <motion.div variants={scaleIn} className="flex justify-center"><ScoreCircle score={stats.qualityScore} /></motion.div>
             <motion.div variants={slideInRight} className="space-y-4">
               {scoreCategories.map((c) => (
-                <div key={c.label} className="p-4 rounded-2xl bg-white/60 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700">
+                <div key={c.label} className="p-4 rounded-2xl bg-white/60 dark:bg-secondary-800/50 border border-linen dark:border-secondary-700">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-gray-700 dark:text-gray-200">{c.label}</span>
+                    <span className="font-medium text-ink-soft dark:text-cream/70">{c.label}</span>
                     <span className="text-sm font-bold text-primary-600">{c.percent}%</span>
                   </div>
-                  <div className="h-2.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                  <div className="h-2.5 rounded-full bg-linen dark:bg-secondary-700 overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       whileInView={{ width: `${c.percent}%` }}
@@ -412,10 +412,10 @@ export function FoodQualityPage() {
                 <div className={`h-12 w-12 rounded-2xl bg-gradient-to-br ${step.color} text-white flex items-center justify-center shadow-lg`}>
                   <step.icon className="h-6 w-6" />
                 </div>
-                <span className="font-display text-2xl font-bold text-gray-300 dark:text-gray-700">0{i + 1}</span>
+                <span className="font-display text-2xl font-bold text-linen dark:text-secondary-700">0{i + 1}</span>
               </div>
               <h3 className="font-display text-lg font-bold mb-1">{step.title}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{step.desc}</p>
+              <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed">{step.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -430,10 +430,10 @@ export function FoodQualityPage() {
         </motion.div>
         <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-md mx-auto mb-8">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Completion</span>
+            <span className="text-sm font-medium text-ink-soft dark:text-cream/70">Completion</span>
             <span className="text-sm font-bold text-primary-600">{Math.round((Object.values(checked).filter(Boolean).length / safetyChecklist.length) * 100)}%</span>
           </div>
-          <div className="h-3 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+          <div className="h-3 rounded-full bg-linen dark:bg-secondary-700 overflow-hidden">
             <motion.div
               animate={{ width: `${Math.round((Object.values(checked).filter(Boolean).length / safetyChecklist.length) * 100)}%` }}
               transition={{ duration: 0.4, ease: 'easeOut' }}
@@ -448,8 +448,8 @@ export function FoodQualityPage() {
         <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-2 gap-4">
           {safetyChecklist.map((item, i) => (
             <motion.button key={item.label} variants={fadeInUp} onClick={() => toggle(i)} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-              className={`flex items-center gap-4 p-4 rounded-2xl border transition-all text-left ${checked[i] ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800' : 'bg-white/60 dark:bg-gray-800/50 border-gray-100 dark:border-gray-700'}`}>
-              <div className={`h-10 w-10 rounded-xl flex items-center justify-center transition-all ${checked[i] ? 'bg-gradient-to-br from-primary-500 to-primary-500 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-400'}`}>
+              className={`flex items-center gap-4 p-4 rounded-2xl border transition-all text-left ${checked[i] ? 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-primary-800' : 'bg-white/60 dark:bg-secondary-800/50 border-linen dark:border-secondary-700'}`}>
+              <div className={`h-10 w-10 rounded-xl flex items-center justify-center transition-all ${checked[i] ? 'bg-gradient-to-br from-primary-500 to-primary-500 text-white' : 'bg-oat dark:bg-secondary-700 text-ink-soft/60 dark:text-cream/40'}`}>
                 <AnimatePresence mode="wait">
                   {checked[i] ? (
                     <motion.span key="check" initial={{ scale: 0, rotate: -90 }} animate={{ scale: 1, rotate: 0 }} exit={{ scale: 0 }}><CheckCircle2 className="h-5 w-5" /></motion.span>
@@ -458,7 +458,7 @@ export function FoodQualityPage() {
                   )}
                 </AnimatePresence>
               </div>
-              <span className={`font-medium ${checked[i] ? 'text-primary-700 dark:text-primary-300' : 'text-gray-600 dark:text-gray-300'}`}>{item.label}</span>
+              <span className={`font-medium ${checked[i] ? 'text-primary-700 dark:text-primary-300' : 'text-ink-soft dark:text-cream/70'}`}>{item.label}</span>
             </motion.button>
           ))}
         </motion.div>
@@ -477,7 +477,7 @@ export function FoodQualityPage() {
               <motion.div whileHover={{ rotate: 360 }} transition={{ duration: 0.6 }} className={`h-12 w-12 rounded-full bg-gradient-to-br ${b.color} text-white flex items-center justify-center shadow-lg`}>
                 <b.icon className="h-6 w-6" />
               </motion.div>
-              <span className="font-display font-bold text-gray-800 dark:text-gray-100">{b.label}</span>
+              <span className="font-display font-bold text-ink dark:text-cream">{b.label}</span>
             </motion.div>
           ))}
         </motion.div>
@@ -516,7 +516,7 @@ export function FoodQualityPage() {
                 <s.icon className="h-7 w-7" />
               </div>
               <h3 className={`font-display text-lg font-bold mb-1 ${s.text}`}>{s.label}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">{s.desc}</p>
+              <p className="text-sm text-ink-soft dark:text-cream/60 leading-relaxed">{s.desc}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -537,11 +537,11 @@ export function FoodQualityPage() {
               { value: stats.qualityVolunteers, suffix: '+', label: 'Quality Volunteers', icon: Users, color: 'text-accent-500' },
             ].map((s) => (
               <motion.div key={s.label} variants={scaleIn} whileHover={{ y: -6 }} className="glass-card p-6 text-center">
-                <div className={`h-14 w-14 rounded-2xl bg-white dark:bg-gray-800 shadow-lg flex items-center justify-center mx-auto mb-3 ${s.color}`}>
+                <div className={`h-14 w-14 rounded-2xl bg-white dark:bg-secondary-800 shadow-lg flex items-center justify-center mx-auto mb-3 ${s.color}`}>
                   <s.icon className="h-7 w-7" />
                 </div>
                 <p className={`font-display text-3xl sm:text-4xl font-bold ${s.color}`}><Counter value={s.value} suffix={s.suffix} /></p>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{s.label}</p>
+                <p className="text-sm text-ink-soft dark:text-cream/60 mt-1">{s.label}</p>
               </motion.div>
             ))}
           </div>
@@ -570,10 +570,10 @@ export function FoodQualityPage() {
             <CertificateDocument scale={0.85} />
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-sm mt-6 mb-6">
-            <div><Calendar className="h-5 w-5 text-primary-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Inspection Date</p><p className="font-medium text-xs">{certificateInfo.inspectionDate}</p></div>
-            <div><Hash className="h-5 w-5 text-accent-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Certificate ID</p><p className="font-medium text-xs">{certificateInfo.id}</p></div>
-            <div><ShieldCheck className="h-5 w-5 text-primary-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Unique ID</p><p className="font-medium text-xs">{certificateInfo.uniqueId}</p></div>
-            <div><Award className="h-5 w-5 text-accent-500 mx-auto mb-1" /><p className="text-gray-400 text-xs">Quality Grade</p><p className="font-medium text-xs text-primary-600">{certificateInfo.grade}</p></div>
+            <div><Calendar className="h-5 w-5 text-primary-500 mx-auto mb-1" /><p className="text-ink-soft/60 dark:text-cream/40 text-xs">Inspection Date</p><p className="font-medium text-xs">{certificateInfo.inspectionDate}</p></div>
+            <div><Hash className="h-5 w-5 text-accent-500 mx-auto mb-1" /><p className="text-ink-soft/60 dark:text-cream/40 text-xs">Certificate ID</p><p className="font-medium text-xs">{certificateInfo.id}</p></div>
+            <div><ShieldCheck className="h-5 w-5 text-primary-500 mx-auto mb-1" /><p className="text-ink-soft/60 dark:text-cream/40 text-xs">Unique ID</p><p className="font-medium text-xs">{certificateInfo.uniqueId}</p></div>
+            <div><Award className="h-5 w-5 text-accent-500 mx-auto mb-1" /><p className="text-ink-soft/60 dark:text-cream/40 text-xs">Quality Grade</p><p className="font-medium text-xs text-primary-600">{certificateInfo.grade}</p></div>
           </div>
           <div className="flex flex-wrap justify-center gap-3">
             <RippleButton onClick={() => setCertModal(true)} variant="primary"><Eye className="h-4 w-4" /> View Certificate</RippleButton>
@@ -583,9 +583,9 @@ export function FoodQualityPage() {
         </motion.div>
         ) : (
         <motion.div variants={fadeInUp} initial="hidden" whileInView="visible" viewport={{ once: true }} className="glass-card p-12 text-center">
-          <Award className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+          <Award className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-4" />
           <h3 className="font-display text-xl font-bold mb-2">No Certificates Yet</h3>
-          <p className="text-gray-500 dark:text-gray-400 text-sm max-w-md mx-auto">Certificates are generated automatically after a successful delivery. Complete a delivery to see your first quality certificate here.</p>
+          <p className="text-ink-soft dark:text-cream/60 text-sm max-w-md mx-auto">Certificates are generated automatically after a successful delivery. Complete a delivery to see your first quality certificate here.</p>
           <Link to="/register" className="inline-block mt-6"><RippleButton variant="primary">Get Started</RippleButton></Link>
         </motion.div>
         )}
@@ -614,11 +614,11 @@ export function FoodQualityPage() {
                   <Award className="h-6 w-6 text-primary-600" />
                   <h3 className="font-display text-xl font-bold">Food Quality Certificate</h3>
                 </div>
-                <button onClick={() => setCertModal(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                <button onClick={() => setCertModal(false)} className="text-ink-soft/60 dark:text-cream/40 hover:text-ink-soft dark:hover:text-cream/70 transition-colors">
                   <X className="h-6 w-6" />
                 </button>
               </div>
-              <div className="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex flex-wrap items-center gap-2 mb-4 pb-4 border-b border-linen dark:border-secondary-700">
                 <RippleButton onClick={() => setCertScale((s) => Math.min(2, s + 0.15))} variant="ghost" className="text-sm px-3 py-2"><ZoomIn className="h-4 w-4" /> Zoom In</RippleButton>
                 <RippleButton onClick={() => setCertScale((s) => Math.max(0.5, s - 0.15))} variant="ghost" className="text-sm px-3 py-2"><ZoomOut className="h-4 w-4" /> Zoom Out</RippleButton>
                 <RippleButton onClick={() => setCertScale(1)} variant="ghost" className="text-sm px-3 py-2"><Maximize className="h-4 w-4" /> Reset</RippleButton>
@@ -627,21 +627,21 @@ export function FoodQualityPage() {
                 <Link to={`/services/verify-certificate/${certificateInfo.id}`}><RippleButton variant="ghost" className="text-sm px-3 py-2"><ShieldCheck className="h-4 w-4" /> Verify Certificate</RippleButton></Link>
               </div>
               <div className="grid lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-2 overflow-auto max-h-[70vh] rounded-2xl bg-gray-50 dark:bg-gray-900/50 p-4 flex justify-center">
+                <div className="lg:col-span-2 overflow-auto max-h-[70vh] rounded-2xl bg-oat dark:bg-secondary-900/50 p-4 flex justify-center">
                   <CertificateDocument scale={certScale} />
                 </div>
                 <div className="space-y-4">
                   <div className="glass-card p-5">
                     <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Hash className="h-4 w-4 text-primary-500" /> Certificate ID</h4>
-                    <p className="text-sm font-mono text-gray-600 dark:text-gray-300">{certificateInfo.id}</p>
+                    <p className="text-sm font-mono text-ink-soft dark:text-cream/70">{certificateInfo.id}</p>
                   </div>
                   <div className="glass-card p-5">
                     <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Building2 className="h-4 w-4 text-accent-500" /> Hotel Name</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">{certificateInfo.issuedTo}</p>
+                    <p className="text-sm text-ink-soft dark:text-cream/70">{certificateInfo.issuedTo}</p>
                   </div>
                   <div className="glass-card p-5">
                     <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Calendar className="h-4 w-4 text-primary-500" /> Inspection Date</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">{certificateInfo.inspectionDate}</p>
+                    <p className="text-sm text-ink-soft dark:text-cream/70">{certificateInfo.inspectionDate}</p>
                   </div>
                   <div className="glass-card p-5">
                     <h4 className="font-display font-bold mb-3 flex items-center gap-2"><Sparkles className="h-4 w-4 text-accent-500" /> Food Quality Grade</h4>
@@ -649,11 +649,11 @@ export function FoodQualityPage() {
                   </div>
                   <div className="glass-card p-5">
                     <h4 className="font-display font-bold mb-3 flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-primary-500" /> Inspector</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300">{certificateInfo.inspector}</p>
+                    <p className="text-sm text-ink-soft dark:text-cream/70">{certificateInfo.inspector}</p>
                   </div>
                   <div className="glass-card p-5">
                     <h4 className="font-display font-bold mb-3 flex items-center gap-2"><QrCode className="h-4 w-4 text-accent-500" /> QR Verification Status</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary-500" /> QR Verified & Active</p>
+                    <p className="text-sm text-ink-soft dark:text-cream/70 flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-primary-500" /> QR Verified & Active</p>
                   </div>
                   <div className="glass-card p-5 bg-primary-50 dark:bg-primary-900/20">
                     <h4 className="font-display font-bold mb-2 flex items-center gap-2"><BadgeCheck className="h-4 w-4 text-primary-500" /> Status</h4>

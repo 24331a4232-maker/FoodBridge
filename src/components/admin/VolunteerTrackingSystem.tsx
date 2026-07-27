@@ -27,7 +27,7 @@ const STAGE_ORDER: TrackingStage[] = [
 ];
 
 const STAGE_META: Record<TrackingStage, { label: string; color: string; dot: string; icon: typeof Radio }> = {
-  available:        { label: 'Available',        color: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',         dot: 'bg-gray-400',   icon: Radio },
+  available:        { label: 'Available',        color: 'bg-oat text-ink-soft dark:bg-secondary-800 dark:text-cream/60',         dot: 'bg-ink-soft/40 dark:bg-cream/40',   icon: Radio },
   accepted:         { label: 'Accepted',          color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',       dot: 'bg-blue-500',   icon: CheckCircle2 },
   verified:         { label: 'Verified',          color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300', dot: 'bg-purple-500', icon: QrCode },
   quality_approved: { label: 'Quality Approved',  color: 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300', dot: 'bg-orange-500', icon: ShieldCheck },
@@ -223,11 +223,11 @@ export function VolunteerTrackingSystem() {
           <h2 className="font-display text-xl font-bold flex items-center gap-2">
             <Radio className="h-5 w-5 text-primary-500" /> Real-Time Volunteer Tracking
           </h2>
-          <p className="text-sm text-gray-500 mt-1">Monitor every volunteer from pickup to delivery — live.</p>
+          <p className="text-sm text-ink-soft dark:text-cream/60 mt-1">Monitor every volunteer from pickup to delivery — live.</p>
         </div>
         <div className="flex items-center gap-2 px-3 py-2 rounded-xl glass">
-          <span className={`h-2 w-2 rounded-full ${liveCount > 0 ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`} />
-          <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+          <span className={`h-2 w-2 rounded-full ${liveCount > 0 ? 'bg-green-500 animate-pulse' : 'bg-ink-soft/40 dark:bg-cream/40'}`} />
+          <span className="text-xs font-medium text-ink-soft dark:text-cream/70">
             {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : `${liveCount} live · ${activeCount} active`}
           </span>
         </div>
@@ -244,7 +244,7 @@ export function VolunteerTrackingSystem() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-4">
         <div className="relative flex-1">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search volunteer, donor, or donation..." className="input-field pl-12" />
         </div>
         <select value={stageFilter} onChange={(e) => setStageFilter(e.target.value as TrackingStage | 'all')} className="input-field sm:w-52">
@@ -260,11 +260,11 @@ export function VolunteerTrackingSystem() {
           <h3 className="font-display font-bold mb-3 flex items-center gap-2"><MapPin className="h-4 w-4 text-primary-500" /> Live Map</h3>
           <div className="h-[400px] rounded-xl overflow-hidden">
             {loading ? (
-              <div className="flex items-center justify-center h-full"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+              <div className="flex items-center justify-center h-full"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
             ) : mapPoints.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
-                <MapPin className="h-10 w-10 text-gray-300 mb-2" />
-                <p className="text-sm text-gray-500">No live locations right now.</p>
+                <MapPin className="h-10 w-10 text-ink-soft/40 dark:text-cream/30 mb-2" />
+                <p className="text-sm text-ink-soft dark:text-cream/60">No live locations right now.</p>
               </div>
             ) : (
               <LeafletMap points={mapPoints} selectedPoint={selectedPoint} height="h-full" />
@@ -281,13 +281,13 @@ export function VolunteerTrackingSystem() {
         {/* Table */}
         <div className="xl:col-span-2 glass-card p-4 overflow-x-auto">
           {loading ? (
-            <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-gray-400" /></div>
+            <div className="flex justify-center py-16"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
           ) : filtered.length === 0 ? (
-            <div className="py-16 text-center"><Radio className="h-12 w-12 text-gray-300 mx-auto mb-3" /><p className="text-gray-500">No volunteers match your filters.</p></div>
+            <div className="py-16 text-center"><Radio className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" /><p className="text-ink-soft dark:text-cream/60">No volunteers match your filters.</p></div>
           ) : (
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-left text-xs text-gray-400 border-b border-linen dark:border-secondary-800">
+                <tr className="text-left text-xs text-ink-soft/60 dark:text-cream/40 border-b border-linen dark:border-secondary-800">
                   <th className="pb-2 pr-3 font-medium">Volunteer</th>
                   <th className="pb-2 pr-3 font-medium hidden md:table-cell">Current Donation</th>
                   <th className="pb-2 pr-3 font-medium hidden lg:table-cell">Donor</th>
@@ -323,19 +323,19 @@ export function VolunteerTrackingSystem() {
                             </div>
                           )}
                           <div className="min-w-0">
-                            <p className="font-medium truncate">{r.volunteer.full_name}</p>
-                            <p className="text-xs text-gray-400 truncate font-mono">{r.volunteer.id.slice(0, 8)}</p>
-                            <p className="text-xs text-gray-400 truncate md:hidden">{r.volunteer.phone || '—'}</p>
+                            <p className="font-medium truncate text-ink dark:text-cream">{r.volunteer.full_name}</p>
+                            <p className="text-xs text-ink-soft/60 dark:text-cream/40 truncate font-mono">{r.volunteer.id.slice(0, 8)}</p>
+                            <p className="text-xs text-ink-soft/60 dark:text-cream/40 truncate md:hidden">{r.volunteer.phone || '—'}</p>
                           </div>
                         </div>
                       </td>
                       <td className="py-3 pr-3 hidden md:table-cell">
-                        <p className="font-medium truncate max-w-[140px]">{r.donation?.food_name ?? '—'}</p>
-                        <p className="text-xs text-gray-400 truncate max-w-[140px]">{r.donation?.pickup_address ?? ''}</p>
+                        <p className="font-medium truncate max-w-[140px] text-ink dark:text-cream">{r.donation?.food_name ?? '—'}</p>
+                        <p className="text-xs text-ink-soft/60 dark:text-cream/40 truncate max-w-[140px]">{r.donation?.pickup_address ?? ''}</p>
                       </td>
-                      <td className="py-3 pr-3 hidden lg:table-cell truncate max-w-[100px]">{r.donor?.full_name ?? '—'}</td>
+                      <td className="py-3 pr-3 hidden lg:table-cell truncate max-w-[100px] text-ink dark:text-cream">{r.donor?.full_name ?? '—'}</td>
                       <td className="py-3 pr-3 hidden lg:table-cell">
-                        <div className="text-xs text-gray-500 space-y-0.5">
+                        <div className="text-xs text-ink-soft dark:text-cream/60 space-y-0.5">
                           <p className="truncate max-w-[120px]">📍 {r.donation?.address?.split(',')[0] ?? '—'}</p>
                           <p className="truncate max-w-[120px]">🏁 {r.pickup?.recipient_org ?? r.donation?.recommended_recipient ?? '—'}</p>
                         </div>
@@ -345,19 +345,19 @@ export function VolunteerTrackingSystem() {
                           <StageIcon className="h-3 w-3" /> {meta.label}
                         </span>
                       </td>
-                      <td className="py-3 pr-3 hidden md:table-cell text-xs text-gray-500">{timeAgo(r.lastUpdated)}</td>
+                      <td className="py-3 pr-3 hidden md:table-cell text-xs text-ink-soft dark:text-cream/60">{timeAgo(r.lastUpdated)}</td>
                       <td className="py-3 pr-3 hidden xl:table-cell">
                         {r.volunteer.current_location_lat != null ? (
                           <span className="text-xs text-green-600 dark:text-green-400 flex items-center gap-1">
                             <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
                             {r.volunteer.current_location_lat.toFixed(3)}, {r.volunteer.current_location_lng?.toFixed(3)}
                           </span>
-                        ) : <span className="text-xs text-gray-400">Offline</span>}
+                        ) : <span className="text-xs text-ink-soft/60 dark:text-cream/40">Offline</span>}
                       </td>
-                      <td className="py-3 pr-3 hidden xl:table-cell text-xs text-gray-500">
+                      <td className="py-3 pr-3 hidden xl:table-cell text-xs text-ink-soft dark:text-cream/60">
                         {eta != null ? `${Math.round(eta)} min` : '—'}
                       </td>
-                      <td className="py-3 pr-3 hidden sm:table-cell text-xs">{r.volunteer.total_deliveries}</td>
+                      <td className="py-3 pr-3 hidden sm:table-cell text-xs text-ink dark:text-cream">{r.volunteer.total_deliveries}</td>
                       <td className="py-3 pr-3 hidden sm:table-cell">
                         <span className="inline-flex items-center gap-0.5 text-xs">
                           <Star className="h-3 w-3 text-yellow-500" />{r.volunteer.rating ?? 0}
@@ -389,15 +389,15 @@ function StatMini({ icon: Icon, label, value, color }: { icon: typeof Radio; lab
       <div className={`h-9 w-9 rounded-xl bg-gradient-to-br ${color} text-white flex items-center justify-center shadow-lg mb-2`}>
         <Icon className="h-4.5 w-4.5" />
       </div>
-      <p className="font-display text-xl font-bold tabular-nums">{value}</p>
-      <p className="text-xs text-gray-500 leading-tight">{label}</p>
+      <p className="font-display text-xl font-bold tabular-nums text-ink dark:text-cream">{value}</p>
+      <p className="text-xs text-ink-soft dark:text-cream/60 leading-tight">{label}</p>
     </div>
   );
 }
 
 function Legend({ dot, label }: { dot: string; label: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 text-gray-500">
+    <span className="inline-flex items-center gap-1.5 text-ink-soft dark:text-cream/60">
       <span className={`h-2.5 w-2.5 rounded-full ${dot}`} /> {label}
     </span>
   );
@@ -415,13 +415,13 @@ function Timeline({ stage }: { stage: TrackingStage }) {
         return (
           <div key={step.stage} className="flex items-center shrink-0">
             <div className="flex flex-col items-center gap-1 min-w-[64px]">
-              <div className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${done ? 'bg-green-500 text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-400'}`}>
+              <div className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${done ? 'bg-green-500 text-white' : 'bg-oat dark:bg-secondary-800 text-ink-soft/60 dark:text-cream/40'}`}>
                 <StepIcon className="h-4 w-4" />
               </div>
-              <span className={`text-[10px] text-center leading-tight ${done ? 'text-green-600 dark:text-green-400 font-medium' : 'text-gray-400'}`}>{step.label}</span>
+              <span className={`text-[10px] text-center leading-tight ${done ? 'text-green-600 dark:text-green-400 font-medium' : 'text-ink-soft/60 dark:text-cream/40'}`}>{step.label}</span>
             </div>
             {i < TIMELINE_STEPS.length - 1 && (
-              <div className={`h-0.5 w-6 sm:w-10 mx-0.5 ${done && currentIdx > stepIdx ? 'bg-green-500' : 'bg-gray-200 dark:bg-gray-700'}`} />
+              <div className={`h-0.5 w-6 sm:w-10 mx-0.5 ${done && currentIdx > stepIdx ? 'bg-green-500' : 'bg-linen dark:bg-secondary-700'}`} />
             )}
           </div>
         );
@@ -460,19 +460,19 @@ function VolunteerDetailModal({ row, onClose }: { row: VolunteerRow; onClose: ()
               </div>
             )}
             <div>
-              <h3 className="font-display text-lg font-bold">{v.full_name}</h3>
-              <p className="text-xs text-gray-400 font-mono">ID: {v.id.slice(0, 8)}</p>
+              <h3 className="font-display text-lg font-bold text-ink dark:text-cream">{v.full_name}</h3>
+              <p className="text-xs text-ink-soft/60 dark:text-cream/40 font-mono">ID: {v.id.slice(0, 8)}</p>
               <span className={`inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-medium mt-1 ${meta.color}`}>
                 <StageIcon className="h-3 w-3" /> {meta.label}
               </span>
             </div>
           </div>
-          <button onClick={onClose} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"><X className="h-5 w-5" /></button>
+          <button onClick={onClose} className="p-1 rounded-lg hover:bg-oat dark:hover:bg-secondary-800 text-ink-soft dark:text-cream/60"><X className="h-5 w-5" /></button>
         </div>
 
         {/* Timeline */}
         <div className="glass p-3 rounded-xl mb-4">
-          <p className="text-xs font-medium text-gray-500 mb-1">Delivery Timeline</p>
+          <p className="text-xs font-medium text-ink-soft dark:text-cream/60 mb-1">Delivery Timeline</p>
           <Timeline stage={row.stage} />
         </div>
 
@@ -522,7 +522,7 @@ function VolunteerDetailModal({ row, onClose }: { row: VolunteerRow; onClose: ()
               <InfoRow label="Rating" value={handover?.inspection_rating != null ? `${handover.inspection_rating}/5` : '—'} />
             </div>
           ) : (
-            <p className="text-sm text-gray-400">No quality report submitted yet.</p>
+            <p className="text-sm text-ink-soft/60 dark:text-cream/40">No quality report submitted yet.</p>
           )}
         </Section>
 
@@ -531,7 +531,7 @@ function VolunteerDetailModal({ row, onClose }: { row: VolunteerRow; onClose: ()
           {handover?.pickup_photo_url ? (
             <img src={handover.pickup_photo_url} alt="Delivery proof" className="w-full max-h-64 object-cover rounded-xl" />
           ) : (
-            <div className="h-32 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-400">
+            <div className="h-32 rounded-xl bg-oat dark:bg-secondary-800 flex items-center justify-center text-ink-soft/60 dark:text-cream/40">
               <Camera className="h-8 w-8" />
             </div>
           )}
@@ -544,10 +544,10 @@ function VolunteerDetailModal({ row, onClose }: { row: VolunteerRow; onClose: ()
 function InfoRow({ icon: Icon, label, value }: { icon?: typeof Radio; label: string; value: string }) {
   return (
     <div>
-      <p className="text-xs text-gray-400 mb-0.5 flex items-center gap-1">
+      <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-0.5 flex items-center gap-1">
         {Icon && <Icon className="h-3 w-3" />} {label}
       </p>
-      <p className="font-medium text-sm break-words">{value}</p>
+      <p className="font-medium text-sm break-words text-ink dark:text-cream">{value}</p>
     </div>
   );
 }

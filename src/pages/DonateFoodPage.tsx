@@ -311,7 +311,7 @@ export function DonateFoodPage() {
             <CheckCircle2 className="h-10 w-10 text-white" />
           </motion.div>
           <h2 className="font-display text-2xl font-bold mb-3">Thank You!</h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">Your donation has been listed. Nearby volunteers will be notified to pick it up soon.</p>
+          <p className="text-ink-soft dark:text-cream/60 mb-6">Your donation has been listed. Nearby volunteers will be notified to pick it up soon.</p>
           <div className="flex flex-col gap-3">
             <Link to="/services/available-food"><RippleButton variant="primary" fullWidth>View Available Food</RippleButton></Link>
             <button onClick={() => { setSuccess(false); setForm({ ...form, food_name: '', quantity: '', description: '' }); setMapPoints([]); setCoords(null); }} className="btn-ghost">
@@ -332,12 +332,12 @@ export function DonateFoodPage() {
             <Sparkles className="h-3.5 w-3.5" /> Make a Difference
           </span>
           <h1 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold">Donate Surplus Food</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-3 max-w-xl mx-auto">List your surplus food and our volunteer network will redistribute it to those in need.</p>
+          <p className="text-ink-soft dark:text-cream/60 mt-3 max-w-xl mx-auto">List your surplus food and our volunteer network will redistribute it to those in need.</p>
         </motion.div>
 
         {!user && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="glass-card p-5 mb-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-ink-soft dark:text-cream/60">
               You need to be logged in to donate. <Link to="/login" className="text-primary-600 font-semibold hover:underline">Login here</Link> or <Link to="/register" className="text-primary-600 font-semibold hover:underline">Register</Link>.
             </p>
           </motion.div>
@@ -418,7 +418,7 @@ export function DonateFoodPage() {
             <h3 className="font-display text-lg font-bold mb-1 flex items-center gap-2">
               <ShieldCheck className="h-5 w-5 text-primary-500" /> Food Quality Check
             </h3>
-            <p className="text-xs text-gray-500 mb-4">Enter food details to automatically assess quality and freshness. All calculations update in real-time.</p>
+            <p className="text-xs text-ink-soft dark:text-cream/60 mb-4">Enter food details to automatically assess quality and freshness. All calculations update in real-time.</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
               <div>
@@ -467,8 +467,8 @@ export function DonateFoodPage() {
                 >
                   {/* Freshness Badge + Score */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="p-4 rounded-2xl bg-white dark:bg-gray-800/70 border border-gray-100 dark:border-gray-700">
-                      <p className="text-xs text-gray-400 mb-2">Freshness Status</p>
+                    <div className="p-4 rounded-2xl bg-white dark:bg-secondary-800/70 border border-linen dark:border-secondary-700">
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-2">Freshness Status</p>
                       <div className="flex items-center gap-2">
                         {quality.isExpired ? (
                           <span className="badge bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">
@@ -483,22 +483,22 @@ export function DonateFoodPage() {
                             <ShieldCheck className="h-4 w-4" /> Fresh
                           </span>
                         )}
-                        <span className="text-xs text-gray-500">{quality.freshnessDescription}</span>
+                        <span className="text-xs text-ink-soft dark:text-cream/60">{quality.freshnessDescription}</span>
                       </div>
                     </div>
-                    <div className="p-4 rounded-2xl bg-white dark:bg-gray-800/70 border border-gray-100 dark:border-gray-700">
-                      <p className="text-xs text-gray-400 mb-2">Quality Score</p>
+                    <div className="p-4 rounded-2xl bg-white dark:bg-secondary-800/70 border border-linen dark:border-secondary-700">
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-2">Quality Score</p>
                       <div className="flex items-center gap-3">
                         <div className="flex-1">
                           <div className="flex items-baseline gap-1">
                             <span className={`font-display text-3xl font-bold ${quality.score >= 80 ? 'text-primary-600' : quality.score >= 60 ? 'text-gold-600' : quality.score >= 40 ? 'text-accent-600' : 'text-red-600'}`}>
                               {quality.score}%
                             </span>
-                            <span className="text-xs text-gray-400">
+                            <span className="text-xs text-ink-soft/60 dark:text-cream/40">
                               {quality.score >= 80 ? 'Excellent' : quality.score >= 60 ? 'Good' : quality.score >= 40 ? 'Fair' : 'Poor'}
                             </span>
                           </div>
-                          <div className="mt-1.5 h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                          <div className="mt-1.5 h-2 bg-oat dark:bg-secondary-700 rounded-full overflow-hidden">
                             <motion.div
                               initial={{ width: 0 }}
                               animate={{ width: `${quality.score}%` }}
@@ -545,7 +545,7 @@ export function DonateFoodPage() {
                     <p className="text-sm font-semibold mb-2 flex items-center gap-1.5"><Info className="h-4 w-4 text-secondary-500" /> Food Safety Tips</p>
                     <ul className="space-y-1.5">
                       {quality.safetyTips.map((tip, i) => (
-                        <li key={i} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-2">
+                        <li key={i} className="text-xs text-ink-soft dark:text-cream/60 flex items-start gap-2">
                           <ShieldCheck className="h-3.5 w-3.5 text-secondary-500 shrink-0 mt-0.5" />
                           {tip}
                         </li>
@@ -560,17 +560,17 @@ export function DonateFoodPage() {
                     </p>
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                       {/* Estimated Meals */}
-                      <div className="p-3 rounded-xl bg-white dark:bg-gray-800/70 flex items-center gap-3">
+                      <div className="p-3 rounded-xl bg-white dark:bg-secondary-800/70 flex items-center gap-3">
                         <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center shrink-0">
                           <Package className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="text-[10px] text-gray-400 uppercase tracking-wide">Est. Meals</p>
+                          <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Est. Meals</p>
                           <p className="font-display text-lg font-bold">{quality.estimatedMeals}</p>
                         </div>
                       </div>
                       {/* Recommended Recipient */}
-                      <div className="p-3 rounded-xl bg-white dark:bg-gray-800/70 flex items-center gap-3">
+                      <div className="p-3 rounded-xl bg-white dark:bg-secondary-800/70 flex items-center gap-3">
                         <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-accent-500 to-accent-500 text-white flex items-center justify-center shrink-0">
                           {(() => {
                             const Icon = recipientIcons[quality.recipientIcon] ?? Home;
@@ -578,17 +578,17 @@ export function DonateFoodPage() {
                           })()}
                         </div>
                         <div>
-                          <p className="text-[10px] text-gray-400 uppercase tracking-wide">Recipient</p>
+                          <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Recipient</p>
                           <p className="font-semibold text-sm">{quality.recommendedRecipient}</p>
                         </div>
                       </div>
                       {/* Priority Level */}
-                      <div className="p-3 rounded-xl bg-white dark:bg-gray-800/70 flex items-center gap-3">
+                      <div className="p-3 rounded-xl bg-white dark:bg-secondary-800/70 flex items-center gap-3">
                         <div className={`h-10 w-10 rounded-xl text-white flex items-center justify-center shrink-0 ${quality.priority === 'high' ? 'bg-gradient-to-br from-red-500 to-red-500' : quality.priority === 'medium' ? 'bg-gradient-to-br from-gold-500 to-yellow-500' : 'bg-gradient-to-br from-primary-500 to-primary-500'}`}>
                           <Zap className="h-5 w-5" />
                         </div>
                         <div>
-                          <p className="text-[10px] text-gray-400 uppercase tracking-wide">Priority</p>
+                          <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Priority</p>
                           <p className="font-semibold text-sm capitalize">{quality.priority}</p>
                         </div>
                       </div>
@@ -631,7 +631,7 @@ export function DonateFoodPage() {
               zoom={12}
             />
             {coords && (
-              <p className="text-xs text-gray-500 mt-2 flex items-center gap-1">
+              <p className="text-xs text-ink-soft dark:text-cream/60 mt-2 flex items-center gap-1">
                 <MapPin className="h-3 w-3 text-primary-500" />
                 Coordinates: {coords.lat.toFixed(6)}, {coords.lng.toFixed(6)}
               </p>
@@ -643,7 +643,7 @@ export function DonateFoodPage() {
             <div className="sm:col-span-2">
               <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><MapPin className="h-4 w-4 text-primary-500" /> Address *</label>
               <input name="address" value={form.address} onChange={handleChange} className="input-field" placeholder="12 MG Road" required />
-              {geocoding && <p className="text-xs text-gray-400 mt-1 flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> Looking up address...</p>}
+              {geocoding && <p className="text-xs text-ink-soft/60 dark:text-cream/40 mt-1 flex items-center gap-1"><Loader2 className="h-3 w-3 animate-spin" /> Looking up address...</p>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1.5">City</label>
@@ -660,17 +660,17 @@ export function DonateFoodPage() {
           {/* Image upload */}
           <motion.div variants={fadeInUp}>
             <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><ImageIcon className="h-4 w-4 text-primary-500" /> Food Image</label>
-            <label className="block border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl p-6 text-center cursor-pointer hover:border-primary-400 hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition-all">
+            <label className="block border-2 border-dashed border-linen dark:border-secondary-700 rounded-2xl p-6 text-center cursor-pointer hover:border-primary-400 hover:bg-primary-50/30 dark:hover:bg-primary-900/10 transition-all">
               <input type="file" accept="image/*" onChange={handleImage} className="hidden" />
               {imagePreview ? (
                 <div className="relative">
                   <img src={imagePreview} alt="Preview" className="max-h-48 mx-auto rounded-xl" />
-                  <p className="text-xs text-gray-400 mt-2">Click to change image</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 mt-2">Click to change image</p>
                 </div>
               ) : (
                 <div>
-                  <Upload className="h-10 w-10 text-gray-300 mx-auto mb-2" />
-                  <p className="text-sm text-gray-500">Click to upload a photo of the food</p>
+                  <Upload className="h-10 w-10 text-ink-soft/40 dark:text-cream/30 mx-auto mb-2" />
+                  <p className="text-sm text-ink-soft dark:text-cream/60">Click to upload a photo of the food</p>
                 </div>
               )}
             </label>

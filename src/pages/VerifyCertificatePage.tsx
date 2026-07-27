@@ -68,14 +68,14 @@ export function VerifyCertificatePage() {
             <ShieldCheck className="h-8 w-8 text-white" />
           </div>
           <h1 className="font-display text-3xl sm:text-4xl font-bold">Verify Certificate</h1>
-          <p className="text-gray-500 mt-2">Enter a certificate ID to verify its authenticity.</p>
+          <p className="text-ink-soft dark:text-cream/60 mt-2">Enter a certificate ID to verify its authenticity.</p>
         </motion.div>
 
         {/* Search */}
         <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="glass-card p-6 mb-6">
           <motion.div variants={fadeInUp} className="flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
               <input
                 value={certNumber}
                 onChange={(e) => setCertNumber(e.target.value)}
@@ -94,7 +94,7 @@ export function VerifyCertificatePage() {
         {result === 'searching' && (
           <div className="text-center py-12">
             <div className="h-12 w-12 rounded-full border-4 border-primary-200 border-t-primary-600 animate-spin mx-auto" />
-            <p className="text-gray-500 mt-4">Verifying certificate...</p>
+            <p className="text-ink-soft dark:text-cream/60 mt-4">Verifying certificate...</p>
           </div>
         )}
 
@@ -127,7 +127,7 @@ export function VerifyCertificatePage() {
                   <CheckCircle2 className="h-8 w-8 text-primary-600" />
                 </div>
                 <h2 className="font-display text-2xl font-bold text-primary-600 mb-1">Certificate Status: VALID</h2>
-                <p className="text-sm text-gray-500">This is an authentic FoodBridge volunteer certificate.</p>
+                <p className="text-sm text-ink-soft dark:text-cream/60">This is an authentic FoodBridge volunteer certificate.</p>
               </div>
 
               {/* Details grid */}
@@ -141,45 +141,45 @@ export function VerifyCertificatePage() {
                   <Award className="h-5 w-5 text-primary-500" /> Certificate Details
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
+                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-oat dark:bg-secondary-800/50">
                     <User className="h-5 w-5 text-primary-500 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-400">Volunteer Name</p>
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40">Volunteer Name</p>
                       <p className="font-semibold">{cert.volunteer?.full_name ?? cert.volunteer_name ?? 'Unknown'}</p>
                     </div>
                   </motion.div>
-                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
+                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-oat dark:bg-secondary-800/50">
                     <Hash className="h-5 w-5 text-accent-500 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-400">Certificate ID</p>
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40">Certificate ID</p>
                       <p className="font-semibold">{cert.certificate_number}</p>
                     </div>
                   </motion.div>
-                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
+                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-oat dark:bg-secondary-800/50">
                     <Calendar className="h-5 w-5 text-primary-500 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-400">Issue Date</p>
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40">Issue Date</p>
                       <p className="font-semibold">{new Date(cert.issue_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     </div>
                   </motion.div>
-                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
+                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-oat dark:bg-secondary-800/50">
                     <Package className="h-5 w-5 text-accent-500 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-400">Completed Deliveries</p>
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40">Completed Deliveries</p>
                       <p className="font-semibold">{cert.deliveries_count}</p>
                     </div>
                   </motion.div>
-                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
+                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-oat dark:bg-secondary-800/50">
                     <Clock className="h-5 w-5 text-primary-500 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-400">Hours Served</p>
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40">Hours Served</p>
                       <p className="font-semibold">{Math.round(cert.hours_served)}</p>
                     </div>
                   </motion.div>
-                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/50">
+                  <motion.div variants={fadeInUp} className="flex items-start gap-3 p-4 rounded-2xl bg-oat dark:bg-secondary-800/50">
                     <Building2 className="h-5 w-5 text-accent-500 mt-0.5" />
                     <div>
-                      <p className="text-xs text-gray-400">Organization</p>
+                      <p className="text-xs text-ink-soft/60 dark:text-cream/40">Organization</p>
                       <p className="font-semibold">{cert.organization_name ?? 'FoodBridge'}</p>
                     </div>
                   </motion.div>
@@ -187,7 +187,7 @@ export function VerifyCertificatePage() {
 
                 {/* Project line */}
                 <div className="mt-4 p-4 rounded-2xl bg-gradient-to-br from-primary-50 to-accent-50 dark:from-primary-900/20 dark:to-accent-900/20">
-                  <p className="text-xs text-gray-400 mb-1">Project</p>
+                  <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">Project</p>
                   <p className="font-semibold text-sm">{PROJECT_NAME}</p>
                 </div>
               </motion.div>
@@ -213,8 +213,8 @@ export function VerifyCertificatePage() {
                 <Frown className="h-10 w-10 text-red-500" />
               </motion.div>
               <h2 className="font-display text-2xl font-bold text-red-500 mb-2">Invalid Certificate</h2>
-              <p className="text-gray-500 mb-2">No valid certificate found with this ID.</p>
-              <p className="text-sm text-gray-400 mb-6">The certificate number may be incorrect, expired, or revoked. Please double-check and try again.</p>
+              <p className="text-ink-soft dark:text-cream/60 mb-2">No valid certificate found with this ID.</p>
+              <p className="text-sm text-ink-soft/60 dark:text-cream/40 mb-6">The certificate number may be incorrect, expired, or revoked. Please double-check and try again.</p>
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 dark:bg-red-900/20 text-red-600 text-sm font-medium">
                 <XCircle className="h-4 w-4" /> Verification Failed
               </div>
@@ -230,10 +230,10 @@ export function VerifyCertificatePage() {
               transition={{ duration: 2, repeat: Infinity }}
               className="inline-flex"
             >
-              <QrCode className="h-16 w-16 text-gray-300" />
+              <QrCode className="h-16 w-16 text-ink-soft/40 dark:text-cream/30" />
             </motion.div>
-            <p className="text-gray-500 mt-4 mb-1">Enter a certificate number above to verify its authenticity.</p>
-            <p className="text-xs text-gray-400">You can also scan the QR code on a certificate to open this page.</p>
+            <p className="text-ink-soft dark:text-cream/60 mt-4 mb-1">Enter a certificate number above to verify its authenticity.</p>
+            <p className="text-xs text-ink-soft/60 dark:text-cream/40">You can also scan the QR code on a certificate to open this page.</p>
           </motion.div>
         )}
 

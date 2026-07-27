@@ -43,11 +43,11 @@ export function DonationQrCard({ donation, donorName, handover, onInvalid }: Don
   if (!valid) {
     return (
       <div className="glass-card p-6 text-center">
-        <div className="h-14 w-14 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-3">
-          <XCircle className="h-7 w-7 text-gray-400" />
+        <div className="h-14 w-14 rounded-full bg-red-100 dark:bg-red-900/40 flex items-center justify-center mx-auto mb-3">
+          <XCircle className="h-7 w-7 text-red-500 dark:text-red-400" />
         </div>
-        <p className="font-medium text-gray-600 dark:text-gray-300">QR Code Invalid</p>
-        <p className="text-xs text-gray-400 mt-1">This QR code was used for pickup and is no longer valid.</p>
+        <p className="font-medium text-ink dark:text-cream">QR Code Invalid</p>
+        <p className="text-xs text-ink-soft dark:text-cream/60 mt-1">This QR code was used for pickup and is no longer valid.</p>
         {onInvalid && (
           <RippleButton onClick={onInvalid} variant="ghost" className="text-xs mt-3">Close</RippleButton>
         )}
@@ -66,7 +66,7 @@ export function DonationQrCard({ donation, donorName, handover, onInvalid }: Don
         <div className="relative bg-white p-4 rounded-2xl shadow-lg ring-1 ring-black/5">
           {loading ? (
             <div className="w-44 h-44 flex items-center justify-center">
-              <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+              <Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" />
             </div>
           ) : (
             <img src={qrUrl} alt="Donation QR code" className="w-44 h-44" />
@@ -75,15 +75,15 @@ export function DonationQrCard({ donation, donorName, handover, onInvalid }: Don
       </div>
       <div className="mt-4 space-y-1 text-left w-full max-w-xs">
         <div className="flex justify-between text-xs">
-          <span className="text-gray-400">Food</span>
+          <span className="text-ink-soft dark:text-cream/60">Food</span>
           <span className="font-medium truncate ml-2">{donation.food_name}</span>
         </div>
         <div className="flex justify-between text-xs">
-          <span className="text-gray-400">Quantity</span>
+          <span className="text-ink-soft dark:text-cream/60">Quantity</span>
           <span className="font-medium">{donation.quantity} {donation.quantity_unit}</span>
         </div>
         <div className="flex justify-between text-xs">
-          <span className="text-gray-400">Status</span>
+          <span className="text-ink-soft dark:text-cream/60">Status</span>
           <span className="font-medium capitalize">{handover?.handover_status?.replace(/_/g, ' ') ?? donation.status}</span>
         </div>
       </div>
@@ -125,7 +125,7 @@ export function DonationQrModal({ donation, donorName, onClose }: DonationQrModa
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm" onClick={onClose}>
       <div className="max-w-sm w-full" onClick={(e) => e.stopPropagation()}>
         <DonationQrCard donation={donation} donorName={donorName} handover={handover} onInvalid={onClose} />
-        <button onClick={onClose} className="w-full mt-3 text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">Close</button>
+        <button onClick={onClose} className="w-full mt-3 text-xs text-ink-soft dark:text-cream/60 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Close</button>
       </div>
     </div>
   );
