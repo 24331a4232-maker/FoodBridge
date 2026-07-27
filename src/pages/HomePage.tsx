@@ -76,26 +76,25 @@ export function HomePage() {
       {/* ---------- HERO ---------- */}
       <section className="relative w-full min-h-screen flex flex-col overflow-hidden">
 
-        {/* Full-bleed photo (dimmed + transparent so baked-in text vanishes) */}
-        <div className="absolute inset-0" style={{ backgroundColor: C.dark }}>
+        {/* Full-bleed photo */}
+        <div className="absolute inset-0">
           <img
             src="/images/ChatGPT_Image_Jul_27,_2026,_05_33_56_PM.png"
             alt="FoodBridge volunteers distributing surplus meals to a family during golden hour"
-            className="w-full h-full object-cover object-right"
-            style={{ filter: 'brightness(0.8) saturate(1.05)', opacity: 0.3 }}
+            className="w-full h-full object-cover object-center"
+            style={{ filter: 'brightness(0.88) saturate(1.08)' }}
           />
-          {/* Solid left panel fading right — fully hides baked-in image text */}
+          {/* Cinematic left-to-right dark brown gradient for text legibility */}
           <div
             className="absolute inset-0"
             style={{
               background: `linear-gradient(
-                to right,
-                rgba(18,10,4,1.0)   0%,
-                rgba(18,10,4,1.0)  48%,
-                rgba(18,10,4,0.92) 58%,
-                rgba(18,10,4,0.65) 70%,
-                rgba(18,10,4,0.25) 84%,
-                rgba(0,0,0,0.0)   100%
+                100deg,
+                rgba(30,18,10,0.93) 0%,
+                rgba(40,24,12,0.82) 28%,
+                rgba(50,30,14,0.55) 52%,
+                rgba(30,16,6,0.18) 72%,
+                rgba(0,0,0,0.04) 100%
               )`,
             }}
           />
