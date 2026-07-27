@@ -90,11 +90,11 @@ export function HomePage() {
             style={{
               background: `linear-gradient(
                 100deg,
-                rgba(20,10,4,1.0) 0%,
-                rgba(20,10,4,1.0) 22%,
-                rgba(30,16,8,0.88) 42%,
-                rgba(30,16,6,0.35) 62%,
-                rgba(0,0,0,0.05) 100%
+                rgba(20,10,4,0.78) 0%,
+                rgba(20,10,4,0.55) 22%,
+                rgba(30,16,8,0.30) 42%,
+                rgba(30,16,6,0.12) 62%,
+                rgba(0,0,0,0.0) 100%
               )`,
             }}
           />
