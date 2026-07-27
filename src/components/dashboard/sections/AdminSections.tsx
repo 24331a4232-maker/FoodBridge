@@ -5,7 +5,7 @@ import {
   BarChart3, FileText, Bell, Settings, Radio, TrendingUp, TrendingDown,
   Loader2, Search, CheckCircle2, Clock, XCircle, Download, Star,
   Activity, AlertTriangle, Eye, EyeOff, Filter, Save, RefreshCw,
-  Camera, MapPin, User,
+  Camera, MapPin, User, Edit3, X, Check, Mail, Phone,
 } from 'lucide-react';
 import {
   ResponsiveContainer, ComposedChart, Line, Area, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
@@ -1057,6 +1057,14 @@ export function AdminSettingsSection() {
     certificateAlerts: profile?.notification_settings?.certificates ?? true,
   });
   const [saving, setSaving] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [savingProfile, setSavingProfile] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [profileForm, setProfileForm] = useState({
+    full_name: profile?.full_name ?? '',
+    email: profile?.email ?? '',
+    phone: profile?.phone ?? '',
+  });
 
   const handleSave = async () => {
     setSaving(true);
@@ -1075,6 +1083,40 @@ export function AdminSettingsSection() {
     pushToast('Settings saved successfully', 'success');
   };
 
+  const saveProfileInfo = async () => {
+    if (!profile?.id) return;
+    setSavingProfile(true);
+    const { error } = await supabase.from('profiles').update({
+      full_name: profileForm.full_name,
+      email: profileForm.email,
+      phone: profileForm.phone,
+    }).eq('id', profile.id);
+    setSavingProfile(false);
+    if (error) { pushToast('Could not save profile', 'error'); return; }
+    await refreshProfile();
+    setEditingProfile(false);
+    pushToast('Admin profile updated', 'success');
+  };
+
+  const uploadAvatar = async (file: File) => {
+    if (!profile?.id) return;
+    setUploadingAvatar(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const path = `avatars/${profile.id}.${ext}`;
+      const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
+      await supabase.from('profiles').update({ avatar_url: pub.publicUrl }).eq('id', profile.id);
+      await refreshProfile();
+      pushToast('Profile photo updated', 'success');
+    } catch {
+      pushToast('Could not upload photo', 'error');
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
   const toggles = [
     { key: 'emailNotifications', label: 'Email Notifications', desc: 'Receive notifications via email' },
     { key: 'pushNotifications', label: 'Push Notifications', desc: 'Receive browser push notifications' },
@@ -1086,20 +1128,67 @@ export function AdminSettingsSection() {
     <div>
       <DashboardSectionHeader title="Settings" description="Manage your admin account preferences." action={<RippleButton onClick={handleSave} variant="primary" disabled={saving}>{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save Changes</RippleButton>} />
       <div className="glass-card p-6 mb-4">
-        <h3 className="font-display font-bold mb-4 flex items-center gap-2"><User className="h-5 w-5 text-primary-500" /> Admin Profile</h3>
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
-          {profile?.avatar_url ? (
-            <img src={profile.avatar_url} alt={profile.full_name ?? 'Admin'} className="h-20 w-20 rounded-2xl object-cover ring-2 ring-primary-200 dark:ring-primary-800 shrink-0" />
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-display font-bold flex items-center gap-2"><User className="h-5 w-5 text-primary-500" /> Admin Profile</h3>
+          {!editingProfile ? (
+            <RippleButton onClick={() => { setProfileForm({ full_name: profile?.full_name ?? '', email: profile?.email ?? '', phone: profile?.phone ?? '' }); setEditingProfile(true); }} variant="secondary">
+              <Edit3 className="h-4 w-4" /> Edit
+            </RippleButton>
           ) : (
-            <div className="h-20 w-20 rounded-2xl flex items-center justify-center text-2xl font-bold bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 shrink-0">
-              {profile?.full_name?.[0]?.toUpperCase() ?? 'A'}
+            <div className="flex gap-2">
+              <RippleButton onClick={() => setEditingProfile(false)} variant="secondary"><X className="h-4 w-4" /> Cancel</RippleButton>
+              <RippleButton onClick={saveProfileInfo} variant="primary" disabled={savingProfile}>
+                {savingProfile ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} Save
+              </RippleButton>
             </div>
           )}
+        </div>
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+          <div className="relative group shrink-0">
+            {profile?.avatar_url ? (
+              <img src={profile.avatar_url} alt={profile.full_name ?? 'Admin'} className="h-20 w-20 rounded-2xl object-cover ring-2 ring-primary-200 dark:ring-primary-800" />
+            ) : (
+              <div className="h-20 w-20 rounded-2xl flex items-center justify-center text-2xl font-bold bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300">
+                {profile?.full_name?.[0]?.toUpperCase() ?? 'A'}
+              </div>
+            )}
+            <label className="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+              {uploadingAvatar ? (
+                <div className="h-6 w-6 rounded-full border-2 border-white border-t-transparent animate-spin" />
+              ) : (
+                <Camera className="h-6 w-6 text-white" />
+              )}
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadAvatar(f); }} />
+            </label>
+          </div>
           <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
-            <div><p className="text-xs text-gray-400">Name</p><p className="font-medium">{profile?.full_name || '—'}</p></div>
-            <div><p className="text-xs text-gray-400">Email</p><p className="font-medium break-all">{profile?.email || '—'}</p></div>
-            <div><p className="text-xs text-gray-400">Phone</p><p className="font-medium">{profile?.phone || '—'}</p></div>
-            <div><p className="text-xs text-gray-400">Role</p><p className="font-medium capitalize">{profile?.role || '—'}</p></div>
+            {editingProfile ? (
+              <>
+                <div>
+                  <p className="text-xs text-gray-400 mb-1 flex items-center gap-1"><User className="h-3 w-3" /> Name</p>
+                  <input value={profileForm.full_name} onChange={(e) => setProfileForm({ ...profileForm, full_name: e.target.value })} className="input-field" placeholder="Admin name" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400 mb-1 flex items-center gap-1"><Mail className="h-3 w-3" /> Email</p>
+                  <input value={profileForm.email} onChange={(e) => setProfileForm({ ...profileForm, email: e.target.value })} className="input-field" placeholder="admin@example.com" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400 mb-1 flex items-center gap-1"><Phone className="h-3 w-3" /> Phone</p>
+                  <input value={profileForm.phone} onChange={(e) => setProfileForm({ ...profileForm, phone: e.target.value })} className="input-field" placeholder="+91 98765 43210" />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400">Role</p>
+                  <p className="font-medium capitalize">{profile?.role || '—'}</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div><p className="text-xs text-gray-400">Name</p><p className="font-medium">{profile?.full_name || '—'}</p></div>
+                <div><p className="text-xs text-gray-400">Email</p><p className="font-medium break-all">{profile?.email || '—'}</p></div>
+                <div><p className="text-xs text-gray-400">Phone</p><p className="font-medium">{profile?.phone || '—'}</p></div>
+                <div><p className="text-xs text-gray-400">Role</p><p className="font-medium capitalize">{profile?.role || '—'}</p></div>
+              </>
+            )}
           </div>
         </div>
       </div>
