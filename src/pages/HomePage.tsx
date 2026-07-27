@@ -81,20 +81,21 @@ export function HomePage() {
           <img
             src="/images/ChatGPT_Image_Jul_27,_2026,_05_33_56_PM.png"
             alt="FoodBridge volunteers distributing surplus meals to a family during golden hour"
-            className="w-full h-full object-cover object-center"
+            className="w-full h-full object-cover object-right"
             style={{ filter: 'brightness(0.88) saturate(1.08)' }}
           />
-          {/* Cinematic left-to-right dark brown gradient for text legibility */}
+          {/* Fully opaque left panel to bury baked-in image text, fading to transparent */}
           <div
             className="absolute inset-0"
             style={{
               background: `linear-gradient(
-                100deg,
-                rgba(30,18,10,0.93) 0%,
-                rgba(40,24,12,0.82) 28%,
-                rgba(50,30,14,0.55) 52%,
-                rgba(30,16,6,0.18) 72%,
-                rgba(0,0,0,0.04) 100%
+                to right,
+                rgba(18,10,4,1.0)   0%,
+                rgba(18,10,4,1.0)  38%,
+                rgba(18,10,4,0.88) 50%,
+                rgba(18,10,4,0.55) 62%,
+                rgba(18,10,4,0.18) 78%,
+                rgba(0,0,0,0.0)   100%
               )`,
             }}
           />
