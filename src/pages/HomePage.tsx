@@ -76,35 +76,20 @@ export function HomePage() {
       {/* ---------- HERO ---------- */}
       <section className="relative w-full min-h-screen flex flex-col overflow-hidden">
 
-        {/* Full-bleed photo (dimmed + transparent so baked-in text vanishes) */}
-        <div className="absolute inset-0" style={{ backgroundColor: C.dark }}>
-          <img
-            src="/images/ChatGPT_Image_Jul_27,_2026,_05_33_56_PM.png"
-            alt="FoodBridge volunteers distributing surplus meals to a family during golden hour"
-            className="w-full h-full object-cover object-right"
-            style={{ filter: 'brightness(0.8) saturate(1.05)', opacity: 0.55 }}
-          />
-          {/* Solid left panel fading right — fully hides baked-in image text */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(
-                to right,
-                rgba(18,10,4,1.0)   0%,
-                rgba(18,10,4,1.0)  48%,
-                rgba(18,10,4,0.92) 58%,
-                rgba(18,10,4,0.65) 70%,
-                rgba(18,10,4,0.25) 84%,
-                rgba(0,0,0,0.0)   100%
-              )`,
-            }}
-          />
-          {/* Subtle vertical vignette bottom */}
-          <div
-            className="absolute inset-x-0 bottom-0 h-40 pointer-events-none"
-            style={{ background: 'linear-gradient(to top, rgba(20,12,6,0.55) 0%, transparent 100%)' }}
-          />
-        </div>
+        {/* Clean gradient background — no photo, no baked-in text */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `linear-gradient(125deg, ${C.dark} 0%, #3a2418 45%, ${C.primary} 100%)`,
+          }}
+        />
+        {/* Soft radial glow accent */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: `radial-gradient(60% 50% at 80% 20%, ${C.accent}22 0%, transparent 60%)`,
+          }}
+        />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col flex-1">
