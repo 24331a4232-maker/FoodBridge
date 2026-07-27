@@ -3,12 +3,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, Search, Filter, Eye, EyeOff, Loader2, MapPin, Phone, Mail,
   Building2, Calendar, Clock, ShieldCheck, Hotel, HeartHandshake, Truck,
-  Trash2, AlertTriangle, X, UserX,
+  Trash2, AlertTriangle, X, UserX, Edit3, Save, Check,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Profile, UserRole } from '@/types';
 
 type DeleteState = 'idle' | 'confirming' | 'deleting' | 'error';
+type EditState = 'idle' | 'saving' | 'error';
+
+const roleOptions: { value: UserRole; label: string }[] = [
+  { value: 'donor', label: 'Donor' },
+  { value: 'volunteer', label: 'Volunteer' },
+  { value: 'restaurant', label: 'Restaurant' },
+  { value: 'ngo', label: 'NGO' },
+  { value: 'admin', label: 'Admin' },
+];
 
 const roleMeta: Record<UserRole, { label: string; icon: typeof Users; color: string; bg: string }> = {
   admin: { label: 'Admin', icon: ShieldCheck, color: 'text-rose-600', bg: 'bg-rose-100 dark:bg-rose-900/30' },
@@ -51,6 +60,13 @@ export function UserManagementTable() {
   const [deleteTarget, setDeleteTarget] = useState<Profile | null>(null);
   const [deleteState, setDeleteState] = useState<DeleteState>('idle');
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [editTarget, setEditTarget] = useState<Profile | null>(null);
+  const [editState, setEditState] = useState<EditState>('idle');
+  const [editError, setEditError] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState({
+    full_name: '', email: '', phone: '', role: 'donor' as UserRole,
+    organization: '', address: '', city: '', state: '', pincode: '', bio: '',
+  });
 
   const confirmDelete = async () => {
     if (!deleteTarget) return;
@@ -91,6 +107,49 @@ export function UserManagementTable() {
     setDeleteTarget(null);
     setDeleteState('idle');
     setDeleteError(null);
+  };
+
+  const openEditModal = (u: Profile) => {
+    setEditTarget(u);
+    setEditState('idle');
+    setEditError(null);
+    setEditForm({
+      full_name: u.full_name, email: u.email, phone: u.phone ?? '', role: u.role,
+      organization: u.organization ?? '', address: u.address ?? '',
+      city: u.city ?? '', state: u.state ?? '', pincode: u.pincode ?? '', bio: u.bio ?? '',
+    });
+  };
+
+  const closeEditModal = () => {
+    if (editState === 'saving') return;
+    setEditTarget(null);
+    setEditState('idle');
+    setEditError(null);
+  };
+
+  const saveEdit = async () => {
+    if (!editTarget) return;
+    setEditState('saving');
+    setEditError(null);
+    const { error } = await supabase.from('profiles').update({
+      full_name: editForm.full_name,
+      email: editForm.email,
+      phone: editForm.phone || null,
+      role: editForm.role,
+      organization: editForm.organization || null,
+      address: editForm.address || null,
+      city: editForm.city || null,
+      state: editForm.state || null,
+      pincode: editForm.pincode || null,
+      bio: editForm.bio || null,
+    }).eq('id', editTarget.id);
+    if (error) {
+      setEditState('error');
+      setEditError(error.message);
+      return;
+    }
+    setEditTarget(null);
+    setEditState('idle');
   };
 
   useEffect(() => {
@@ -252,6 +311,13 @@ export function UserManagementTable() {
                             >
                               {expanded ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                             </button>
+                            <button
+                              onClick={() => openEditModal(u)}
+                              className="text-primary-600 hover:text-primary-700 p-1 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/30"
+                              title="Edit user"
+                            >
+                              <Edit3 className="h-4 w-4" />
+                            </button>
                             {u.role !== 'admin' && (
                               <button
                                 onClick={() => { setDeleteTarget(u); setDeleteState('confirming'); setDeleteError(null); }}
@@ -360,6 +426,12 @@ export function UserManagementTable() {
                     >
                       {expanded ? <><EyeOff className="h-3.5 w-3.5" /> Hide details</> : <><Eye className="h-3.5 w-3.5" /> Show details</>}
                     </button>
+                    <button
+                      onClick={() => openEditModal(u)}
+                      className="text-xs font-medium text-primary-600 hover:text-primary-700 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/30"
+                    >
+                      <Edit3 className="h-3.5 w-3.5" /> Edit
+                    </button>
                     {u.role !== 'admin' && (
                       <button
                         onClick={() => { setDeleteTarget(u); setDeleteState('confirming'); setDeleteError(null); }}
@@ -466,6 +538,108 @@ export function UserManagementTable() {
                       <><Loader2 className="h-4 w-4 animate-spin" /> Deleting...</>
                     ) : (
                       <><Trash2 className="h-4 w-4" /> Delete Permanently</>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {editTarget && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={closeEditModal}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="glass-card p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-display text-lg font-bold flex items-center gap-2">
+                  <Edit3 className="h-5 w-5 text-primary-500" /> Edit User
+                </h3>
+                <button onClick={closeEditModal} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">Full Name</p>
+                  <input value={editForm.full_name} onChange={(e) => setEditForm({ ...editForm, full_name: e.target.value })} className="input-field" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-400 mb-1">Email</p>
+                    <input value={editForm.email} onChange={(e) => setEditForm({ ...editForm, email: e.target.value })} className="input-field" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 mb-1">Phone</p>
+                    <input value={editForm.phone} onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })} className="input-field" placeholder="+91 98765 43210" />
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">Role</p>
+                  <select value={editForm.role} onChange={(e) => setEditForm({ ...editForm, role: e.target.value as UserRole })} className="input-field capitalize">
+                    {roleOptions.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">Organization</p>
+                  <input value={editForm.organization} onChange={(e) => setEditForm({ ...editForm, organization: e.target.value })} className="input-field" placeholder="Hotel / NGO name" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-xs text-gray-400 mb-1">Address</p>
+                    <input value={editForm.address} onChange={(e) => setEditForm({ ...editForm, address: e.target.value })} className="input-field" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 mb-1">City</p>
+                    <input value={editForm.city} onChange={(e) => setEditForm({ ...editForm, city: e.target.value })} className="input-field" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 mb-1">State</p>
+                    <input value={editForm.state} onChange={(e) => setEditForm({ ...editForm, state: e.target.value })} className="input-field" />
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-400 mb-1">Pincode</p>
+                    <input value={editForm.pincode} onChange={(e) => setEditForm({ ...editForm, pincode: e.target.value })} className="input-field" />
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-400 mb-1">Bio</p>
+                  <textarea value={editForm.bio} onChange={(e) => setEditForm({ ...editForm, bio: e.target.value })} rows={2} className="input-field resize-none" />
+                </div>
+                {editState === 'error' && (
+                  <div className="p-3 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 shrink-0" /> {editError}
+                  </div>
+                )}
+                <div className="flex gap-3 pt-2">
+                  <button
+                    onClick={closeEditModal}
+                    disabled={editState === 'saving'}
+                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={saveEdit}
+                    disabled={editState === 'saving'}
+                    className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-primary-600 to-accent-500 text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {editState === 'saving' ? (
+                      <><Loader2 className="h-4 w-4 animate-spin" /> Saving...</>
+                    ) : (
+                      <><Save className="h-4 w-4" /> Save Changes</>
                     )}
                   </button>
                 </div>
