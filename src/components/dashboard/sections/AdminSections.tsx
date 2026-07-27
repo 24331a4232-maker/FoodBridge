@@ -5,7 +5,7 @@ import {
   BarChart3, FileText, Bell, Settings, Radio, TrendingUp, TrendingDown,
   Loader2, Search, CheckCircle2, Clock, XCircle, Download, Star,
   Activity, AlertTriangle, Eye, EyeOff, Filter, Save, RefreshCw,
-  Camera, MapPin,
+  Camera, MapPin, User,
 } from 'lucide-react';
 import {
   ResponsiveContainer, ComposedChart, Line, Area, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
@@ -1085,6 +1085,24 @@ export function AdminSettingsSection() {
   return (
     <div>
       <DashboardSectionHeader title="Settings" description="Manage your admin account preferences." action={<RippleButton onClick={handleSave} variant="primary" disabled={saving}>{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Save Changes</RippleButton>} />
+      <div className="glass-card p-6 mb-4">
+        <h3 className="font-display font-bold mb-4 flex items-center gap-2"><User className="h-5 w-5 text-primary-500" /> Admin Profile</h3>
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+          {profile?.avatar_url ? (
+            <img src={profile.avatar_url} alt={profile.full_name ?? 'Admin'} className="h-20 w-20 rounded-2xl object-cover ring-2 ring-primary-200 dark:ring-primary-800 shrink-0" />
+          ) : (
+            <div className="h-20 w-20 rounded-2xl flex items-center justify-center text-2xl font-bold bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300 shrink-0">
+              {profile?.full_name?.[0]?.toUpperCase() ?? 'A'}
+            </div>
+          )}
+          <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+            <div><p className="text-xs text-gray-400">Name</p><p className="font-medium">{profile?.full_name || '—'}</p></div>
+            <div><p className="text-xs text-gray-400">Email</p><p className="font-medium break-all">{profile?.email || '—'}</p></div>
+            <div><p className="text-xs text-gray-400">Phone</p><p className="font-medium">{profile?.phone || '—'}</p></div>
+            <div><p className="text-xs text-gray-400">Role</p><p className="font-medium capitalize">{profile?.role || '—'}</p></div>
+          </div>
+        </div>
+      </div>
       <div className="glass-card p-6 mb-4">
         <h3 className="font-display font-bold mb-4 flex items-center gap-2"><Bell className="h-5 w-5 text-primary-500" /> Notification Preferences</h3>
         <div className="space-y-3">
