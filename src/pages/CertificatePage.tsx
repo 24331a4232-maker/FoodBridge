@@ -156,143 +156,149 @@ export function CertificatePage() {
               <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-500 via-gold-400 to-accent-500" />
 
               {/* Content layout */}
-              <div className="relative h-full flex flex-col p-8 sm:p-12">
-                {/* Header row */}
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <img src="/logo.png" alt="FoodBridge" className="h-12 w-12 object-contain" />
-                    <div>
-                      <p className="font-display text-sm font-bold text-primary-700 dark:text-primary-300 tracking-wide">FoodBridge</p>
-                      <p className="text-[9px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-[0.15em]">Impact Passport</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary-100 dark:bg-primary-800/40 border border-primary-200 dark:border-primary-700/50">
-                      <ShieldCheck className="h-3 w-3 text-primary-600 dark:text-primary-400" />
-                      <span className="text-[9px] font-semibold text-primary-700 dark:text-primary-300">Blockchain Verified</span>
-                    </div>
-                    <p className="text-[9px] text-ink-soft/60 dark:text-cream/40 mt-1.5 flex items-center gap-1 justify-end">
-                      <Hash className="h-2.5 w-2.5" /> {certData.certificateNumber}
-                    </p>
+              <div className="relative h-full flex flex-col">
+
+                {/* ── Top header band ── */}
+                <div className="bg-[#1B4332] flex items-center justify-between px-6 sm:px-10 py-2.5">
+                  <span className="text-[10px] sm:text-xs font-bold tracking-[0.18em] text-white/90 uppercase">
+                    The Last Plate – FoodBridge Initiative
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <ShieldCheck className="h-3 w-3 text-[#C9A66B]" />
+                    <span className="text-[9px] text-[#C9A66B] font-semibold tracking-wide uppercase">Verified</span>
                   </div>
                 </div>
+                {/* Gold accent line */}
+                <div className="h-[3px] bg-[#C9A66B]" />
 
-                {/* Recipient section */}
-                <div className="mt-6 sm:mt-8">
-                  <motion.p
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-[10px] uppercase tracking-[0.2em] text-ink-soft/60 dark:text-cream/40 mb-1"
-                  >
-                    Passport Holder
-                  </motion.p>
-                  <motion.h2
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="font-display text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-primary-700 via-primary-500 to-gold-500 bg-clip-text text-transparent"
-                  >
-                    {certData.volunteerName}
-                  </motion.h2>
-                  <p className="text-xs text-ink-soft dark:text-cream/60 mt-1">{certData.organizationName}</p>
-                </div>
+                {/* ── Main body ── */}
+                <div className="flex-1 flex gap-4 sm:gap-6 px-5 sm:px-10 pt-4 pb-2">
 
-                {/* Impact metrics grid */}
-                <div className="mt-5 sm:mt-6 grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
-                  {impactMetrics.map((m, i) => {
-                    const Icon = m.icon;
-                    return (
-                      <motion.div
-                        key={m.label}
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.35 + i * 0.08 }}
-                        className="relative rounded-xl bg-white/70 dark:bg-secondary-800/60 backdrop-blur-sm border border-linen/60 dark:border-secondary-700/50 p-2.5 sm:p-3"
-                      >
-                        <div
-                          className="h-7 w-7 sm:h-8 sm:w-8 rounded-lg flex items-center justify-center mb-1.5"
-                          style={{ backgroundColor: `${m.color}20` }}
-                        >
-                          <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" style={{ color: m.color }} />
-                        </div>
-                        <p className="font-stat text-lg sm:text-xl font-bold text-ink dark:text-cream leading-none">{m.value}</p>
-                        <p className="text-[8px] sm:text-[9px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide mt-0.5">{m.label}</p>
-                        {/* Mini sparkline decoration */}
-                        <div className="absolute bottom-1 right-1.5 flex items-end gap-0.5 opacity-30">
-                          {[3, 5, 4, 6, 5, 7].map((h, j) => (
-                            <div key={j} className="w-0.5 rounded-full" style={{ height: h, backgroundColor: m.color }} />
-                          ))}
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-
-                {/* Impact journey bar */}
-                <div className="mt-4 sm:mt-5">
-                  <p className="text-[9px] uppercase tracking-[0.15em] text-ink-soft/60 dark:text-cream/40 mb-1.5 flex items-center gap-1">
-                    <TrendingUp className="h-2.5 w-2.5" /> Impact Journey
-                  </p>
-                  <div className="relative h-2 rounded-full bg-linen/60 dark:bg-secondary-800 overflow-hidden">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: `${Math.min((certData.deliveriesCount / 10) * 100, 100)}%` }}
-                      transition={{ delay: 0.5, duration: 0.8, ease: 'easeOut' }}
-                      className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-primary-500 via-primary-400 to-gold-400"
+                  {/* Left: logo + seal */}
+                  <div className="flex flex-col items-center gap-3 shrink-0 w-16 sm:w-20 justify-center">
+                    <motion.img
+                      src="/images/WhatsApp_Image_2026-07-08_at_10.26.18_PM copy.jpeg"
+                      alt="The Last Plate"
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.2, type: 'spring', stiffness: 180 }}
+                      className="w-14 h-14 sm:w-20 sm:h-20 object-contain"
                     />
-                  </div>
-                  <div className="flex justify-between mt-1">
-                    <p className="text-[8px] text-ink-soft/60 dark:text-cream/40">Started</p>
-                    <p className="text-[8px] font-medium text-primary-600 dark:text-primary-400">{certData.deliveriesCount} / 10 deliveries</p>
-                  </div>
-                </div>
-
-                {/* Bottom row: signature, seal, QR */}
-                <div className="mt-auto pt-4 flex flex-wrap items-end justify-between gap-2">
-                  {/* Signature */}
-                  <div className="text-left">
-                    <p className="font-display italic text-ink dark:text-cream text-sm" style={{ fontFamily: 'Georgia, serif' }}>FoodBridge Team</p>
-                    <div className="h-px w-20 bg-linen dark:bg-secondary-600 my-1" />
-                    <p className="text-[9px] text-ink-soft dark:text-cream/60">Authorized Signatory</p>
-                  </div>
-
-                  {/* Holographic seal */}
-                  <motion.div
-                    initial={{ scale: 0, rotate: -30 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ delay: 0.6, type: 'spring', stiffness: 200, damping: 15 }}
-                    className="relative h-14 w-14 sm:h-16 sm:w-16"
-                  >
-                    <div className="absolute inset-0 rounded-full bg-gradient-conic from-primary-400 via-gold-400 to-primary-400 opacity-80 blur-sm animate-spin-slow" style={{ animationDuration: '8s' }} />
-                    <div className="absolute inset-1 rounded-full bg-white dark:bg-secondary-900 flex flex-col items-center justify-center border-2 border-gold-500 shadow-lg">
-                      <ShieldCheck className="h-4 w-4 sm:h-5 sm:w-5 text-gold-600 dark:text-gold-400" />
-                      <span className="text-[6px] sm:text-[7px] font-bold text-gold-700 dark:text-gold-300 mt-0.5">VERIFIED</span>
-                    </div>
-                  </motion.div>
-
-                  {/* QR Code */}
-                  <div className="flex flex-col items-center gap-1">
-                    {qrUrl ? (
-                      <img src={qrUrl} alt="QR Code" className="h-14 w-14 sm:h-16 sm:w-16 rounded-lg" />
-                    ) : (
-                      <div className="h-14 w-14 sm:h-16 sm:w-16 bg-oat dark:bg-secondary-800 rounded-lg flex items-center justify-center">
-                        <QrCode className="h-7 w-7 text-ink-soft/40 dark:text-cream/30" />
+                    {/* Decorative seal */}
+                    <motion.div
+                      initial={{ scale: 0, rotate: -30 }}
+                      animate={{ scale: 1, rotate: 0 }}
+                      transition={{ delay: 0.6, type: 'spring', stiffness: 200, damping: 14 }}
+                      className="relative h-10 w-10 sm:h-12 sm:w-12"
+                    >
+                      <div className="absolute inset-0 rounded-full border-2 border-[#C9A66B]" />
+                      <div className="absolute inset-[4px] rounded-full border border-[#C9A66B]/60 flex flex-col items-center justify-center">
+                        <Award className="h-3 w-3 sm:h-4 sm:w-4 text-[#C9A66B]" />
+                        <span className="text-[5px] sm:text-[6px] font-bold text-[#1B4332] dark:text-[#C9A66B] mt-0.5 uppercase tracking-wide">Seal</span>
                       </div>
-                    )}
-                    <p className="text-[8px] text-ink-soft/60 dark:text-cream/40 flex items-center gap-1">
-                      <QrCode className="h-2.5 w-2.5" /> Scan to verify
+                    </motion.div>
+                  </div>
+
+                  {/* Right: certificate content */}
+                  <div className="flex-1 min-w-0 flex flex-col">
+                    {/* Title */}
+                    <div className="text-center mb-2 sm:mb-3">
+                      <p className="text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-[#8B5E3C] font-semibold">Certificate of Appreciation</p>
+                      <div className="flex items-center gap-2 my-1 justify-center">
+                        <div className="h-px flex-1 bg-[#C9A66B]/50" />
+                        <Leaf className="h-3 w-3 text-[#C9A66B]" />
+                        <div className="h-px flex-1 bg-[#C9A66B]/50" />
+                      </div>
+                      <p className="text-[8px] sm:text-[9px] text-ink-soft/60 dark:text-cream/40 italic">
+                        This certificate is proudly presented to
+                      </p>
+                    </div>
+
+                    {/* Recipient */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="text-center mb-2 sm:mb-3"
+                    >
+                      <h2 className="font-display text-xl sm:text-2xl lg:text-3xl font-bold text-[#1B4332] dark:text-primary-300 leading-tight">
+                        {certData.volunteerName}
+                      </h2>
+                      <div className="mx-auto mt-1 h-[2px] w-24 sm:w-32 bg-gradient-to-r from-transparent via-[#C9A66B] to-transparent" />
+                      <p className="text-[8px] sm:text-[9px] text-ink-soft/60 dark:text-cream/40 mt-1 italic">
+                        {certData.organizationName}
+                      </p>
+                    </motion.div>
+
+                    {/* Body text */}
+                    <p className="text-[7px] sm:text-[8.5px] text-center text-ink-soft/80 dark:text-cream/50 leading-relaxed mb-3 px-2">
+                      in recognition of outstanding dedication and selfless service in redistributing surplus food to communities in need,
+                      helping reduce food waste and bring hope to those who need it most.
                     </p>
+
+                    {/* Stats row */}
+                    <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-3">
+                      {impactMetrics.slice(0, 3).map((m, i) => {
+                        const Icon = m.icon;
+                        return (
+                          <motion.div
+                            key={m.label}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.4 + i * 0.08 }}
+                            className="flex flex-col items-center rounded-xl bg-[#1B4332] py-2 px-1"
+                          >
+                            <Icon className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-[#C9A66B] mb-0.5" />
+                            <p className="font-bold text-sm sm:text-base text-white leading-none">{m.value}</p>
+                            <p className="text-[6px] sm:text-[7px] text-white/60 uppercase tracking-wide mt-0.5 text-center">{m.label}</p>
+                          </motion.div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Motto */}
+                    <p className="text-center text-[7px] sm:text-[8px] italic text-[#8B5E3C] dark:text-[#C9A66B]/80 mb-2 sm:mb-3">
+                      "Because the last plate you don't need, might be the only meal they get."
+                    </p>
+
+                    {/* Bottom: signature | QR */}
+                    <div className="mt-auto flex items-end justify-between gap-3">
+                      {/* Signature */}
+                      <div>
+                        <p className="font-display text-sm sm:text-base italic text-[#1B4332] dark:text-primary-300" style={{ fontFamily: 'Georgia, serif' }}>
+                          The Last Plate Team
+                        </p>
+                        <div className="h-px w-28 bg-ink/30 dark:bg-cream/20 my-1" />
+                        <p className="text-[8px] text-ink-soft/60 dark:text-cream/40">Authorized Signatory</p>
+                      </div>
+
+                      {/* QR */}
+                      <div className="flex flex-col items-center gap-0.5">
+                        {qrUrl ? (
+                          <img src={qrUrl} alt="QR Code" className="h-12 w-12 sm:h-14 sm:w-14 rounded-md border border-[#C9A66B]/40" />
+                        ) : (
+                          <div className="h-12 w-12 sm:h-14 sm:w-14 bg-oat dark:bg-secondary-800 rounded-md flex items-center justify-center">
+                            <QrCode className="h-6 w-6 text-ink-soft/40" />
+                          </div>
+                        )}
+                        <p className="text-[7px] text-ink-soft/50 dark:text-cream/30">Scan to verify</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* Verification strip */}
-                <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-r from-primary-700 via-secondary-700 to-primary-700 dark:from-primary-800 dark:via-secondary-800 dark:to-primary-800 flex items-center justify-between px-8 sm:px-12">
-                  <p className="text-[7px] sm:text-[8px] text-cream/80 font-mono tracking-wider">
-                    ID: {certData.uniqueId}
+                {/* Gold accent line */}
+                <div className="h-[3px] bg-[#C9A66B]" />
+                {/* ── Footer band ── */}
+                <div className="bg-[#1B4332] flex items-center justify-between px-6 sm:px-10 py-1.5">
+                  <p className="text-[7px] sm:text-[8px] text-white/60 font-mono tracking-wider">
+                    No: {certData.certificateNumber}
                   </p>
-                  <p className="text-[7px] sm:text-[8px] text-cream/80 font-mono tracking-wider">
-                    ISSUED: {issueDateFormatted}
+                  <p className="text-[7px] sm:text-[8px] text-white/60 font-mono">
+                    Save Food · Share Food · Serve Humanity
+                  </p>
+                  <p className="text-[7px] sm:text-[8px] text-white/60 font-mono tracking-wider">
+                    {issueDateFormatted}
                   </p>
                 </div>
               </div>

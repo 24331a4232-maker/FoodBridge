@@ -2,8 +2,8 @@ import jsPDF from 'jspdf';
 import QRCode from 'qrcode';
 import { supabase } from './supabase';
 
-const ORG_NAME = 'FoodBridge';
-const PROJECT_NAME = 'FoodBridge';
+const ORG_NAME = 'The Last Plate';
+const PROJECT_NAME = 'The Last Plate – FoodBridge Initiative';
 
 export interface CertificateData {
   certificateNumber: string;
@@ -68,7 +68,6 @@ export async function createCertificateRecord(params: {
 
   if (error || !certData) return null;
 
-  // Create a QR verification record (one per certificate, unique)
   await supabase.from('qr_verifications').insert({
     certificate_id: certData.id,
     qr_code: certificateNumber,
@@ -90,159 +89,197 @@ export async function createCertificateRecord(params: {
   };
 }
 
+/** Loads an image URL and returns a base64 data-URL (JPEG/PNG) for use in jsPDF */
+async function loadImageAsDataUrl(src: string): Promise<string> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) { resolve(''); return; }
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.onerror = () => resolve('');
+    img.src = src;
+  });
+}
+
 export async function generateCertificatePDF(data: CertificateData, qrDataUrl: string): Promise<void> {
   const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
-  const w = pdf.internal.pageSize.getWidth();
-  const h = pdf.internal.pageSize.getHeight();
+  const W = pdf.internal.pageSize.getWidth();   // 297
+  const H = pdf.internal.pageSize.getHeight();  // 210
 
-  // White background
-  pdf.setFillColor(255, 255, 255);
-  pdf.rect(0, 0, w, h, 'F');
+  // ── Background ─────────────────────────────────────────────────────────────
+  // Ivory base
+  pdf.setFillColor(254, 252, 245);
+  pdf.rect(0, 0, W, H, 'F');
 
-  // Outer border — teal
-  pdf.setDrawColor(27, 67, 50);
-  pdf.setLineWidth(2.5);
-  pdf.rect(6, 6, w - 12, h - 12);
-  // Inner border — copper
-  pdf.setDrawColor(139, 94, 60);
-  pdf.setLineWidth(1);
-  pdf.rect(10, 10, w - 20, h - 20);
-  // Thin decorative line
-  pdf.setDrawColor(27, 67, 50);
-  pdf.setLineWidth(0.3);
-  pdf.rect(13, 13, w - 26, h - 26);
+  // Top colour band
+  pdf.setFillColor(27, 67, 50);   // deep forest green
+  pdf.rect(0, 0, W, 14, 'F');
 
-  // Corner ornaments
-  const drawCorner = (x: number, y: number, dx: number, dy: number) => {
-    pdf.setDrawColor(139, 94, 60);
-    pdf.setLineWidth(1.5);
-    pdf.line(x, y, x + dx, y);
-    pdf.line(x, y, x, y + dy);
-  };
-  drawCorner(16, 16, 12, 12);
-  drawCorner(w - 16, 16, -12, 12);
-  drawCorner(16, h - 16, 12, -12);
-  drawCorner(w - 16, h - 16, -12, -12);
-
-  // Watermark — light FoodBridge text
-  pdf.setTextColor(27, 67, 50);
-  pdf.setFontSize(60);
-  pdf.setFont('helvetica', 'bold');
-  pdf.setTextColor(27, 67, 50, 18);
-  pdf.text('FoodBridge', w / 2, h / 2 + 5, { align: 'center' });
-
-  // Logo circle with "FB"
+  // Bottom colour band
   pdf.setFillColor(27, 67, 50);
-  pdf.circle(w / 2, 32, 11, 'F');
-  pdf.setTextColor(255, 255, 255);
-  pdf.setFontSize(16);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('FB', w / 2, 35.5, { align: 'center' });
+  pdf.rect(0, H - 10, W, 10, 'F');
 
-  // Title block
-  pdf.setTextColor(27, 67, 50);
-  pdf.setFontSize(26);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text('Volunteer Appreciation Certificate', w / 2, 55, { align: 'center' });
+  // Gold accent stripe at bottom of header band
+  pdf.setFillColor(201, 166, 107);
+  pdf.rect(0, 14, W, 2.5, 'F');
 
-  pdf.setTextColor(120, 120, 120);
-  pdf.setFontSize(10);
-  pdf.setFont('helvetica', 'normal');
-  pdf.text(PROJECT_NAME, w / 2, 62, { align: 'center' });
+  // Gold accent stripe above footer band
+  pdf.setFillColor(201, 166, 107);
+  pdf.rect(0, H - 12, W, 2, 'F');
 
-  // Divider
+  // Left decorative sidebar
+  pdf.setFillColor(27, 67, 50);
+  pdf.rect(0, 16.5, 8, H - 28.5, 'F');
+
+  // Right decorative sidebar
+  pdf.setFillColor(27, 67, 50);
+  pdf.rect(W - 8, 16.5, 8, H - 28.5, 'F');
+
+  // Gold thin inner border
   pdf.setDrawColor(201, 166, 107);
   pdf.setLineWidth(0.8);
-  pdf.line(w / 2 - 30, 66, w / 2 + 30, 66);
+  pdf.rect(12, 20, W - 24, H - 33, undefined);
 
-  // "Presented to"
-  pdf.setTextColor(100, 100, 100);
-  pdf.setFontSize(11);
-  pdf.setFont('helvetica', 'italic');
-  pdf.text('This certificate is proudly presented to', w / 2, 76, { align: 'center' });
+  // ── Logo ───────────────────────────────────────────────────────────────────
+  const logoDataUrl = await loadImageAsDataUrl('/images/WhatsApp_Image_2026-07-08_at_10.26.18_PM copy.jpeg');
+  if (logoDataUrl) {
+    // Logo placed in upper-left inside border
+    pdf.addImage(logoDataUrl, 'JPEG', 16, 22, 32, 32);
+  }
 
-  // Volunteer name
-  pdf.setTextColor(20, 20, 20);
-  pdf.setFontSize(28);
-  pdf.setFont('helvetica', 'bold');
-  pdf.text(data.volunteerName || 'Volunteer', w / 2, 88, { align: 'center' });
-
-  // Underline under name
-  pdf.setDrawColor(201, 166, 107);
-  pdf.setLineWidth(0.5);
-  const nameWidth = Math.min(120, (data.volunteerName || 'Volunteer').length * 6);
-  pdf.line(w / 2 - nameWidth / 2, 91, w / 2 + nameWidth / 2, 91);
-
-  // Body text
-  pdf.setTextColor(80, 80, 80);
-  pdf.setFontSize(10);
-  pdf.setFont('helvetica', 'normal');
-  const bodyY = 100;
-  const bodyLines = [
-    'in recognition of outstanding dedication and valuable service in redistributing surplus food',
-    'from hotels and events to people in need through the FoodBridge initiative.',
-  ];
-  bodyLines.forEach((line, i) => {
-    pdf.text(line, w / 2, bodyY + i * 5.5, { align: 'center' });
-  });
-  pdf.text('Your contribution has helped reduce food waste and support communities.', w / 2, bodyY + 12, { align: 'center' });
-  pdf.text('Thank you for making a meaningful difference.', w / 2, bodyY + 17.5, { align: 'center' });
-
-  // Stats row
-  pdf.setTextColor(27, 67, 50);
+  // ── Header text (top band) ─────────────────────────────────────────────────
+  pdf.setTextColor(255, 255, 255);
   pdf.setFontSize(9);
   pdf.setFont('helvetica', 'bold');
-  pdf.text(`${data.deliveriesCount} Deliveries`, w / 2 - 40, 128, { align: 'center' });
-  pdf.text(`${Math.round(data.hoursServed)} Hours`, w / 2, 128, { align: 'center' });
-  pdf.text(`${data.totalMeals} Meals Saved`, w / 2 + 40, 128, { align: 'center' });
+  pdf.text('THE LAST PLATE  –  FOODBRIDGE INITIATIVE', W / 2, 9.5, { align: 'center' });
 
-  // Bottom section: signature, seal, QR
-  const bottomY = h - 35;
+  // ── Title block ────────────────────────────────────────────────────────────
+  const titleX = W / 2 + 14; // shift right to give logo room
+  pdf.setTextColor(27, 67, 50);
+  pdf.setFontSize(22);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text('Certificate of Appreciation', titleX, 34, { align: 'center' });
 
-  // Signature
-  pdf.setTextColor(40, 40, 40);
+  pdf.setFontSize(9);
+  pdf.setFont('helvetica', 'normal');
+  pdf.setTextColor(139, 94, 60);
+  pdf.text('VOLUNTEER  ·  FOOD REDISTRIBUTION  ·  COMMUNITY SERVICE', titleX, 40, { align: 'center' });
+
+  // Thin gold divider under subtitle
+  pdf.setDrawColor(201, 166, 107);
+  pdf.setLineWidth(0.6);
+  pdf.line(titleX - 55, 43, titleX + 55, 43);
+
+  // ── Presented to ───────────────────────────────────────────────────────────
+  pdf.setTextColor(100, 100, 100);
+  pdf.setFontSize(9.5);
   pdf.setFont('helvetica', 'italic');
-  pdf.setFontSize(14);
-  pdf.text('FoodBridge Team', 45, bottomY);
+  pdf.text('This certificate is proudly presented to', W / 2, 52, { align: 'center' });
+
+  // Volunteer name
+  pdf.setTextColor(27, 67, 50);
+  pdf.setFontSize(30);
+  pdf.setFont('helvetica', 'bold');
+  pdf.text(data.volunteerName || 'Volunteer', W / 2, 65, { align: 'center' });
+
+  // Gold underline proportional to name
+  const nameLen = Math.min(130, (data.volunteerName || 'Volunteer').length * 7.5 + 20);
+  pdf.setDrawColor(201, 166, 107);
+  pdf.setLineWidth(0.7);
+  pdf.line(W / 2 - nameLen / 2, 68.5, W / 2 + nameLen / 2, 68.5);
+
+  // ── Body text ──────────────────────────────────────────────────────────────
+  pdf.setTextColor(70, 70, 70);
+  pdf.setFontSize(9);
+  pdf.setFont('helvetica', 'normal');
+  const body = [
+    'in recognition of outstanding dedication and selfless service in redistributing surplus food',
+    `from hotels and events to communities in need through ${PROJECT_NAME}.`,
+    'Your commitment has helped reduce food waste and bring hope to those who need it most.',
+  ];
+  body.forEach((line, i) => pdf.text(line, W / 2, 77 + i * 5.5, { align: 'center' }));
+
+  // ── Stats row ──────────────────────────────────────────────────────────────
+  const statsY = 101;
+  const statCols = [
+    { label: 'Deliveries Completed', value: String(data.deliveriesCount), x: W / 2 - 52 },
+    { label: 'Hours of Service',     value: String(Math.round(data.hoursServed)), x: W / 2 },
+    { label: 'Meals Saved',          value: String(data.totalMeals),  x: W / 2 + 52 },
+  ];
+
+  statCols.forEach(({ label, value, x }) => {
+    // Pill background
+    pdf.setFillColor(27, 67, 50);
+    pdf.roundedRect(x - 20, statsY - 8, 40, 16, 3, 3, 'F');
+    pdf.setTextColor(255, 255, 255);
+    pdf.setFontSize(16);
+    pdf.setFont('helvetica', 'bold');
+    pdf.text(value, x, statsY + 1, { align: 'center' });
+    pdf.setFontSize(6.5);
+    pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(139, 94, 60);
+    pdf.text(label.toUpperCase(), x, statsY + 11, { align: 'center' });
+  });
+
+  // ── Motto strip ────────────────────────────────────────────────────────────
+  pdf.setTextColor(100, 100, 100);
+  pdf.setFontSize(8);
+  pdf.setFont('helvetica', 'italic');
+  pdf.text('"Because the last plate you don\'t need, might be the only meal they get."', W / 2, 122, { align: 'center' });
+
+  // ── Bottom section: signature | seal | QR ──────────────────────────────────
+  const botY = H - 26;
+
+  // Signature (left)
+  pdf.setTextColor(30, 30, 30);
+  pdf.setFont('helvetica', 'italic');
+  pdf.setFontSize(13);
+  pdf.text('The Last Plate Team', 40, botY - 2);
   pdf.setDrawColor(150, 150, 150);
   pdf.setLineWidth(0.4);
-  pdf.line(28, bottomY + 2, 75, bottomY + 2);
-  pdf.setFontSize(8);
+  pdf.line(20, botY, 70, botY);
+  pdf.setFontSize(7.5);
   pdf.setFont('helvetica', 'normal');
   pdf.setTextColor(100, 100, 100);
-  pdf.text('Authorized Signatory', 45, bottomY + 6, { align: 'center' });
+  pdf.text('Authorized Signatory', 45, botY + 4.5, { align: 'center' });
 
-  // Official seal (circle with text)
-  const sealX = w / 2;
-  const sealY = bottomY - 2;
+  // Official seal (centre)
+  const sX = W / 2, sY = botY - 4;
   pdf.setDrawColor(201, 166, 107);
   pdf.setLineWidth(1.5);
-  pdf.circle(sealX, sealY, 13);
+  pdf.circle(sX, sY, 11);
   pdf.setLineWidth(0.5);
-  pdf.circle(sealX, sealY, 10.5);
+  pdf.circle(sX, sY, 8.5);
   pdf.setFontSize(7);
-  pdf.setTextColor(139, 94, 60);
   pdf.setFont('helvetica', 'bold');
-  pdf.text('OFFICIAL', sealX, sealY - 3, { align: 'center' });
-  pdf.text('SEAL', sealX, sealY + 1, { align: 'center' });
+  pdf.setTextColor(139, 94, 60);
+  pdf.text('OFFICIAL', sX, sY - 2.5, { align: 'center' });
+  pdf.text('SEAL', sX, sY + 1.5, { align: 'center' });
   pdf.setFontSize(5);
-  pdf.text('FOODBRIDGE', sealX, sealY + 5, { align: 'center' });
+  pdf.text('THE LAST PLATE', sX, sY + 5.5, { align: 'center' });
 
-  // QR code
+  // QR code (right)
   if (qrDataUrl) {
-    pdf.addImage(qrDataUrl, 'PNG', w - 42, bottomY - 12, 18, 18);
+    pdf.addImage(qrDataUrl, 'PNG', W - 40, botY - 14, 18, 18);
     pdf.setFontSize(6);
     pdf.setTextColor(100, 100, 100);
     pdf.setFont('helvetica', 'normal');
-    pdf.text('Scan to verify', w - 33, bottomY + 9, { align: 'center' });
+    pdf.text('Scan to verify', W - 31, botY + 6, { align: 'center' });
   }
 
-  // Certificate ID and issue date (bottom corners)
-  pdf.setFontSize(8);
-  pdf.setTextColor(100, 100, 100);
-  pdf.text(`Certificate ID: ${data.certificateNumber}`, 16, h - 16);
-  pdf.text(`Issue Date: ${new Date(data.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, w - 16, h - 16, { align: 'right' });
-  pdf.text(`Unique ID: ${data.uniqueId}`, 16, h - 12);
+  // ── Footer band text ────────────────────────────────────────────────────────
+  pdf.setTextColor(220, 220, 220);
+  pdf.setFontSize(7);
+  pdf.setFont('helvetica', 'normal');
+  pdf.text(`Certificate No: ${data.certificateNumber}   ·   Unique ID: ${data.uniqueId}`, 16, H - 4);
+  pdf.text(`Issued: ${new Date(data.issueDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}`, W - 16, H - 4, { align: 'right' });
 
-  pdf.save(`FoodBridge-Certificate-${data.volunteerName.replace(/\s+/g, '-')}.pdf`);
+  pdf.save(`TheLastPlate-Certificate-${data.volunteerName.replace(/\s+/g, '-')}.pdf`);
 }
