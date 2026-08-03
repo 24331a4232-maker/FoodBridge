@@ -11,7 +11,7 @@ import { LeafletMap, type MapPoint } from '@/components/LeafletMap';
 const contactInfo = [
   { icon: Mail, label: 'Email', value: 'hello@foodbridge.org', href: 'mailto:hello@foodbridge.org' },
   { icon: Phone, label: 'Phone', value: '+91 80 1234 5678', href: 'tel:+918012345678' },
-  { icon: MapPin, label: 'Address', value: 'MG Road, Bangalore, Karnataka 560001', href: '#' },
+  { icon: MapPin, label: 'Address', value: 'Vizianagaram, Andhra Pradesh, India', href: '#' },
   { icon: Clock, label: 'Hours', value: 'Mon - Sat, 9:00 AM - 8:00 PM', href: '#' },
 ];
 
@@ -100,14 +100,14 @@ export function ContactPage() {
             {/* Map */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-2">
               <LeafletMap
-                center={[12.9756, 77.6053]}
+                center={[18.0997, 83.3977]}
                 zoom={15}
                 height="h-64"
                 points={[
-                  { lat: 12.9756, lng: 77.6053, type: 'donor', popup: '<strong>FoodBridge HQ</strong><br/>MG Road, Bangalore' },
+                  { lat: 18.0997, lng: 83.3977, type: 'donor', popup: '<strong>FoodBridge HQ</strong><br/>Vizianagaram, Andhra Pradesh' },
                 ] as MapPoint[]}
               />
-              <p className="text-xs text-ink-soft/60 dark:text-cream/40 flex items-center gap-1"><MapPin className="h-3 w-3" /> FoodBridge HQ - MG Road, Bangalore</p>
+              <p className="text-xs text-ink-soft/60 dark:text-cream/40 flex items-center gap-1"><MapPin className="h-3 w-3" /> FoodBridge HQ - Vizianagaram, Andhra Pradesh</p>
             </motion.div>
 
             {/* Social */}

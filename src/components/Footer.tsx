@@ -126,7 +126,7 @@ export function Footer() {
                 <Phone className="h-4 w-4 text-primary-400 shrink-0" /> +91 80 1234 5678
               </a>
               <p className="flex items-center gap-3 text-sm text-cream/60">
-                <MapPin className="h-4 w-4 text-primary-400 shrink-0" /> MG Road, Bangalore, India
+                <MapPin className="h-4 w-4 text-primary-400 shrink-0" /> Vizianagaram, Andhra Pradesh, India
               </p>
             </div>
             <div className="flex gap-2">

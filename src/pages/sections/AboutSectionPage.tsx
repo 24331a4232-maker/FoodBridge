@@ -78,10 +78,12 @@ function MissionVisionTab() {
         <span className="absolute top-6 left-8 font-display text-6xl text-primary-200 dark:text-primary-800/40 leading-none select-none">"</span>
         <p className="text-lg sm:text-xl text-ink-soft dark:text-cream/70 leading-relaxed font-display italic mb-8 relative z-10 pl-8">{founderQuote}</p>
         <motion.div variants={fadeInUp} className="flex items-center gap-4 relative z-10">
-          <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center font-display text-xl font-semibold shadow-lg">A</div>
+          <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center shadow-lg">
+            <Heart className="h-6 w-6" />
+          </div>
           <div>
-            <p className="font-display font-semibold text-ink dark:text-cream">Arjun Sharma</p>
-            <p className="text-sm text-ink-soft dark:text-cream/50">Founder, FoodBridge</p>
+            <p className="font-display font-semibold text-ink dark:text-cream">The FoodBridge Team</p>
+            <p className="text-sm text-ink-soft dark:text-cream/50">Vizianagaram, Andhra Pradesh, India</p>
           </div>
         </motion.div>
       </motion.div>
