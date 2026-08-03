@@ -18,7 +18,7 @@ import { DonationStatusTracker } from '@/components/DonationStatusTracker';
 import { FoodQualityBadge } from '@/components/FoodQualityBadge';
 import { DonationImage } from '@/components/Illustration';
 import { DashboardSectionHeader, StatCard } from '@/components/dashboard/DashboardLayout';
-import type { FoodDonation, Pickup, InspectionChecklist } from '@/types';
+import type { FoodDonation, Pickup, InspectionChecklist, Certificate } from '@/types';
 
 /* ---------- Assigned Donations ---------- */
 export function VolunteerAssignedSection() {
@@ -54,12 +54,27 @@ export function VolunteerAssignedSection() {
         reward_points: (profile.reward_points ?? 0) + (pickup.points_earned ?? 25),
       }).eq('id', profile.id);
     }
-    pushToast('Delivery completed! Points earned.', 'success');
+    // Auto-upsert the volunteer's cumulative certificate
+    const meals = pickup.donation?.estimated_meals ?? 0;
+    await supabase.rpc('upsert_volunteer_certificate', {
+      p_volunteer_id: user?.id ?? '',
+      p_volunteer_name: profile?.full_name ?? 'Volunteer',
+      p_deliveries_delta: 1,
+      p_hours_delta: 0.5,
+      p_meals_delta: meals,
+    });
+    pushToast('Delivery completed! Points earned. Certificate updated.', 'success');
     pushNotification({
       type: 'delivery_completed',
       title: 'Delivery Completed',
-      description: `You delivered ${pickup.donation?.food_name ?? 'a donation'} and earned ${pickup.points_earned ?? 25} points.`,
+      description: `You delivered ${pickup.donation?.food_name ?? 'a donation'} and earned ${pickup.points_earned ?? 25} points. Your certificate has been updated.`,
       actionUrl: '/dashboard/volunteer',
+    });
+    pushNotification({
+      type: 'certificate_generated',
+      title: 'Certificate Updated',
+      description: `Your volunteer certificate has been updated with your latest delivery. Total deliveries: ${(profile?.total_deliveries ?? 0) + 1}.`,
+      actionUrl: '/services/certificate-history',
     });
     load();
   };
@@ -791,6 +806,115 @@ export function VolunteerProfileSection() {
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+/* ---------- Volunteer Certificates ---------- */
+export function VolunteerCertificatesSection() {
+  const { user, profile } = useAuth();
+  const [certs, setCerts] = useState<Certificate[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const load = async () => {
+      if (!user) return;
+      const { data } = await supabase.from('certificates').select('*').eq('volunteer_id', user.id).order('created_at', { ascending: false });
+      setCerts((data as Certificate[]) ?? []);
+      setLoading(false);
+    };
+    load();
+    const ch = supabase.channel('vol-certs').on('postgres_changes', { event: '*', schema: 'public', table: 'certificates' }, load).subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [user]);
+
+  const latestCert = certs[0];
+  const totalDeliveries = latestCert?.deliveries_count ?? profile?.total_deliveries ?? 0;
+  const totalHours = Math.round(latestCert?.hours_served ?? profile?.total_hours ?? 0);
+  const totalMeals = latestCert?.total_meals ?? 0;
+
+  return (
+    <div>
+      <DashboardSectionHeader
+        title="My Certificates"
+        description="Your volunteer appreciation certificate updates automatically with every completed delivery."
+        action={<Link to="/services/certificate-history"><RippleButton variant="secondary">View All</RippleButton></Link>}
+      />
+      {loading ? (
+        <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>
+      ) : certs.length === 0 ? (
+        <div className="glass-card p-10 text-center">
+          <Award className="h-12 w-12 text-ink-soft/40 dark:text-cream/30 mx-auto mb-3" />
+          <p className="text-ink-soft dark:text-cream/60 mb-2">No certificate yet.</p>
+          <p className="text-xs text-ink-soft/60 dark:text-cream/40">Complete a delivery to earn your first volunteer certificate.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {/* Latest certificate card */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-6 relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-primary-500 to-accent-500" />
+            <div className="flex items-center gap-4 mb-4">
+              <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white shadow-lg">
+                <Award className="h-7 w-7" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-display text-lg font-bold">Volunteer Appreciation Certificate</p>
+                <p className="text-xs text-ink-soft/60 dark:text-cream/40 font-mono">{latestCert.certificate_number}</p>
+              </div>
+              {latestCert.is_valid ? (
+                <span className="badge bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"><ShieldCheck className="h-3 w-3" /> Valid</span>
+              ) : (
+                <span className="badge bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300">Revoked</span>
+              )}
+            </div>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              <div className="p-3 rounded-xl bg-oat dark:bg-secondary-800/50">
+                <p className="font-display text-2xl font-bold text-primary-600 dark:text-primary-400"><AnimatedCounter value={totalDeliveries} /></p>
+                <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Deliveries</p>
+              </div>
+              <div className="p-3 rounded-xl bg-oat dark:bg-secondary-800/50">
+                <p className="font-display text-2xl font-bold text-blue-600 dark:text-blue-400"><AnimatedCounter value={totalHours} /></p>
+                <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Hours</p>
+              </div>
+              <div className="p-3 rounded-xl bg-oat dark:bg-secondary-800/50">
+                <p className="font-display text-2xl font-bold text-accent-600 dark:text-accent-400"><AnimatedCounter value={totalMeals} /></p>
+                <p className="text-[10px] text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide">Meals</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mt-4 text-xs text-ink-soft/60 dark:text-cream/40">
+              <Calendar className="h-3.5 w-3.5" />
+              Last updated: {new Date(latestCert.completion_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            </div>
+            <div className="flex gap-2 mt-4">
+              <Link to={`/services/verify-certificate/${latestCert.certificate_number}`}>
+                <RippleButton variant="primary"><ShieldCheck className="h-4 w-4" /> View Certificate</RippleButton>
+              </Link>
+              <Link to="/services/certificate-history">
+                <RippleButton variant="ghost"><Award className="h-4 w-4" /> All Certificates</RippleButton>
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* Summary of all certificates */}
+          {certs.length > 1 && (
+            <div className="glass-card p-5">
+              <p className="text-sm font-medium mb-3 flex items-center gap-2"><Award className="h-4 w-4 text-primary-500" /> Certificate History ({certs.length})</p>
+              <div className="space-y-2">
+                {certs.slice(0, 5).map((c) => (
+                  <div key={c.id} className="flex items-center gap-3 p-3 rounded-xl bg-oat dark:bg-secondary-800/50">
+                    <Award className="h-4 w-4 text-primary-500 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-mono truncate">{c.certificate_number}</p>
+                      <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">{c.deliveries_count} deliveries - {Math.round(c.hours_served)} hrs</p>
+                    </div>
+                    {c.is_valid ? <ShieldCheck className="h-3.5 w-3.5 text-green-500 shrink-0" /> : <span className="text-[10px] text-red-500">Revoked</span>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

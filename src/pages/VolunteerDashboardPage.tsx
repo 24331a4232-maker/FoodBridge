@@ -1,5 +1,5 @@
 import {
-  Package, MapPin, CheckCircle2, ShieldCheck, Truck, User as UserIcon, QrCode,
+  Package, MapPin, CheckCircle2, ShieldCheck, Truck, User as UserIcon, QrCode, Award,
 } from 'lucide-react';
 import { DashboardLayout, type NavItem } from '@/components/dashboard/DashboardLayout';
 import {
@@ -9,6 +9,7 @@ import {
   VolunteerFoodQualitySection,
   VolunteerAvailabilitySection,
   VolunteerProfileSection,
+  VolunteerCertificatesSection,
 } from '@/components/dashboard/sections/VolunteerSections';
 import { VolunteerQrHandoverSection } from '@/components/dashboard/sections/VolunteerQrHandoverSection';
 
@@ -18,6 +19,7 @@ export function VolunteerDashboardPage() {
     { key: 'assigned', label: 'Assigned Donations', icon: Package, content: <VolunteerAssignedSection /> },
     { key: 'live', label: 'Live Tracking', icon: MapPin, content: <VolunteerLiveTrackingSection /> },
     { key: 'history', label: 'Delivery History', icon: CheckCircle2, content: <VolunteerDeliveryHistorySection /> },
+    { key: 'certificates', label: 'My Certificates', icon: Award, content: <VolunteerCertificatesSection /> },
     { key: 'quality', label: 'Food Quality Update', icon: ShieldCheck, content: <VolunteerFoodQualitySection /> },
     { key: 'availability', label: 'Availability', icon: Truck, content: <VolunteerAvailabilitySection /> },
     { key: 'profile', label: 'Profile', icon: UserIcon, content: <VolunteerProfileSection /> },

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Award, Download, Eye, Calendar, Hash, Package, Clock, ShieldCheck, ArrowLeft, Plus, Sparkles } from 'lucide-react';
+import { Award, Download, Eye, Calendar, Hash, Package, Clock, ShieldCheck, ArrowLeft, Plus, Sparkles, MapPin, Printer, Lock } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
@@ -21,12 +21,22 @@ export function CertificateHistoryPage() {
   useEffect(() => {
     const load = async () => {
       if (!user) return;
-      const { data } = await supabase
+      // Fetch certificates where the user is either the donor or the volunteer
+      const { data: donorCerts } = await supabase
+        .from('certificates')
+        .select('*')
+        .eq('donor_id', user.id)
+        .order('created_at', { ascending: false });
+      const { data: volCerts } = await supabase
         .from('certificates')
         .select('*')
         .eq('volunteer_id', user.id)
         .order('created_at', { ascending: false });
-      setCerts((data as Certificate[]) ?? []);
+      const all = [...(donorCerts as Certificate[] ?? []), ...(volCerts as Certificate[] ?? [])];
+      // Deduplicate by id and sort by created_at desc
+      const unique = all.filter((c, idx, arr) => arr.findIndex((x) => x.id === c.id) === idx);
+      unique.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+      setCerts(unique);
       setLoading(false);
     };
     load();
@@ -66,7 +76,7 @@ export function CertificateHistoryPage() {
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="font-display text-3xl sm:text-4xl font-bold">My Certificates</h1>
-            <p className="text-ink-soft dark:text-cream/60 mt-1">All your volunteer appreciation certificates in one place.</p>
+            <p className="text-ink-soft dark:text-cream/60 mt-1">All your donor and volunteer appreciation certificates in one place.</p>
           </div>
           <Link to="/services/certificates">
             <RippleButton variant="primary"><Plus className="h-4 w-4" /> Generate New</RippleButton>
@@ -107,7 +117,7 @@ export function CertificateHistoryPage() {
               <Award className="h-10 w-10 text-ink-soft/40 dark:text-cream/30" />
             </div>
             <h2 className="font-display text-xl font-bold mb-2">No certificates yet</h2>
-            <p className="text-ink-soft dark:text-cream/60 mb-6">Complete food deliveries to earn your first volunteer appreciation certificate.</p>
+            <p className="text-ink-soft dark:text-cream/60 mb-6">Volunteers earn certificates automatically after completing deliveries. Donors can generate certificates for completed donations.</p>
             <div className="flex flex-wrap justify-center gap-3">
               <Link to="/dashboard/volunteer"><RippleButton variant="primary">Go to Dashboard</RippleButton></Link>
               <Link to="/services/certificates"><RippleButton variant="secondary">Generate Certificate</RippleButton></Link>
@@ -134,10 +144,12 @@ export function CertificateHistoryPage() {
                       <Award className="h-6 w-6" />
                     </div>
                     <div>
-                      <p className="font-display font-bold">{cert.volunteer_name ?? 'Volunteer'}</p>
+                      <p className="font-display font-bold">{cert.donor_name ?? cert.volunteer_name ?? 'Unknown'}</p>
                       <p className="text-xs text-ink-soft/60 dark:text-cream/40 flex items-center gap-1">
                         <Hash className="h-3 w-3" /> {cert.certificate_number}
                       </p>
+                      {cert.donation_id && <span className="badge bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 text-[9px]">Donor</span>}
+                      {cert.volunteer_id && !cert.donation_id && <span className="badge bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-[9px]">Volunteer</span>}
                     </div>
                   </div>
                   {cert.is_valid ? (
@@ -149,23 +161,69 @@ export function CertificateHistoryPage() {
                   )}
                 </div>
 
-                <div className="grid grid-cols-3 gap-2 mb-4">
-                  <div className="text-center p-2 rounded-xl bg-oat dark:bg-secondary-800/50">
-                    <Package className="h-4 w-4 text-accent-500 mx-auto mb-1" />
-                    <p className="font-bold text-sm">{cert.deliveries_count}</p>
-                    <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Deliveries</p>
+                {/* Donation details (for donor certs) */}
+                {cert.donation_id && cert.food_name && (
+                  <div className="space-y-1.5 mb-3">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Package className="h-3.5 w-3.5 text-accent-500" />
+                      <span className="text-ink-soft/60 dark:text-cream/40">Food:</span>
+                      <span className="font-medium">{cert.food_name}</span>
+                    </div>
+                    {cert.food_quantity && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <Sparkles className="h-3.5 w-3.5 text-yellow-500" />
+                        <span className="text-ink-soft/60 dark:text-cream/40">Quantity:</span>
+                        <span className="font-medium">{cert.food_quantity}</span>
+                      </div>
+                    )}
+                    {cert.delivery_location && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <MapPin className="h-3.5 w-3.5 text-primary-500" />
+                        <span className="text-ink-soft/60 dark:text-cream/40">Location:</span>
+        <span className="font-medium">{cert.delivery_location}</span>
+                      </div>
+                    )}
+                    {cert.volunteer_name && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <ShieldCheck className="h-3.5 w-3.5 text-green-500" />
+                        <span className="text-ink-soft/60 dark:text-cream/40">Volunteer:</span>
+                        <span className="font-medium">{cert.volunteer_name}</span>
+                      </div>
+                    )}
                   </div>
-                  <div className="text-center p-2 rounded-xl bg-oat dark:bg-secondary-800/50">
-                    <Clock className="h-4 w-4 text-primary-500 mx-auto mb-1" />
-                    <p className="font-bold text-sm">{Math.round(cert.hours_served)}</p>
-                    <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Hours</p>
+                )}
+
+                {/* Stats grid (for volunteer certs) */}
+                {cert.volunteer_id && !cert.donation_id && (
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    <div className="text-center p-2 rounded-xl bg-oat dark:bg-secondary-800/50">
+                      <Package className="h-4 w-4 text-accent-500 mx-auto mb-1" />
+                      <p className="font-bold text-sm">{cert.deliveries_count}</p>
+                      <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Deliveries</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-oat dark:bg-secondary-800/50">
+                      <Clock className="h-4 w-4 text-primary-500 mx-auto mb-1" />
+                      <p className="font-bold text-sm">{Math.round(cert.hours_served)}</p>
+                      <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Hours</p>
+                    </div>
+                    <div className="text-center p-2 rounded-xl bg-oat dark:bg-secondary-800/50">
+                      <Sparkles className="h-4 w-4 text-yellow-500 mx-auto mb-1" />
+                      <p className="font-bold text-sm">{cert.total_meals}</p>
+                      <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Meals</p>
+                    </div>
                   </div>
-                  <div className="text-center p-2 rounded-xl bg-oat dark:bg-secondary-800/50">
-                    <Sparkles className="h-4 w-4 text-yellow-500 mx-auto mb-1" />
-                    <p className="font-bold text-sm">{cert.total_meals}</p>
-                    <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Meals</p>
+                )}
+
+                {/* Meals for donor certs */}
+                {cert.donation_id && (
+                  <div className="grid grid-cols-1 gap-2 mb-4">
+                    <div className="text-center p-2 rounded-xl bg-oat dark:bg-secondary-800/50">
+                      <Sparkles className="h-4 w-4 text-yellow-500 mx-auto mb-1" />
+                      <p className="font-bold text-sm">{cert.total_meals}</p>
+                      <p className="text-[10px] text-ink-soft/60 dark:text-cream/40">Meals Provided</p>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 <div className="flex items-center gap-2 text-xs text-ink-soft/60 dark:text-cream/40 mb-4">
                   <Calendar className="h-3.5 w-3.5" />
