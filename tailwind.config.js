@@ -10,9 +10,9 @@ export default {
           50: '#E8F0EA',
           100: '#D1E2D5',
           200: '#A8C5B0',
-          300: '#7FA88A',
-          400: '#74A57F', // Moss Green (secondary)
-          500: '#4F8060',
+          300: '#8FBC9A', // brightened for dark mode luminosity
+          400: '#7AB589', // brightened Moss Green
+          500: '#5A9070', // brightened
           600: '#3A6249',
           700: '#1B4332', // Pine Green (primary)
           800: '#163628',
@@ -24,9 +24,9 @@ export default {
           50: '#F5EDE6',
           100: '#EBD9CC',
           200: '#D6B399',
-          300: '#C18D66',
-          400: '#AC774F',
-          500: '#8B5E3C', // Mocha Brown (primary button)
+          300: '#D8A07A', // brightened for dark mode warmth
+          400: '#C18D5E', // brightened
+          500: '#A8764A', // brightened Mocha
           600: '#724B30',
           700: '#5A3A26',
           800: '#42291B',
@@ -38,7 +38,7 @@ export default {
           50: '#FBF6EC',
           100: '#F5EBD3',
           200: '#EBD7A7',
-          300: '#E0C37B',
+          300: '#E5CD85', // brightened for dark mode shimmer
           400: '#D5AF4F',
           500: '#C9A66B', // Accent Gold
           600: '#A8854A',
@@ -59,9 +59,9 @@ export default {
           50: '#E8F0EA',
           100: '#D1E2D5',
           200: '#A8C5B0',
-          300: '#7FA88A',
-          400: '#74A57F',
-          500: '#4F8060',
+          300: '#8FBC9A', // brightened for dark mode luminosity
+          400: '#7AB589', // brightened
+          500: '#5A9070', // brightened
           600: '#3A6249',
           700: '#1B4332',
           800: '#163628',
@@ -94,6 +94,13 @@ export default {
         'glow-orange': '0 8px 32px -8px rgba(139, 94, 60, 0.35)',
         'glow-gold': '0 8px 32px -8px rgba(201, 166, 107, 0.40)',
         'inner-soft': 'inset 0 1px 2px rgba(0, 0, 0, 0.04)',
+        // Dark mode luminous shadows — richer, deeper, with colored glow
+        'dark-soft': '0 2px 8px -2px rgba(0, 0, 0, 0.3), 0 4px 16px -4px rgba(0, 0, 0, 0.2)',
+        'dark-premium': '0 4px 24px -6px rgba(0, 0, 0, 0.4), 0 8px 32px -8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(127, 168, 138, 0.08)',
+        'dark-premium-lg': '0 8px 40px -8px rgba(0, 0, 0, 0.5), 0 16px 48px -12px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(127, 168, 138, 0.1)',
+        'dark-glow-green': '0 8px 32px -8px rgba(127, 168, 138, 0.25), 0 0 24px -4px rgba(127, 168, 138, 0.15), 0 0 0 1px rgba(127, 168, 138, 0.12)',
+        'dark-glow-orange': '0 8px 32px -8px rgba(176, 137, 104, 0.25), 0 0 24px -4px rgba(176, 137, 104, 0.15), 0 0 0 1px rgba(176, 137, 104, 0.12)',
+        'dark-glow-gold': '0 8px 32px -8px rgba(201, 166, 107, 0.3), 0 0 24px -4px rgba(201, 166, 107, 0.2), 0 0 0 1px rgba(201, 166, 107, 0.15)',
       },
       animation: {
         'blob': 'blob 7s infinite',

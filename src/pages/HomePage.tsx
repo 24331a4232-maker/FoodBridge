@@ -40,10 +40,10 @@ const services = [
 ];
 
 const stats = [
-  { value: 128000, suffix: '+', label: 'Meals Delivered', icon: Heart },
-  { value: 1560, suffix: '+', label: 'Active Volunteers', icon: Users },
-  { value: 340, suffix: '+', label: 'Partner Hotels', icon: Globe2 },
-  { value: 154000, suffix: ' kg', label: 'CO2 Saved', icon: Recycle },
+  { value: 10, suffix: '', label: 'Meals Delivered', icon: Heart },
+  { value: 3, suffix: '', label: 'Active Volunteers', icon: Users },
+  { value: 2, suffix: '', label: 'Partner Hotels', icon: Globe2 },
+  { value: 4, suffix: ' kg', label: 'CO2 Saved', icon: Recycle },
 ];
 
 const features = [
@@ -55,7 +55,7 @@ const features = [
 
 const testimonials = [
   { quote: 'FoodBridge turned our nightly surplus into a purpose. Pickup was seamless and the team handled everything with care.', name: 'Anita Rao', role: 'Head Chef, The Fern Kitchen', initials: 'AR' },
-  { quote: 'I have delivered over 200 meals as a volunteer. The tracking and certificates make every trip feel meaningful.', name: 'Daniel Mathew', role: 'Volunteer Coordinator', initials: 'DM' },
+  { quote: 'Every pickup I complete feels meaningful. The live tracking and certificates make each delivery feel valued.', name: 'Daniel Mathew', role: 'Volunteer Coordinator', initials: 'DM' },
   { quote: 'Our shelter receives fresh, verified food within hours. It has changed how we plan our evening meals.', name: 'Sister Clara', role: 'Hope Shelter NGO', initials: 'SC' },
 ];
 
@@ -205,9 +205,9 @@ export function HomePage() {
                   className="font-display font-bold leading-[1.0] tracking-[-0.04em] mb-7"
                   style={{ fontSize: 'clamp(3rem, 7.5vw, 5.5rem)', color: '#FFFFFF' }}
                 >
-                  Every Meal<br />
-                  Has a<br />
-                  <span style={{ color: C.sand }}>Second Chance.</span>
+                  Where Every<br />
+                  Surplus Finds<br />
+                  <span style={{ color: C.sand }}>a Purpose.</span>
                 </motion.h1>
 
                 {/* Description */}
@@ -295,10 +295,10 @@ export function HomePage() {
           >
             <div className="max-w-7xl mx-auto px-6 lg:px-10 py-5 grid grid-cols-2 sm:grid-cols-4 gap-6 divide-x divide-white/10">
               {[
-                { value: '128K+', label: 'Meals Delivered' },
-                { value: '1,560+', label: 'Active Volunteers' },
-                { value: '340+',  label: 'Partner Hotels' },
-                { value: '154K kg', label: 'CO₂ Saved' },
+                { value: '10', label: 'Meals Delivered' },
+                { value: '3', label: 'Active Volunteers' },
+                { value: '2',  label: 'Partner Hotels' },
+                { value: '4 kg', label: 'CO₂ Saved' },
               ].map((s) => (
                 <div key={s.label} className="text-center pl-4 first:pl-0 sm:pl-6 sm:first:pl-0">
                   <p className="font-display text-2xl font-bold text-white tabular-nums">{s.value}</p>

@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   Target, Eye, Calendar, Lightbulb, UtensilsCrossed,
-  TrendingDown, Award, ArrowRight, Info,
+  TrendingDown, Award, ArrowRight, Info, Globe2, Sparkles, Heart, Users, Building2, Leaf,
 } from 'lucide-react';
 import { SectionHeading, fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
@@ -10,15 +10,22 @@ import { SectionPageHeader } from '@/components/SectionPageHeader';
 import { SectionTabs } from '@/components/SectionTabs';
 
 const timeline = [
-  { year: '2023', title: 'The Idea', desc: 'A group of engineering students witnessed massive food waste at a college fest and decided to act.', icon: Lightbulb },
-  { year: '2023', title: 'First Pilot', desc: 'Connected 5 hotels with 2 orphanages in Bangalore. Saved 1,200 meals in the first month.', icon: UtensilsCrossed },
-  { year: '2024', title: 'Going Digital', desc: 'Launched the FoodBridge web platform with real-time matching and volunteer tracking.', icon: Globe2 },
-  { year: '2024', title: 'Scaling Up', desc: 'Expanded to 28 cities, 340+ partner hotels, and 1,500+ active volunteers.', icon: TrendingDown },
-  { year: '2025', title: 'FoodBridge', desc: 'Officially launched FoodBridge with certification programs for volunteers.', icon: Award },
+  { year: '2025', title: 'The Idea', desc: 'A group of students witnessed surplus food being discarded after a campus event and decided something had to be done.', icon: Lightbulb },
+  { year: '2025', title: 'First Pilot', desc: 'Connected 2 partner hotels with a local shelter. Saved our first 10 meals and proved the concept works.', icon: UtensilsCrossed },
+  { year: '2025', title: 'Going Digital', desc: 'Built the FoodBridge web platform with real-time matching, volunteer tracking, and impact passports.', icon: Globe2 },
+  { year: '2026', title: 'Growing Carefully', desc: 'Onboarding more partners and volunteers one at a time — prioritizing trust and food safety over speed.', icon: TrendingDown },
+  { year: '2026', title: 'FoodBridge', desc: 'Launched certification programs and impact passports so every volunteer\'s contribution is verifiable.', icon: Award },
 ];
 
 const founderQuote =
-  '"We started FoodBridge because we could not ignore the contradiction around us - mountains of food being thrown away while people went to bed hungry. Technology gave us the tool, but it is the community that makes it work. Every volunteer, every donor, every recipient is a bridge. Together, we are making sure no plate stays empty."';
+  '"We started FoodBridge because we could not ignore the contradiction around us — food being thrown away while people went to bed hungry. Technology gave us the tool, but it is the community that makes it work. We are still small, and that is okay. Every volunteer, every donor, every recipient is a bridge. Together, we are making sure no surplus goes to waste."';
+
+const honestStats = [
+  { icon: Heart, value: '10', label: 'Meals Saved', color: '#7AB589' },
+  { icon: Users, value: '3', label: 'Volunteers', color: '#C18D5E' },
+  { icon: Building2, value: '2', label: 'Partner Hotels', color: '#7AB589' },
+  { icon: Leaf, value: '4 kg', label: 'CO₂ Reduced', color: '#D5AF4F' },
+];
 
 function MissionVisionTab() {
   return (
@@ -30,7 +37,7 @@ function MissionVisionTab() {
           </div>
           <h2 className="font-display text-2xl font-bold mb-3">Our Mission</h2>
           <p className="text-ink-soft dark:text-cream/60 leading-relaxed">
-            To eliminate edible food waste by building a trusted, technology-driven network that redistributes surplus food from hotels, restaurants, and events to orphanages, shelters, and people in need - one meal at a time.
+            To make sure every surplus meal finds a purpose. We build a trusted, technology-driven network that redirects surplus food from hotels, restaurants, and events to shelters and people who need it — one meal at a time.
           </p>
         </motion.div>
         <motion.div initial={{ opacity: 0, x: 40 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} className="card p-8 hover:shadow-premium transition-shadow">
@@ -44,13 +51,37 @@ function MissionVisionTab() {
         </motion.div>
       </div>
 
-      <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-3xl mx-auto card p-8 sm:p-12 relative">
-        <p className="text-lg sm:text-xl text-ink-soft dark:text-cream/70 leading-relaxed font-display italic mb-8">{founderQuote}</p>
-        <motion.div variants={fadeInUp} className="flex items-center gap-4">
-          <div className="h-14 w-14 rounded-full bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 flex items-center justify-center font-display text-xl font-semibold">A</div>
+      {/* Honest stats strip */}
+      <motion.div
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="grid grid-cols-2 md:grid-cols-4 gap-4"
+      >
+        {honestStats.map((s) => {
+          const Icon = s.icon;
+          return (
+            <motion.div key={s.label} variants={fadeInUp} className="card p-6 text-center">
+              <div className="h-10 w-10 rounded-xl mx-auto mb-3 flex items-center justify-center" style={{ backgroundColor: `${s.color}20` }}>
+                <Icon className="h-5 w-5" style={{ color: s.color }} />
+              </div>
+              <p className="font-stat text-2xl font-bold text-ink dark:text-cream">{s.value}</p>
+              <p className="text-xs text-ink-soft/60 dark:text-cream/40 uppercase tracking-wide mt-1">{s.label}</p>
+            </motion.div>
+          );
+        })}
+      </motion.div>
+
+      <motion.div variants={staggerContainer} initial="hidden" whileInView="visible" viewport={{ once: true }} className="max-w-3xl mx-auto card p-8 sm:p-12 relative overflow-hidden">
+        <div className="absolute -top-12 -right-12 h-40 w-40 rounded-full bg-primary-200/20 dark:bg-primary-700/10 blur-3xl" />
+        <span className="absolute top-6 left-8 font-display text-6xl text-primary-200 dark:text-primary-800/40 leading-none select-none">"</span>
+        <p className="text-lg sm:text-xl text-ink-soft dark:text-cream/70 leading-relaxed font-display italic mb-8 relative z-10 pl-8">{founderQuote}</p>
+        <motion.div variants={fadeInUp} className="flex items-center gap-4 relative z-10">
+          <div className="h-14 w-14 rounded-full bg-gradient-to-br from-primary-500 to-accent-500 text-white flex items-center justify-center font-display text-xl font-semibold shadow-lg">A</div>
           <div>
             <p className="font-display font-semibold text-ink dark:text-cream">Arjun Sharma</p>
-            <p className="text-sm text-ink-soft dark:text-cream/50">Founder & CEO, FoodBridge</p>
+            <p className="text-sm text-ink-soft dark:text-cream/50">Founder, FoodBridge</p>
           </div>
         </motion.div>
       </motion.div>
@@ -100,13 +131,16 @@ function OurStoryTab() {
         className="max-w-3xl mx-auto mt-14 text-center"
       >
         <p className="font-display text-lg sm:text-xl italic text-ink-soft dark:text-cream/70 leading-relaxed">
-          "Together, we believe technology can reduce food waste, support communities, and create a more sustainable future through FoodBridge."
+          "We are still early. Ten meals is a start, not a finish line. Every surplus that finds a purpose is proof this works — and a reason to keep going."
         </p>
       </motion.blockquote>
 
       <div className="text-center max-w-2xl mx-auto mt-12">
-        <h2 className="font-display text-3xl font-bold mb-4 text-ink dark:text-cream">Be part of the change</h2>
-        <p className="text-ink-soft dark:text-cream/60 mb-8">Join FoodBridge today. Donate surplus food or become a volunteer. Every action counts.</p>
+        <span className="badge bg-accent-100 dark:bg-accent-900/30 text-accent-700 dark:text-accent-300 mb-4">
+          <Sparkles className="h-3.5 w-3.5" /> Be part of the change
+        </span>
+        <h2 className="font-display text-3xl font-bold mb-4 text-ink dark:text-cream">Where every surplus finds a purpose</h2>
+        <p className="text-ink-soft dark:text-cream/60 mb-8">Join FoodBridge today. Donate surplus food or become a volunteer. Every action counts — no matter how small.</p>
         <div className="flex flex-wrap justify-center gap-4">
           <Link to="/register"><RippleButton variant="primary">Join Us <ArrowRight className="h-4 w-4" /></RippleButton></Link>
           <Link to="/services/donate-food"><RippleButton variant="accent">Donate Food</RippleButton></Link>
@@ -122,8 +156,8 @@ export function AboutSectionPage() {
       <SectionPageHeader
         crumbs={[{ label: 'About', icon: Info }]}
         eyebrow="About FoodBridge"
-        title="We are on a mission to end food waste"
-        subtitle="FoodBridge is a smart surplus food redistribution platform. We connect those who have surplus food with those who need it - using technology, trust, and a passionate community."
+        title="Where every surplus finds a purpose"
+        subtitle="FoodBridge is a smart surplus food redistribution platform. We connect those who have surplus food with those who need it — using technology, trust, and a passionate community. We are early-stage, honest about our numbers, and focused on doing this right."
         icon={Info}
       />
       <section className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto pb-16">
