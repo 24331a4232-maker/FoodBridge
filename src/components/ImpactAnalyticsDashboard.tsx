@@ -259,7 +259,8 @@ export function UnifiedImpactGraph() {
             transition={{ duration: 0.4, ease: 'easeOut' }}
             className="relative"
           >
-            <ResponsiveContainer width="100%" height={300} className="h-[280px] sm:h-[380px]">
+            <div className="h-[280px] sm:h-[380px]">
+            <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData} margin={{ top: 12, right: 16, left: -14, bottom: 4 }}>
                 <defs>
                   <linearGradient id="donationAreaGradient" x1="0" y1="0" x2="0" y2="1">
@@ -343,6 +344,7 @@ export function UnifiedImpactGraph() {
                 ))}
               </ComposedChart>
             </ResponsiveContainer>
+            </div>
             <span className="absolute top-0 right-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-soft/40 dark:text-cream/30">
               Impact Index
             </span>

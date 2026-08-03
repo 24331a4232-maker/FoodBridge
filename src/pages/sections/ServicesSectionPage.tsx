@@ -128,7 +128,7 @@ export function ServicesSectionPage() {
               >
                 <Link to={s.path} className="card p-7 block h-full group relative overflow-hidden">
                   {/* Step number watermark */}
-                  <span className="absolute -top-4 -right-2 font-display text-8xl font-bold text-primary-100/60 dark:text-primary-900/30 select-none pointer-events-none">
+                  <span className="absolute -top-4 -right-2 font-display text-6xl sm:text-8xl font-bold text-primary-100/60 dark:text-primary-900/30 select-none pointer-events-none">
                     {String(s.step).padStart(2, '0')}
                   </span>
 

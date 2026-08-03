@@ -321,7 +321,7 @@ export function HomePage() {
             className="relative"
           >
             <div className="relative rounded-[2rem] p-10 shadow-xl" style={{ backgroundColor: C.card, border: `1px solid ${C.sand}` }}>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-6">
                   <div className="rounded-2xl p-6" style={{ backgroundColor: C.beige }}>
                     <Leaf className="h-7 w-7 mb-3" style={{ color: C.coffee }} />
@@ -753,7 +753,7 @@ export function HomePage() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-80px' }}
           transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
-          className="max-w-4xl mx-auto rounded-[2rem] px-8 py-16 sm:px-16 sm:py-20 text-center relative overflow-hidden"
+          className="max-w-4xl mx-auto rounded-[2rem] px-6 py-10 sm:px-16 sm:py-20 text-center relative overflow-hidden"
           style={{ background: `linear-gradient(135deg, ${C.primary} 0%, ${C.coffee} 100%)`, boxShadow: `0 20px 60px -20px ${C.dark}55` }}
         >
           <div className="absolute -top-16 -right-16 h-64 w-64 rounded-full blur-3xl" style={{ backgroundColor: `${C.accent}33` }} />

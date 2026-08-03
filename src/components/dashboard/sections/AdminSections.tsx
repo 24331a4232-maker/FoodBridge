@@ -437,7 +437,7 @@ export function AdminFoodQualitySection() {
   return (
     <div>
       <DashboardSectionHeader title="Food Quality Monitoring" description="Review food quality inspections, photos, ratings, and volunteer reports." />
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
         <StatCard icon={CheckCircle2} label="Approved" value={inspections.filter((i) => i.approval_status === 'approved').length} color="bg-green-500" />
         <StatCard icon={Clock} label="Pending" value={inspections.filter((i) => i.approval_status === 'pending').length} color="bg-amber-500" />
         <StatCard icon={XCircle} label="Rejected" value={inspections.filter((i) => i.approval_status === 'rejected').length} color="bg-red-500" />
@@ -697,7 +697,7 @@ export function AdminAnalyticsSection() {
       } />
       <div className="glass-card p-5 mb-4">
         <h3 className="font-display font-bold mb-4 flex items-center gap-2"><BarChart3 className="h-5 w-5 text-primary-500" /> User Growth & Deliveries</h3>
-        <div className="h-[300px] relative">
+        <div className="h-[240px] sm:h-[300px] relative">
           {loading ? <div className="absolute inset-0 flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div> : (
             <ResponsiveContainer width="100%" height="100%">
               <ComposedChart data={chartData} margin={{ top: 10, right: 10, bottom: 0, left: -10 }}>

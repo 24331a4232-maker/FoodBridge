@@ -116,11 +116,11 @@ export function DashboardLayout({ navItems, title, subtitle, roles, accent = 'pr
               onClick={() => setMobileOpen(false)}
             />
             <motion.aside
-              initial={{ x: -280 }}
+              initial={{ x: -288 }}
               animate={{ x: 0 }}
-              exit={{ x: -280 }}
+              exit={{ x: -288 }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className={`lg:hidden fixed inset-y-0 left-0 top-0 w-72 bg-gradient-to-b ${a.sidebar} text-white z-50 flex flex-col pt-safe`}
+              className={`lg:hidden fixed inset-y-0 left-0 top-0 w-72 max-w-[85vw] bg-gradient-to-b ${a.sidebar} text-white z-50 flex flex-col pt-safe`}
             >
               <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
                 <div>

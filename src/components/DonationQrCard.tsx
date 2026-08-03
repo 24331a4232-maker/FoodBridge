@@ -65,11 +65,11 @@ export function DonationQrCard({ donation, donorName, handover, onInvalid }: Don
         <div className="absolute -inset-2 bg-gradient-to-br from-primary-400/20 to-accent-400/20 rounded-2xl blur-lg" />
         <div className="relative bg-white p-4 rounded-2xl shadow-lg ring-1 ring-black/5">
           {loading ? (
-            <div className="w-44 h-44 flex items-center justify-center">
+            <div className="w-40 h-40 sm:w-44 sm:h-44 flex items-center justify-center">
               <Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" />
             </div>
           ) : (
-            <img src={qrUrl} alt="Donation QR code" className="w-44 h-44" />
+            <img src={qrUrl} alt="Donation QR code" className="w-40 h-40 sm:w-44 sm:h-44" />
           )}
         </div>
       </div>

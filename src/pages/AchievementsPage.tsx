@@ -129,7 +129,7 @@ function LeaderboardCard({ entry, rank }: { entry: LeaderboardEntry; rank: numbe
     <motion.div
       variants={fadeInUp}
       whileHover={{ y: -4 }}
-      className={`relative rounded-[20px] p-5 flex items-center gap-4 ${
+      className={`relative rounded-[20px] p-4 sm:p-5 flex items-center gap-2 sm:gap-4 ${
         isPodium ? 'glass-card' : 'card'
       } ${entry.isMe ? 'ring-2 ring-primary-400' : ''}`}
     >
@@ -277,7 +277,7 @@ export function AchievementsPage() {
               </div>
               <p className="text-xs text-ink-soft/60 dark:text-cream/40 mt-2 text-right">{levelProgress}% to next level</p>
             </div>
-            <div className="relative grid grid-cols-3 sm:grid-cols-6 gap-2 mt-6">
+            <div className="relative grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 mt-6">
               {levels.map((l) => {
                 const reached = points >= l.minPoints;
                 const LevelIcon = l.icon;

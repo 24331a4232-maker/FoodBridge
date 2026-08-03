@@ -85,7 +85,7 @@ export function ContactPage() {
 
           {/* Contact info + map */}
           <div className="space-y-6">
-            <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-2 gap-4">
+            <motion.div variants={staggerContainer} initial="hidden" animate="visible" className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {contactInfo.map((c) => (
                 <motion.a key={c.label} href={c.href} variants={fadeInUp} whileHover={{ y: -4 }} className="card p-5 block">
                   <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center mb-3">

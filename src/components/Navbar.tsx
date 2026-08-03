@@ -232,7 +232,7 @@ export function Navbar() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.97 }}
               transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute left-0 top-full mt-2 w-72 rounded-2xl glass-nav shadow-premium-lg border border-linen/70 dark:border-secondary-800/60 overflow-hidden p-2"
+              className="absolute left-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] rounded-2xl glass-nav shadow-premium-lg border border-linen/70 dark:border-secondary-800/60 overflow-hidden p-2"
               onMouseLeave={() => setOpenDropdown(null)}
             >
               {links.map((link) => {
@@ -413,7 +413,7 @@ export function Navbar() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: -8, scale: 0.96 }}
                         transition={{ duration: 0.18 }}
-                        className="absolute right-0 mt-2 w-56 rounded-2xl-premium glass-card p-2 shadow-premium-lg z-50"
+                        className="absolute right-0 mt-2 w-56 max-w-[calc(100vw-2rem)] rounded-2xl-premium glass-card p-2 shadow-premium-lg z-50"
                       >
                         <div className="px-3 py-2.5 mb-1 border-b border-linen/60 dark:border-secondary-800/60">
                           <p className="text-sm font-semibold truncate text-ink dark:text-cream">{profile?.full_name ?? 'User'}</p>

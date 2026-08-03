@@ -196,14 +196,14 @@ export function VolunteerLiveTrackingSection() {
     <div>
       <DashboardSectionHeader title="Live Tracking" description="See your active deliveries on the map in real time." />
       <div className="glass-card p-4 mb-4">
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
           <h3 className="font-display font-bold flex items-center gap-2"><MapPin className="h-5 w-5 text-primary-500" /> Live Map</h3>
           {!position && <RippleButton onClick={requestGeo} variant="ghost" className="text-xs" disabled={geoLoading}>{geoLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <MapPin className="h-3 w-3" />} Enable Location</RippleButton>}
           <RippleButton onClick={toggleBroadcast} variant={broadcasting ? 'primary' : 'ghost'} className="text-xs">
             <Radio className="h-3 w-3" /> {broadcasting ? 'Stop Sharing' : 'Share Live Location'}
           </RippleButton>
         </div>
-        <LeafletMap points={mapPoints} showRoute={!!route} routeCoords={route?.coordinates ?? []} height="h-80" center={position ? [position.lat, position.lng] : [20.5937, 78.9629]} zoom={position ? 13 : 5} />
+        <LeafletMap points={mapPoints} showRoute={!!route} routeCoords={route?.coordinates ?? []} height="h-64 sm:h-80" center={position ? [position.lat, position.lng] : [20.5937, 78.9629]} zoom={position ? 13 : 5} />
       </div>
       {loading ? (
         <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-ink-soft/60 dark:text-cream/40" /></div>

@@ -249,7 +249,7 @@ export function CertificatePage() {
                 </div>
 
                 {/* Bottom row: signature, seal, QR */}
-                <div className="mt-auto pt-4 flex items-end justify-between">
+                <div className="mt-auto pt-4 flex flex-wrap items-end justify-between gap-2">
                   {/* Signature */}
                   <div className="text-left">
                     <p className="font-display italic text-ink dark:text-cream text-sm" style={{ fontFamily: 'Georgia, serif' }}>FoodBridge Team</p>

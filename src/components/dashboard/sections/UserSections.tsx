@@ -154,7 +154,7 @@ export function UserTrackDonationSection() {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-6">
         <StatCard icon={Clock} label="Active" value={active.length} color="bg-amber-500" />
         <StatCard icon={CheckCircle2} label="Delivered" value={completed.length} color="bg-green-500" />
         <StatCard icon={Package} label="Total" value={donations.length} color="bg-primary-500" />
@@ -382,7 +382,7 @@ export function UserQrVerificationSection() {
     <div>
       <DashboardSectionHeader title="QR Verification" description="Verify the authenticity of a certificate." />
       <div className="glass-card p-6 mb-4">
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-ink-soft/60 dark:text-cream/40" />
             <input

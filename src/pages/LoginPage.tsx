@@ -152,7 +152,7 @@ export function LoginPage() {
           </motion.div>
 
           {!adminMode && (
-            <motion.div variants={fadeInUp} className="flex items-center justify-between text-sm">
+            <motion.div variants={fadeInUp} className="flex flex-wrap items-center justify-between gap-2 text-sm">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="h-4 w-4 rounded text-primary-600 focus:ring-primary-500" />
                 <span className="text-ink-soft dark:text-cream/60">Remember me</span>

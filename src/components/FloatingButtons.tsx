@@ -58,8 +58,8 @@ export function FloatingButtons() {
               initial={{ opacity: 0, y: 20, scale: 0.9 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.9 }}
-              className="absolute bottom-16 right-0 w-80 sm:w-96 glass-card overflow-hidden flex flex-col"
-              style={{ maxHeight: '450px' }}
+              className="absolute bottom-16 right-0 w-80 sm:w-96 max-w-[calc(100vw-3rem)] glass-card overflow-hidden flex flex-col"
+              style={{ maxHeight: '60vh' }}
             >
               <div className="bg-gradient-to-r from-primary-600 to-primary-500 text-white p-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
