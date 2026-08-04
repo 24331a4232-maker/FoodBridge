@@ -3,13 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, Search, Filter, Eye, EyeOff, Loader2, MapPin, Phone, Mail,
   Building2, Calendar, Clock, ShieldCheck, Hotel, HeartHandshake, Truck,
-  Trash2, AlertTriangle, X, UserX, Edit3, Save, Check,
+  Trash2, AlertTriangle, X, UserX, Edit3, Save, Check, KeyRound, Eye, EyeOff,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { Profile, UserRole } from '@/types';
 
 type DeleteState = 'idle' | 'confirming' | 'deleting' | 'error';
 type EditState = 'idle' | 'saving' | 'error';
+type PasswordState = 'idle' | 'saving' | 'success' | 'error';
 
 const roleOptions: { value: UserRole; label: string }[] = [
   { value: 'donor', label: 'Donor' },
@@ -67,6 +68,10 @@ export function UserManagementTable() {
     full_name: '', email: '', phone: '', role: 'donor' as UserRole,
     organization: '', address: '', city: '', state: '', pincode: '', bio: '',
   });
+  const [pwTarget, setPwTarget] = useState<Profile | null>(null);
+  const [pwState, setPwState] = useState<PasswordState>('idle');
+  const [pwError, setPwError] = useState<string | null>(null);
+  const [pwForm, setPwForm] = useState({ password: '', confirm: '', show: false });
 
   const confirmDelete = async () => {
     if (!deleteTarget) return;
@@ -125,6 +130,60 @@ export function UserManagementTable() {
     setEditTarget(null);
     setEditState('idle');
     setEditError(null);
+  };
+
+  const openPasswordModal = (u: Profile) => {
+    setPwTarget(u);
+    setPwState('idle');
+    setPwError(null);
+    setPwForm({ password: '', confirm: '', show: false });
+  };
+
+  const closePasswordModal = () => {
+    if (pwState === 'saving') return;
+    setPwTarget(null);
+    setPwState('idle');
+    setPwError(null);
+    setPwForm({ password: '', confirm: '', show: false });
+  };
+
+  const submitPasswordChange = async () => {
+    if (!pwTarget) return;
+    if (pwForm.password.length < 6) {
+      setPwState('error');
+      setPwError('Password must be at least 6 characters.');
+      return;
+    }
+    if (pwForm.password !== pwForm.confirm) {
+      setPwState('error');
+      setPwError('Passwords do not match.');
+      return;
+    }
+    setPwState('saving');
+    setPwError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setPwState('error');
+        setPwError('Your session has expired. Please sign in again.');
+        return;
+      }
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/update-user-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify({ userId: pwTarget.id, newPassword: pwForm.password }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setPwState('error');
+        setPwError(json?.error ?? 'Failed to update password');
+        return;
+      }
+      setPwState('success');
+    } catch (err) {
+      setPwState('error');
+      setPwError(err instanceof Error ? err.message : 'Unexpected error');
+    }
   };
 
   const saveEdit = async () => {
@@ -317,6 +376,13 @@ export function UserManagementTable() {
                               title="Edit user"
                             >
                               <Edit3 className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => openPasswordModal(u)}
+                              className="text-amber-600 hover:text-amber-700 p-1 rounded-lg hover:bg-amber-50 dark:hover:bg-amber-900/30"
+                              title="Change password"
+                            >
+                              <KeyRound className="h-4 w-4" />
                             </button>
                             {u.role !== 'admin' && (
                               <button
@@ -644,6 +710,117 @@ export function UserManagementTable() {
                   </button>
                 </div>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Password change modal */}
+      <AnimatePresence>
+        {pwTarget && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
+            onClick={closePasswordModal}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="glass-card p-6 max-w-md w-full"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-display text-lg font-bold flex items-center gap-2">
+                  <KeyRound className="h-5 w-5 text-amber-500" /> Change Password
+                </h3>
+                <button onClick={closePasswordModal} className="p-1 rounded-lg hover:bg-oat dark:hover:bg-secondary-800">
+                  <X className="h-5 w-5 text-ink-soft dark:text-cream/60" />
+                </button>
+              </div>
+
+              <div className="rounded-xl bg-oat dark:bg-secondary-800/50 p-3 mb-4 flex items-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center text-xs font-bold shrink-0">
+                  {initials(pwTarget.full_name)}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-medium text-sm truncate text-ink dark:text-cream">{pwTarget.full_name}</p>
+                  <p className="text-xs text-ink-soft dark:text-cream/60 truncate">{pwTarget.email}</p>
+                </div>
+              </div>
+
+              {pwState === 'success' ? (
+                <div className="text-center py-4">
+                  <div className="h-14 w-14 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 flex items-center justify-center mx-auto mb-3">
+                    <Check className="h-7 w-7" />
+                  </div>
+                  <p className="font-medium text-sm mb-4">Password updated successfully.</p>
+                  <button onClick={closePasswordModal} className="px-4 py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-primary-600 to-accent-500 text-white hover:opacity-90 transition-opacity">
+                    Done
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">New Password</p>
+                    <div className="relative">
+                      <input
+                        type={pwForm.show ? 'text' : 'password'}
+                        value={pwForm.password}
+                        onChange={(e) => setPwForm({ ...pwForm, password: e.target.value })}
+                        className="input-field pr-10"
+                        placeholder="At least 6 characters"
+                        autoComplete="new-password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setPwForm({ ...pwForm, show: !pwForm.show })}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-soft/60 dark:text-cream/40 hover:text-primary-600"
+                      >
+                        {pwForm.show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-1">Confirm Password</p>
+                    <input
+                      type={pwForm.show ? 'text' : 'password'}
+                      value={pwForm.confirm}
+                      onChange={(e) => setPwForm({ ...pwForm, confirm: e.target.value })}
+                      className="input-field"
+                      placeholder="Re-enter new password"
+                      autoComplete="new-password"
+                    />
+                  </div>
+                  {pwState === 'error' && pwError && (
+                    <div className="p-3 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm flex items-center gap-2">
+                      <AlertTriangle className="h-4 w-4 shrink-0" /> {pwError}
+                    </div>
+                  )}
+                  <div className="flex gap-3 pt-1">
+                    <button
+                      onClick={closePasswordModal}
+                      disabled={pwState === 'saving'}
+                      className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-oat dark:bg-secondary-800 text-ink-soft dark:text-cream/70 hover:bg-linen dark:hover:bg-secondary-700 transition-colors disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      onClick={submitPasswordChange}
+                      disabled={pwState === 'saving'}
+                      className="flex-1 px-4 py-2.5 rounded-xl text-sm font-medium bg-gradient-to-r from-amber-600 to-orange-500 text-white hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                    >
+                      {pwState === 'saving' ? (
+                        <><Loader2 className="h-4 w-4 animate-spin" /> Updating...</>
+                      ) : (
+                        <><KeyRound className="h-4 w-4" /> Update Password</>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}
