@@ -22,6 +22,10 @@ export type HandoverStatus =
   | 'quality_approved'
   | 'quality_rejected'
   | 'picked_up'
+  | 'distributed'
+  | 'admin_approved'
+  | 'admin_rejected'
+  | 'certificate_generated'
   | 'delivered'
   | 'cancelled';
 
@@ -40,6 +44,16 @@ export interface DonationHandover {
   inspection_rating: number | null;
   pickup_photo_url: string | null;
   handover_status: HandoverStatus;
+  distribution_photo_url: string | null;
+  distribution_people_served: number | null;
+  distribution_location: string | null;
+  distribution_notes: string | null;
+  distribution_at: string | null;
+  admin_verified: boolean | null;
+  admin_verified_at: string | null;
+  admin_rejection_reason: string | null;
+  certificate_generated: boolean | null;
+  certificate_generated_at: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -145,6 +159,18 @@ export interface FoodDonation {
   status: DonationStatus;
   is_urgent: boolean;
   contact_phone: string;
+  food_type: 'veg' | 'non_veg' | null;
+  meals_count: number | null;
+  distribution_photo_url: string | null;
+  distribution_people_served: number | null;
+  distribution_location: string | null;
+  distribution_notes: string | null;
+  distribution_at: string | null;
+  admin_verified: boolean | null;
+  admin_verified_at: string | null;
+  admin_rejection_reason: string | null;
+  certificate_generated: boolean | null;
+  certificate_generated_at: string | null;
   created_at: string;
   updated_at: string;
   assigned_volunteer_id: string | null;
@@ -213,7 +239,11 @@ export type NotificationType =
   | 'certificate_generated'
   | 'volunteer_arrived'
   | 'food_expiring'
-  | 'thank_you';
+  | 'thank_you'
+  | 'distribution_complete'
+  | 'pickup_confirmed'
+  | 'admin_approved'
+  | 'admin_rejected';
 
 export interface Notification {
   id: string;
@@ -242,6 +272,18 @@ export interface Certificate {
   is_valid: boolean;
   created_at: string;
   volunteer?: Profile;
+}
+
+export interface DonationCertificate {
+  id: string;
+  donation_id: string;
+  volunteer_id: string | null;
+  donor_id: string | null;
+  certificate_number: string;
+  qr_code: string | null;
+  qr_code_url: string | null;
+  issue_date: string;
+  created_at: string;
 }
 
 export type RejectionReason =

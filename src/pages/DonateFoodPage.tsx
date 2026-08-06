@@ -9,7 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { useNotifications } from '@/context/NotificationContext';
 import type { OrganizationType, FoodCategory, StorageMethod, FoodCondition, FoodDonation } from '@/types';
-import { createHandoverForDonation } from '@/lib/handover';
+import { createHandoverForDonation, renderQrDataUrl, buildQrPayload } from '@/lib/handover';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Link } from 'react-router-dom';
@@ -70,8 +70,10 @@ export function DonateFoodPage() {
     organization_type: 'hotel' as OrganizationType,
     food_name: '',
     category: 'cooked' as FoodCategory,
+    food_type: 'veg' as 'veg' | 'non_veg',
     quantity: '',
     quantity_unit: 'servings',
+    meals_count: '',
     pickup_time: '',
     expiry_time: '',
     preparation_time: '',
@@ -85,6 +87,7 @@ export function DonateFoodPage() {
     is_urgent: false,
     image_url: '',
   });
+  const [successData, setSuccessData] = useState<{ donationId: string; qrUrl: string } | null>(null);
 
   const quality: QualityResult | null = useMemo(() => {
     if (!form.preparation_time || !form.expiry_time) return null;
@@ -207,8 +210,10 @@ export function DonateFoodPage() {
       organization_type: form.organization_type,
       food_name: form.food_name,
       category: form.category,
+      food_type: form.food_type,
       quantity: form.quantity,
       quantity_unit: form.quantity_unit,
+      meals_count: form.meals_count ? parseInt(form.meals_count) : 0,
       pickup_time: new Date(form.pickup_time).toISOString(),
       expiry_time: new Date(form.expiry_time).toISOString(),
       preparation_time: form.preparation_time ? new Date(form.preparation_time).toISOString() : null,
@@ -249,8 +254,10 @@ export function DonateFoodPage() {
           organization_type: form.organization_type,
           food_name: form.food_name,
           category: form.category,
+          food_type: form.food_type,
           quantity: form.quantity,
           quantity_unit: form.quantity_unit,
+          meals_count: form.meals_count ? parseInt(form.meals_count) : 0,
           pickup_time: new Date(form.pickup_time).toISOString(),
           expiry_time: new Date(form.expiry_time).toISOString(),
           preparation_time: form.preparation_time ? new Date(form.preparation_time).toISOString() : null,
@@ -280,8 +287,20 @@ export function DonateFoodPage() {
           donation_code: null,
           handover_status: 'waiting_volunteer',
           pickup_confirmed_at: null,
+          distribution_photo_url: null,
+          distribution_people_served: null,
+          distribution_location: null,
+          distribution_notes: null,
+          distribution_at: null,
+          admin_verified: false,
+          admin_verified_at: null,
+          admin_rejection_reason: null,
+          certificate_generated: false,
+          certificate_generated_at: null,
         } as FoodDonation;
         await createHandoverForDonation(fullDonation, form.donor_name || profile?.full_name || '');
+        const qrUrl = await renderQrDataUrl(buildQrPayload(fullDonation, form.donor_name || profile?.full_name || ''));
+        setSuccessData({ donationId: inserted.id, qrUrl });
       }
       setSuccess(true);
       pushToast('Donation Submitted Successfully', 'success');
@@ -311,10 +330,20 @@ export function DonateFoodPage() {
             <CheckCircle2 className="h-10 w-10 text-white" />
           </motion.div>
           <h2 className="font-display text-2xl font-bold mb-3">Thank You!</h2>
-          <p className="text-ink-soft dark:text-cream/60 mb-6">Your donation has been listed. Nearby volunteers will be notified to pick it up soon.</p>
+          <p className="text-ink-soft dark:text-cream/60 mb-4">Your donation has been listed. Nearby volunteers will be notified to pick it up soon.</p>
+          {successData && (
+            <div className="mb-6 p-4 rounded-2xl bg-white dark:bg-secondary-800/50 border border-linen dark:border-secondary-700">
+              <p className="text-xs text-ink-soft/60 dark:text-cream/40 mb-2">Donation ID</p>
+              <p className="font-mono text-sm font-bold mb-3">{successData.donationId.slice(0, 8).toUpperCase()}</p>
+              <div className="flex justify-center">
+                <img src={successData.qrUrl} alt="Donation QR Code" className="h-40 w-40 rounded-xl border-2 border-linen dark:border-secondary-600" />
+              </div>
+              <p className="text-xs text-ink-soft/60 dark:text-cream/40 mt-2">Show this QR to the volunteer when they arrive</p>
+            </div>
+          )}
           <div className="flex flex-col gap-3">
             <Link to="/services/available-food"><RippleButton variant="primary" fullWidth>View Available Food</RippleButton></Link>
-            <button onClick={() => { setSuccess(false); setForm({ ...form, food_name: '', quantity: '', description: '' }); setMapPoints([]); setCoords(null); }} className="btn-ghost">
+            <button onClick={() => { setSuccess(false); setSuccessData(null); setForm({ ...form, food_name: '', quantity: '', description: '', meals_count: '' }); setMapPoints([]); setCoords(null); }} className="btn-ghost">
               Donate More
             </button>
           </div>
@@ -383,10 +412,33 @@ export function DonateFoodPage() {
               <input name="food_name" value={form.food_name} onChange={handleChange} className="input-field" placeholder="Biryani & Curry" required />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-1.5">Food Type / Category *</label>
+              <label className="block text-sm font-medium mb-1.5">Food Category *</label>
               <select name="category" value={form.category} onChange={handleChange} className="input-field">
                 {foodCategories.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
               </select>
+            </div>
+          </motion.div>
+
+          {/* Food type (veg/non-veg) and meals */}
+          <motion.div variants={fadeInUp} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium mb-1.5">Food Type (Veg / Non-Veg) *</label>
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" onClick={() => setForm((f) => ({ ...f, food_type: 'veg' }))}
+                  className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${form.food_type === 'veg' ? 'bg-green-500 text-white shadow-lg' : 'bg-oat dark:bg-secondary-800/50 text-ink-soft dark:text-cream/70 hover:bg-green-50'}`}>
+                  <span className="h-4 w-4 border-2 border-current rounded-sm flex items-center justify-center"><span className="h-2 w-2 rounded-full bg-current" /></span>
+                  Vegetarian
+                </button>
+                <button type="button" onClick={() => setForm((f) => ({ ...f, food_type: 'non_veg' }))}
+                  className={`flex items-center justify-center gap-2 p-3 rounded-xl text-sm font-medium transition-all ${form.food_type === 'non_veg' ? 'bg-red-500 text-white shadow-lg' : 'bg-oat dark:bg-secondary-800/50 text-ink-soft dark:text-cream/70 hover:bg-red-50'}`}>
+                  <span className="h-4 w-4 border-2 border-current rounded-sm flex items-center justify-center"><span className="h-2 w-2 rounded-full bg-current" /></span>
+                  Non-Veg
+                </button>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1.5 flex items-center gap-1.5"><Package className="h-4 w-4 text-primary-500" /> Number of Meals</label>
+              <input type="number" name="meals_count" value={form.meals_count} onChange={handleChange} className="input-field" placeholder="e.g. 25" min="0" />
             </div>
           </motion.div>
 

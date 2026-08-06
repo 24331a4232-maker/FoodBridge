@@ -2,7 +2,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   QrCode, ScanLine, Loader2, Package, MapPin, Phone, Clock, Calendar,
-  ShieldCheck, CheckCircle2, XCircle, Star, Camera, User, FileText, Truck, Navigation,
+  ShieldCheck, CheckCircle2, XCircle, Star, Camera, User, FileText, Truck, Navigation, Hand,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
@@ -16,11 +16,20 @@ import { haversineKm } from '@/components/LeafletMap';
 import { useGeolocation } from '@/lib/geo';
 import {
   verifyQrForHandover, submitQualityReport, confirmPickup, assignVolunteerToHandover,
+  submitDistribution, type DistributionInput,
   QUALITY_CHECKLIST, REJECTION_REASONS, type QualityReportInput,
 } from '@/lib/handover';
 import type { FoodDonation, DonationHandover, Profile, QrPayload } from '@/types';
 
-type Phase = 'scan' | 'details' | 'inspection' | 'pickup' | 'done';
+type Phase = 'scan' | 'details' | 'inspection' | 'pickup' | 'distribution' | 'done';
+
+type QualityRating = 'excellent' | 'good' | 'average' | 'poor';
+const QUALITY_RATING_OPTIONS: { value: QualityRating; label: string; color: string }[] = [
+  { value: 'excellent', label: 'Excellent', color: 'bg-green-500 text-white' },
+  { value: 'good', label: 'Good', color: 'bg-primary-500 text-white' },
+  { value: 'average', label: 'Average', color: 'bg-amber-500 text-white' },
+  { value: 'poor', label: 'Poor', color: 'bg-red-500 text-white' },
+];
 
 export function VolunteerQrHandoverSection() {
   const { user, profile } = useAuth();
@@ -44,6 +53,15 @@ export function VolunteerQrHandoverSection() {
   const [uploading, setUploading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [qualityRating, setQualityRating] = useState<QualityRating | ''>('');
+
+  // distribution form
+  const [distPhotoUrl, setDistPhotoUrl] = useState('');
+  const [distUploading, setDistUploading] = useState(false);
+  const [distPeopleServed, setDistPeopleServed] = useState('');
+  const [distLocation, setDistLocation] = useState('');
+  const [distNotes, setDistNotes] = useState('');
+  const [distSubmitting, setDistSubmitting] = useState(false);
   const { position } = useGeolocation();
 
   const distanceFor = (d: FoodDonation): string | null => {
@@ -140,14 +158,15 @@ export function VolunteerQrHandoverSection() {
   const submitInspection = async () => {
     if (!donation) return;
     if (rating === 0) { toast('Please rate the food quality (1-5 stars)', 'error'); return; }
+    if (!qualityRating) { toast('Please select a quality rating (Excellent/Good/Average/Poor)', 'error'); return; }
     if (approval === 'rejected' && !rejectionReason) { toast('Please select a rejection reason', 'error'); return; }
-    if (!photoUrl) { toast('Please upload a pickup photo', 'error'); return; }
+    if (!photoUrl) { toast('Please upload a food photo - it is mandatory', 'error'); return; }
     const allChecked = QUALITY_CHECKLIST.every((c) => checklist[c.key]);
     if (approval === 'approved' && !allChecked) { toast('Please complete every checklist item', 'error'); return; }
     setSubmitting(true);
     const report: QualityReportInput = {
       checklist,
-      freshness: '',
+      freshness: qualityRating,
       packaging: '',
       temperature: '',
       rating,
@@ -202,11 +221,69 @@ export function VolunteerQrHandoverSection() {
     pushNotification({
       type: 'pickup_confirmed',
       title: 'Pickup Confirmed',
-      description: `You picked up ${donation.food_name}. Deliver it to the recipient now.`,
+      description: `You picked up ${donation.food_name}. Now distribute it to those in need.`,
+      actionUrl: '/dashboard/volunteer',
+    });
+    setPhase('distribution');
+    setConfirming(false);
+  };
+
+  const handleDistPhoto = async (file: File) => {
+    if (!user) return;
+    setDistUploading(true);
+    const ext = file.name.split('.').pop() ?? 'jpg';
+    const path = `${user.id}/distribution-${donation?.id}-${Date.now()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from('food-photos').upload(path, file, { cacheControl: '3600', upsert: true });
+    if (upErr) {
+      toast('Distribution photo upload failed', 'error');
+      setDistUploading(false);
+      return;
+    }
+    const { data: pub } = supabase.storage.from('food-photos').getPublicUrl(path);
+    setDistPhotoUrl(pub.publicUrl);
+    setDistUploading(false);
+    toast('Distribution photo uploaded', 'success');
+  };
+
+  const submitDistributionForm = async () => {
+    if (!donation) return;
+    if (!distPhotoUrl) { toast('Please upload a distribution photo - it is mandatory', 'error'); return; }
+    if (!distPeopleServed || parseInt(distPeopleServed) <= 0) { toast('Please enter the number of people served', 'error'); return; }
+    if (!distLocation.trim()) { toast('Please enter the distribution location', 'error'); return; }
+    setDistSubmitting(true);
+    const dist: DistributionInput = {
+      photoUrl: distPhotoUrl,
+      peopleServed: parseInt(distPeopleServed),
+      location: distLocation.trim(),
+      notes: distNotes.trim(),
+    };
+    const updated = await submitDistribution(donation.id, dist);
+    setHandover(updated);
+    await supabase.from('donation_events').insert({
+      donation_id: donation.id,
+      event_type: 'delivery_completed',
+      actor_name: profile?.full_name ?? 'Volunteer',
+      actor_role: 'volunteer',
+      notes: `Food distributed to ${dist.peopleServed} people at ${dist.location}. ${dist.notes}`,
+    });
+    if (donation.donor_id) {
+      await supabase.from('notifications').insert({
+        user_id: donation.donor_id,
+        type: 'distribution_complete',
+        title: 'Food Distributed Successfully',
+        description: `Your food (${donation.food_name}) was distributed to ${dist.peopleServed} people. Thank you!`,
+        action_url: '/dashboard/user',
+      });
+    }
+    pushToast('Distribution recorded! Waiting for admin verification.', 'success');
+    pushNotification({
+      type: 'distribution_complete',
+      title: 'Distribution Recorded',
+      description: `You distributed ${donation.food_name} to ${dist.peopleServed} people. Admin verification pending.`,
       actionUrl: '/dashboard/volunteer',
     });
     setPhase('done');
-    setConfirming(false);
+    setDistSubmitting(false);
   };
 
   const reset = () => {
@@ -216,10 +293,15 @@ export function VolunteerQrHandoverSection() {
     setHandover(null);
     setChecklist({});
     setRating(0);
+    setQualityRating('');
     setApproval('approved');
     setRejectionReason('');
     setNotes('');
     setPhotoUrl('');
+    setDistPhotoUrl('');
+    setDistPeopleServed('');
+    setDistLocation('');
+    setDistNotes('');
     setScanError('');
   };
 
@@ -335,17 +417,17 @@ export function VolunteerQrHandoverSection() {
           </div>
           {/* Photo */}
           <div>
-            <p className="text-sm font-medium mb-2">Upload Pickup Photo</p>
+            <p className="text-sm font-medium mb-2 flex items-center gap-1"><Camera className="h-4 w-4 text-primary-500" /> Upload Food Photo <span className="text-red-500">*</span></p>
             <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-linen dark:border-secondary-600 cursor-pointer hover:border-primary-400 transition-colors">
               {uploading ? <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
-                : photoUrl ? <img src={photoUrl} alt="Pickup" className="h-32 w-full object-cover rounded-lg" />
-                : <><Camera className="h-8 w-8 text-ink-soft/60 dark:text-cream/40" /><span className="text-xs text-ink-soft dark:text-cream/60">Tap to add a photo</span></>}
+                : photoUrl ? <img src={photoUrl} alt="Food" className="h-32 w-full object-cover rounded-lg" />
+                : <><Camera className="h-8 w-8 text-ink-soft/60 dark:text-cream/40" /><span className="text-xs text-ink-soft dark:text-cream/60">Tap to add a food photo (mandatory)</span></>}
               <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handlePhoto(f); }} />
             </label>
           </div>
           {/* Rating */}
           <div>
-            <p className="text-sm font-medium mb-2">Rating</p>
+            <p className="text-sm font-medium mb-2">Star Rating</p>
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map((n) => (
                 <button key={n} type="button" onClick={() => setRating(n)} className="p-1">
@@ -353,6 +435,18 @@ export function VolunteerQrHandoverSection() {
                 </button>
               ))}
               <span className="ml-2 text-sm text-ink-soft dark:text-cream/60">{rating > 0 ? `${rating}/5` : 'Tap a star'}</span>
+            </div>
+          </div>
+          {/* Quality Rating */}
+          <div>
+            <p className="text-sm font-medium mb-2">Quality Rating <span className="text-red-500">*</span></p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {QUALITY_RATING_OPTIONS.map((opt) => (
+                <button key={opt.value} type="button" onClick={() => setQualityRating(opt.value)}
+                  className={`p-3 rounded-xl text-sm font-medium transition-all ${qualityRating === opt.value ? `${opt.color} shadow-lg` : 'bg-oat dark:bg-secondary-800/50 text-ink-soft dark:text-cream/70 hover:bg-linen dark:hover:bg-secondary-800'}`}>
+                  {opt.label}
+                </button>
+              ))}
             </div>
           </div>
           {/* Decision */}
@@ -402,7 +496,51 @@ export function VolunteerQrHandoverSection() {
           <p className="text-xs text-ink-soft dark:text-cream/60 mb-4">Confirm that you have collected the food from the donor.</p>
           <RippleButton onClick={handleConfirmPickup} variant="primary" fullWidth disabled={confirming}>
             {confirming ? <Loader2 className="h-4 w-4 animate-spin" /> : <Truck className="h-4 w-4" />}
-            Confirm Pickup
+            Food Collected
+          </RippleButton>
+        </motion.div>
+      )}
+
+      {/* Distribution phase - Step 6 */}
+      {phase === 'distribution' && donation && (
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="glass-card p-5 space-y-5">
+          <div className="flex items-center gap-2">
+            <div className="h-10 w-10 rounded-xl bg-primary-100 text-primary-600 dark:bg-primary-900/30 dark:text-primary-300 flex items-center justify-center shrink-0">
+              <Hand className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="font-display font-bold">Food Distribution</h3>
+              <p className="text-xs text-ink-soft dark:text-cream/60">Record the distribution of food to people in need.</p>
+            </div>
+          </div>
+          {/* Distribution Photo */}
+          <div>
+            <p className="text-sm font-medium mb-2 flex items-center gap-1"><Camera className="h-4 w-4 text-primary-500" /> Distribution Photo <span className="text-red-500">*</span></p>
+            <label className="flex flex-col items-center justify-center gap-2 p-4 rounded-xl border-2 border-dashed border-linen dark:border-secondary-600 cursor-pointer hover:border-primary-400 transition-colors">
+              {distUploading ? <Loader2 className="h-6 w-6 animate-spin text-primary-500" />
+                : distPhotoUrl ? <img src={distPhotoUrl} alt="Distribution" className="h-32 w-full object-cover rounded-lg" />
+                : <><Camera className="h-8 w-8 text-ink-soft/60 dark:text-cream/40" /><span className="text-xs text-ink-soft dark:text-cream/60">Tap to add a distribution photo (mandatory)</span></>}
+              <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleDistPhoto(f); }} />
+            </label>
+          </div>
+          {/* People Served */}
+          <div>
+            <p className="text-sm font-medium mb-2">Number of People Served <span className="text-red-500">*</span></p>
+            <input type="number" value={distPeopleServed} onChange={(e) => setDistPeopleServed(e.target.value)} className="input-field" placeholder="e.g. 25" />
+          </div>
+          {/* Distribution Location */}
+          <div>
+            <p className="text-sm font-medium mb-2">Distribution Location <span className="text-red-500">*</span></p>
+            <input type="text" value={distLocation} onChange={(e) => setDistLocation(e.target.value)} className="input-field" placeholder="e.g. Community Hall, Sector 12" />
+          </div>
+          {/* Notes */}
+          <div>
+            <p className="text-sm font-medium mb-2">Notes (Optional)</p>
+            <textarea value={distNotes} onChange={(e) => setDistNotes(e.target.value)} rows={2} className="input-field text-sm resize-none" placeholder="Any additional notes about the distribution..." />
+          </div>
+          <RippleButton onClick={submitDistributionForm} variant="primary" fullWidth disabled={distSubmitting}>
+            {distSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Hand className="h-4 w-4" />}
+            Submit Distribution Report
           </RippleButton>
         </motion.div>
       )}
@@ -415,10 +553,12 @@ export function VolunteerQrHandoverSection() {
               ? <XCircle className="h-7 w-7 text-red-500" />
               : <CheckCircle2 className="h-7 w-7 text-green-500" />}
           </div>
-          <h3 className="font-display font-bold mb-1">{handover?.handover_status === 'quality_rejected' ? 'Donation Rejected' : 'Pickup Confirmed'}</h3>
+          <h3 className="font-display font-bold mb-1">{handover?.handover_status === 'quality_rejected' ? 'Donation Rejected' : handover?.handover_status === 'distributed' ? 'Distribution Recorded' : 'Pickup Confirmed'}</h3>
           <p className="text-xs text-ink-soft dark:text-cream/60 mb-4">
             {handover?.handover_status === 'quality_rejected'
               ? 'The donation was rejected due to food quality issues.'
+              : handover?.handover_status === 'distributed'
+              ? 'Distribution recorded. Waiting for admin verification to generate certificate.'
               : 'The donor has been notified that their food was collected successfully.'}
           </p>
           <RippleButton onClick={reset} variant="primary">Scan Another Donation</RippleButton>

@@ -182,6 +182,174 @@ export async function confirmPickup(
   return data as DonationHandover;
 }
 
+export interface DistributionInput {
+  photoUrl: string;
+  peopleServed: number;
+  location: string;
+  notes: string;
+}
+
+export async function submitDistribution(
+  donationId: string,
+  dist: DistributionInput,
+): Promise<DonationHandover | null> {
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from('donation_handovers')
+    .update({
+      distribution_photo_url: dist.photoUrl,
+      distribution_people_served: dist.peopleServed,
+      distribution_location: dist.location,
+      distribution_notes: dist.notes,
+      distribution_at: now,
+      handover_status: 'distributed',
+    })
+    .eq('donation_id', donationId)
+    .select('*')
+    .maybeSingle();
+  if (error || !data) return null;
+  await supabase
+    .from('food_donations')
+    .update({
+      handover_status: 'distributed',
+      distribution_photo_url: dist.photoUrl,
+      distribution_people_served: dist.peopleServed,
+      distribution_location: dist.location,
+      distribution_notes: dist.notes,
+      distribution_at: now,
+    })
+    .eq('id', donationId);
+  return data as DonationHandover;
+}
+
+export async function adminVerifyDonation(
+  donationId: string,
+  approved: boolean,
+  rejectionReason: string,
+): Promise<DonationHandover | null> {
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from('donation_handovers')
+    .update({
+      admin_verified: approved,
+      admin_verified_at: approved ? now : null,
+      admin_rejection_reason: approved ? null : rejectionReason,
+      handover_status: approved ? 'admin_approved' : 'admin_rejected',
+    })
+    .eq('donation_id', donationId)
+    .select('*')
+    .maybeSingle();
+  if (error || !data) return null;
+  await supabase
+    .from('food_donations')
+    .update({
+      handover_status: approved ? 'admin_approved' : 'admin_rejected',
+      admin_verified: approved,
+      admin_verified_at: approved ? now : null,
+      admin_rejection_reason: approved ? null : rejectionReason,
+    })
+    .eq('id', donationId);
+  return data as DonationHandover;
+}
+
+export function canGenerateCertificate(handover: DonationHandover | null): boolean {
+  if (!handover) return false;
+  return (
+    handover.qr_verified &&
+    handover.pickup_confirmed &&
+    handover.pickup_photo_url !== null &&
+    handover.distribution_photo_url !== null &&
+    handover.admin_verified === true &&
+    !handover.certificate_generated
+  );
+}
+
+export async function generateDonationCertificate(
+  donation: FoodDonation,
+  handover: DonationHandover,
+  volunteerName: string,
+  donorName: string,
+): Promise<{ certificateNumber: string; qrCodeUrl: string } | null> {
+  if (!canGenerateCertificate(handover)) return null;
+  const certNumber = `FB-CERT-${donation.id.slice(0, 8).toUpperCase()}-${Date.now().toString(36).toUpperCase()}`;
+  const qrPayload = JSON.stringify({
+    certNumber,
+    donationId: donation.id,
+    volunteerName,
+    donorName,
+    date: new Date().toISOString(),
+  });
+  const qrCodeUrl = await QRCode.toDataURL(qrPayload, {
+    width: 200,
+    margin: 1,
+    color: { dark: '#1B4332', light: '#ffffff' },
+  });
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from('donation_certificates')
+    .insert({
+      donation_id: donation.id,
+      volunteer_id: handover.volunteer_id,
+      donor_id: donation.donor_id ?? null,
+      certificate_number: certNumber,
+      qr_code: qrPayload,
+      qr_code_url: qrCodeUrl,
+    })
+    .select('*')
+    .maybeSingle();
+  if (error || !data) return null;
+  await supabase
+    .from('donation_handovers')
+    .update({
+      certificate_generated: true,
+      certificate_generated_at: now,
+      handover_status: 'certificate_generated',
+    })
+    .eq('donation_id', donation.id);
+  await supabase
+    .from('food_donations')
+    .update({
+      certificate_generated: true,
+      certificate_generated_at: now,
+      handover_status: 'certificate_generated',
+      status: 'delivered',
+      delivery_time: now,
+    })
+    .eq('id', donation.id);
+  return { certificateNumber: certNumber, qrCodeUrl };
+}
+
+export async function applyVolunteerRewards(
+  volunteerId: string,
+  donation: FoodDonation,
+): Promise<void> {
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('reward_points, total_deliveries, total_hours, badges')
+    .eq('id', volunteerId)
+    .maybeSingle();
+  if (!profile) return;
+  const newPoints = (profile.reward_points ?? 0) + 20;
+  const newDeliveries = (profile.total_deliveries ?? 0) + 1;
+  const newHours = Number(profile.total_hours ?? 0) + 1;
+  const badges = (profile.badges ?? []) as string[];
+  const updatedBadges = [...badges];
+  if (newDeliveries >= 1 && !updatedBadges.includes('First Delivery')) updatedBadges.push('First Delivery');
+  if (newDeliveries >= 5 && !updatedBadges.includes('5 Deliveries')) updatedBadges.push('5 Deliveries');
+  if (newDeliveries >= 10 && !updatedBadges.includes('10 Deliveries')) updatedBadges.push('10 Deliveries');
+  if (newPoints >= 100 && !updatedBadges.includes('100 Points')) updatedBadges.push('100 Points');
+  if (newPoints >= 500 && !updatedBadges.includes('500 Points')) updatedBadges.push('500 Points');
+  await supabase
+    .from('profiles')
+    .update({
+      reward_points: newPoints,
+      total_deliveries: newDeliveries,
+      total_hours: newHours,
+      badges: updatedBadges,
+    })
+    .eq('id', volunteerId);
+}
+
 export function isQrValid(handover: DonationHandover | null): boolean {
   if (!handover) return false;
   return !handover.pickup_confirmed;
@@ -193,7 +361,9 @@ export const HANDOVER_STEP_LABELS: { key: string; label: string }[] = [
   { key: 'qr_verified', label: 'QR Verified' },
   { key: 'quality_approved', label: 'Food Quality Approved' },
   { key: 'picked_up', label: 'Picked Up' },
-  { key: 'delivered', label: 'Delivered' },
+  { key: 'distributed', label: 'Distributed' },
+  { key: 'admin_approved', label: 'Admin Approved' },
+  { key: 'certificate_generated', label: 'Certificate Generated' },
 ];
 
 export const REJECTION_REASONS: { value: string; label: string }[] = [
