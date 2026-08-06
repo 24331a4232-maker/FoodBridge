@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Award, Download, Eye, Calendar, Hash, Package, Clock, ShieldCheck, ArrowLeft, Plus, Sparkles, MapPin, Printer, Lock } from 'lucide-react';
+import { Award, Download, Eye, Calendar, Hash, Package, Clock, ShieldCheck, ArrowLeft, Plus, Sparkles, MapPin } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';

@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  QrCode, ScanLine, Loader2, Package, MapPin, Phone, Clock, Calendar,
+  QrCode, ScanLine, Loader2, Package, MapPin, Phone, Clock,
   ShieldCheck, CheckCircle2, XCircle, Star, Camera, User, FileText, Truck, Navigation, Hand,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -9,7 +9,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { useNotifications } from '@/context/NotificationContext';
 import { RippleButton } from '@/components/ui/RippleButton';
-import { DashboardSectionHeader, StatCard } from '@/components/dashboard/DashboardLayout';
+import { DashboardSectionHeader } from '@/components/dashboard/DashboardLayout';
 import { QrScanner } from '@/components/QrScanner';
 import { DonationImage } from '@/components/Illustration';
 import { haversineKm } from '@/components/LeafletMap';

@@ -7,7 +7,7 @@ import {
   Package, Thermometer, Eye, ClipboardCheck, Truck,
   Leaf, Lock, BadgeCheck, Award, Download, QrCode, Hash, Calendar, X,
   CheckCircle, AlertTriangle, XCircle, Clock, HandHeart, Users, Building2, Utensils,
-  ZoomIn, ZoomOut, Maximize, Printer, ScanLine, TrendingUp,
+  ZoomIn, ZoomOut, Maximize, Printer, ScanLine,
 } from 'lucide-react';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { Illustration } from '@/components/Illustration';

@@ -2,9 +2,9 @@ import { useEffect, useState, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import {
   Users, Package, Truck, Store, Building2, ShieldCheck, QrCode, Award,
-  BarChart3, FileText, Bell, Settings, Radio, TrendingUp, TrendingDown,
+  BarChart3, Bell, Settings, Radio, TrendingUp,
   Loader2, Search, CheckCircle2, Clock, XCircle, Download, Star,
-  Activity, AlertTriangle, Eye, EyeOff, Filter, Save, RefreshCw,
+  Activity, Eye, Save,
   Camera, MapPin, User, Edit3, X, Check, Mail, Phone,
 } from 'lucide-react';
 import {
@@ -18,12 +18,12 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { DashboardSectionHeader, StatCard } from '@/components/dashboard/DashboardLayout';
 import { UserManagementTable } from '@/components/admin/UserManagementTable';
 import { VolunteerTrackingSystem } from '@/components/admin/VolunteerTrackingSystem';
-import { LeafletMap, type MapPoint } from '@/components/LeafletMap';
+
 import {
   type OpsStat, type OpsActivity, type ActivityKind, type TimeFilter,
   fetchLiveStats, fetchLiveActivities, fetchLiveAnalytics, subscribeToStats,
 } from '@/lib/opsData';
-import type { Profile, FoodDonation, Pickup, Certificate, QrVerification, FoodQualityInspection, UserRole, DonationHandover, LoginActivity } from '@/types';
+import type { Profile, FoodDonation, Certificate, FoodQualityInspection, UserRole, DonationHandover, LoginActivity } from '@/types';
 
 /* ---------- Dashboard Overview ---------- */
 const statIcons: Record<string, { icon: typeof Users; bg: string }> = {

@@ -20,7 +20,7 @@ interface DashboardLayoutProps {
   accent?: string;
 }
 
-export function DashboardLayout({ navItems, title, subtitle, roles, accent = 'primary' }: DashboardLayoutProps) {
+export function DashboardLayout({ navItems, title, subtitle, accent = 'primary' }: DashboardLayoutProps) {
   const { profile, signOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();

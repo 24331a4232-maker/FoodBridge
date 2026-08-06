@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Radio, Loader2, MapPin, Star, Phone, Mail, Truck, X, Search,
   Navigation, Clock, CheckCircle2, QrCode, ShieldCheck, Package,
-  User, Camera, Calendar, Route,
+  User, Camera, Calendar,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useNotifications } from '@/context/NotificationContext';
@@ -93,7 +93,7 @@ export function VolunteerTrackingSystem() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [stageFilter, setStageFilter] = useState<TrackingStage | 'all'>('all');
-  const [selectedVol, setSelectedVol] = useState<string | null>(null);
+  const [selectedVol] = useState<string | null>(null);
   const [detailRow, setDetailRow] = useState<VolunteerRow | null>(null);
   const prevStageRef = useRef<Record<string, TrackingStage>>({});
 

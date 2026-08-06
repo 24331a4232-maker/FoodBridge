@@ -3,7 +3,6 @@ import { Link, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lock, Eye, EyeOff, LogIn, ArrowRight, AtSign, ShieldCheck } from 'lucide-react';
 import { useAuth, roleDashboardPath } from '@/context/AuthContext';
-import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';

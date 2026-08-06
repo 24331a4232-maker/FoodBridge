@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Download, Loader2, QrCode as QrIcon, ShieldCheck, XCircle } from 'lucide-react';
-import QRCode from 'qrcode';
 import type { FoodDonation, DonationHandover } from '@/types';
 import { buildQrPayload, renderQrDataUrl, isQrValid } from '@/lib/handover';
 import { supabase } from '@/lib/supabase';

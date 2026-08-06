@@ -321,7 +321,7 @@ export async function generateDonationCertificate(
 
 export async function applyVolunteerRewards(
   volunteerId: string,
-  donation: FoodDonation,
+  _donation: FoodDonation,
 ): Promise<void> {
   const { data: profile } = await supabase
     .from('profiles')

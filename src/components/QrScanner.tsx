@@ -44,7 +44,8 @@ export function QrScanner({ onScan, onClose }: QrScannerProps) {
     ctx.drawImage(video, 0, 0, w, h);
     try {
       const img = ctx.getImageData(0, 0, w, h);
-      const detector = new (window as unknown as { BarcodeDetector?: typeof BarcodeDetector }).BarcodeDetector?.({ formats: ['qr_code'] });
+      const BarcodeDetectorCtor = (window as unknown as { BarcodeDetector?: typeof BarcodeDetector }).BarcodeDetector;
+      const detector = BarcodeDetectorCtor ? new BarcodeDetectorCtor({ formats: ['qr_code'] }) : null;
       if (detector) {
         const codes = await detector.detect(img);
         if (codes.length > 0) {

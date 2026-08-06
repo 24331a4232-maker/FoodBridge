@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Package, Clock, CheckCircle2, MapPin, Truck, Navigation, Loader2,
-  Award, ShieldCheck, Zap, Target, Trophy, Star,
-  Camera, Thermometer, CheckCircle, XCircle, Calendar, Radio,
+  Award, ShieldCheck, Zap, Target, Star,
+  Camera, CheckCircle, XCircle, Calendar, Radio,
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
@@ -15,8 +15,6 @@ import { RippleButton } from '@/components/ui/RippleButton';
 import { LeafletMap, haversineKm, type MapPoint } from '@/components/LeafletMap';
 import { useGeolocation, getRoute, type RouteInfo } from '@/lib/geo';
 import { DonationStatusTracker } from '@/components/DonationStatusTracker';
-import { FoodQualityBadge } from '@/components/FoodQualityBadge';
-import { DonationImage } from '@/components/Illustration';
 import { DashboardSectionHeader, StatCard } from '@/components/dashboard/DashboardLayout';
 import type { FoodDonation, Pickup, InspectionChecklist, Certificate } from '@/types';
 

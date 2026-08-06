@@ -144,7 +144,7 @@ export async function fetchLiveActivities(): Promise<OpsActivity[]> {
 export async function fetchLiveAnalytics(filter: TimeFilter): Promise<{ label: string; users: number; volunteers: number; deliveries: number; waste: number }[]> {
   const now = new Date();
   let startDate: Date;
-  let buckets: { label: string; start: Date; end: Date }[] = [];
+  const buckets: { label: string; start: Date; end: Date }[] = [];
 
   if (filter === 'today') {
     startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());

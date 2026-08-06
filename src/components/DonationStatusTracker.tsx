@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import {
-  FileText, ShieldCheck, CheckCircle2, UserCheck, MapPin, PackageCheck, Truck,
+  FileText, ShieldCheck, CheckCircle2, UserCheck, PackageCheck, Truck,
   MapPinned, HandHeart, Award, BadgeCheck, ChevronDown, Sparkles, Clock, User, Route, ShieldAlert, QrCode, type LucideIcon,
 } from 'lucide-react';
 import type { FoodDonation, Pickup, Certificate, Profile } from '@/types';

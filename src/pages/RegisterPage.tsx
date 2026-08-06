@@ -47,7 +47,7 @@ export function RegisterPage() {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [, setTouched] = useState<Record<string, boolean>>({});
 
   // Only redirect if we're NOT in the middle of a registration.
   // During signUp, the user may exist briefly before the profile is ready.

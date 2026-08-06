@@ -4,18 +4,17 @@ import { motion } from 'framer-motion';
 import {
   Package, Clock, CheckCircle2, TrendingUp, Plus, MapPin, Award,
   Loader2, Search, ShieldCheck, CheckCircle, XCircle, Bell, User as UserIcon,
-  Mail, Phone, MapPin, Calendar, Building2, Edit3, QrCode, Download, ExternalLink, Eye,
+  Mail, Phone, MapPin, Calendar, Building2, Edit3, QrCode, Download, ExternalLink,
 } from 'lucide-react';
 import QRCode from 'qrcode';
 import { useToast } from '@/context/ToastContext';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
 import { useNotifications } from '@/context/NotificationContext';
-import { AnimatedCounter } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { DashboardSectionHeader, StatCard } from '@/components/dashboard/DashboardLayout';
 import { DonationQrModal } from '@/components/DonationQrCard';
-import type { FoodDonation, Certificate, Notification } from '@/types';
+import type { FoodDonation, Certificate } from '@/types';
 
 /* ---------- Donate Food ---------- */
 export function UserDonateFoodSection() {

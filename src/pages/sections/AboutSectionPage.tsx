@@ -4,7 +4,7 @@ import {
   Target, Eye, Calendar, Lightbulb, UtensilsCrossed,
   TrendingDown, Award, ArrowRight, Info, Globe2, Sparkles, Heart, Users, Building2, Leaf,
 } from 'lucide-react';
-import { SectionHeading, fadeInUp, staggerContainer } from '@/lib/animations';
+import { fadeInUp, staggerContainer } from '@/lib/animations';
 import { RippleButton } from '@/components/ui/RippleButton';
 import { SectionPageHeader } from '@/components/SectionPageHeader';
 import { SectionTabs } from '@/components/SectionTabs';
