@@ -166,7 +166,7 @@ export function Navbar() {
   };
 
   const roleBadgeColors: Record<UserRole, string> = {
-    admin: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300',
+    admin: 'bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300',
     volunteer: 'bg-accent-100 text-accent-700 dark:bg-accent-900/40 dark:text-accent-300',
     donor: 'bg-primary-100 text-primary-700 dark:bg-primary-900/40 dark:text-primary-300',
     restaurant: 'bg-rose-100 text-rose-700 dark:bg-rose-900/40 dark:text-rose-300',
