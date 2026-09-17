@@ -140,7 +140,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (lookupError) {
           console.error('[auth] username lookup error:', lookupError.message);
-          return { error: 'Unable to verify credentials. Please try again.' };
+          // If the profiles table is unreachable (RLS, network, etc.),
+          // fall through and try authenticating with the identifier as-is.
+          // signInWithPassword will return a clear error if it's not a valid email.
+          const { error: directError } = await supabase.auth.signInWithPassword({
+            email: id,
+            password,
+          });
+          if (directError) {
+            return { error: 'Invalid email/username or password.' };
+          }
+          const { data: { session: directSession } } = await supabase.auth.getSession();
+          if (directSession?.user) {
+            const fetchedProfile = await fetchProfile(directSession.user.id);
+            return { error: null, role: fetchedProfile?.role };
+          }
+          return { error: null };
         }
         if (!profileRow) {
           return { error: 'Invalid email/username or password.' };
