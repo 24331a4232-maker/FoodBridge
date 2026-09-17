@@ -60,10 +60,11 @@ export async function createHandoverForDonation(
     .maybeSingle();
 
   if (error || !data) return null;
-  await supabase
+  const { error: fdError } = await supabase
     .from('food_donations')
     .update({ handover_status: 'waiting_volunteer' })
     .eq('id', donation.id);
+  if (fdError) console.error('[handover] food_donations update error (waiting_volunteer):', fdError.message);
   return data as DonationHandover;
 }
 
@@ -90,10 +91,11 @@ export async function assignVolunteerToHandover(
     .select('*')
     .maybeSingle();
   if (error || !data) return null;
-  await supabase
+  const { error: fdError } = await supabase
     .from('food_donations')
     .update({ handover_status: 'volunteer_assigned' })
     .eq('id', donationId);
+  if (fdError) console.error('[handover] food_donations update error (volunteer_assigned):', fdError.message);
   return data as DonationHandover;
 }
 
@@ -113,10 +115,11 @@ export async function verifyQrForHandover(
     .select('*')
     .maybeSingle();
   if (error || !data) return null;
-  await supabase
+  const { error: fdError } = await supabase
     .from('food_donations')
     .update({ handover_status: 'qr_verified', qr_verified: true })
     .eq('id', donationId);
+  if (fdError) console.error('[handover] food_donations update error (qr_verified):', fdError.message);
   return data as DonationHandover;
 }
 
@@ -149,10 +152,11 @@ export async function submitQualityReport(
     .select('*')
     .maybeSingle();
   if (error || !data) return null;
-  await supabase
+  const { error: fdError } = await supabase
     .from('food_donations')
     .update({ handover_status: approved ? 'quality_approved' : 'quality_rejected' })
     .eq('id', donationId);
+  if (fdError) console.error('[handover] food_donations update error (quality):', fdError.message);
   return data as DonationHandover;
 }
 
@@ -171,7 +175,7 @@ export async function confirmPickup(
     .select('*')
     .maybeSingle();
   if (error || !data) return null;
-  await supabase
+  const { error: fdError } = await supabase
     .from('food_donations')
     .update({
       handover_status: 'picked_up',
@@ -179,6 +183,7 @@ export async function confirmPickup(
       pickup_confirmed_at: now,
     })
     .eq('id', donationId);
+  if (fdError) console.error('[handover] food_donations update error (picked_up):', fdError.message);
   return data as DonationHandover;
 }
 
@@ -208,7 +213,7 @@ export async function submitDistribution(
     .select('*')
     .maybeSingle();
   if (error || !data) return null;
-  await supabase
+  const { error: fdError } = await supabase
     .from('food_donations')
     .update({
       handover_status: 'distributed',
@@ -219,6 +224,7 @@ export async function submitDistribution(
       distribution_at: now,
     })
     .eq('id', donationId);
+  if (fdError) console.error('[handover] food_donations update error (distributed):', fdError.message);
   return data as DonationHandover;
 }
 
@@ -240,7 +246,7 @@ export async function adminVerifyDonation(
     .select('*')
     .maybeSingle();
   if (error || !data) return null;
-  await supabase
+  const { error: fdError } = await supabase
     .from('food_donations')
     .update({
       handover_status: approved ? 'admin_approved' : 'admin_rejected',
@@ -249,6 +255,7 @@ export async function adminVerifyDonation(
       admin_rejection_reason: approved ? null : rejectionReason,
     })
     .eq('id', donationId);
+  if (fdError) console.error('[handover] food_donations update error (admin_verify):', fdError.message);
   return data as DonationHandover;
 }
 
@@ -298,7 +305,7 @@ export async function generateDonationCertificate(
     .select('*')
     .maybeSingle();
   if (error || !data) return null;
-  await supabase
+  const { error: dhError } = await supabase
     .from('donation_handovers')
     .update({
       certificate_generated: true,
@@ -306,7 +313,8 @@ export async function generateDonationCertificate(
       handover_status: 'certificate_generated',
     })
     .eq('donation_id', donation.id);
-  await supabase
+  if (dhError) console.error('[handover] donation_handovers cert update error:', dhError.message);
+  const { error: fdError } = await supabase
     .from('food_donations')
     .update({
       certificate_generated: true,
@@ -316,6 +324,7 @@ export async function generateDonationCertificate(
       delivery_time: now,
     })
     .eq('id', donation.id);
+  if (fdError) console.error('[handover] food_donations cert update error:', fdError.message);
   return { certificateNumber: certNumber, qrCodeUrl };
 }
 
@@ -339,7 +348,7 @@ export async function applyVolunteerRewards(
   if (newDeliveries >= 10 && !updatedBadges.includes('10 Deliveries')) updatedBadges.push('10 Deliveries');
   if (newPoints >= 100 && !updatedBadges.includes('100 Points')) updatedBadges.push('100 Points');
   if (newPoints >= 500 && !updatedBadges.includes('500 Points')) updatedBadges.push('500 Points');
-  await supabase
+  const { error: rewardError } = await supabase
     .from('profiles')
     .update({
       reward_points: newPoints,
@@ -348,6 +357,7 @@ export async function applyVolunteerRewards(
       badges: updatedBadges,
     })
     .eq('id', volunteerId);
+  if (rewardError) console.error('[handover] reward update error:', rewardError.message);
 }
 
 export function isQrValid(handover: DonationHandover | null): boolean {

@@ -29,11 +29,14 @@ export function DonationTrackingPage() {
   useEffect(() => {
     const load = async () => {
       if (!user) { setLoading(false); return; }
-      const { data } = await supabase
+      const { data, error } = await supabase
         .from('pickups')
         .select('*, donation:food_donations(*)')
         .eq('volunteer_id', user.id)
         .order('created_at', { ascending: false });
+      if (error) {
+        console.error('[DonationTrackingPage] query error:', error.message);
+      }
       setPickups((data as Pickup[]) ?? []);
       setLoading(false);
     };

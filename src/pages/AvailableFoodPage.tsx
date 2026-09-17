@@ -86,18 +86,32 @@ export function AvailableFoodPage() {
       return;
     }
     setAccepting(true);
-    const { error } = await supabase.from('pickups').insert({
+    // Atomic claim: only update if still 'available' — prevents race condition
+    const { data: updated, error: claimError } = await supabase
+      .from('food_donations')
+      .update({ status: 'claimed' })
+      .eq('id', donation.id)
+      .eq('status', 'available')
+      .select('id')
+      .maybeSingle();
+    if (claimError || !updated) {
+      setAccepting(false);
+      toast('Could not accept this pickup. It may already be claimed.', 'error');
+      return;
+    }
+    const { error: pickupError } = await supabase.from('pickups').insert({
       donation_id: donation.id,
       volunteer_id: user.id,
       status: 'accepted',
       points_earned: donation.is_urgent ? 50 : 25,
     });
-    if (error) {
+    if (pickupError) {
+      // Rollback the donation status since pickup insert failed
+      await supabase.from('food_donations').update({ status: 'available' }).eq('id', donation.id);
       setAccepting(false);
-      toast('Could not accept this pickup. It may already be claimed.', 'error');
+      toast('Could not accept this pickup. Please try again.', 'error');
       return;
     }
-    await supabase.from('food_donations').update({ status: 'claimed' }).eq('id', donation.id);
     setAccepting(false);
     setAcceptedId(donation.id);
     setDonations((d) => d.filter((x) => x.id !== donation.id));

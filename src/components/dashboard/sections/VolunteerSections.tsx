@@ -28,7 +28,8 @@ export function VolunteerAssignedSection() {
 
   const load = useCallback(async () => {
     if (!user) return;
-    const { data } = await supabase.from('pickups').select('*, donation:food_donations(*)').eq('volunteer_id', user.id).order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('pickups').select('*, donation:food_donations(*)').eq('volunteer_id', user.id).order('created_at', { ascending: false });
+    if (error) console.error('[volunteer] load pickups error:', error.message);
     setPickups((data as Pickup[]) ?? []);
     setLoading(false);
   }, [user]);
@@ -44,23 +45,26 @@ export function VolunteerAssignedSection() {
   const markDelivered = async (pickup: Pickup) => {
     const { error } = await supabase.from('pickups').update({ status: 'delivered', delivered_at: new Date().toISOString() }).eq('id', pickup.id);
     if (error) { toast('Could not update status', 'error'); return; }
-    await supabase.from('food_donations').update({ status: 'delivered', delivery_time: new Date().toISOString() }).eq('id', pickup.donation_id);
+    const { error: fdError } = await supabase.from('food_donations').update({ status: 'delivered', delivery_time: new Date().toISOString() }).eq('id', pickup.donation_id);
+    if (fdError) console.error('[volunteer] food_donations delivered update error:', fdError.message);
     if (profile) {
-      await supabase.from('profiles').update({
+      const { error: rewardError } = await supabase.from('profiles').update({
         total_deliveries: (profile.total_deliveries ?? 0) + 1,
         total_hours: (profile.total_hours ?? 0) + 0.5,
         reward_points: (profile.reward_points ?? 0) + (pickup.points_earned ?? 25),
       }).eq('id', profile.id);
+      if (rewardError) console.error('[volunteer] reward update error:', rewardError.message);
     }
     // Auto-upsert the volunteer's cumulative certificate
     const meals = pickup.donation?.estimated_meals ?? 0;
-    await supabase.rpc('upsert_volunteer_certificate', {
+    const { error: certError } = await supabase.rpc('upsert_volunteer_certificate', {
       p_volunteer_id: user?.id ?? '',
       p_volunteer_name: profile?.full_name ?? 'Volunteer',
       p_deliveries_delta: 1,
       p_hours_delta: 0.5,
       p_meals_delta: meals,
     });
+    if (certError) console.error('[volunteer] certificate upsert error:', certError.message);
     pushToast('Delivery completed! Points earned. Certificate updated.', 'success');
     pushNotification({
       type: 'delivery_completed',
