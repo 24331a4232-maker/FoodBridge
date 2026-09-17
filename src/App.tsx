@@ -46,6 +46,7 @@ const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then(m => ({ defa
 const DonationTrackingPage = lazy(() => import('@/pages/DonationTrackingPage').then(m => ({ default: m.DonationTrackingPage })));
 const CurrentLocationPage = lazy(() => import('@/pages/CurrentLocationPage').then(m => ({ default: m.CurrentLocationPage })));
 const DonorQrPage = lazy(() => import('@/pages/DonorQrPage').then(m => ({ default: m.DonorQrPage })));
+const AdminSetupPage = lazy(() => import('@/pages/AdminSetupPage').then(m => ({ default: m.AdminSetupPage })));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -120,6 +121,7 @@ function AnimatedRoutes() {
           {/* Auth */}
           <Route path="/login" element={<PageTransition><LoginPage /></PageTransition>} />
           <Route path="/register" element={<PageTransition><RegisterPage /></PageTransition>} />
+          <Route path="/admin-setup" element={<PageTransition><AdminSetupPage /></PageTransition>} />
 
           {/* Profile */}
           <Route path="/profile" element={<ProtectedRoute><PageTransition><ProfilePage /></PageTransition></ProtectedRoute>} />
